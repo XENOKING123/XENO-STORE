@@ -56,6 +56,7 @@ static void settings_defaults(settings_t *s) {
   xstrlcpy(s->language, "auto", sizeof s->language);
   xstrlcpy(s->theme, "xeno-gold", sizeof s->theme);
   xstrlcpy(s->cardSize, "m", sizeof s->cardSize);
+  xstrlcpy(s->designPack, "broadcast", sizeof s->designPack);
   s->reduceMotion = 0; s->sounds = 1; s->hints = 1; s->showPs4 = 1; s->adultFilter = 0;
   xstrlcpy(s->defaultRoot, "/data", sizeof s->defaultRoot);
   s->connections = 8; s->concurrentJobs = 1; s->maxBytesPerSec = 0;
@@ -98,7 +99,7 @@ static void write_settings(jw *w, const settings_t *s) {
   jw_obj_begin(w);
   jw_kv_int(w, "v", 1);
   jw_key(w, "general"); jw_obj_begin(w);
-  jw_kv_str(w, "language", s->language); jw_kv_str(w, "theme", s->theme); jw_kv_str(w, "cardSize", s->cardSize);
+  jw_kv_str(w, "language", s->language); jw_kv_str(w, "theme", s->theme); jw_kv_str(w, "cardSize", s->cardSize); jw_kv_str(w, "designPack", s->designPack);
   jw_kv_bool(w, "reduceMotion", s->reduceMotion); jw_kv_bool(w, "sounds", s->sounds); jw_kv_bool(w, "hints", s->hints);
   jw_kv_bool(w, "showPs4", s->showPs4); jw_kv_bool(w, "adultFilter", s->adultFilter);
   jw_kv_bool(w, "largeText", s->largeText); jw_kv_bool(w, "highContrast", s->highContrast);
@@ -240,10 +241,15 @@ static int normalize_install_order(char *val, size_t cap) {
 }
 
 static int validate(settings_t *s, char *err, size_t errcap) {
-  static const char *const themes[] = {"xeno-gold", "midnight", "oled", "crimson", "emerald", "royal", "ice"};
+  static const char *const themes[] = {"xeno-gold", "midnight", "oled", "crimson", "emerald", "royal", "ice",
+                                       "obsidian", "neon", "sunset", "ocean", "galaxy", "sakura"};
+  static const char *const packs[] = {"broadcast", "gallery", "minimal", "arcade"};
   int ok = 0;
   for (size_t i = 0; i < XS_ARRAY_LEN(themes); i++) if (strcmp(s->theme, themes[i]) == 0) ok = 1;
   if (!ok) { xsnprintf(err, errcap, "unknown theme"); return -1; }
+  ok = 0;
+  for (size_t i = 0; i < XS_ARRAY_LEN(packs); i++) if (strcmp(s->designPack, packs[i]) == 0) ok = 1;
+  if (!ok) { xsnprintf(err, errcap, "designPack must be broadcast|gallery|minimal|arcade"); return -1; }
   if (strcmp(s->cardSize, "s") && strcmp(s->cardSize, "m") && strcmp(s->cardSize, "l")) { xsnprintf(err, errcap, "cardSize must be s|m|l"); return -1; }
   if (!valid_hhmm(s->scheduleStart) || !valid_hhmm(s->scheduleEnd)) { xsnprintf(err, errcap, "schedule times must be HH:MM"); return -1; }
   if (s->pin[0]) {
@@ -289,6 +295,7 @@ static int merge_into(settings_t *s, jv o, char *err, size_t errcap) {
     merge_str(g, "language", s->language, sizeof s->language);
     merge_str(g, "theme", s->theme, sizeof s->theme);
     merge_str(g, "cardSize", s->cardSize, sizeof s->cardSize);
+    merge_str(g, "designPack", s->designPack, sizeof s->designPack);
     merge_bool(g, "reduceMotion", &s->reduceMotion); merge_bool(g, "sounds", &s->sounds);
     merge_bool(g, "hints", &s->hints); merge_bool(g, "showPs4", &s->showPs4); merge_bool(g, "adultFilter", &s->adultFilter);
     merge_bool(g, "largeText", &s->largeText); merge_bool(g, "highContrast", &s->highContrast);

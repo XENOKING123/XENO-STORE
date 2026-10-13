@@ -1,0 +1,111 @@
+/* Discover showcase stage (SPEC §18.3): a full-bleed band of hero art that runs under the glass top bar, dissolves
+   into the canvas and auto-advances through the most popular games. Everything animates with opacity/transform only;
+   Reduce motion and Safe mode turn every drift, fade and breath off. */
+
+/* ---- ambient: the screen breathes with the slide's colour ---- */
+.stage-ambient { position: absolute; left: 0; right: 0; top: 0; height: 120vh; z-index: 0; pointer-events: none; overflow: hidden; }
+.stage-ambient i { position: absolute; inset: 0; opacity: 0; transition: opacity 1.4s var(--ease-out); }
+.stage-ambient i.live { opacity: 1; }
+.stage-ambient b { position: absolute; inset: -10% -10% 0 -10%; display: block;
+  background: radial-gradient(70% 55% at 62% 18%, var(--tint, #1a2a5a) 0%, rgba(0, 0, 0, 0) 70%);
+  opacity: .55; animation: stage-breath 9s ease-in-out infinite alternate; }
+@keyframes stage-breath { from { transform: scale(1); opacity: .45; } to { transform: scale(1.06); opacity: .62; } }
+#scr-discover { position: absolute; }
+#scr-discover > .screen-inner { position: relative; z-index: 1; }
+
+/* ---- on Discover the top bar floats over the stage: clear at the top, glass once you scroll (TV layout) ---- */
+@media (min-width: 1281px) {
+  html.on-discover .topbar { position: absolute; left: 0; right: 0; top: 0; z-index: 30; transition: background .35s var(--ease), box-shadow .35s var(--ease); }
+  html.on-discover.stage-top .topbar { background: linear-gradient(180deg, rgba(4, 8, 20, .72) 0%, rgba(4, 8, 20, 0) 100%);
+    border-bottom-color: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  html.on-discover #scr-discover > .screen-inner { padding-top: var(--topbar-h); }
+  html.on-discover .banners { position: absolute; left: 0; right: 0; top: var(--topbar-h); z-index: 31; }
+  html.on-discover #scr-discover > .screen-inner.with-stage { padding-top: 0; }
+  html.on-discover #scr-discover .hero.stage { height: calc(60vh + var(--topbar-h)); max-height: calc(720px + var(--topbar-h)); }
+}
+
+/* ---- stage frame ---- */
+.hero.stage { position: relative; display: block; margin: 0 calc(-1 * var(--gutter)); height: 60vh; min-height: 500px; max-height: 720px;
+  border-radius: 0; border: 0; box-shadow: none; background: transparent; overflow: hidden; }
+html[data-theme="ice"] .hero.stage, html[data-theme="sakura"] .hero.stage { margin: 22px 0 0; border-radius: 28px; box-shadow: var(--shadow-2); background: var(--bg0); }
+
+/* ---- art layers: A/B, the incoming layer fades in over the still-opaque outgoing one ---- */
+.hero.stage .art { position: absolute; inset: 0; opacity: 0; z-index: 0; transition: none; }
+.hero.stage .art.out { opacity: 1; z-index: 1; }
+.hero.stage .art.live { opacity: 1; z-index: 2; transition: opacity 900ms var(--ease-out); }
+.hero.stage .art .cover { position: absolute; inset: 0; border-radius: 0; }
+.hero.stage .art .cover img { opacity: 0; object-position: 50% 30%; transform-origin: 50% 40%; animation: kb-drift-a 9s linear both; animation-play-state: paused; }
+.hero.stage .art.b .cover img { animation-name: kb-drift-b; transform-origin: 50% 60%; }
+.hero.stage .art.live .cover img { animation-play-state: running; will-change: transform; }
+.hero.stage .art .cover.loaded img { opacity: 1; }
+.hero.stage .art.tall .cover img { object-fit: contain; object-position: 88% 50%; }
+.hero.stage.held .art .cover img { animation-play-state: paused; }
+.hero.stage .art::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg, var(--bg0) 0%, rgba(6, 11, 28, .78) 26%, rgba(6, 11, 28, .2) 58%, rgba(6, 11, 28, 0) 100%),
+              linear-gradient(0deg, var(--bg0) 0%, rgba(6, 11, 28, .55) 22%, rgba(6, 11, 28, 0) 55%),
+              linear-gradient(180deg, rgba(0, 0, 0, .35) 0%, rgba(0, 0, 0, 0) 22%); }
+@keyframes kb-drift-a { from { transform: scale(1) translate3d(0, 0, 0); } to { transform: scale(1.07) translate3d(-1.2%, -.8%, 0); } }
+@keyframes kb-drift-b { from { transform: scale(1.07) translate3d(1%, .6%, 0); } to { transform: scale(1) translate3d(0, 0, 0); } }
+
+/* ---- body + staggered reveal ---- */
+.hero.stage .stage-body { position: absolute; z-index: 3; inset-inline-start: var(--gutter); bottom: 70px; max-width: 860px; display: flex; flex-direction: column; gap: 12px; }
+.stage-rank { display: inline-flex; align-items: center; gap: 10px; height: 34px; padding: 0 16px 0 6px; border-radius: 999px; align-self: flex-start;
+  background: rgba(10, 16, 34, .62); border: 1px solid rgba(255, 255, 255, .16); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 4px 14px rgba(0, 0, 0, .35); }
+.stage-rank .rk-no { display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 24px; padding: 0 7px; border-radius: 999px;
+  background: var(--gold-grad); color: var(--gold-ink); font-weight: 900; font-size: 13px; }
+.stage-rank .rk-lbl { color: var(--gold2); font-weight: 800; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; }
+.hero.stage .stage-title { font-size: 60px; line-height: 1.02; letter-spacing: -.028em; text-shadow: var(--ink-shadow); max-width: 15ch; }
+.hero.stage .tagline { font-size: 18px; color: var(--dim); max-width: 640px; text-shadow: 0 2px 10px rgba(0, 0, 0, .5); }
+.hero.stage .stage-body > * { opacity: 1; }
+.hero.stage .stage-body.in > * { animation: stage-rise .7s var(--ease-out) both; }
+.hero.stage .stage-body.in > :nth-child(2) { animation-delay: .06s; }
+.hero.stage .stage-body.in > :nth-child(3) { animation-delay: .12s; }
+.hero.stage .stage-body.in > :nth-child(4) { animation-delay: .18s; }
+.hero.stage .stage-body.in > :nth-child(5) { animation-delay: .24s; }
+@keyframes stage-rise { from { opacity: 0; transform: translate3d(0, 14px, 0); } to { opacity: 1; transform: none; } }
+
+/* ---- line-up strip (bottom right) with the on-air marker ---- */
+.stage-strip { position: absolute; z-index: 3; inset-inline-end: var(--gutter); bottom: 70px; display: flex; gap: 10px; align-items: flex-end; padding-bottom: 10px; }
+.strip-marker { position: absolute; left: 0; bottom: 0; width: 76px; height: 3px; border-radius: 2px; background: var(--gold); box-shadow: 0 0 12px var(--gold-glow);
+  transition: transform .6s var(--ease); will-change: transform; }
+[dir="rtl"] .strip-marker { left: 0; }
+.strip-tile { position: relative; width: 76px; flex: 0 0 auto; padding: 0; border: 0; background: none; border-radius: 12px; cursor: pointer;
+  opacity: .62; transform: translate3d(0, 0, 0); transition: opacity .35s var(--ease), transform .35s var(--ease); }
+.strip-tile .cover { aspect-ratio: 3 / 4; border-radius: 12px; box-shadow: 0 8px 22px rgba(0, 0, 0, .45); }
+.strip-tile .rk { position: absolute; top: 5px; inset-inline-start: 5px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px;
+  background: rgba(6, 11, 28, .78); color: #fff; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; }
+.strip-tile.live { opacity: 1; transform: translate3d(0, -8px, 0); }
+.strip-tile.live .rk { background: var(--gold-grad); color: var(--gold-ink); }
+.strip-tile:focus { opacity: 1; transform: translate3d(0, -8px, 0) scale(1.06); outline: none; }
+.strip-tile:focus .cover { box-shadow: var(--focus-ring), 0 10px 26px rgba(0, 0, 0, .5); }
+
+/* ---- progress bar + paused pill ---- */
+.stage-bar { position: absolute; z-index: 3; left: var(--gutter); right: var(--gutter); bottom: 34px; height: 3px; border-radius: 2px; background: rgba(255, 255, 255, .14); overflow: hidden; }
+.stage-bar i { position: absolute; inset: 0; display: block; background: var(--gold-grad); transform-origin: 0 50%; animation: pager-fill 7.5s linear both; }
+[dir="rtl"] .stage-bar i { transform-origin: 100% 50%; }
+.hero.stage.held .stage-bar i { animation-play-state: paused; }
+.stage-paused { position: absolute; z-index: 3; inset-inline-end: var(--gutter); bottom: 44px; padding: 3px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 800;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--gold2); background: rgba(6, 11, 28, .7); border: 1px solid var(--gold-line); opacity: 0; transition: opacity .3s var(--ease); }
+.hero.stage.held .stage-paused { opacity: 1; }
+#scr-discover:not(.active) .stage-paused { opacity: 0; }
+
+/* ---- reduced motion / safe mode: instant swaps, no drift, no breath ---- */
+html[data-motion="reduce"] .hero.stage .art.live, html.prm .hero.stage .art.live { transition: none; }
+html[data-motion="reduce"] .hero.stage .art .cover img, html.prm .hero.stage .art .cover img,
+html[data-motion="reduce"] .stage-ambient b, html.prm .stage-ambient b,
+html[data-motion="reduce"] .hero.stage .stage-body.in > *, html.prm .hero.stage .stage-body.in > * { animation: none; transform: none; }
+html[data-motion="reduce"] .strip-marker, html.prm .strip-marker, html[data-motion="reduce"] .stage-ambient i, html.prm .stage-ambient i { transition: none; }
+html[data-safe-mode="1"] .stage-ambient { display: none; }
+
+/* ---- narrower screens: the strip folds away, the stage keeps its art and actions ---- */
+@media (max-width: 1280px) {
+  .hero.stage { height: 52vh; min-height: 420px; }
+  .hero.stage .stage-title { font-size: 44px; }
+  .stage-strip { display: none; }
+}
+@media (max-width: 819px) {
+  .hero.stage { margin: 12px 0 0; height: auto; min-height: 380px; border-radius: 22px; }
+  .hero.stage .stage-body { inset-inline-start: 18px; inset-inline-end: 18px; bottom: 46px; }
+  .hero.stage .stage-title { font-size: 32px; }
+  .stage-bar { left: 18px; right: 18px; bottom: 22px; }
+}

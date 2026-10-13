@@ -14,7 +14,7 @@
 
 <br/><br/>
 
-![version](https://img.shields.io/badge/version-1.0.0-FFCE4A?style=for-the-badge)
+![version](https://img.shields.io/badge/version-1.1.0-FFCE4A?style=for-the-badge)
 ![platform](https://img.shields.io/badge/PS5-on--console%20payload-2F7CF6?style=for-the-badge&logo=playstation&logoColor=white)
 ![catalog](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FXENOKING123%2FXENO-STORE%2Fmain%2Fcatalog%2Frevision.json&query=%24.games&suffix=%20games&label=catalog&color=2ea043&style=for-the-badge)
 ![verified](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FXENOKING123%2FXENO-STORE%2Fmain%2Fcatalog%2Frevision.json&query=%24.verifiedReleases&suffix=%20verified%20releases&label=audit&color=2f7cf6&style=for-the-badge)

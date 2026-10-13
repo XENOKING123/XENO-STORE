@@ -1,82 +1,193 @@
-/* XENO STORE — 40-discover.js: hero spotlight (featured.hero first), rails incl. owner-curated featured rows,
+/* XENO STORE — 40-discover.js: popular-games showcase stage (featured.hero first, then popularity), rails incl. owner-curated featured rows,
    backports, community saves, homebrew essentials; announcement banner; prefetch; surprise me; All games grid. */
 (function () {
   'use strict';
   var XS = window.XS, U = XS.util, S = XS.state, ui = XS.ui, ca = XS.ca, h = U.h, t = XS.t;
   var PAGE = 96;
-  var heroTimer = null, heroIdx = 0, heroList = [], heroEl = null, page = 0, root = null, gridEl = null;
+  var page = 0, root = null, gridEl = null;
   var dirty = false;   /* something changed while Discover was hidden (recent games, job set): re-render on the next show */
 
-  function featured() { var st = S.data.status; return (st && st.featured) || {}; }
-  function heroPool() {
-    var L = S.data.lists;
-    var pool = [], seen = {};
-    function add(g) { if (g && ca.isGame(g) && !seen[g.id] && pool.length < 10) { seen[g.id] = 1; pool.push(g); } }
-    (featured().hero || []).forEach(function (id) { add(S.game(id)); });   /* owner-curated first (§17.1) */
-    (L.featured || []).forEach(add);
-    (L.newest || []).forEach(function (g) { if (g.hero || g.cover) add(g); });
-    return pool.slice(0, 10);
-  }
+  /* ---------- Showcase stage: a moving line-up of the most popular games ---------- */
+  var PERIOD = 7500, PERIOD_CALM = 12000, IDLE_RESUME = 20000, TICK = 250;
+  var stage = null, stageTimer = null;
 
-  function renderHero(container) {
-    heroList = heroPool();
-    if (!heroList.length) return;
-    heroIdx = Math.min(heroIdx, heroList.length - 1);
-    heroEl = h('section.hero', { data: { navFrame: '' } });
-    container.appendChild(heroEl);
-    paintHero(false);
-    startRotation();
+  function featured() { var st = S.data.status; return (st && st.featured) || {}; }
+  function cmpPopular(a, b) {
+    var d = (Number(b.popularity) || 0) - (Number(a.popularity) || 0); if (d) return d;
+    var fa = a.featured > 0 ? a.featured : 1e9, fb = b.featured > 0 ? b.featured : 1e9;
+    if (fa !== fb) return fa - fb;
+    var ma = typeof a.metacritic === 'number' ? a.metacritic : -1, mb = typeof b.metacritic === 'number' ? b.metacritic : -1;
+    if (ma !== mb) return mb - ma;
+    return String(a.title).localeCompare(String(b.title));
   }
-  function paintHero(animate) {
-    var g = heroList[heroIdx];
-    if (!g || !heroEl) return;
-    var focusedInHero = heroEl.contains(document.activeElement);
-    var focusId = focusedInHero && document.activeElement.getAttribute('data-nav-id');
-    U.clear(heroEl);
-    heroEl.classList.toggle('swap', !!animate && !U.reducedMotion());
-    var art = h('div.art');
-    art.appendChild(ui.cover(g.hero || g.cover, g.heroFallback || g.coverFallback, g.title));
-    heroEl.appendChild(art);
-    var body = h('div.body');
-    var curated = (featured().hero || []).indexOf(g.id) >= 0;
-    body.appendChild(h('div.kicker', { text: curated ? t('discover2.kickerStaff') : g.featured > 0 ? t('discover.kickerFeatured') : t('discover.kicker') }));
-    body.appendChild(h('h1', { text: g.title }));
-    if (g.tagline) body.appendChild(h('p.tagline.clamp2', { text: g.tagline }));
-    var chips = h('div.chips');
-    chips.appendChild(ui.platChip(g.platform));
-    ui.uniqueFormats(g).slice(0, 3).forEach(function (f) { chips.appendChild(h('span.chip.fmt', { text: f })); });
-    if (g.sizeMax) chips.appendChild(h('span.chip', { text: ui.sizeRange(g) }));
-    if (g.verified) chips.appendChild(h('span.chip.gold', { html: U.icon('check') + '<span>' + U.escapeHtml(t('common.verified')) + '</span>' }));
-    var mc = ca.metacritic(g.metacritic); if (mc) chips.appendChild(mc);
-    if (g.cheats > 0) chips.appendChild(h('span.chip.gold', { html: U.icon('zap') + '<span>' + U.escapeHtml(t('game2.cheatsChip', { n: g.cheats })) + '</span>' }));
+  /* Owner-curated ids first (§17.1), then the popular ranking; up to 10 games with art. */
+  function showcasePool() {
+    var out = [], seen = {};
+    function add(g) { if (g && ca.isGame(g) && (g.hero || g.cover) && !seen[g.id] && out.length < 10) { seen[g.id] = 1; out.push(g); } }
+    (featured().hero || []).forEach(function (id) { add(S.game(id)); });
+    S.data.games.filter(ca.isGame).slice().sort(cmpPopular).forEach(add);
+    return out;
+  }
+  function period() { return U.reducedMotion() ? PERIOD_CALM : PERIOD; }
+
+  function renderStage(container, ambient) {
+    stopStage();
+    var pool = showcasePool();
+    if (!pool.length) { stage = null; return; }
+    var keepId = stage && stage.pool[stage.idx] ? stage.pool[stage.idx].id : null;
+    var startIdx = 0;
+    pool.forEach(function (g, i) { if (g.id === keepId) startIdx = i; });
+    var el = h('section.hero.stage', { data: { navFrame: '' }, 'aria-label': t('discover3.showcase') });
+    var a = h('div.art.a'), b = h('div.art.b');
+    el.appendChild(a); el.appendChild(b);
+    var body = h('div.stage-body');
+    var rkNo = h('span.rk-no'), rkLbl = h('span.rk-lbl');
+    body.appendChild(h('div.stage-rank', [rkNo, rkLbl]));
+    var title = h('h1.stage-title');
+    body.appendChild(title);
+    var tag = h('p.tagline.clamp2');
+    body.appendChild(tag);
+    var chips = h('div.chips.stage-chips');
     body.appendChild(chips);
     var acts = h('div.actions');
-    var view = h('button.btn.primary.lg', { nav: 'hero-view', html: U.icon('play') + '<span>' + U.escapeHtml(t('discover.viewGame')) + '</span>', data: { hints: 'select' } });
-    view.addEventListener('click', function () { XS.router.go('game', { id: g.id }); });
-    var fav = h('button.btn.lg.icon-only.fav' + (S.isFav(g.id) ? '.on' : ''), { nav: 'hero-fav', html: U.icon('heart'), 'aria-label': t('game.favorite'), data: { game: g.id } });
-    fav.addEventListener('click', function () { XS.actions.toggleFavorite(g.id); });
-    acts.appendChild(view); acts.appendChild(fav);
+    var view = h('button.btn.primary.lg', { nav: 'stage-view', html: U.icon('play') + '<span>' + U.escapeHtml(t('discover.viewGame')) + '</span>', data: { hints: 'select' } });
+    view.addEventListener('click', function () { var g = current(); if (g) XS.router.go('game', { id: g.id }); });
+    var fav = h('button.btn.lg.icon-only.fav', { nav: 'stage-fav', html: U.icon('heart'), 'aria-label': t('game.favorite') });
+    fav.addEventListener('click', function () { var g = current(); if (g) XS.actions.toggleFavorite(g.id); });
+    var more = h('button.btn.lg.ghost', { nav: 'stage-more', html: U.icon('star') + '<span>' + U.escapeHtml(t('discover3.allPopular')) + '</span>' });
+    more.addEventListener('click', function () { XS.router.go('browse', { sort: 'popular' }); });
+    acts.appendChild(view); acts.appendChild(fav); acts.appendChild(more);
     body.appendChild(acts);
-    heroEl.appendChild(body);
-    var thumb = h('div.thumb'); thumb.appendChild(ui.cover(g.cover, g.coverFallback, g.title)); heroEl.appendChild(thumb);
-    var dots = h('div.dots');
-    heroList.forEach(function (_, i) { dots.appendChild(h('i' + (i === heroIdx ? '.on' : ''))); });
-    heroEl.appendChild(dots);
-    if (focusId) { var again = heroEl.querySelector('[data-nav-id="' + focusId + '"]'); if (again) XS.nav.focus(again, false); }
-    /* ambient crossfade: preload the next hero's art so the swap never flashes a placeholder */
-    var nxt = heroList[(heroIdx + 1) % heroList.length];
-    if (nxt && !ca.safeMode()) { try { var im = new Image(); im.src = nxt.hero || nxt.cover; } catch (e) { /* ignore */ } }
+    el.appendChild(body);
+    var strip = h('div.stage-strip', { data: { navRegion: '' }, role: 'list', 'aria-label': t('discover3.lineup') });
+    var marker = h('i.strip-marker');
+    strip.appendChild(marker);
+    var tiles = pool.map(function (g, i) {
+      var tile = h('button.strip-tile', { nav: 'stage-strip:' + i, data: { game: g.id, hints: 'select' }, 'aria-label': t('discover3.tileLabel', { title: g.title, n: i + 1 }) });
+      tile.appendChild(ui.cover(g.cover, g.coverFallback, g.title));
+      tile.appendChild(h('span.rk', { text: String(i + 1) }));
+      var pending = null;
+      tile.addEventListener('focus', function () {
+        if (pending) clearTimeout(pending);
+        pending = setTimeout(function () { pending = null; if (stage && stage.idx !== i && document.activeElement === tile) select(i, 'focus'); }, 160);
+      });
+      tile.addEventListener('click', function () {
+        if (stage && stage.idx === i) XS.router.go('game', { id: g.id }); else select(i, 'tap');
+      });
+      strip.appendChild(tile);
+      return tile;
+    });
+    el.appendChild(strip);
+    var bar = h('div.stage-bar', [h('i')]);
+    el.appendChild(bar);
+    el.appendChild(h('span.stage-paused', { text: t('discover3.paused') }));
+    var ambA = h('i.g.a', [h('b')]), ambB = h('i.g.b', [h('b')]);
+    U.clear(ambient);
+    ambient.appendChild(ambA); ambient.appendChild(ambB);
+    stage = { el: el, pool: pool, idx: -1, a: a, b: b, live: null, body: body, rkNo: rkNo, rkLbl: rkLbl, title: title, tag: tag, chips: chips, view: view, fav: fav,
+      strip: strip, marker: marker, tiles: tiles, bar: bar, ambA: ambA, ambB: ambB, ambLive: null, elapsed: 0, last: Date.now(), lastInput: 0, held: false };
+    function noteInput() { if (stage) stage.lastInput = Date.now(); }
+    el.addEventListener('keydown', noteInput);
+    el.addEventListener('focusin', noteInput);
+    el.addEventListener('pointerdown', noteInput);
+    container.appendChild(el);
+    select(startIdx, 'init');
+    startStage();
   }
-  function startRotation() {
-    stopRotation();
-    heroTimer = setInterval(function () {
-      if (!heroEl || !root.classList.contains('active') || XS.ui.layers.length || ca.screensaver.active()) return;
-      if (heroEl.contains(document.activeElement)) return;   /* don't yank a focused hero */
-      heroIdx = (heroIdx + 1) % heroList.length;
-      paintHero(true);
-    }, 8000);
+  function current() { return stage ? stage.pool[stage.idx] : null; }
+
+  function select(i, reason) {
+    var s = stage;
+    if (!s || !s.pool[i]) return;
+    var g = s.pool[i];
+    s.idx = i; s.elapsed = 0; s.last = Date.now();
+    /* art: the incoming layer fades in over the still-opaque outgoing one (opacity only) */
+    var incoming = s.live === s.a ? s.b : s.a, outgoing = s.live;
+    U.clear(incoming);
+    incoming.classList.remove('live', 'out');
+    var cov = ui.cover(g.hero || g.cover, g.heroFallback || g.coverFallback, g.title);
+    incoming.appendChild(cov);
+    incoming.classList.toggle('tall', !g.hero);
+    var swapped = false;
+    function swap() {
+      if (swapped || stage !== s || s.idx !== i) return;
+      swapped = true;
+      if (outgoing) { outgoing.classList.add('out'); outgoing.classList.remove('live'); }
+      incoming.classList.add('live');
+      s.live = incoming;
+      if (outgoing) setTimeout(function () { if (outgoing !== s.live) { outgoing.classList.remove('out'); U.clear(outgoing); } }, 950);
+    }
+    var img = cov.querySelector('img');
+    if (!outgoing || reason === 'init' || !img || U.reducedMotion()) swap();
+    else {
+      img.addEventListener('load', swap);
+      img.addEventListener('error', function () { setTimeout(swap, 250); });
+      setTimeout(swap, 1500);   /* slow CDN: never leave the old slide up for long */
+    }
+    /* body: patch the persistent nodes so a focused button keeps its focus */
+    var curated = (featured().hero || []).indexOf(g.id) >= 0;
+    s.rkNo.textContent = t('discover3.rank', { n: i + 1 });
+    s.rkLbl.textContent = curated ? t('discover2.kickerStaff') : t('discover3.popularNow');
+    s.title.textContent = g.title;
+    s.tag.textContent = g.tagline || '';
+    s.tag.style.display = g.tagline ? '' : 'none';
+    U.clear(s.chips);
+    s.chips.appendChild(ui.platChip(g.platform));
+    if (g.genres && g.genres[0]) s.chips.appendChild(h('span.chip', { text: g.genres[0] }));
+    if (g.sizeMax) s.chips.appendChild(h('span.chip', { text: ui.sizeRange(g) }));
+    var mc = ca.metacritic(g.metacritic); if (mc) s.chips.appendChild(mc);
+    if (g.verified) s.chips.appendChild(h('span.chip.gold', { html: U.icon('check') + '<span>' + U.escapeHtml(t('common.verified')) + '</span>' }));
+    if (g.cheats > 0) s.chips.appendChild(h('span.chip.gold', { html: U.icon('zap') + '<span>' + U.escapeHtml(t('game2.cheatsChip', { n: g.cheats })) + '</span>' }));
+    s.view.setAttribute('data-game', g.id);
+    s.fav.setAttribute('data-game', g.id);
+    s.fav.classList.toggle('on', S.isFav(g.id));
+    s.body.classList.remove('in');
+    void s.body.offsetWidth;   /* restart the staggered reveal */
+    s.body.classList.add('in');
+    /* line-up: live tile + the on-air marker */
+    s.tiles.forEach(function (tile, k) { tile.classList.toggle('live', k === i); });
+    var tile = s.tiles[i];
+    if (tile) s.marker.style.transform = 'translate3d(' + tile.offsetLeft + 'px, 0, 0)';
+    /* progress bar: a fresh <i> restarts the fill */
+    U.clear(s.bar);
+    var fill = h('i');
+    fill.style.animationDuration = period() + 'ms';
+    s.bar.appendChild(fill);
+    /* ambient: the screen breathes with the slide's colour */
+    var tint = ca.hashTint(g.title, g.tint);
+    var ambIn = s.ambLive === s.ambA ? s.ambB : s.ambA, ambOut = s.ambLive;
+    ambIn.style.setProperty('--tint', tint);
+    ambIn.classList.add('live');
+    if (ambOut) ambOut.classList.remove('live');
+    s.ambLive = ambIn;
+    ca.ambient(g.cover || g.hero, tint).then(function (c) { if (stage === s && s.idx === i && c) ambIn.style.setProperty('--tint', c); });
+    /* preload the next two slides */
+    if (!ca.safeMode()) [1, 2].forEach(function (k) { var n = s.pool[(i + k) % s.pool.length]; if (n && n !== g) { try { var im = new Image(); im.src = n.hero || n.cover; } catch (e) { /* ignore */ } } });
   }
-  function stopRotation() { if (heroTimer) clearInterval(heroTimer); heroTimer = null; }
+
+  function stageHeld(now) {
+    if (!root || !root.classList.contains('active') || document.hidden) return true;
+    if (XS.ui.layers.length || ca.screensaver.active() || ca.safeMode()) return true;
+    return stage.el.contains(document.activeElement) && now - stage.lastInput < IDLE_RESUME;
+  }
+  function tick() {
+    if (!stage || !stage.el.isConnected) { stopStage(); return; }
+    var now = Date.now(), dt = now - stage.last;
+    stage.last = now;
+    var held = stageHeld(now);
+    if (held !== stage.held) { stage.held = held; stage.el.classList.toggle('held', held); }
+    if (held || stage.pool.length < 2) return;
+    stage.elapsed += dt;
+    if (stage.elapsed >= period()) select((stage.idx + 1) % stage.pool.length, 'auto');
+  }
+  function startStage() { stopStage(); if (stage) { stage.last = Date.now(); stageTimer = setInterval(tick, TICK); } }
+  function stopStage() { if (stageTimer) clearInterval(stageTimer); stageTimer = null; }
+  /* Discover's top bar floats over the stage: clear while the stage is in view, glass once the user scrolls. */
+  function setUnderBar(active) {
+    var de = document.documentElement;
+    de.classList.toggle('on-discover', !!active);
+    de.classList.toggle('stage-top', !!active && !!stage && !!root && root.scrollTop < 40);
+  }
 
   function jobsByGame() {
     var m = {};
@@ -189,12 +300,14 @@
   /* Full render keeps the user's place: scroll offset and the focused element (by data-nav-id) survive. */
   function render() {
     if (!root) return;
-    stopRotation();
+    stopStage();
     dirty = false;
     featuredChanged();   /* the rendered featured set is now current */
     var scroll = root.scrollTop;
     var fid = root.contains(document.activeElement) ? document.activeElement.getAttribute('data-nav-id') : null;
     U.clear(root);
+    var ambient = h('div.stage-ambient', { 'aria-hidden': 'true' });
+    root.appendChild(ambient);
     var inner = h('div.screen-inner');
     root.appendChild(inner);
     if (!S.data.catalog) {
@@ -202,7 +315,8 @@
       inner.appendChild(ui.skeletonRail(8)); inner.appendChild(ui.skeletonRail(8));
       return;
     }
-    renderHero(inner);
+    renderStage(inner, ambient);
+    inner.classList.toggle('with-stage', !!stage);
     var top = h('div.discover-top');
     var req = h('button.btn.ghost', { nav: 'request-game', html: U.icon('plus') + '<span>' + U.escapeHtml(t('game2.requestGame')) + '</span>', title: t('game2.requestSub') });
     req.addEventListener('click', function () { ca.requestGame(''); });
@@ -216,6 +330,7 @@
     allGames(inner);
     root.scrollTop = scroll;
     if (fid) { var again = root.querySelector('[data-nav-id="' + fid + '"]'); if (again) XS.nav.focus(again, false); }
+    setUnderBar(root.classList.contains('active'));
   }
 
   /* Only patch what changed on queue/favorite updates: no full re-render while the user is browsing. */
@@ -245,17 +360,20 @@
     lastFeaturedKey = key; return true;
   }
 
+  XS.discover = { stage: { index: function () { return stage ? stage.idx : -1; }, size: function () { return stage ? stage.pool.length : 0; }, select: function (i) { select(i, 'tap'); } } };
+
   XS.router.register('discover', {
     tab: true, icon: 'compass', label: function () { return t('nav.discover'); },
     mount: function (el) {
       root = el;
       /* prefetch the next 6 covers of the rail the user walks along (§17.7) */
       el.addEventListener('focusin', function (e) { var card = e.target && e.target.closest ? e.target.closest('.card') : null; if (card && card.parentNode && card.parentNode.classList.contains('rail-track')) ca.prefetchRail(card.parentNode, card); });
+      el.addEventListener('scroll', function () { if (el.classList.contains('active')) setUnderBar(true); }, { passive: true });
       ca.banner();
       ca.screensaver.setup();
     },
-    show: function () { if (!root.firstChild || !S.data.catalog || dirty) render(); else { startRotation(); patchFavorites(); } },
-    hide: function () { stopRotation(); },
+    show: function () { if (!root.firstChild || !S.data.catalog || dirty) render(); else { startStage(); patchFavorites(); } setUnderBar(true); },
+    hide: function () { stopStage(); setUnderBar(false); },
     refresh: render
   });
   S.on('catalog', function () { if (root) { lastContinueKey = ''; render(); if (root.classList.contains('active')) XS.nav.restore(); } });

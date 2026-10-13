@@ -1,0 +1,34 @@
+/* Design packs (Settings → Appearance → Design): one choice sets the card style, the backdrop and the motion level
+   together. html[data-pack] is set by applySettings; everything here is an override of existing rules. */
+
+/* ---- Gallery: matte flat cards, a calm spotlight backdrop ---- */
+html[data-pack="gallery"] .card:hover, html[data-pack="gallery"] .card:focus { transform: translateY(-3px); }
+html[data-pack="gallery"] .card:focus .cf { transform: none; }
+html[data-pack="gallery"] .card:hover .cover img, html[data-pack="gallery"] .card:focus .cover img { transform: none; }
+html[data-pack="gallery"] .card .cf::after, html[data-pack="gallery"] .card:focus .cf::after { display: none; animation: none; }
+html[data-pack="gallery"] .card .cf, html[data-pack="gallery"] .card .cover { border-radius: 10px; }
+html[data-pack="gallery"] .aurora { display: none; }
+html[data-pack="gallery"] body { background-image: radial-gradient(1400px 900px at 50% -20%, var(--glow-spot) 0%, var(--bg0) 62%); }
+
+/* ---- Minimal: flat cards, plain canvas, no ambient glow, slower and quieter showcase ---- */
+html[data-pack="minimal"] .card:hover, html[data-pack="minimal"] .card:focus { transform: translateY(-2px); }
+html[data-pack="minimal"] .card:focus .cf { transform: none; }
+html[data-pack="minimal"] .card:hover .cover img, html[data-pack="minimal"] .card:focus .cover img { transform: none; }
+html[data-pack="minimal"] .card .cf::after, html[data-pack="minimal"] .card:focus .cf::after { display: none; animation: none; }
+html[data-pack="minimal"] .aurora, html[data-pack="minimal"] .stage-ambient { display: none; }
+html[data-pack="minimal"] body { background-image: none; }
+html[data-pack="minimal"] body::before { opacity: 0; }
+html[data-pack="minimal"] .hero.stage .art .cover img { animation: none; }
+
+/* ---- Arcade: big poster cards with a deeper lift and tilt ---- */
+html[data-pack="arcade"] .card:hover, html[data-pack="arcade"] .card:focus { transform: translateY(-12px); }
+html[data-pack="arcade"] .card:focus .cf { transform: perspective(800px) rotateX(var(--rx, 3deg)) rotateY(var(--ry, -3deg)) scale(1.02); }
+html[data-pack="arcade"] .card:hover .cover img, html[data-pack="arcade"] .card:focus .cover img { transform: scale(1.07); }
+html[data-pack="arcade"] .card .cf, html[data-pack="arcade"] .card .cover { border-radius: 20px; }
+html[data-pack="arcade"] .hero.stage .stage-title { font-size: 68px; text-transform: uppercase; letter-spacing: -.01em; }
+html[data-pack="arcade"] .strip-tile { width: 88px; }
+html[data-pack="arcade"] .strip-marker { width: 88px; }
+
+/* Reduce motion always wins over a pack. */
+html[data-motion="reduce"][data-pack] .card:hover, html[data-motion="reduce"][data-pack] .card:focus,
+html[data-motion="reduce"][data-pack] .card:focus .cf, html[data-motion="reduce"][data-pack] .card:focus .cover img { transform: none; }

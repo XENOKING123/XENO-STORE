@@ -1,0 +1,44 @@
+{
+  "discover3": {
+    "showcase": "热门游戏展台",
+    "popularNow": "当前热门",
+    "rank": "#{n}",
+    "lineup": "热门阵容",
+    "allPopular": "全部热门",
+    "tileLabel": "{title} — #{n}",
+    "paused": "已暂停"
+  },
+  "theme": {
+    "obsidian": "黑曜石",
+    "neon": "霓虹",
+    "sunset": "日落",
+    "ocean": "海洋",
+    "galaxy": "星河",
+    "sakura": "樱花（浅色）"
+  },
+  "design": {
+    "title": "设计",
+    "hint": "卡片样式、背景和动效一次选好",
+    "pack": {
+      "broadcast": "播映",
+      "gallery": "画廊",
+      "minimal": "极简",
+      "arcade": "街机"
+    },
+    "packHint": {
+      "broadcast": "3D 气泡卡片、极光背景、电影感动效",
+      "gallery": "扁平哑光卡片与柔和聚光背景",
+      "minimal": "简洁扁平卡片、纯色背景、低调动效",
+      "arcade": "大海报卡片，深度浮起与醒目标题"
+    }
+  },
+  "upd3": {
+    "restart": "重启以完成更新",
+    "restartHint": "下载会安全暂停，XENO STORE 回来后自动继续。",
+    "restartConfirm": "XENO STORE 将以新版本重启，大约需要 10 秒，之后下载会继续。",
+    "restartNow": "立即重启",
+    "restarting": "正在重启 XENO STORE…",
+    "back": "XENO STORE 已恢复 · v{v}",
+    "ready": "更新已下载 — 重启以完成"
+  }
+}

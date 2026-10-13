@@ -1,0 +1,44 @@
+{
+  "discover3": {
+    "showcase": "Vitrine des jeux populaires",
+    "popularNow": "Populaire en ce moment",
+    "rank": "#{n}",
+    "lineup": "Sélection populaire",
+    "allPopular": "Tous les populaires",
+    "tileLabel": "{title} — #{n}",
+    "paused": "En pause"
+  },
+  "theme": {
+    "obsidian": "Obsidienne",
+    "neon": "Néon",
+    "sunset": "Coucher de soleil",
+    "ocean": "Océan",
+    "galaxy": "Galaxie",
+    "sakura": "Sakura (clair)"
+  },
+  "design": {
+    "title": "Design",
+    "hint": "Style des cartes, arrière-plan et animations en un seul choix",
+    "pack": {
+      "broadcast": "Diffusion",
+      "gallery": "Galerie",
+      "minimal": "Minimal",
+      "arcade": "Arcade"
+    },
+    "packHint": {
+      "broadcast": "Cartes bulles 3D, fond aurore, animations cinématographiques",
+      "gallery": "Cartes plates mates et un fond projecteur apaisé",
+      "minimal": "Cartes plates épurées, fond uni, animations discrètes",
+      "arcade": "Grandes cartes affiches avec un relief marqué et des titres forts"
+    }
+  },
+  "upd3": {
+    "restart": "Redémarrer pour terminer la mise à jour",
+    "restartHint": "Les téléchargements se mettent en pause en sécurité et reprennent d’eux-mêmes au retour de XENO STORE.",
+    "restartConfirm": "XENO STORE redémarre avec la nouvelle version. Cela prend environ 10 secondes ; vos téléchargements continuent ensuite.",
+    "restartNow": "Redémarrer maintenant",
+    "restarting": "Redémarrage de XENO STORE…",
+    "back": "XENO STORE est de retour · v{v}",
+    "ready": "Mise à jour téléchargée — redémarrez pour terminer"
+  }
+}

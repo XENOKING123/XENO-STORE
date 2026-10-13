@@ -1,0 +1,44 @@
+{
+  "discover3": {
+    "showcase": "Popular games showcase",
+    "popularNow": "Popular now",
+    "rank": "#{n}",
+    "lineup": "Popular line-up",
+    "allPopular": "All popular",
+    "tileLabel": "{title} — #{n}",
+    "paused": "Paused"
+  },
+  "theme": {
+    "obsidian": "Obsidian",
+    "neon": "Neon",
+    "sunset": "Sunset",
+    "ocean": "Ocean",
+    "galaxy": "Galaxy",
+    "sakura": "Sakura (light)"
+  },
+  "design": {
+    "title": "Design",
+    "hint": "Card style, backdrop and motion in one choice",
+    "pack": {
+      "broadcast": "Broadcast",
+      "gallery": "Gallery",
+      "minimal": "Minimal",
+      "arcade": "Arcade"
+    },
+    "packHint": {
+      "broadcast": "3D bubble cards, aurora backdrop, cinematic motion",
+      "gallery": "Flat matte cards and a calm spotlight backdrop",
+      "minimal": "Clean flat cards, plain canvas, quiet motion",
+      "arcade": "Big poster cards with a deep lift and bold titles"
+    }
+  },
+  "upd3": {
+    "restart": "Restart to finish updating",
+    "restartHint": "Downloads pause safely and resume by themselves once XENO STORE is back.",
+    "restartConfirm": "XENO STORE restarts with the new version. It takes about 10 seconds; your downloads continue afterwards.",
+    "restartNow": "Restart now",
+    "restarting": "Restarting XENO STORE…",
+    "back": "XENO STORE is back · v{v}",
+    "ready": "Update downloaded — restart to finish"
+  }
+}

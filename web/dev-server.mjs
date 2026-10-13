@@ -240,7 +240,7 @@ const catalogGz = gzipSync(catalogJson);
 const startedAt = now();
 const settings = {
   v: 1,
-  general: { language: 'auto', theme: 'xeno-gold', cardSize: 'm', reduceMotion: false, sounds: true, hints: true, showPs4: true, adultFilter: false },
+  general: { language: 'auto', theme: 'xeno-gold', cardSize: 'm', designPack: 'broadcast', reduceMotion: false, sounds: true, hints: true, showPs4: true, adultFilter: false },
   downloads: { defaultRoot: '/data', connections: 8, concurrentJobs: 1, maxBytesPerSec: 0, verifyHashes: true, autoInstallPkg: true, shadowMountScan: true, keepAwake: true, retryMax: 8, allowInsecureTls: false, scheduleStart: '', scheduleEnd: '' },
   sources: { enabled: { archive: true, vikingfile: true, dlpsgame: true, other: true }, acknowledged: args.includes('--acknowledged') },
   catalog: { autoRefresh: true, url: 'https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/catalog/xeno-catalog.json', revisionUrl: 'https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/catalog/revision.json', lastCheck: startedAt - 3600 },

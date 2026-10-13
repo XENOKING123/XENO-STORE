@@ -1,0 +1,44 @@
+{
+  "discover3": {
+    "showcase": "Escaparate de juegos populares",
+    "popularNow": "Popular ahora",
+    "rank": "#{n}",
+    "lineup": "Selección popular",
+    "allPopular": "Todos los populares",
+    "tileLabel": "{title} — #{n}",
+    "paused": "En pausa"
+  },
+  "theme": {
+    "obsidian": "Obsidiana",
+    "neon": "Neón",
+    "sunset": "Atardecer",
+    "ocean": "Océano",
+    "galaxy": "Galaxia",
+    "sakura": "Sakura (claro)"
+  },
+  "design": {
+    "title": "Diseño",
+    "hint": "Estilo de tarjetas, fondo y movimiento en una sola elección",
+    "pack": {
+      "broadcast": "Emisión",
+      "gallery": "Galería",
+      "minimal": "Minimalista",
+      "arcade": "Arcade"
+    },
+    "packHint": {
+      "broadcast": "Tarjetas burbuja 3D, fondo aurora, movimiento cinematográfico",
+      "gallery": "Tarjetas planas mate y un fondo de foco sereno",
+      "minimal": "Tarjetas planas limpias, fondo liso, movimiento tranquilo",
+      "arcade": "Tarjetas tipo póster grandes con elevación profunda y títulos llamativos"
+    }
+  },
+  "upd3": {
+    "restart": "Reinicia para terminar la actualización",
+    "restartHint": "Las descargas se pausan de forma segura y se reanudan solas cuando XENO STORE vuelve.",
+    "restartConfirm": "XENO STORE se reinicia con la nueva versión. Tarda unos 10 segundos; tus descargas continúan después.",
+    "restartNow": "Reiniciar ahora",
+    "restarting": "Reiniciando XENO STORE…",
+    "back": "XENO STORE ha vuelto · v{v}",
+    "ready": "Actualización descargada: reinicia para terminar"
+  }
+}

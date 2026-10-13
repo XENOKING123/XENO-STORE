@@ -1,0 +1,44 @@
+{
+  "discover3": {
+    "showcase": "Popüler oyunlar vitrini",
+    "popularNow": "Şu an popüler",
+    "rank": "#{n}",
+    "lineup": "Popüler seçki",
+    "allPopular": "Tüm popülerler",
+    "tileLabel": "{title} — #{n}",
+    "paused": "Duraklatıldı"
+  },
+  "theme": {
+    "obsidian": "Obsidyen",
+    "neon": "Neon",
+    "sunset": "Gün batımı",
+    "ocean": "Okyanus",
+    "galaxy": "Galaksi",
+    "sakura": "Sakura (açık)"
+  },
+  "design": {
+    "title": "Tasarım",
+    "hint": "Kart stili, arka plan ve hareket tek seçimde",
+    "pack": {
+      "broadcast": "Yayın",
+      "gallery": "Galeri",
+      "minimal": "Minimal",
+      "arcade": "Arcade"
+    },
+    "packHint": {
+      "broadcast": "3D baloncuk kartlar, aurora arka plan, sinematik hareket",
+      "gallery": "Düz mat kartlar ve sakin bir spot ışıklı arka plan",
+      "minimal": "Temiz düz kartlar, düz arka plan, sakin hareket",
+      "arcade": "Derin yükselen büyük poster kartlar ve iddialı başlıklar"
+    }
+  },
+  "upd3": {
+    "restart": "Güncellemeyi bitirmek için yeniden başlat",
+    "restartHint": "İndirmeler güvenle duraklar ve XENO STORE geri geldiğinde kendiliğinden devam eder.",
+    "restartConfirm": "XENO STORE yeni sürümle yeniden başlar. Yaklaşık 10 saniye sürer; indirmeleriniz ardından devam eder.",
+    "restartNow": "Şimdi yeniden başlat",
+    "restarting": "XENO STORE yeniden başlatılıyor…",
+    "back": "XENO STORE geri döndü · v{v}",
+    "ready": "Güncelleme indirildi — bitirmek için yeniden başlat"
+  }
+}

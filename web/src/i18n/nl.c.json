@@ -1,0 +1,44 @@
+{
+  "discover3": {
+    "showcase": "Showcase van populaire games",
+    "popularNow": "Nu populair",
+    "rank": "#{n}",
+    "lineup": "Populaire selectie",
+    "allPopular": "Alle populaire",
+    "tileLabel": "{title} — #{n}",
+    "paused": "Gepauzeerd"
+  },
+  "theme": {
+    "obsidian": "Obsidiaan",
+    "neon": "Neon",
+    "sunset": "Zonsondergang",
+    "ocean": "Oceaan",
+    "galaxy": "Melkweg",
+    "sakura": "Sakura (licht)"
+  },
+  "design": {
+    "title": "Ontwerp",
+    "hint": "Kaartstijl, achtergrond en beweging in één keuze",
+    "pack": {
+      "broadcast": "Broadcast",
+      "gallery": "Galerij",
+      "minimal": "Minimaal",
+      "arcade": "Arcade"
+    },
+    "packHint": {
+      "broadcast": "3D-bubbelkaarten, aurora-achtergrond, filmische beweging",
+      "gallery": "Platte matte kaarten en een rustige spotlight-achtergrond",
+      "minimal": "Strakke platte kaarten, effen achtergrond, rustige beweging",
+      "arcade": "Grote posterkaarten met een diepe lift en krachtige titels"
+    }
+  },
+  "upd3": {
+    "restart": "Opnieuw starten om de update af te ronden",
+    "restartHint": "Downloads pauzeren veilig en gaan vanzelf verder zodra XENO STORE terug is.",
+    "restartConfirm": "XENO STORE start opnieuw met de nieuwe versie. Dat duurt ongeveer 10 seconden; je downloads gaan daarna verder.",
+    "restartNow": "Nu opnieuw starten",
+    "restarting": "XENO STORE wordt opnieuw gestart…",
+    "back": "XENO STORE is terug · v{v}",
+    "ready": "Update gedownload — start opnieuw om af te ronden"
+  }
+}

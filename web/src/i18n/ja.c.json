@@ -1,0 +1,44 @@
+{
+  "discover3": {
+    "showcase": "人気ゲームのショーケース",
+    "popularNow": "いま人気",
+    "rank": "#{n}",
+    "lineup": "人気ラインナップ",
+    "allPopular": "人気をすべて見る",
+    "tileLabel": "{title} — #{n}",
+    "paused": "一時停止中"
+  },
+  "theme": {
+    "obsidian": "オブシディアン",
+    "neon": "ネオン",
+    "sunset": "サンセット",
+    "ocean": "オーシャン",
+    "galaxy": "ギャラクシー",
+    "sakura": "サクラ（ライト）"
+  },
+  "design": {
+    "title": "デザイン",
+    "hint": "カードのスタイル、背景、モーションをまとめて選択",
+    "pack": {
+      "broadcast": "ブロードキャスト",
+      "gallery": "ギャラリー",
+      "minimal": "ミニマル",
+      "arcade": "アーケード"
+    },
+    "packHint": {
+      "broadcast": "3Dバブルカード、オーロラ背景、シネマティックなモーション",
+      "gallery": "フラットなマットカードと落ち着いたスポットライト背景",
+      "minimal": "すっきりしたフラットカード、無地の背景、控えめなモーション",
+      "arcade": "大きなポスターカード、深い浮き上がりと太いタイトル"
+    }
+  },
+  "upd3": {
+    "restart": "再起動してアップデートを完了",
+    "restartHint": "ダウンロードは安全に一時停止し、XENO STORE が戻ると自動で再開します。",
+    "restartConfirm": "XENO STORE を新しいバージョンで再起動します。約 10 秒かかり、その後ダウンロードは続行されます。",
+    "restartNow": "今すぐ再起動",
+    "restarting": "XENO STORE を再起動しています…",
+    "back": "XENO STORE が戻りました · v{v}",
+    "ready": "アップデートをダウンロードしました — 再起動して完了"
+  }
+}

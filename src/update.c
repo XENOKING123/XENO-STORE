@@ -7,12 +7,14 @@
  * Fallback: GitHub Releases "latest" — tag v<ver> (xeno-store-v<ver> still accepted), asset
  * xeno-store.elf, and SHA256SUMS when present for the hash.
  */
+#include <errno.h>
 #include "update.h"
 #include "config.h"
 #include "http_client.h"
 #include "log.h"
 #include "settings.h"
 #include "sha256.h"
+#include "cx_common.h"
 #include "util.h"
 
 #include <fcntl.h>
@@ -152,6 +154,8 @@ void update_status_json(jw *w) {
   jw_kv_str(w, "notes", U.notes);
   jw_kv_i64(w, "checkedAt", (int64_t)U.checkedAt);
   pthread_mutex_unlock(&update_mu);
+  char staged[600];
+  jw_kv_bool(w, "staged", update_staged(staged, sizeof staged));
 }
 
 /* Streams url to dst while hashing; returns 0 and the hex digest. */
@@ -202,6 +206,17 @@ static int download_to_file(const char *url, const char *dst, char hex[65], char
   return rc;
 }
 
+/* 1 when the file starts with the ELF magic (reads 4 bytes, any file size). */
+static int file_is_elf(const char *path) {
+  int fd = open(path, O_RDONLY);
+  if (fd < 0) return 0;
+  unsigned char m[4];
+  ssize_t r;
+  do { r = read(fd, m, sizeof m); } while (r < 0 && errno == EINTR);
+  close(fd);
+  return r == 4 && m[0] == 0x7f && m[1] == 'E' && m[2] == 'L' && m[3] == 'F';
+}
+
 int update_apply(char *out_path, size_t cap, char *err, size_t errcap) {
   err[0] = 0;
   char url[1024], expect[65];
@@ -226,14 +241,28 @@ int update_apply(char *out_path, size_t cap, char *err, size_t errcap) {
     return -1;
   }
   /* Sanity: an ELF starts with 0x7F 'E' 'L' 'F'. */
-  size_t n;
-  char *head = util_read_file(staging, &n, 64);
-  int is_elf = head && n >= 4 && memcmp(head, "\x7f" "ELF", 4) == 0;
-  free(head);
-  if (!is_elf) { xsnprintf(err, errcap, "Downloaded file is not an ELF"); util_unlink_quiet(staging); return -1; }
+  if (!file_is_elf(staging)) { xsnprintf(err, errcap, "Downloaded file is not an ELF"); util_unlink_quiet(staging); return -1; }
   if (rename(staging, final) != 0) { xsnprintf(err, errcap, "Cannot rename staged ELF"); return -1; }
   util_fsync_dir(final);
   xstrlcpy(out_path, final, cap);
   LOGI("update: staged %s (sha256 %s)", final, hex);
   return 0;
+}
+
+int update_staged(char *path, size_t cap) {
+  xsnprintf(path, cap, "%s/xeno-store.elf", data_dir);
+  return file_is_elf(path);
+}
+
+int update_relaunch(int loader_port, char *err, size_t errcap) {
+  char path[600];
+  if (!update_staged(path, sizeof path)) { xsnprintf(err, errcap, "No downloaded update is waiting"); return -1; }
+  size_t len = 0;
+  char *elf = util_read_file(path, &len, 96u << 20);
+  if (!elf || len < 64) { free(elf); xsnprintf(err, errcap, "Cannot read %s", path); return -1; }
+  int rc = cx_tcp_send_all(loader_port, elf, len, 15000, err, errcap);
+  free(elf);
+  if (rc == 0) LOGI("update: handed %s (%zu bytes) to the ELF loader on :%d", path, len, loader_port);
+  else LOGE("update: relaunch failed: %s", err);
+  return rc;
 }

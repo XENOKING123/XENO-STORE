@@ -373,6 +373,7 @@
     var html = document.documentElement;
     html.setAttribute('data-theme', g.theme || 'xeno-gold');
     html.setAttribute('data-cards', g.cardSize || 'm');
+    html.setAttribute('data-pack', g.designPack || 'broadcast');
     if (g.reduceMotion) html.setAttribute('data-motion', 'reduce'); else html.removeAttribute('data-motion');
     XS.sound.setEnabled(g.sounds !== false);
     var want = XS.i18n.resolve(g.language || 'auto');

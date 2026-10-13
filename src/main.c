@@ -22,6 +22,7 @@
 #include "storage.h"
 #include "sys.h"
 #include "update.h"
+#include "cx_common.h"
 #include "util.h"
 
 #include <errno.h>
@@ -173,6 +174,10 @@ int main(int argc, char **argv) {
   pthread_join(hk, NULL);
   server_stop();
   dl_shutdown();
+  if (g_cfg.restart_requested) {
+    char err[256];
+    if (update_relaunch(cx_local_port("LOADER", 9021), err, sizeof err) != 0) sys_toast("XENO STORE update: %s — send the payload again", err);
+  }
   LOGI("bye");
   log_shutdown();
   return 0;

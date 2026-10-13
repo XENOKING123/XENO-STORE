@@ -208,9 +208,17 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(s["downloads"]["maxBytesPerSec"], 1234)
         self.assertEqual(s["general"]["theme"], "oled")
         self.assertEqual(s["downloads"]["concurrentJobs"], 1)       # untouched by the partial merge
-        st, b = self.srv.api("PUT", "/api/settings", {"general": {"theme": "neon"}})
+        st, b = self.srv.api("PUT", "/api/settings", {"general": {"theme": "no-such-theme"}})
         self.assertEqual(st, 400)
         self.assertEqual(b["error"], "invalid_settings")
+        self.assertEqual(s["general"]["designPack"], "broadcast")
+        st, b = self.srv.api("PUT", "/api/settings", {"general": {"designPack": "arcade", "theme": "neon"}})
+        self.assertEqual(st, 200)
+        self.assertEqual(b["settings"]["general"]["designPack"], "arcade")
+        self.assertEqual(b["settings"]["general"]["theme"], "neon")
+        st, b = self.srv.api("PUT", "/api/settings", {"general": {"designPack": "nope"}})
+        self.assertEqual(st, 400)
+        self.srv.api("PUT", "/api/settings", {"general": {"designPack": "broadcast", "theme": "oled"}})
         st, b = self.srv.api("PUT", "/api/settings", {"downloads": {"scheduleStart": "25:99"}})
         self.assertEqual(st, 400)
         with open(os.path.join(self.data, "settings.json")) as f:

@@ -1,0 +1,44 @@
+{
+  "discover3": {
+    "showcase": "Vetrina dei giochi popolari",
+    "popularNow": "Popolare ora",
+    "rank": "#{n}",
+    "lineup": "Selezione popolare",
+    "allPopular": "Tutti i popolari",
+    "tileLabel": "{title} — #{n}",
+    "paused": "In pausa"
+  },
+  "theme": {
+    "obsidian": "Ossidiana",
+    "neon": "Neon",
+    "sunset": "Tramonto",
+    "ocean": "Oceano",
+    "galaxy": "Galassia",
+    "sakura": "Sakura (chiaro)"
+  },
+  "design": {
+    "title": "Design",
+    "hint": "Stile delle schede, sfondo e animazioni in un’unica scelta",
+    "pack": {
+      "broadcast": "Broadcast",
+      "gallery": "Galleria",
+      "minimal": "Minimale",
+      "arcade": "Arcade"
+    },
+    "packHint": {
+      "broadcast": "Schede a bolla 3D, sfondo aurora, movimento cinematografico",
+      "gallery": "Schede piatte opache e uno sfondo con faro tranquillo",
+      "minimal": "Schede piatte pulite, sfondo semplice, movimento discreto",
+      "arcade": "Grandi schede poster con sollevamento profondo e titoli decisi"
+    }
+  },
+  "upd3": {
+    "restart": "Riavvia per completare l’aggiornamento",
+    "restartHint": "I download vanno in pausa in sicurezza e riprendono da soli quando XENO STORE torna attivo.",
+    "restartConfirm": "XENO STORE si riavvia con la nuova versione. Ci vogliono circa 10 secondi; i download proseguono subito dopo.",
+    "restartNow": "Riavvia ora",
+    "restarting": "Riavvio di XENO STORE…",
+    "back": "XENO STORE è tornato · v{v}",
+    "ready": "Aggiornamento scaricato: riavvia per completare"
+  }
+}

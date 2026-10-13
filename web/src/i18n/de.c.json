@@ -1,0 +1,44 @@
+{
+  "discover3": {
+    "showcase": "Beliebte Spiele im Rampenlicht",
+    "popularNow": "Gerade beliebt",
+    "rank": "#{n}",
+    "lineup": "Beliebte Auswahl",
+    "allPopular": "Alle beliebten",
+    "tileLabel": "{title} — #{n}",
+    "paused": "Pausiert"
+  },
+  "theme": {
+    "obsidian": "Obsidian",
+    "neon": "Neon",
+    "sunset": "Sonnenuntergang",
+    "ocean": "Ozean",
+    "galaxy": "Galaxie",
+    "sakura": "Sakura (hell)"
+  },
+  "design": {
+    "title": "Design",
+    "hint": "Kartenstil, Hintergrund und Animation in einer Auswahl",
+    "pack": {
+      "broadcast": "Broadcast",
+      "gallery": "Galerie",
+      "minimal": "Minimal",
+      "arcade": "Arcade"
+    },
+    "packHint": {
+      "broadcast": "3D-Bubble-Karten, Aurora-Hintergrund, filmische Bewegung",
+      "gallery": "Flache matte Karten und ein ruhiger Spotlight-Hintergrund",
+      "minimal": "Klare flache Karten, schlichter Hintergrund, ruhige Bewegung",
+      "arcade": "Große Poster-Karten mit starkem Anheben und kräftigen Titeln"
+    }
+  },
+  "upd3": {
+    "restart": "Neu starten, um das Update abzuschließen",
+    "restartHint": "Downloads pausieren sicher und laufen von selbst weiter, sobald XENO STORE zurück ist.",
+    "restartConfirm": "XENO STORE startet mit der neuen Version neu. Das dauert etwa 10 Sekunden; deine Downloads laufen danach weiter.",
+    "restartNow": "Jetzt neu starten",
+    "restarting": "XENO STORE wird neu gestartet…",
+    "back": "XENO STORE ist zurück · v{v}",
+    "ready": "Update heruntergeladen — zum Abschließen neu starten"
+  }
+}

@@ -35,6 +35,7 @@
     stop: function () { return post('/api/system/stop'); },
     updateCheck: function () { return get('/api/update/check', { timeout: 30000 }); },
     updateApply: function () { return post('/api/update/apply', {}, { timeout: 120000 }); },
+    updateRestart: function () { return post('/api/update/restart', {}, { timeout: 15000 }); },
     catalogInfo: function () { return get('/api/catalog/info'); },
     catalogRefresh: function () { return post('/api/catalog/refresh', {}, { timeout: 65000 }); },
     catalogSearch: function (query, platform, limit) { return get('/api/catalog/search' + q({ q: query, platform: platform, limit: limit })); },

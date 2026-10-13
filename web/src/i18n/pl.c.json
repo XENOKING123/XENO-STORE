@@ -1,0 +1,44 @@
+{
+  "discover3": {
+    "showcase": "Pokaz popularnych gier",
+    "popularNow": "Teraz popularne",
+    "rank": "#{n}",
+    "lineup": "Popularny zestaw",
+    "allPopular": "Wszystkie popularne",
+    "tileLabel": "{title} — #{n}",
+    "paused": "Wstrzymano"
+  },
+  "theme": {
+    "obsidian": "Obsydian",
+    "neon": "Neon",
+    "sunset": "Zachód słońca",
+    "ocean": "Ocean",
+    "galaxy": "Galaktyka",
+    "sakura": "Sakura (jasny)"
+  },
+  "design": {
+    "title": "Wygląd",
+    "hint": "Styl kart, tło i animacje w jednym wyborze",
+    "pack": {
+      "broadcast": "Transmisja",
+      "gallery": "Galeria",
+      "minimal": "Minimalny",
+      "arcade": "Arcade"
+    },
+    "packHint": {
+      "broadcast": "Karty-bąbelki 3D, tło zorzy, kinowe animacje",
+      "gallery": "Płaskie matowe karty i spokojne tło z reflektorem",
+      "minimal": "Czyste płaskie karty, jednolite tło, spokojne animacje",
+      "arcade": "Duże karty-plakaty z głębokim uniesieniem i wyrazistymi tytułami"
+    }
+  },
+  "upd3": {
+    "restart": "Uruchom ponownie, aby dokończyć aktualizację",
+    "restartHint": "Pobierania bezpiecznie się wstrzymają i same wznowią, gdy XENO STORE wróci.",
+    "restartConfirm": "XENO STORE uruchomi się ponownie w nowej wersji. Potrwa to około 10 sekund; pobierania potem będą kontynuowane.",
+    "restartNow": "Uruchom ponownie teraz",
+    "restarting": "Ponowne uruchamianie XENO STORE…",
+    "back": "XENO STORE wrócił · v{v}",
+    "ready": "Aktualizacja pobrana — uruchom ponownie, aby dokończyć"
+  }
+}

@@ -2,6 +2,19 @@
 
 All notable changes to XENO STORE. The version lives in `VERSION`; releases are tagged `v<VERSION>`.
 
+## 1.1.0 — 2026-10-13
+
+### Home
+- Discover opens on a moving showcase of the ten most popular games: full-bleed art that crossfades with a slow drift, a ranked line-up strip with an on-air marker, a progress bar, and an ambient glow tinted by each game. It pauses while you browse inside it, on other screens and in the screensaver; Reduce motion swaps instantly.
+
+### Look and feel
+- Six new themes: Obsidian, Neon, Sunset, Ocean, Galaxy and Sakura (13 in total).
+- Design packs change the layout language on top of any theme: Broadcast (default), Gallery, Minimal and Arcade (Settings → Appearance).
+
+### Updates
+- Update & restart: after an update is downloaded and checked, Settings → Updates offers *Restart now*. The store stops cleanly, hands the new version to the ELF loader on port 9021 and the page reconnects by itself.
+- Fixed: installing an update always failed the "is this an ELF" check on real-size files.
+
 ## 1.0.0 — 2026-10-13
 
 First release. A native PS5 game store + download manager by XENOKING.

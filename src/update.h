@@ -19,4 +19,12 @@ void update_status_json(jw *w);
  * (when the feed provides one), renames to <data>/xeno-store.elf. */
 int update_apply(char *out_path, size_t cap, char *err, size_t errcap);
 
+/* 1 when a downloaded update waits in <data>/xeno-store.elf; fills its path. */
+int update_staged(char *path, size_t cap);
+
+/* Called after the server and the downloads have shut down: sends the staged
+ * ELF to the local ELF loader so the new version starts on the freed port.
+ * 0 sent, -1 nothing staged or the loader did not take it (err filled). */
+int update_relaunch(int loader_port, char *err, size_t errcap);
+
 #endif

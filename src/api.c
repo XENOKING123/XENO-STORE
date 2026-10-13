@@ -19,6 +19,7 @@
 #include "storage.h"
 #include "sys.h"
 #include "update.h"
+#include "cx_common.h"
 #include "util.h"
 
 #include <stdio.h>
@@ -166,6 +167,25 @@ static void h_update_apply(api_ctx *c) {
   api_begin(&w);
   jw_kv_str(&w, "path", path);
   jw_kv_bool(&w, "restartRequired", 1);
+  api_send(c, &w);
+}
+
+/* Restart into the staged update: the reply goes out first, then main() stops
+ * the server and the downloads (checkpoints saved, port released) and hands the
+ * staged ELF to the local loader, which starts the new version. */
+static void h_update_restart(api_ctx *c) {
+  char path[600];
+  if (!update_staged(path, sizeof path)) { api_error(c, 409, "nothing_staged", "Download the update first (Settings → Updates → Install update)"); return; }
+  int port = cx_local_port("LOADER", 9021);
+  if (!cx_tcp_probe(port, 800)) { api_error(c, 503, "loader_unavailable", "The ELF loader is not answering on 127.0.0.1:9021 — load etaHEN or elfldr, then try again"); return; }
+  LOGI("update: restart requested (staged %s, loader :%d)", path, port);
+  g_cfg.restart_requested = 1;
+  g_cfg.stop_requested = 1;
+  jw w;
+  api_begin(&w);
+  jw_kv_bool(&w, "restarting", 1);
+  jw_kv_str(&w, "path", path);
+  jw_kv_int(&w, "loaderPort", port);
   api_send(c, &w);
 }
 
@@ -591,6 +611,7 @@ static const api_route ROUTES[] = {
   { "GET", "/api/update/check", h_update_check },
   { "POST", "/api/update/check", h_update_check },
   { "POST", "/api/update/apply", h_update_apply },
+  { "POST", "/api/update/restart", h_update_restart },
   { "GET", "/api/catalog/info", h_catalog_info },
   { "POST", "/api/catalog/refresh", h_catalog_refresh },
   { "GET", "/api/catalog/search", h_catalog_search },

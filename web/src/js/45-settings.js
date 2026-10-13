@@ -8,8 +8,10 @@
   var root = null, bodyEl = null, navEl = null, group = 'general';
   var GROUPS = ['general', 'downloads', 'debrid', 'sources', 'catalog', 'saves', 'accounts', 'setup', 'pair', 'updates', 'notifications', 'diagnostics', 'about', 'uninstall'];
   var ICONS = { general: 'sliders', downloads: 'download', debrid: 'cloud', sources: 'globe', catalog: 'grid', saves: 'shield', accounts: 'gamepad', setup: 'check', pair: 'phone', updates: 'refresh', notifications: 'bell', diagnostics: 'log', about: 'info', uninstall: 'trash' };
-  var THEMES = ['xeno-gold', 'midnight', 'oled', 'crimson', 'emerald', 'royal', 'ice'];
-  var THEME_SWATCH = { 'xeno-gold': ['#0f1d44', '#ffce4a'], midnight: ['#0f1d44', '#4aa3ff'], oled: ['#000', '#ffce4a'], crimson: ['#2a0f15', '#ff5c6c'], emerald: ['#0c2a21', '#4affa6'], royal: ['#1e1040', '#c99bff'], ice: ['#ffffff', '#d99a00'] };
+  var THEMES = ['xeno-gold', 'midnight', 'oled', 'crimson', 'emerald', 'royal', 'ice', 'obsidian', 'neon', 'sunset', 'ocean', 'galaxy', 'sakura'];
+  var PACKS = ['broadcast', 'gallery', 'minimal', 'arcade'];
+  var THEME_SWATCH = { 'xeno-gold': ['#0f1d44', '#ffce4a'], midnight: ['#0f1d44', '#4aa3ff'], oled: ['#000', '#ffce4a'], crimson: ['#2a0f15', '#ff5c6c'], emerald: ['#0c2a21', '#4affa6'], royal: ['#1e1040', '#c99bff'], ice: ['#ffffff', '#d99a00'],
+    obsidian: ['#15181f', '#e4e8f2'], neon: ['#0b1428', '#2ef2ff'], sunset: ['#2c1627', '#ff9a5c'], ocean: ['#0a2735', '#4ae3ff'], galaxy: ['#160f3a', '#ffb86b'], sakura: ['#fbf2f6', '#d63a74'] };
   var sget = cb.sget, sset = cb.sset;
   var debrid = { services: null, at: 0 }, accounts = { data: null, at: 0 }, mdns = { data: null, at: 0 };
 
@@ -68,6 +70,10 @@
     var theme = sget('general.theme', 'xeno-gold');
     list.appendChild(ui.valueRow({ id: 'set-theme', icon: 'moon', label: t('set.theme'), valueEl: h('span.row', [swatch(theme), h('span', { text: t('theme.' + theme) })]), onClick: function (row) {
       ui.menu(row, THEMES.map(function (th) { return { label: t('theme.' + th), checked: theme === th, onSelect: function () { sset('general.theme', th, render); } }; }), { title: t('set.theme') });
+    } }));
+    var pack = sget('general.designPack', 'broadcast');
+    list.appendChild(ui.valueRow({ id: 'set-pack', icon: 'image', label: t('design.title'), desc: t('design.hint'), value: t('design.pack.' + pack), onClick: function (row) {
+      ui.menu(row, PACKS.map(function (p) { return { label: t('design.pack.' + p), sub: t('design.packHint.' + p), checked: pack === p, onSelect: function () { sset('general.designPack', p, render); } }; }), { title: t('design.title') });
     } }));
     var cs = h('div.lrow', { tabindex: '-1' }, [h('span.ic', { html: U.icon('grid') }), h('div.main', [h('div.name', { text: t('set.cardSize') })])]);
     cs.appendChild(ui.segControl({ id: 'set-cards', value: sget('general.cardSize', 'm'), options: [{ value: 's', label: t('set.cardS') }, { value: 'm', label: t('set.cardM') }, { value: 'l', label: t('set.cardL') }], onChange: function (v) { sset('general.cardSize', v); } }));
@@ -520,6 +526,27 @@
   }
 
   /* ---------------- Updates ---------------- */
+  /* Restart into the downloaded update: the console stops the store cleanly (downloads
+     keep their checkpoints), the ELF loader starts the new version, and this page reloads
+     as soon as the new version answers. */
+  function restartIntoUpdate() {
+    var before = (S.data.status && S.data.status.version) || XS.version;
+    ui.confirm(t('upd3.restart'), t('upd3.restartConfirm'), t('upd3.restartNow')).then(function (ok) {
+      if (!ok) return;
+      api.updateRestart().then(function () {
+        ui.toast({ cls: 'gold', title: t('upd3.restarting'), timeout: 20000 });
+        var started = Date.now();
+        (function poll() {
+          setTimeout(function () {
+            api.status().then(function (st) {
+              if (st && st.version && (st.version !== before || Date.now() - started > 8000)) { ui.toast({ cls: 'good', title: t('upd3.back', { v: st.version }) }); setTimeout(function () { location.reload(); }, 600); }
+              else if (Date.now() - started < 90000) poll();
+            }, function () { if (Date.now() - started < 90000) poll(); });
+          }, 1500);
+        })();
+      }, function (err) { ui.errorToast(err, t('upd3.restart')); });
+    });
+  }
   BUILD.updates = function (sec) {
     var st = S.data.status || {}, up = st.update || {};
     var kv = h('dl.kv');
@@ -537,8 +564,17 @@
     if (up.available) {
       list.appendChild(ui.valueRow({ id: 'upd-apply', icon: 'download', label: t('set.updInstall', { v: up.latest }), desc: t('set.updInstallHint'), noChevron: true, onClick: function (row) {
         row.classList.add('busy');
-        api.updateApply().then(function (r) { row.classList.remove('busy'); ui.toast({ cls: 'good', title: t('toast.updateReady'), desc: r.path || '' }); }, function (err) { row.classList.remove('busy'); ui.errorToast(err, t('set.updInstall', { v: up.latest })); });
+        api.updateApply().then(function () {
+          row.classList.remove('busy');
+          S.data.status = S.data.status || {}; S.data.status.update = S.data.status.update || {}; S.data.status.update.staged = true;
+          ui.toast({ cls: 'good', title: t('upd3.ready') });
+          render();
+          restartIntoUpdate();
+        }, function (err) { row.classList.remove('busy'); ui.errorToast(err, t('set.updInstall', { v: up.latest })); });
       } }));
+    }
+    if (up.staged) {
+      list.appendChild(ui.valueRow({ id: 'upd-restart', icon: 'refresh', label: t('upd3.restart'), desc: t('upd3.restartHint'), noChevron: true, onClick: function () { restartIntoUpdate(); } }));
     }
     list.appendChild(ui.valueRow({ id: 'upd-stop', icon: 'power', label: t('set.stop'), desc: t('set.stopHint'), noChevron: true, danger: true, onClick: function () {
       ui.confirm(t('set.stop'), t('set.stopConfirm'), t('set.stop'), true).then(function (ok) { if (!ok) return; api.stop().then(function () { ui.toast({ cls: 'gold', title: t('toast.stopped') }); }, function () { ui.toast({ cls: 'gold', title: t('toast.stopped') }); }); });

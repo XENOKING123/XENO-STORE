@@ -30,6 +30,7 @@ typedef struct settings {
   char language[12];
   char theme[24];
   char cardSize[4];
+  char designPack[16];   /* broadcast | gallery | minimal | arcade */
   int reduceMotion, sounds, hints, showPs4, adultFilter;
   /* downloads */
   char defaultRoot[256];

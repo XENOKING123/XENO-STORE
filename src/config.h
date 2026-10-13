@@ -25,6 +25,7 @@ typedef struct xeno_config {
   int n_extra_roots;
   time_t started_at;
   volatile int stop_requested;   /* set by signals / POST /api/system/stop */
+  volatile int restart_requested; /* POST /api/update/restart: after shutdown, hand the staged ELF to the loader */
 } xeno_config;
 
 extern xeno_config g_cfg;

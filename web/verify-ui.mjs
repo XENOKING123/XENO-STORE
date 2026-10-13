@@ -98,6 +98,12 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     await sleep(600);
     await shot(page, 'tv-discover.png');
     await expect(async () => (await page.$$('#scr-discover .rail')).length >= 8, 'Discover should show at least 8 rails');
+    /* popular-games showcase: line-up, live tile follows the slide, focus inside holds the show */
+    await expect(async () => !!(await page.$('#scr-discover .hero.stage .stage-strip .strip-tile')), 'showcase stage with a popular line-up missing');
+    await expect(async () => page.evaluate(() => XS.discover.stage.size() >= 2), 'showcase needs at least 2 popular games');
+    await page.evaluate(() => XS.discover.stage.select(1));
+    await expect(async () => page.evaluate(() => XS.discover.stage.index() === 1 && document.querySelectorAll('#scr-discover .strip-tile')[1].classList.contains('live')), 'showcase select did not move the line-up');
+    await page.evaluate(() => XS.discover.stage.select(0));
     await expect(async () => !!(await page.$('#scr-discover [data-rail="featured-0"]')), 'owner-curated featured row missing (status.featured.rows)');
     await expect(async () => !!(await page.$('#scr-discover [data-rail="backports"]')), 'Backports rail missing');
     await expect(async () => !!(await page.$('#banners .banner.announce')), 'announcement banner (status.messages) missing');

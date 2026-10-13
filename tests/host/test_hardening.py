@@ -10,6 +10,7 @@ test_hardening.py — Phase 3 C hardening and download durability:
   * download durability: the persisted resume cursor never advances past the
     last fsync, even when a flush fails mid-transfer,
   * the exFAT/USB bounded-window download path produces correct bytes,
+  * restart into a staged update hands the ELF to the loader after a clean shutdown,
   * classic ZipCrypto extraction with the community password list, a user
     override password, and a zip-slip refusal.
 
@@ -302,6 +303,67 @@ class UsbWindowTests(unittest.TestCase):
         finally:
             srv.stop()
             rs.kill()
+
+
+class UpdateRestartTests(unittest.TestCase):
+    """Restart into a downloaded update: the store shuts down cleanly, frees its
+    port and hands the staged ELF to the local ELF loader."""
+
+    def test_restart_hands_staged_elf_to_loader(self):
+        import socket, threading
+        sink = socket.socket()
+        sink.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sink.bind(("127.0.0.1", 0))
+        sink.listen(4)
+        got = []
+
+        def serve():
+            while True:
+                try:
+                    c, _ = sink.accept()
+                except OSError:
+                    return
+                c.settimeout(10)
+                buf = b""
+                try:
+                    while True:
+                        d = c.recv(65536)
+                        if not d:
+                            break
+                        buf += d
+                except OSError:
+                    pass
+                c.close()
+                got.append(buf)
+        threading.Thread(target=serve, daemon=True).start()
+        tmp = tempfile.mkdtemp(prefix="xeno-restart.")
+        srv = XenoServer(os.path.join(tmp, "data"), env={"XENO_PORT_LOADER": str(sink.getsockname()[1])}).start()
+        try:
+            st, b = srv.api("POST", "/api/update/restart", {})
+            self.assertEqual(st, 409, b)
+            self.assertEqual(b["error"], "nothing_staged")
+            elf = b"\x7fELF" + bytes(range(256)) * 64
+            with open(os.path.join(srv.data_dir, "xeno-store.elf"), "wb") as f:
+                f.write(elf)
+            st, b = srv.api("GET", "/api/status")
+            self.assertTrue(b["update"]["staged"], b["update"])
+            st, b = srv.api("POST", "/api/update/restart", {})
+            self.assertEqual(st, 200, b)
+            self.assertTrue(b["restarting"])
+            srv.proc.wait(timeout=30)          # clean shutdown, then the hand-off
+            self.assertEqual(srv.proc.returncode, 0)
+            deadline = time.time() + 10
+            while time.time() < deadline and elf not in got:
+                time.sleep(0.05)
+            self.assertIn(elf, got, "the loader must receive exactly the staged ELF")
+            # the port is free again for the new version
+            s2 = socket.socket()
+            s2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            s2.bind(("127.0.0.1", srv.port))
+            s2.close()
+        finally:
+            srv.stop()
+            sink.close()
 
 
 class ArchivePasswordTests(unittest.TestCase):
