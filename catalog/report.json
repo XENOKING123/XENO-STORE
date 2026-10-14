@@ -1,98 +1,98 @@
 {
   "audit": {
-    "auditedAt": "2026-10-14T12:11:05Z",
+    "auditedAt": "2026-10-14T17:27:14Z",
     "droppedDead": 0,
     "droppedLinks": [],
-    "flaky": 5050,
-    "ok": 8355,
+    "flaky": 6153,
+    "ok": 8782,
     "page": 0,
-    "results": 15103,
-    "unaudited": 12562
+    "results": 16621,
+    "unaudited": 11064
   },
   "backports": 9,
-  "bytes": 15878474,
+  "bytes": 15958659,
   "changed": true,
   "droppedGames": {},
   "droppedReleases": {
     "duplicate_url": 2838
   },
   "droppedSamples": [],
-  "elapsed": 504.7,
+  "elapsed": 510.7,
   "enrichment": {
-    "psStoreCache": 235,
+    "psStoreCache": 295,
     "psstore": {
       "errors": 0,
       "hits": 0,
-      "looked": 56,
-      "misses": 56,
-      "skipped": 174
+      "looked": 60,
+      "misses": 60,
+      "skipped": 232
     },
     "seeds": {
       "cheats": 1162,
-      "conceptIds": 7496,
+      "conceptIds": 7530,
       "covers": 512,
-      "games": 17738,
+      "games": 17772,
       "namesResolved": 0,
-      "regions": 2428,
-      "titleIdsFilled": 1776
+      "regions": 2462,
+      "titleIdsFilled": 1808
     },
     "steam": {
       "errors": 0,
-      "hits": 22,
-      "looked": 26,
-      "misses": 4,
-      "skipped": 73,
+      "hits": 20,
+      "looked": 27,
+      "misses": 7,
+      "skipped": 99,
       "stoppedBy": 0
     },
-    "steamCache": 100
+    "steamCache": 127
   },
   "formats": {
     "7z": 89,
-    "FFPFSC": 320,
+    "FFPFSC": 322,
     "FFPKG": 1,
-    "PAGE": 20604,
+    "PAGE": 20633,
     "PKG": 3458,
     "RAR": 342,
-    "ZIP": 480,
+    "ZIP": 481,
     "exFAT": 673
   },
-  "games": 9015,
-  "generatedAt": "2026-10-14T17:23:02Z",
+  "games": 9032,
+  "generatedAt": "2026-10-14T21:51:15Z",
   "genres": {
-    "Action": 252,
-    "Adventure": 143,
-    "Family": 28,
+    "Action": 257,
+    "Adventure": 146,
+    "Family": 29,
     "Fighting": 24,
     "Horror": 50,
-    "Indie": 1,
+    "Indie": 2,
     "Music": 1,
     "Puzzle": 17,
-    "RPG": 91,
-    "Racing": 35,
+    "RPG": 92,
+    "Racing": 36,
     "Shooter": 34,
     "Simulation": 33,
     "Sports": 15,
     "Strategy": 24
   },
-  "httpFailures": 25,
-  "httpRequests": 1246,
+  "httpFailures": 7,
+  "httpRequests": 1346,
   "kinds": {
     "app": 153,
     "backport": 3,
     "dlc": 1992,
-    "game": 16340,
+    "game": 16372,
     "update": 7479
   },
-  "mergedGroups": 1381,
+  "mergedGroups": 1386,
   "mode": "online",
-  "nodes": 547735,
+  "nodes": 550516,
   "platforms": {
     "HOMEBREW": 146,
-    "PS4": 7710,
-    "PS5": 1159
+    "PS4": 7709,
+    "PS5": 1177
   },
-  "releases": 25967,
-  "revision": 9,
+  "releases": 25999,
+  "revision": 10,
   "sources": [
     {
       "draftGames": 1506,
@@ -107,34 +107,34 @@
       "status": "live"
     },
     {
-      "draftGames": 7604,
-      "draftReleases": 19612,
+      "draftGames": 7621,
+      "draftReleases": 19629,
       "dropped": 647,
-      "elapsed": 131.4,
+      "elapsed": 99.3,
       "error": "",
-      "games": 7604,
+      "games": 7621,
       "id": "dlpsgame",
       "name": "DLPSGAME",
-      "releases": 18965,
+      "releases": 18982,
       "status": "live"
     },
     {
-      "draftGames": 3089,
-      "draftReleases": 3195,
+      "draftGames": 3092,
+      "draftReleases": 3198,
       "dropped": 51,
-      "elapsed": 253.3,
+      "elapsed": 260.9,
       "error": "",
-      "games": 3089,
+      "games": 3092,
       "id": "archive_org",
       "name": "Archive.org",
-      "releases": 3144,
+      "releases": 3147,
       "status": "live"
     },
     {
       "draftGames": 2517,
       "draftReleases": 2517,
       "dropped": 2119,
-      "elapsed": 47.7,
+      "elapsed": 48.3,
       "error": "",
       "games": 2517,
       "id": "superpsx",
@@ -146,7 +146,7 @@
       "draftGames": 3,
       "draftReleases": 3,
       "dropped": 0,
-      "elapsed": 3.2,
+      "elapsed": 4.0,
       "error": "",
       "games": 3,
       "id": "romsfun",
@@ -170,7 +170,7 @@
       "draftGames": 146,
       "draftReleases": 153,
       "dropped": 0,
-      "elapsed": 227.5,
+      "elapsed": 205.1,
       "error": "",
       "games": 146,
       "id": "pkgzone",
@@ -182,7 +182,7 @@
       "draftGames": 1124,
       "draftReleases": 1127,
       "dropped": 13,
-      "elapsed": 137.2,
+      "elapsed": 140.6,
       "error": "",
       "games": 1124,
       "id": "espacypkg",
@@ -194,7 +194,7 @@
       "draftGames": 100,
       "draftReleases": 123,
       "dropped": 0,
-      "elapsed": 3.8,
+      "elapsed": 4.3,
       "error": "",
       "games": 100,
       "id": "pkggames",
@@ -203,15 +203,15 @@
       "status": "live"
     },
     {
-      "draftGames": 164,
-      "draftReleases": 164,
+      "draftGames": 176,
+      "draftReleases": 176,
       "dropped": 0,
-      "elapsed": 179.7,
+      "elapsed": 179.6,
       "error": "",
-      "games": 164,
+      "games": 176,
       "id": "pspkg",
       "name": "pspkg.com",
-      "releases": 164,
+      "releases": 176,
       "status": "live"
     },
     {
@@ -227,10 +227,10 @@
       "status": "live"
     }
   ],
-  "verifiedReleases": 4245,
+  "verifiedReleases": 4251,
   "withCheats": 581,
-  "withMetacritic": 39,
-  "withPsStoreUrl": 3748,
+  "withMetacritic": 48,
+  "withPsStoreUrl": 3765,
   "withScreenshots": 907,
-  "withTitleIds": 3759
+  "withTitleIds": 3776
 }
