@@ -49,5 +49,26 @@
     "worksHere": "Passt zu deinen Spielen",
     "allSaves": "Alle Community-Spielstände",
     "browse": "Spielstände ansehen"
+  },
+  "link": {
+    "title": "Mit deiner PS5 verbinden",
+    "text": "Dieser Browser ist noch nicht mit deiner PS5 verbunden. Verbinde ihn einmal, dann kannst du von hier stöbern, laden und Spiele an die PS5 schicken.",
+    "address": "PS5 unter {addr}",
+    "step1": "Drücke „Code auf meiner PS5 zeigen“",
+    "step2": "Deine PS5 zeigt einen 6-stelligen Code als Benachrichtigung",
+    "step3": "Gib den Code hier ein",
+    "show": "Code auf meiner PS5 zeigen",
+    "shown": "Code gesendet — sieh auf die Benachrichtigung deiner PS5",
+    "wait": "Warte {n} s, bevor du ihn erneut zeigst",
+    "codeLabel": "6-stelliger Code",
+    "go": "Verbinden",
+    "linking": "Verbinde…",
+    "bad": "Der Code stimmt nicht — prüfe die Benachrichtigung auf deiner PS5",
+    "locked": "Zu viele Versuche — warte {n} s",
+    "done": "Verbunden! XENO STORE wird geöffnet…",
+    "note": "Nur verbundene Geräte können deinen Store steuern. Das machst du einmal pro Browser."
+  },
+  "discover4": {
+    "topPs5": "Top-PS5-Spiele"
   }
 }

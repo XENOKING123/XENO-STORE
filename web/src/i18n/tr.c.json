@@ -49,5 +49,26 @@
     "worksHere": "Oyunlarınla çalışır",
     "allSaves": "Tüm topluluk kayıtları",
     "browse": "Kayıtlara göz at"
+  },
+  "link": {
+    "title": "PS5'ine bağla",
+    "text": "Bu tarayıcı henüz PS5'ine bağlı değil. Bir kez bağla, sonra buradan göz at, indir ve PS5'ine oyun gönder.",
+    "address": "PS5 adresi {addr}",
+    "step1": "“Kodu PS5'imde göster”e bas",
+    "step2": "PS5'in bir bildirimde 6 haneli bir kod gösterir",
+    "step3": "Kodu buraya yaz",
+    "show": "Kodu PS5'imde göster",
+    "shown": "Kod gönderildi — PS5'indeki bildirime bak",
+    "wait": "Tekrar göstermek için {n} sn bekle",
+    "codeLabel": "6 haneli kod",
+    "go": "Bağla",
+    "linking": "Bağlanıyor…",
+    "bad": "Kod yanlış — PS5'indeki bildirimi kontrol et",
+    "locked": "Çok fazla deneme — {n} sn bekle",
+    "done": "Bağlandı! XENO STORE açılıyor…",
+    "note": "Mağazanı yalnızca bağladığın cihazlar yönetebilir. Bunu her tarayıcı için bir kez yaparsın."
+  },
+  "discover4": {
+    "topPs5": "En iyi PS5 oyunları"
   }
 }

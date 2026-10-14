@@ -7,7 +7,8 @@
 #   make test     host build + tests/host/run.sh
 #   make ps5      xeno-store.elf + xeno-store-browser.elf (needs PS5_PAYLOAD_SDK)
 #   make pkg      tools/make_homebrew.py          -> dist/XENO-STORE/ + zip
-#   make ffpkg    tools/make_ffpkg.py             -> dist/XENO-STORE.pkg (needs fpkg_build)
+#   make eboot    app/build_eboot.sh              -> app/dist/eboot.bin (Games-row launcher SELF)
+#   make ffpkg    tools/make_ffpkg.py             -> dist/PPSA99500.ffpkg + dist/XENO-STORE.pkg
 #   make launcher app/build_launcher.sh          -> app/dist/xeno-store-launcher.elf (needs PS5_PAYLOAD_SDK)
 #   make all      web catalog assets ps5 pkg
 #   make clean
@@ -56,7 +57,7 @@ PS5_LIBS := -Wl,--no-as-needed -lSceSystemService -lSceUserService -lSceIpmi -lS
 ELF         := xeno-store.elf
 ELF_BROWSER := xeno-store-browser.elf
 
-.PHONY: all web catalog assets host test ps5 ps5-check pkg ffpkg launcher clean distclean
+.PHONY: all web catalog assets host test ps5 ps5-check pkg eboot ffpkg desktop launcher clean distclean
 
 all: web catalog assets ps5 pkg
 
@@ -130,11 +131,22 @@ endif
 pkg:
 	$(PYTHON) tools/make_homebrew.py
 
-# Installable .pkg built by ps5upload's fpkg_build. Skips cleanly (exit 3) when
-# the builder is not available, so 'make ffpkg' never breaks a build without it.
+# Games-row app: dist/PPSA99500.ffpkg (UFS2 image for ShadowMountPlus, needs makefs) and
+# dist/XENO-STORE.pkg (fake package, needs ps5upload's fpkg_build). eboot.bin is the launcher
+# from 'make eboot'. Skips cleanly (exit 3) when neither tool is available.
+eboot:
+ifndef PS5_PAYLOAD_SDK
+	$(error PS5_PAYLOAD_SDK is not set — export it to the ps5-payload-dev SDK directory)
+endif
+	PS5_PAYLOAD_SDK=$(PS5_PAYLOAD_SDK) app/build_eboot.sh
+
+# XENO STORE Desktop for this machine (needs Go 1.22+); CI builds every OS.
+desktop:
+	cd desktop && CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=$(VERSION)" -o ../dist/XENO-STORE-Desktop$(if $(filter Windows_NT,$(OS)),.exe,) .
+
 ffpkg:
 	@$(PYTHON) tools/make_ffpkg.py; rc=$$?; \
-	  if [ $$rc -eq 3 ]; then echo "make: ffpkg skipped — fpkg_build not found (set \$$XENO_FPKG_BUILD or pass --fpkg)"; \
+	  if [ $$rc -eq 3 ]; then echo "make: ffpkg skipped — neither makefs nor fpkg_build found"; \
 	  elif [ $$rc -ne 0 ]; then exit $$rc; fi
 
 # App-launcher ELF (eboot for the .pkg): probes the store, starts it via the ELF

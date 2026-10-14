@@ -105,7 +105,7 @@
     var incoming = s.live === s.a ? s.b : s.a, outgoing = s.live;
     U.clear(incoming);
     incoming.classList.remove('live', 'out');
-    var cov = ui.cover(g.hero || g.cover, g.heroFallback || g.coverFallback, g.title);
+    var cov = ui.cover(U.sharpArt(g.hero || g.cover, 1920), U.sharpArt(g.heroFallback || g.coverFallback, 1920), g.title);
     incoming.appendChild(cov);
     incoming.classList.toggle('tall', !g.hero);
     var swapped = false;
@@ -217,14 +217,16 @@
     var cont = S.data.queue.jobs.filter(function (j) { return ['downloading', 'connecting', 'queued', 'paused', 'verifying', 'installing', 'failed'].indexOf(j.state) >= 0; });
     /* homebrew installs show as app cards (proxied cover, opens the app page); everything else as game cards */
     if (cont.length) add('continue', t('discover.continue'), cont.map(jobGame), { more: function () { XS.router.go('downloads'); }, render: function (g) { return g._homebrew && XS.homebrew ? XS.homebrew.cardFromGame(g, 'rail.continue') : ui.card(g, { job: jobs[g.id], navPrefix: 'rail.continue' }); } });
-    add('new', t('discover.newOnXeno'), games(L.newest), { more: function () { XS.router.go('browse', { sort: 'added' }); } });
+    /* front rows: the biggest PS5 games, then what just came out, then the owner's picks, then what is new here */
+    add('top-ps5', t('discover4.topPs5'), games(L.topPs5), { more: function () { XS.router.go('browse', { platform: 'PS5', sort: 'popular' }); } });
+    add('latest', t('discover.latestReleases'), games(L.latest), { more: function () { XS.router.go('browse', { sort: 'newest' }); } });
     /* owner-curated rows from updates/featured.json (§17.1) */
     (featured().rows || []).forEach(function (row, i) {
       var list = (row.ids || []).map(S.game).filter(ca.isGame);
       var title = ca.localized(row.title, '');
       if (list.length && title) add('featured-' + i, title, list);
     });
-    add('latest', t('discover.latestReleases'), games(L.latest), { more: function () { XS.router.go('browse', { sort: 'newest' }); } });
+    add('new', t('discover.newOnXeno'), games(L.newest), { more: function () { XS.router.go('browse', { sort: 'added' }); } });
     add('trending', t('discover.trending'), games(L.trending), { more: function () { XS.router.go('browse', { sort: 'popular' }); } });
     add('verified', t('discover.verifiedFast'), games(L.verified), { more: function () { XS.router.go('browse', { verified: 1, source: 'archive' }); } });
     var bps = S.data.games.filter(function (g) { return ca.isGame(g) && ca.counts(g).backport > 0; }).sort(function (a, b) { return (b.popularity || 0) - (a.popularity || 0); }).slice(0, 30);

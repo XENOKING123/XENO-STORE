@@ -193,12 +193,18 @@ jobs:
           cargo build --release -p ps5upload-fpkg --example fpkg_build
           test -x target/release/examples/fpkg_build
 
-      - name: Build XENO-STORE.pkg
+      - name: Build the Games-row app (PPSA99500.ffpkg + XENO-STORE.pkg)
+        env:
+          PS5_PAYLOAD_SDK: /opt/ps5-payload-sdk
         run: |
           set -euo pipefail
+          sudo apt-get install -y -q makefs >/dev/null
+          make eboot
           XENO_FPKG_BUILD="$PWD/ps5upload/engine/target/release/examples/fpkg_build" make ffpkg
           test -s dist/XENO-STORE.pkg
-          ls -la dist/XENO-STORE.pkg
+          test -s dist/PPSA99500.ffpkg
+          python3 tools/ufs2_check.py dist/PPSA99500.ffpkg
+          ls -la app/dist/eboot.bin dist/XENO-STORE.pkg dist/PPSA99500.ffpkg
 
       - name: Verify artifacts
         run: |
@@ -222,10 +228,63 @@ jobs:
             xeno-store-browser.elf
             dist/XENO-STORE.zip
             dist/XENO-STORE.pkg
+            dist/PPSA99500.ffpkg
+          if-no-files-found: error
+
+  desktop:
+    # XENO STORE Desktop: one Go binary per OS (standard library only), cross-compiled here.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache: false
+      - name: Vet + smoke test
+        working-directory: desktop
+        run: |
+          set -euo pipefail
+          test -z "$(gofmt -l .)"
+          go vet ./...
+          CGO_ENABLED=0 go build -o /tmp/xsd .
+          HOME="$(mktemp -d)" /tmp/xsd > /tmp/xsd.log 2>&1 &
+          pid=$!
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:9096/__desktop/ -o /tmp/shell.html && break; sleep 0.3; done
+          grep -q 'Link to your PS5' /tmp/shell.html
+          curl -fsS http://127.0.0.1:9096/__desktop/api/state | grep -q '"ok":true'
+          kill $pid
+      - name: Build for Windows, macOS and Linux
+        working-directory: desktop
+        run: |
+          set -euo pipefail
+          VERSION="$(tr -d '[:space:]' < ../VERSION)"
+          mkdir -p ../dist/desktop
+          build() {  # goos goarch label
+            out="$(mktemp -d)"
+            exe="XENO-STORE-Desktop"; [ "$1" = windows ] && exe="$exe.exe"
+            GOOS=$1 GOARCH=$2 CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=$VERSION" -o "$out/$exe" .
+            cp ../LICENSE "$out/LICENSE.txt"
+            name="XENO-STORE-Desktop-$VERSION-$3"
+            if [ "$1" = linux ]; then tar -C "$out" -czf "../dist/desktop/$name.tar.gz" .; else (cd "$out" && zip -q -9 "$OLDPWD/../dist/desktop/$name.zip" ./*); fi
+          }
+          build windows amd64 win-x64
+          build windows arm64 win-arm64
+          build darwin  arm64 mac-arm64
+          build darwin  amd64 mac-x64
+          build linux   amd64 linux-x64
+          build linux   arm64 linux-arm64
+          ls -la ../dist/desktop
+      - name: Upload desktop builds
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop
+          path: dist/desktop/*
           if-no-files-found: error
 
   release:
-    needs: [ps5-elf]
+    needs: [ps5-elf, desktop]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -253,13 +312,28 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p release
-          for name in XENO-STORE.pkg xeno-store.elf xeno-store-browser.elf XENO-STORE.zip xeno-catalog.json; do
+          NAMES="PPSA99500.ffpkg XENO-STORE.pkg xeno-store.elf xeno-store-browser.elf XENO-STORE.zip xeno-catalog.json"
+          for name in $NAMES; do
             f="$(find artifacts -type f -name "$name" -print -quit)"
             if [ -z "$f" ]; then echo "::error::$name missing from artifacts"; exit 1; fi
             cp -v "$f" "release/$name"
           done
-          (cd release && sha256sum XENO-STORE.pkg xeno-store.elf xeno-store-browser.elf XENO-STORE.zip xeno-catalog.json > SHA256SUMS)
-          cat release/SHA256SUMS
+          # Desktop app archives (built per OS by the desktop job), when present.
+          find artifacts -type f -name 'XENO-STORE-Desktop-*' -exec cp -v {} release/ \;
+          cd release
+          # one <file>.sha256 per PS5 file, plus SHA256SUMS over everything
+          for name in PPSA99500.ffpkg XENO-STORE.pkg xeno-store.elf xeno-store-browser.elf XENO-STORE.zip; do
+            sha256sum "$name" > "$name.sha256"
+          done
+          sha256sum $(ls | grep -v '\.sha256$' | grep -v '^SHA256SUMS$' | grep -v '^BUILD-INFO.json$') > SHA256SUMS
+          python3 - "$GITHUB_SHA" <<'PY'
+          import json, os, sys, time
+          files = {n: os.path.getsize(n) for n in sorted(os.listdir(".")) if not n.endswith(".sha256") and n != "SHA256SUMS"}
+          ver = open("../VERSION").read().strip()
+          json.dump({"name": "XENO STORE", "version": ver, "commit": sys.argv[1], "builtAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                     "titleId": "PPSA99500", "files": files}, open("BUILD-INFO.json", "w"), indent=2)
+          PY
+          cat SHA256SUMS BUILD-INFO.json
 
       - name: Write release notes
         env:
@@ -273,12 +347,14 @@ jobs:
           {
             printf 'XENO STORE %s — PS5 game store + download manager by XENOKING.\n\n' "$VERSION"
             printf '## Files\n'
-            printf -- '- **XENO-STORE.pkg** — the Games-row app with the XENO icon (title id PPSA99500). Install it with your package installer; it starts the store and opens it full screen.\n'
+            printf -- '- **PPSA99500.ffpkg** — the Games-row app (XENO icon). Copy it to `/data/homebrew/` on the PS5; ShadowMountPlus mounts it and it appears under **Games**. Needs kstuff + ShadowMountPlus.\n'
+            printf -- '- **XENO-STORE.pkg** — the same app as a fake package, for consoles that install FPKGs.\n'
             printf -- '- **xeno-store.elf** — the store (server only). Send it with any ELF loader (XENO TOOL → Payloads, port 9021) and open `http://<ps5-ip>:9095` or `http://xeno.local:9095`.\n'
             printf -- '- **xeno-store-browser.elf** — the same store, and it opens the PS5 browser to it.\n'
             printf -- '- **XENO-STORE.zip** — home-screen app for etaHEN / itemzflow: extract into `/data/homebrew/`.\n'
             printf -- '- **xeno-catalog.json** — catalog revision %s (%s games), the same data embedded in the ELF.\n' "$REV" "$GAMES"
-            printf -- '- **SHA256SUMS** — verify what you downloaded; the in-app updater checks the same hashes.\n'
+            printf -- '- **XENO-STORE-Desktop** — the PC app for Windows, macOS and Linux: link to your PS5 with the code it shows, browse and send downloads to the PS5, and send files from your PC.\n'
+            printf -- '- **SHA256SUMS** and one **.sha256** per PS5 file — verify what you downloaded; the in-app updater checks the same hashes. **BUILD-INFO.json** names the commit and sizes.\n'
             printf '\n## Payload Manager\n'
             printf 'Add `https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/payloads.json` as a source and enable auto-start.\n'
             printf '\n## Docs\n'

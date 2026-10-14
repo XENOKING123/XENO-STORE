@@ -52,11 +52,12 @@ server.stderr.on('data', (d) => serverLog.push(String(d)));
 async function waitServer() { for (let i = 0; i < 60; i++) { try { const r = await fetch(BASE + '/api/status'); if (r.ok) return; } catch (e) { /* retry */ } await sleep(250); } throw new Error('dev-server did not start:\n' + serverLog.join('')); }
 
 /* ---------- page helpers ---------- */
-function watch(page, label) {
-  page.on('console', (msg) => { if (msg.type() === 'error') fail(`[${label}] console.error: ${msg.text()}`); });
+function watch(page, label, expected) {
+  /* `expected`: a regex for responses a test provokes on purpose (e.g. a wrong pairing code) */
+  page.on('console', (msg) => { if (msg.type() === 'error' && !(expected && /status of 403/.test(msg.text()))) fail(`[${label}] console.error: ${msg.text()}`); });
   page.on('pageerror', (err) => fail(`[${label}] uncaught: ${err.message}`));
-  page.on('requestfailed', (req) => { if (req.url().indexOf(BASE) === 0) fail(`[${label}] request failed: ${req.method()} ${req.url()} (${req.failure() && req.failure().errorText})`); });
-  page.on('response', (res) => { if (res.url().indexOf(BASE) === 0 && res.status() >= 400) fail(`[${label}] HTTP ${res.status()} for ${res.request().method()} ${res.url()}`); });
+  page.on('requestfailed', (req) => { if (req.url().indexOf(BASE) === 0 && !(expected && /ERR_ABORTED/.test((req.failure() && req.failure().errorText) || ''))) fail(`[${label}] request failed: ${req.method()} ${req.url()} (${req.failure() && req.failure().errorText})`); });
+  page.on('response', (res) => { if (res.url().indexOf(BASE) === 0 && res.status() >= 400 && !(expected && expected.test(res.status() + ' ' + res.url()))) fail(`[${label}] HTTP ${res.status()} for ${res.request().method()} ${res.url()}`); });
 }
 const activeInfo = (page) => page.evaluate(() => { const a = document.activeElement; return a ? (a.tagName + ' ' + (a.className || '') + ' #' + (a.getAttribute('data-nav-id') || '')) : 'none'; });
 async function waitCovers(page, min, ms) { try { await page.waitForFunction((n) => document.querySelectorAll('.cover.loaded').length >= n, min, { timeout: ms || 8000 }); } catch (e) { note('covers still loading (continuing)'); } }
@@ -86,6 +87,31 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
   note('dev-server up on ' + BASE + ` (dist ${(distSize / 1024).toFixed(1)} KiB)`);
   const browser = await chromium.launch({ headless: !args.includes('--headed') });
   try {
+    /* ================= Link to PS5: the first page on a PC browser ================= */
+    {
+      const lctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1, locale: 'en-US' });
+      const lp = await lctx.newPage();
+      watch(lp, 'link', /^403 .*\/api\/pair$/);
+      await api('/api/__mock/remote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ on: true }) });
+      await lp.goto(BASE + '/', { waitUntil: 'load' });
+      await lp.waitForSelector('.link-page [data-nav-id="link-show"]', { timeout: 10000 }).catch(() => fail('Link to PS5 page did not show for a LAN browser'));
+      await shot(lp, 'pc-link.png');
+      await lp.click('[data-nav-id="link-show"]');
+      await lp.waitForFunction(() => /notification/.test(document.querySelector('.link-status').textContent), null, { timeout: 5000 }).catch(() => fail('"Show code" did not confirm the PS5 notification'));
+      await lp.fill('.link-code', '111111');
+      await lp.waitForFunction(() => document.querySelector('.link-status').classList.contains('bad'), null, { timeout: 5000 }).catch(() => fail('a wrong code was not refused'));
+      await lp.fill('.link-code', '424242');
+      await lp.waitForSelector('.link-page', { state: 'detached', timeout: 8000 }).catch(() => fail('the right code did not open the store'));
+      await lp.waitForSelector('#scr-discover.active .card', { timeout: 20000 });
+      await expect(async () => lp.evaluate(() => localStorage.getItem('xs.token') !== null && XS.state.data.token.length === 64), 'device token not kept after linking');
+      await lp.reload({ waitUntil: 'load' });
+      await lp.waitForSelector('#scr-discover.active .card', { timeout: 20000 });
+      await expect(async () => !(await lp.$('.link-page')), 'a linked browser should go straight to the store');
+      await api('/api/__mock/remote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ on: false }) });
+      await lctx.close();
+      note('Link to PS5 page OK');
+    }
+
     /* ================= TV / desktop 1920×1080 ================= */
     const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1, locale: 'en-US' });
     const page = await ctx.newPage();

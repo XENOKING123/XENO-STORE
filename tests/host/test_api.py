@@ -71,6 +71,20 @@ class ApiTests(unittest.TestCase):
         self.assertLessEqual(len(b["lines"]), 20)
         self.assertTrue(any("listening" in ln for ln in b["lines"]))
 
+    def test_launcher_open_is_loopback_and_pin_free(self):
+        st, b = self.srv.api("POST", "/api/launcher/open", {})
+        self.assertEqual(st, 200, b)
+        self.assertFalse(b["launched"])          # host build: no browser to open
+        self.assertIn("/?tv=1", b["url"])
+        self.srv.api("PUT", "/api/settings", {"pairing": {"pin": "4321"}}, headers={"X-XENO-PIN": "4321"})
+        try:
+            st, b = self.srv.api("POST", "/api/launcher/open", {})
+            self.assertEqual(st, 200, b)            # the Games-row app has no PIN to send
+            st, b = self.srv.api("POST", "/api/recent", {"id": "x"})
+            self.assertEqual(st, 401)               # everything else still needs it
+        finally:
+            self.srv.api("PUT", "/api/settings", {"pairing": {"pin": ""}}, headers={"X-XENO-PIN": "4321"})
+
     def test_toast(self):
         st, b = self.srv.api("POST", "/api/system/toast", {"text": "hello from tests"})
         self.assertEqual(st, 200)

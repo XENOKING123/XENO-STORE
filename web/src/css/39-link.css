@@ -1,0 +1,38 @@
+/* Link to PS5: the first page a PC or phone browser sees (the console's own browser never does). */
+html.linking body > *:not(.link-page) { visibility: hidden; }
+.link-page { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px 16px;
+  background: radial-gradient(80% 60% at 50% 0%, rgba(255, 206, 74, .10), rgba(0, 0, 0, 0) 60%), var(--bg0, #050918); overflow-y: auto;
+  transition: opacity .5s var(--ease-out); }
+.link-page.done { opacity: 0; }
+.link-glow { position: absolute; width: 720px; height: 720px; border-radius: 50%; left: 50%; top: 42%; transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(88, 120, 255, .22), rgba(0, 0, 0, 0) 65%); pointer-events: none; }
+.link-card { position: relative; width: 100%; max-width: 560px; padding: 34px 34px 26px; border-radius: 28px; text-align: start;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .02)), var(--card, #0d1733);
+  border: 1px solid var(--line2, rgba(255, 255, 255, .14)); box-shadow: var(--shadow-2), inset 0 1px 0 rgba(255, 255, 255, .1); }
+.link-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; font-size: 18px; letter-spacing: .12em; }
+.link-brand .brand-badge { width: 44px; height: 44px; }
+.link-card h1 { margin: 0 0 8px; font-size: 32px; letter-spacing: -.02em; }
+.link-text { margin: 0 0 14px; color: var(--dim); font-size: 15px; line-height: 1.5; }
+.link-addr { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 700;
+  background: rgba(255, 255, 255, .06); border: 1px solid var(--line); color: var(--text, #fff); margin-bottom: 16px; }
+.link-addr svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+.link-steps { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 8px; }
+.link-steps li { display: flex; align-items: center; gap: 12px; font-size: 14.5px; }
+.link-steps .n { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--gold-grad); color: var(--gold-ink); font-weight: 900; font-size: 13px; }
+.link-show { width: 100%; justify-content: center; }
+.link-entry { display: flex; gap: 10px; margin-top: 14px; }
+.link-code { flex: 1 1 auto; min-width: 0; height: 60px; text-align: center; font-size: 30px; font-weight: 800; letter-spacing: .5em; padding-inline-start: .5em;
+  font-variant-numeric: tabular-nums; }
+.link-go { flex: 0 0 auto; min-width: 110px; }
+.link-status { min-height: 22px; margin-top: 12px; font-size: 14px; font-weight: 600; color: var(--dim); }
+.link-status.good { color: var(--good, #4ade80); }
+.link-status.bad { color: var(--bad, #f87171); }
+.link-note { display: flex; align-items: flex-start; gap: 8px; margin: 14px 0 0; font-size: 12.5px; color: var(--dim); }
+.link-note svg { flex: 0 0 auto; width: 16px; height: 16px; margin-top: 1px; fill: none; stroke: currentColor; stroke-width: 2; }
+@media (max-width: 560px) {
+  .link-card { padding: 24px 18px 20px; border-radius: 22px; }
+  .link-card h1 { font-size: 26px; }
+  .link-code { font-size: 24px; letter-spacing: .35em; }
+}
+html[data-motion="reduce"] .link-page { transition: none; }

@@ -49,5 +49,26 @@
     "worksHere": "Funciona com seus jogos",
     "allSaves": "Todos os saves da comunidade",
     "browse": "Ver saves"
+  },
+  "link": {
+    "title": "Vincule seu PS5",
+    "text": "Este navegador ainda não está vinculado ao seu PS5. Vincule uma vez e navegue, baixe e envie jogos para o PS5 daqui.",
+    "address": "PS5 em {addr}",
+    "step1": "Toque em “Mostrar código no meu PS5”",
+    "step2": "Seu PS5 mostra um código de 6 dígitos em uma notificação",
+    "step3": "Digite o código aqui",
+    "show": "Mostrar código no meu PS5",
+    "shown": "Código enviado — veja a notificação no seu PS5",
+    "wait": "Aguarde {n} s para mostrar de novo",
+    "codeLabel": "Código de 6 dígitos",
+    "go": "Vincular",
+    "linking": "Vinculando…",
+    "bad": "Código incorreto — confira a notificação no seu PS5",
+    "locked": "Tentativas demais — aguarde {n} s",
+    "done": "Vinculado! Abrindo a XENO STORE…",
+    "note": "Só dispositivos vinculados controlam sua loja. Isso é feito uma vez por navegador."
+  },
+  "discover4": {
+    "topPs5": "Melhores jogos de PS5"
   }
 }

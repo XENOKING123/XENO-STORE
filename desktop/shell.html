@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XENO STORE Desktop</title>
+<style>
+:root { --bg: #050918; --card: #0d1733; --line: rgba(255,255,255,.1); --txt: #eef2ff; --dim: #9aa6c8; --gold: #ffce4a; --gold2: #ffe08a; --good: #4ade80; --bad: #f87171; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--txt);
+  background: radial-gradient(70% 50% at 50% 0%, rgba(255,206,74,.09), rgba(0,0,0,0) 60%), var(--bg); }
+header { display: flex; align-items: center; gap: 14px; padding: 22px 32px; }
+header img { width: 44px; height: 44px; border-radius: 50%; box-shadow: 0 0 0 2px var(--gold); }
+header b { font-size: 18px; letter-spacing: .14em; }
+header .chip { margin-inline-start: auto; }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; background: rgba(255,255,255,.06); border: 1px solid var(--line); }
+.chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); }
+.chip.on i { background: var(--good); box-shadow: 0 0 10px var(--good); }
+main { max-width: 980px; margin: 0 auto; padding: 8px 24px 60px; display: grid; gap: 18px; }
+.card { background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)), var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 26px 28px; }
+h1 { margin: 0 0 6px; font-size: 28px; letter-spacing: -.02em; }
+h2 { margin: 0 0 6px; font-size: 20px; }
+p { margin: 0 0 14px; color: var(--dim); }
+button { font: inherit; font-weight: 700; border: 0; border-radius: 999px; padding: 12px 22px; cursor: pointer; color: var(--txt); background: rgba(255,255,255,.08); border: 1px solid var(--line); }
+button.primary { color: #1b1300; background: linear-gradient(180deg, var(--gold2), var(--gold)); border: 0; box-shadow: 0 6px 22px rgba(255,206,74,.25); }
+button:disabled { opacity: .5; cursor: default; }
+button:focus-visible, input:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+input { font: inherit; color: var(--txt); background: rgba(0,0,0,.3); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; min-width: 0; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.grow { flex: 1 1 auto; }
+.list { display: grid; gap: 8px; margin-top: 12px; }
+.item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid var(--line); }
+.item .n { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.item .m { color: var(--dim); font-size: 13px; white-space: nowrap; }
+.item button { padding: 8px 16px; }
+.code { font-size: 28px; font-weight: 800; letter-spacing: .45em; text-align: center; width: 260px; }
+.status { min-height: 22px; font-weight: 600; color: var(--dim); margin-top: 10px; }
+.status.good { color: var(--good); } .status.bad { color: var(--bad); }
+.big { font-size: 18px; padding: 16px 30px; }
+.hidden { display: none !important; }
+.steps { margin: 0 0 16px; padding: 0; list-style: none; display: grid; gap: 6px; color: var(--txt); }
+.steps li::before { content: counter(s); counter-increment: s; display: inline-flex; width: 24px; height: 24px; margin-inline-end: 10px; border-radius: 50%; align-items: center; justify-content: center;
+  background: var(--gold); color: #1b1300; font-weight: 900; font-size: 13px; }
+.steps { counter-reset: s; }
+small { color: var(--dim); }
+</style>
+</head>
+<body>
+<header><img src="/__desktop/logo.jpg" alt=""><b>XENO STORE</b><span class="chip" id="conn"><i></i><span>Not linked</span></span></header>
+<main>
+  <section class="card" id="find">
+    <h1>Find your PS5</h1>
+    <p>Start XENO STORE on the PS5 (the app in Games, or the payload), keep it on the same network as this PC, then search.</p>
+    <div class="row"><button class="primary" id="scan">Search my network</button><span class="grow"></span>
+      <input id="ip" placeholder="or type the PS5 IP, e.g. 192.168.1.50" size="30"><button id="use">Use this PS5</button></div>
+    <div class="list" id="found"></div>
+    <div class="status" id="findStatus"></div>
+  </section>
+
+  <section class="card hidden" id="link">
+    <h1>Link to your PS5</h1>
+    <p id="linkTo"></p>
+    <ol class="steps"><li>Press “Show code on my PS5”</li><li>Your PS5 shows a 6-digit code in a notification</li><li>Type the code here</li></ol>
+    <div class="row"><button class="primary" id="show">Show code on my PS5</button>
+      <input class="code" id="code" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code"><button id="go" disabled>Link</button></div>
+    <div class="status" id="linkStatus"></div>
+    <p style="margin-top:14px"><button id="other">Use a different PS5</button></p>
+  </section>
+
+  <section class="card hidden" id="ready">
+    <h1>You're linked</h1>
+    <p>Browse the whole store here on your PC: everything you download goes straight to your PS5.</p>
+    <div class="row"><button class="primary big" id="open">Open XENO STORE</button><button id="forget">Forget this PS5</button></div>
+  </section>
+
+  <section class="card hidden" id="send">
+    <h2>Send from this PC</h2>
+    <p>Pick a game file on this PC. Your PS5 downloads it over your network with its fast downloader and installs it like any other download. Keep this app open until it finishes.</p>
+    <div class="row"><input class="grow" id="dir" placeholder="Folder"><button id="browse">Open folder</button><button id="up">Up</button></div>
+    <div class="list" id="files"></div>
+    <div class="status" id="sendStatus"></div>
+  </section>
+  <small id="ver"></small>
+</main>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  function call(name, body) {
+    return fetch('/__desktop/api/' + name, { method: body ? 'POST' : 'GET', headers: body ? { 'Content-Type': 'application/json' } : {}, body: body ? JSON.stringify(body) : undefined })
+      .then(function (r) { return r.json().then(function (j) { j._status = r.status; return j; }); });
+  }
+  function say(el, text, cls) { el.className = 'status' + (cls ? ' ' + cls : ''); el.textContent = text || ''; }
+  function fmt(n) { var u = ['B', 'KB', 'MB', 'GB', 'TB'], i = 0; while (n >= 1024 && i < 4) { n /= 1024; i++; } return n.toFixed(i ? 1 : 0) + ' ' + u[i]; }
+  var state = {};
+  function paint() {
+    var linked = !!state.linked;
+    $('find').classList.toggle('hidden', !!state.ps5 && state.reachable);
+    $('link').classList.toggle('hidden', !state.ps5 || !state.reachable || linked);
+    $('ready').classList.toggle('hidden', !linked);
+    $('send').classList.toggle('hidden', !linked);
+    var c = $('conn'); c.classList.toggle('on', linked);
+    c.lastChild.textContent = linked ? 'Linked · ' + state.ps5 : state.ps5 ? (state.reachable ? 'Not linked · ' + state.ps5 : 'PS5 not answering · ' + state.ps5) : 'Not linked';
+    $('linkTo').textContent = 'PS5 at ' + (state.ps5 || '') + '. This PC is not linked to it yet.';
+    $('ver').textContent = 'XENO STORE Desktop ' + (state.version || '');
+    if (linked && !$('files').childNodes.length) files(state.shareDir || '');
+  }
+  function refresh() { return call('state').then(function (s) { state = s; paint(); }); }
+  $('scan').onclick = function () {
+    var b = this; b.disabled = true; say($('findStatus'), 'Searching your network…'); $('found').innerHTML = '';
+    call('discover').then(function (r) {
+      b.disabled = false;
+      var list = r.consoles || [];
+      say($('findStatus'), list.length ? 'Found ' + list.length + ' console' + (list.length > 1 ? 's' : '') + '.' : 'No PS5 with XENO STORE found. Is it running, on the same network?', list.length ? 'good' : 'bad');
+      list.forEach(function (c) {
+        var it = document.createElement('div'); it.className = 'item';
+        it.innerHTML = '<span class="n"></span><button class="primary">Use</button>';
+        it.querySelector('.n').textContent = 'PS5 · ' + c.host;
+        it.querySelector('button').onclick = function () { select(c.host); };
+        $('found').appendChild(it);
+      });
+    }, function () { b.disabled = false; say($('findStatus'), 'Search failed.', 'bad'); });
+  };
+  $('use').onclick = function () { select($('ip').value); };
+  $('ip').onkeydown = function (e) { if (e.key === 'Enter') select($('ip').value); };
+  function select(host) {
+    say($('findStatus'), 'Checking ' + host + '…');
+    call('select', { host: host }).then(function (r) { if (!r.ok) { say($('findStatus'), r.message || 'That did not work.', 'bad'); return; } refresh(); });
+  }
+  $('show').onclick = function () {
+    call('show', {}).then(function (r) {
+      if (r._status === 429) say($('linkStatus'), 'Wait ' + (r.retryAfter || 10) + ' s before showing it again.', 'bad');
+      else if (r.ok === false) say($('linkStatus'), r.message || 'The PS5 did not answer.', 'bad');
+      else { say($('linkStatus'), 'Code sent — look at the notification on your PS5.', 'good'); $('code').focus(); }
+    });
+  };
+  function digits() { return $('code').value.replace(/\D/g, '').slice(0, 6); }
+  $('code').oninput = function () { var d = digits(); if (this.value !== d) this.value = d; $('go').disabled = d.length !== 6; if (d.length === 6) link(); };
+  $('go').onclick = link;
+  var linking = false;
+  function link() {
+    if (linking || digits().length !== 6) return; linking = true; say($('linkStatus'), 'Linking…');
+    call('link', { code: digits() }).then(function (r) {
+      linking = false;
+      if (r.ok && r.linked) { say($('linkStatus'), 'Linked!', 'good'); refresh(); return; }
+      say($('linkStatus'), r._status === 403 ? 'That code is not right — check the notification on your PS5.' : r._status === 429 ? 'Too many tries — wait a minute.' : (r.message || 'Linking failed.'), 'bad');
+      $('code').select();
+    });
+  }
+  $('other').onclick = $('forget').onclick = function () { call('forget', {}).then(refresh); };
+  $('open').onclick = function () { location.href = '/'; };
+  function files(dir) {
+    call('files', { dir: dir }).then(function (r) {
+      if (!r.ok) { say($('sendStatus'), r.message || 'Cannot open that folder.', 'bad'); return; }
+      $('dir').value = r.dir; $('up').dataset.dir = r.parent; $('files').innerHTML = '';
+      var any = false;
+      (r.entries || []).forEach(function (e) {
+        var it = document.createElement('div'); it.className = 'item';
+        it.innerHTML = '<span class="n"></span><span class="m"></span><button></button>';
+        it.querySelector('.n').textContent = (e.dir ? '📁 ' : '') + e.name;
+        it.querySelector('.m').textContent = e.dir ? '' : e.format + ' · ' + fmt(e.size);
+        var b = it.querySelector('button');
+        if (e.dir) { b.textContent = 'Open'; b.onclick = function () { files(e.path); }; }
+        else { any = true; b.textContent = 'Send to PS5'; b.className = 'primary'; b.onclick = function () { send(e, b); }; }
+        $('files').appendChild(it);
+      });
+      say($('sendStatus'), any ? '' : 'No game files in this folder (.pkg, .ffpkg, .ffpfsc, .exfat, .zip, .rar, .7z).');
+    });
+  }
+  function send(e, b) {
+    b.disabled = true; say($('sendStatus'), 'Sending ' + e.name + '…');
+    call('send', { path: e.path }).then(function (r) {
+      if (r.ok) { b.textContent = 'Sent'; say($('sendStatus'), e.name + ' is in your PS5 downloads. Keep this app open until it finishes.', 'good'); }
+      else { b.disabled = false; say($('sendStatus'), r.message || 'The PS5 refused the file.', 'bad'); }
+    });
+  }
+  $('browse').onclick = function () { files($('dir').value); };
+  $('dir').onkeydown = function (e) { if (e.key === 'Enter') files($('dir').value); };
+  $('up').onclick = function () { if (this.dataset.dir) files(this.dataset.dir); };
+  refresh();
+})();
+</script>
+</body>
+</html>

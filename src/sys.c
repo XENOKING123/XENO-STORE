@@ -87,8 +87,10 @@ const char *sys_platform(void) {
 #endif
 }
 
+/* Both PS5 builds can open the browser (the Games-row app asks the running store to); only the
+ * browser build does it by itself at start. */
 int sys_launch_browser(const char *url) {
-#if defined(LAUNCH_BROWSER) && !defined(XENO_HOST)
+#if !defined(XENO_HOST)
   sceUserServiceInitialize(NULL);
   int rc = sceSystemServiceLaunchWebBrowser(url, NULL);
   if (rc != 0) LOGW("sceSystemServiceLaunchWebBrowser(%s) -> 0x%08x", url, (unsigned)rc);

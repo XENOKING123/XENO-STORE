@@ -49,5 +49,26 @@
     "worksHere": "Compatible avec tes jeux",
     "allSaves": "Toutes les sauvegardes de la communauté",
     "browse": "Parcourir les sauvegardes"
+  },
+  "link": {
+    "title": "Associer ta PS5",
+    "text": "Ce navigateur n'est pas encore associé à ta PS5. Associe-le une fois, puis parcours, télécharge et envoie des jeux à ta PS5 depuis ici.",
+    "address": "PS5 à {addr}",
+    "step1": "Appuie sur « Afficher le code sur ma PS5 »",
+    "step2": "Ta PS5 affiche un code à 6 chiffres dans une notification",
+    "step3": "Saisis le code ici",
+    "show": "Afficher le code sur ma PS5",
+    "shown": "Code envoyé — regarde la notification sur ta PS5",
+    "wait": "Attends {n} s avant de l'afficher à nouveau",
+    "codeLabel": "Code à 6 chiffres",
+    "go": "Associer",
+    "linking": "Association…",
+    "bad": "Ce code n'est pas bon — vérifie la notification sur ta PS5",
+    "locked": "Trop d'essais — attends {n} s",
+    "done": "Associé ! Ouverture de XENO STORE…",
+    "note": "Seuls les appareils associés peuvent contrôler ta boutique. À faire une fois par navigateur."
+  },
+  "discover4": {
+    "topPs5": "Meilleurs jeux PS5"
   }
 }

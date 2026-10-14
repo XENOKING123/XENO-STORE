@@ -1,0 +1,51 @@
+/* Clean look (default; the Arcade design pack keeps the 3D bubble cards): big crisp art tiles with nothing
+   painted on the art, the title underneath, a bright ring on focus; letter-spaced tabs with an underline.
+   Focus moves only transform/opacity, so the PS5 browser stays at 60 fps while you scroll a rail.
+   Tiles are sized from the screen: six per row on a TV with the seventh peeking in (five / eight for the
+   Large / Small card setting), like a streaming app's shelf. */
+:root { --rail-gap: 22px; --per-row: 6.3; --card-w: clamp(150px, calc((100vw - 2 * var(--gutter) - 6 * var(--rail-gap)) / var(--per-row)), 340px); }
+html[data-cards="s"] { --per-row: 8.3; }
+html[data-cards="l"] { --per-row: 5.3; }
+html[data-large-text="1"] { --per-row: 5.3; }
+@media (max-width: 819px) { :root { --card-w: 150px; --rail-gap: 14px; } }
+
+html:not([data-pack="arcade"]) .card { background: none; border: 0; padding: 0; box-shadow: none; border-radius: 18px;
+  transition: none; }
+html:not([data-pack="arcade"]) .card::before, html:not([data-pack="arcade"]) .card .cf::after { display: none; }
+html:not([data-pack="arcade"]) .card:hover, html:not([data-pack="arcade"]) .card:focus { transform: none; background: none; box-shadow: none; outline: none; }
+html:not([data-pack="arcade"]) .card .cf { border-radius: 18px; overflow: hidden; transform: translate3d(0, 0, 0);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .38); transition: transform .16s var(--ease-out), box-shadow .16s var(--ease-out); }
+html:not([data-pack="arcade"]) .card .cover { aspect-ratio: 1 / 1; border-radius: 18px; }
+html:not([data-pack="arcade"]) .card .cover img { image-rendering: auto; transform: none; transition: none; }
+html:not([data-pack="arcade"]) .card:hover .cover img, html:not([data-pack="arcade"]) .card:focus .cover img { transform: none; }
+html:not([data-pack="arcade"]) .card:hover .cf { transform: translate3d(0, -3px, 0); }
+html:not([data-pack="arcade"]) .card:focus .cf { transform: scale(1.06); z-index: 2;
+  box-shadow: 0 0 0 3px #fff, 0 0 0 7px rgba(255, 255, 255, .16), 0 22px 44px rgba(0, 0, 0, .6); }
+html:not([data-pack="arcade"]) .card:focus { z-index: 3; }
+html:not([data-pack="arcade"]) .card .title { margin: 12px 2px 2px; height: auto; font-size: 15.5px; font-weight: 600; letter-spacing: -.005em;
+  -webkit-line-clamp: 1; line-clamp: 1; transition: color .16s; }
+html:not([data-pack="arcade"]) .card:focus .title { color: #fff; }
+html:not([data-pack="arcade"]) .card .sub { margin: 0 2px; font-size: 12.5px; }
+html:not([data-pack="arcade"]) .card .sub .plat-t { font-weight: 800; letter-spacing: .06em; color: var(--dim); }
+html:not([data-pack="arcade"]) .card .fav-dot { top: 10px; inset-inline-end: 10px; background: rgba(0, 0, 0, .55); border-radius: 50%; }
+html:not([data-pack="arcade"]) .card .prog { height: 5px; }
+/* rails: room for the focus scale + ring */
+html:not([data-pack="arcade"]) .rail-track { padding-top: 12px; padding-bottom: 14px; }
+
+/* tabs: letter-spaced words with an underline that slides (the indicator element keeps its transform) */
+html:not([data-pack="arcade"]) .tabs { background: none; border: 0; box-shadow: none; gap: 6px; }
+html:not([data-pack="arcade"]) .tab { text-transform: uppercase; letter-spacing: .18em; font-size: 13.5px; font-weight: 700; padding: 0 14px;
+  color: var(--dim); background: none; }
+html:not([data-pack="arcade"]) .tab:hover, html:not([data-pack="arcade"]) .tab:focus { background: rgba(255, 255, 255, .06); color: var(--txt); }
+html:not([data-pack="arcade"]) .tab.active { color: var(--txt); }
+html:not([data-pack="arcade"]) .topbar.has-ind .tab.active { color: var(--txt); }
+html:not([data-pack="arcade"]) .tab-ind { background: none; box-shadow: none; }
+html:not([data-pack="arcade"]) .tab-ind::after { content: ""; position: absolute; left: 14%; right: 14%; bottom: 3px; height: 2px; border-radius: 2px;
+  background: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
+html:not([data-pack="arcade"]) .topbar.has-ind .tab.active .badge { background: var(--gold); color: var(--gold-ink); }
+
+/* section titles: quiet, letter-spaced labels like a TV guide */
+html:not([data-pack="arcade"]) .rail .section-title { text-transform: uppercase; letter-spacing: .16em; font-size: 15px; font-weight: 700; color: var(--dim); }
+html:not([data-pack="arcade"]) .rail .section-title .count { letter-spacing: .1em; }
+
+html[data-motion="reduce"] .card .cf, html.prm .card .cf { transition: none; }

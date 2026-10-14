@@ -14,7 +14,7 @@
 
 <br/><br/>
 
-![version](https://img.shields.io/badge/version-1.1.1-FFCE4A?style=for-the-badge)
+![version](https://img.shields.io/badge/version-1.2.0-FFCE4A?style=for-the-badge)
 ![platform](https://img.shields.io/badge/PS5-on--console%20payload-2F7CF6?style=for-the-badge&logo=playstation&logoColor=white)
 ![catalog](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FXENOKING123%2FXENO-STORE%2Fmain%2Fcatalog%2Frevision.json&query=%24.games&suffix=%20games&label=catalog&color=2ea043&style=for-the-badge)
 ![verified](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FXENOKING123%2FXENO-STORE%2Fmain%2Fcatalog%2Frevision.json&query=%24.verifiedReleases&suffix=%20verified%20releases&label=audit&color=2f7cf6&style=for-the-badge)
@@ -32,7 +32,7 @@
 
 ### 🟢 [**⬇️  DOWNLOAD XENO STORE  ⬇️**](../../releases/latest)
 
-<sub>`XENO-STORE.pkg` (Games-row app) · `xeno-store-browser.elf` · `xeno-store.elf` · `XENO-STORE.zip` (homebrew folder) · `SHA256SUMS`</sub>
+<sub>`PPSA99500.ffpkg` (PS5 app) · `XENO-STORE.pkg` · `xeno-store-browser.elf` · `xeno-store.elf` · `XENO-STORE.zip` · `XENO-STORE-Desktop` (Windows · macOS · Linux) · `.sha256` files</sub>
 
 </div>
 
@@ -140,31 +140,45 @@ real console every tile pulls the actual box art and media from the catalog's ar
 
 ## 🚀 Install
 
-You need a jailbroken PS5 with an ELF loader listening on **port 9021** (etaHEN, the ps5-payload-dev `elfldr`, XENO TOOL's Payloads tab all do). Grab the files from the **[latest release](../../releases/latest)** and pick **one** route — they all run the same store, so settings, queue and saves carry over:
+You need a jailbroken PS5 with an ELF loader on **port 9021** (etaHEN, the ps5-payload-dev `elfldr`, XENO TOOL's Payloads tab all do). Grab the files from the **[latest release](../../releases/latest)**. Every route runs the same store, so settings, queue and saves carry over.
 
-### 1 · Games-row app — `XENO-STORE.pkg` ⭐ recommended
+### 1 · The PS5 app — `PPSA99500.ffpkg` ⭐ recommended
 
-A real application tile in the PS5 **Games home row** (title id `PPSA99500`), with the XENO icon.
+**XENO STORE** in your PS5 **Games** row, with the XENO icon. Press ✕ and it opens full screen.
 
 ```text
-1.  ⬇️   Download  XENO-STORE.pkg
-2.  💿   Install it with your package installer (USB, the DPI daemon or etaHEN DPI)
-3.  🎮   "XENO STORE" appears in the Games row — press ✕
-         The app starts the store if it is not running yet and opens it full screen
+1.  ⬇️   Download  PPSA99500.ffpkg  (and PPSA99500.ffpkg.sha256 to check it)
+2.  📂   Copy it to  /data/homebrew/  on the PS5 (FTP, USB or XENO TOOL)
+3.  🎮   ShadowMountPlus mounts it: "XENO STORE" appears under Games — press ✕
+         The app starts the store if it is not running yet, then opens it full screen
 ```
 
-<sub>A debug package built and verified by <code>make ffpkg</code>; it needs FPKG-capable firmware like any fake package. On firmware that cannot install fake packages, use route 2 or 3.</sub>
+<sub>Needs kstuff + ShadowMountPlus, like every <code>.ffpkg</code> app. The image is UFS2 with the layout ShadowMountPlus documents and is checked file by file at build time. Prefer a classic package? <code>XENO-STORE.pkg</code> is the same app for consoles that install fake packages.</sub>
 
-### 2 · Payload — `xeno-store-browser.elf` (works everywhere)
+### 2 · The web version — `xeno-store-browser.elf`
 
 ```text
 1.  ⬇️   Download  xeno-store-browser.elf
 2.  📡   XENO TOOL → Payloads → Send file  (or any loader on port 9021)
 3.  🌐   The PS5 browser opens the store by itself
-         (sent xeno-store.elf instead? open http://<ps5-ip>:9095 or http://xeno.local:9095)
 ```
 
-### 3 · Homebrew folder — `XENO-STORE.zip` (etaHEN / itemzflow launcher)
+The store also adds a **XENO STORE Web** shortcut on the PS5 that opens the browser version, so you can pick either one. Sent `xeno-store.elf` instead? Open `http://<ps5-ip>:9095` or `http://xeno.local:9095`.
+
+### 3 · On your PC — `XENO-STORE-Desktop` (Windows · macOS · Linux)
+
+```text
+1.  ⬇️   Download the Desktop zip for your system and run XENO-STORE-Desktop
+2.  🔎   "Search my network" finds your PS5 (or type its IP)
+3.  🔔   "Show code on my PS5" → the code pops up as a PS5 notification → type it
+4.  🛒   "Open XENO STORE": the whole store in your PC browser, every download goes to the PS5
+5.  📤   "Send from this PC": pick a .pkg / .ffpkg / .ffpfsc / .exfat / .zip / .rar / .7z on your PC
+         and the PS5 pulls it over your network with its fast downloader, then installs it
+```
+
+<sub>A phone or a PC browser that opens <code>http://&lt;ps5-ip&gt;:9095</code> directly gets the same <b>Link to your PS5</b> page first. macOS may ask you to allow the app in System Settings → Privacy &amp; Security the first time.</sub>
+
+### 4 · Homebrew folder — `XENO-STORE.zip` (etaHEN / itemzflow launcher)
 
 ```text
 1.  ⬇️   Download  XENO-STORE.zip
@@ -264,6 +278,7 @@ Connect **Real-Debrid, AllDebrid, TorBox or Premiumize** with your own API key (
 <img src="docs/screenshots/pair.png" width="100%" alt="Pair a device screen"/>
 
 Settings → **Pair a device** shows a QR code and the two addresses `http://<ps5-ip>:9095` and `http://xeno.local:9095`.
+A phone or PC that opens one of them lands on **Link to your PS5** first: press **Show code on my PS5**, read the 6-digit code from the PS5 notification, type it, done — once per browser.
 Scan it with any phone on the same Wi-Fi: same store, phone layout, bottom tabs. Everything works from the phone —
 browse, queue, pause, **Enter file link** (paste the link you unlocked in a mobile browser), the Save Data Store upload wizard,
 and "Add to home screen" via the PWA manifest.
@@ -413,6 +428,9 @@ UI development without a console: `node web/dev-server.mjs --port 9095` serves t
 | **[earthonion / np-fake-signin](https://github.com/earthonion/np-fake-signin)** | NP fake sign-in / sign-out companions |
 | **[miniz](https://github.com/richgel999/miniz)** | The single-file ZIP engine used for extraction and save backups |
 | **[ps5upload](https://github.com/phantomptr/ps5upload)** (phantomptr, GPL-3.0) | The `fpkg_build` engine that builds and verifies the Games-row `.pkg` |
+| **[ShadowMountPlus](https://github.com/drakmor/shadowMountPlus)** | Mounts the `.ffpkg` app; its documented UFS2 profile is what `make ffpkg` writes |
+| **ps5-payload-sdk `install_app` sample** — John Törnblom (GPL-3.0) | `make_fself.py` and the app linker script behind the Games-row launcher |
+| **[makefs](https://man.netbsd.org/makefs.8)** (NetBSD / FreeBSD) | Builds the UFS2 `.ffpkg` image on Linux without mounting anything |
 | **[qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator)** — Kazuhiko Arase (MIT) | Pairing and share QR codes |
 
 </div>

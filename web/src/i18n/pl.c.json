@@ -49,5 +49,26 @@
     "worksHere": "Działa z twoimi grami",
     "allSaves": "Wszystkie zapisy społeczności",
     "browse": "Przeglądaj zapisy"
+  },
+  "link": {
+    "title": "Połącz z PS5",
+    "text": "Ta przeglądarka nie jest jeszcze połączona z PS5. Połącz ją raz, a potem przeglądaj, pobieraj i wysyłaj gry na PS5 stąd.",
+    "address": "PS5 pod {addr}",
+    "step1": "Naciśnij „Pokaż kod na mojej PS5”",
+    "step2": "PS5 pokaże 6-cyfrowy kod w powiadomieniu",
+    "step3": "Wpisz kod tutaj",
+    "show": "Pokaż kod na mojej PS5",
+    "shown": "Kod wysłany — spójrz na powiadomienie na PS5",
+    "wait": "Poczekaj {n} s przed ponownym pokazaniem",
+    "codeLabel": "6-cyfrowy kod",
+    "go": "Połącz",
+    "linking": "Łączenie…",
+    "bad": "Zły kod — sprawdź powiadomienie na PS5",
+    "locked": "Za dużo prób — poczekaj {n} s",
+    "done": "Połączono! Otwieram XENO STORE…",
+    "note": "Tylko połączone urządzenia mogą sterować sklepem. Robisz to raz na przeglądarkę."
+  },
+  "discover4": {
+    "topPs5": "Najlepsze gry na PS5"
   }
 }

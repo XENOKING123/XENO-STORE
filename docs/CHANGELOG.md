@@ -2,6 +2,21 @@
 
 All notable changes to XENO STORE. The version lives in `VERSION`; releases are tagged `v<VERSION>`.
 
+## 1.2.0 — 2026-10-14
+
+### Apps
+- **PS5 app (`PPSA99500.ffpkg`)**: XENO STORE in the Games row. Copy it to `/data/homebrew/`; ShadowMountPlus mounts it. The app's launcher opens the running store full screen, or hands the store inside the app to the ELF loader first. Also ships as `XENO-STORE.pkg` for consoles that install fake packages.
+- **XENO STORE Web**: the browser shortcut the store adds on the PS5 now has its own name, next to the app.
+- **XENO STORE Desktop** for Windows, macOS and Linux: finds your PS5, links with the code the PS5 shows in a notification, opens the whole store in your PC browser, and sends game files from the PC straight into the PS5's download queue.
+- **Link to your PS5**: a phone or PC browser opening the store lands on a link page first — "Show code on my PS5", type the 6 digits, done once per browser.
+- Releases carry a `.sha256` file for every PS5 file and a `BUILD-INFO.json`.
+
+### Look and feel
+- Clean, bigger art: six large square tiles per row on a TV with the next one peeking in, nothing painted on the art (no PS4/PS5 badges), the title and size underneath, a bright ring on focus, quicker transform-only motion. The 3D bubble cards live on as the Arcade design pack.
+- Letter-spaced tabs with a sliding underline and quieter section labels.
+- Home order: the showcase, Top PS5 games, Latest releases, staff picks, then New on XENO STORE — PS5 games and real art first, so placeholder PS4 entries no longer lead a row.
+- PlayStation artwork is requested at TV resolution instead of 260 px thumbnails; the announcement bar steps aside once you scroll.
+
 ## 1.1.1 — 2026-10-14
 
 ### Catalog

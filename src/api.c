@@ -521,6 +521,11 @@ static void h_pair(api_ctx *c) {
    * must read it off the PS5 toast. `cooldown` throttles POST /api/pair/show. */
   jw_kv_str(&w, "code", c->req->client_is_loopback ? pairing_code() : "");
   jw_kv_int(&w, "cooldown", pairing_show_cooldown());
+  /* The web UI's first page on a PC / phone: "local" = the console itself (no linking needed),
+   * "linked" = this browser already holds a valid device token. */
+  const char *bearer = util_istarts_with(c->req->authorization, "Bearer ") ? c->req->authorization + 7 : NULL;
+  jw_kv_bool(&w, "local", c->req->client_is_loopback);
+  jw_kv_bool(&w, "linked", bearer && pairing_token_valid(bearer));
   api_send(c, &w);
 }
 
@@ -581,6 +586,20 @@ static void h_pair_redeem(api_ctx *c) {
   api_error(c, status, scode, msg);
 }
 
+/* The Games-row app (app/eboot) calls this when the store is already running: open the
+ * console's browser full-screen on the store. Loopback only; needs no PIN. */
+static void h_launcher_open(api_ctx *c) {
+  if (!c->req->client_is_loopback) { api_error(c, 403, "forbidden", "Only the console itself can open its browser."); return; }
+  char url[64];
+  xsnprintf(url, sizeof url, "http://127.0.0.1:%d/?tv=1", g_cfg.port);
+  int rc = sys_launch_browser(url);
+  jw w;
+  api_begin(&w);
+  jw_kv_bool(&w, "launched", rc == 0);
+  jw_kv_str(&w, "url", url);
+  api_send(c, &w);
+}
+
 static void h_session(api_ctx *c) {
   if (!c->req->client_is_loopback) {
     api_error(c, 403, "forbidden", "Pair this device using the code shown on the console.");
@@ -612,6 +631,7 @@ static const api_route ROUTES[] = {
   { "POST", "/api/update/check", h_update_check },
   { "POST", "/api/update/apply", h_update_apply },
   { "POST", "/api/update/restart", h_update_restart },
+  { "POST", "/api/launcher/open", h_launcher_open },
   { "GET", "/api/catalog/info", h_catalog_info },
   { "POST", "/api/catalog/refresh", h_catalog_refresh },
   { "GET", "/api/catalog/search", h_catalog_search },
@@ -723,7 +743,8 @@ void api_handle(http_req *req) {
     return;
   }
   if (strcmp(req->method, "GET") != 0 && strcmp(req->method, "HEAD") != 0 &&
-      !util_starts_with(req->path, "/api/pair")) {   /* pairing itself must stay reachable */
+      !util_starts_with(req->path, "/api/pair") &&   /* pairing itself must stay reachable */
+      !(req->client_is_loopback && strcmp(req->path, "/api/launcher/open") == 0)) {   /* the Games-row app */
     settings_t s;
     settings_get(&s);
     if (s.pin[0]) {

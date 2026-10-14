@@ -53,15 +53,18 @@
     /* nav ids must be unique per screen: the same game can sit in several rails, so each rail prefixes its cards */
     var card = h('a.card', { nav: (opts.navPrefix || 'g') + ':' + g.id, data: { hints: 'open fav', game: g.id }, href: '#game/' + encodeURIComponent(g.id) });
     var frame = h('div.cf');
-    frame.appendChild(ui.cover(g.cover, g.coverFallback, g.title));
-    frame.appendChild(h('span.plat.' + (g.platform === 'PS4' ? 'ps4' : 'ps5'), { text: g.platform }));
+    frame.appendChild(ui.cover(U.sharpArt(g.cover, 720), U.sharpArt(g.coverFallback, 720), g.title));
     frame.appendChild(h('span.fav-dot', { html: U.icon('heart') }));
-    var foot = h('div.cfoot');
-    if (g.verified) foot.appendChild(h('span.vtick', { html: U.icon('check'), title: t('common.verified') }));
-    if (g.cheats > 0) foot.appendChild(h('span.cheats', { html: U.icon('zap') }));
-    foot.appendChild(h('span.spacer'));
-    if (g.sizeMax) foot.appendChild(h('span.size', { text: U.fmtBytes(g.sizeMax, g.sizeMax >= 1e10 ? 0 : 1) }));
-    frame.appendChild(foot);
+    /* nothing is painted on the art (clean look); the Arcade pack brings the 3D badges back */
+    if (document.documentElement.getAttribute('data-pack') === 'arcade') {
+      frame.appendChild(h('span.plat.' + (g.platform === 'PS4' ? 'ps4' : 'ps5'), { text: g.platform }));
+      var foot = h('div.cfoot');
+      if (g.verified) foot.appendChild(h('span.vtick', { html: U.icon('check'), title: t('common.verified') }));
+      if (g.cheats > 0) foot.appendChild(h('span.cheats', { html: U.icon('zap') }));
+      foot.appendChild(h('span.spacer'));
+      if (g.sizeMax) foot.appendChild(h('span.size', { text: U.fmtBytes(g.sizeMax, g.sizeMax >= 1e10 ? 0 : 1) }));
+      frame.appendChild(foot);
+    }
     if (job && job.total) { frame.appendChild(h('div.prog', [h('i', { style: { width: U.pct(job.written, job.total).toFixed(1) + '%' } })])); card.classList.add('has-prog'); }
     card.appendChild(frame);
     if (S.isFav(g.id)) card.classList.add('fav');
@@ -69,8 +72,12 @@
     var sub = h('div.sub');
     if (job) sub.appendChild(h('span.gold', { text: t('dl.state.' + job.state) + (job.total ? ' · ' + U.fmtPct(U.pct(job.written, job.total)) : '') }));
     else {
+      var bits = [];
+      if (g.platform === 'PS4') sub.appendChild(h('span.plat-t', { text: 'PS4' }));
+      if (g.sizeMax) bits.push(U.fmtBytes(g.sizeMax, g.sizeMax >= 1e10 ? 0 : 1));
       var fmts = uniqueFormats(g);
-      sub.appendChild(h('span.ellipsis', { text: fmts.slice(0, 3).join(' · ') || (g.publisher || '') }));
+      if (fmts.length) bits.push(fmts.slice(0, 2).join(' · '));
+      sub.appendChild(h('span.ellipsis', { text: bits.join(' · ') || (g.publisher || '') }));
     }
     card.appendChild(sub);
     card.addEventListener('click', function (e) { e.preventDefault(); XS.router.go('game', { id: g.id }); });

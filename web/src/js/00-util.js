@@ -160,6 +160,14 @@
     return p;
   }
 
+  /* Ask image CDNs for art sharp enough for a TV: PlayStation's image API serves whatever ?w= asks for
+     (the catalog often carries w=260 thumbnails). Other hosts are returned unchanged. */
+  function sharpArt(url, w) {
+    if (!url || url.indexOf('image.api.playstation.com') < 0) return url || '';
+    var base = url.replace(/([?&])w=\d+&?/, '$1').replace(/[?&]$/, '');
+    return base + (base.indexOf('?') >= 0 ? '&' : '?') + 'w=' + (w || 720);
+  }
+
   function isPhone() { return window.innerWidth < 820; }
   function reducedMotion() {
     return document.documentElement.getAttribute('data-motion') === 'reduce' ||
@@ -282,7 +290,7 @@
     $: $, $$: $$, h: h, append: append, clear: clear, svgEl: svgEl, escapeHtml: escapeHtml,
     fmtBytes: fmtBytes, fmtSpeed: fmtSpeed, fmtDur: fmtDur, fmtDate: fmtDate, fmtDateTime: fmtDateTime, pad2: pad2, pct: pct, fmtPct: fmtPct,
     nowSec: nowSec, clamp: clamp, debounce: debounce, rafBatch: rafBatch, hashStr: hashStr, tintFor: tintFor, tintGradient: tintGradient,
-    initials: initials, uid: uid, store: store, fetchJSON: fetchJSON, isPhone: isPhone, reducedMotion: reducedMotion, copyText: copyText,
+    initials: initials, uid: uid, store: store, fetchJSON: fetchJSON, isPhone: isPhone, sharpArt: sharpArt, reducedMotion: reducedMotion, copyText: copyText,
     openExternal: openExternal, normTitle: normTitle, seriesKey: seriesKey, icon: icon, glyph: glyph
   };
 })();

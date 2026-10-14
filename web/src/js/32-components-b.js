@@ -14,6 +14,7 @@
     opts = opts || {};
     var headers = {};
     if (S.data.pin) headers['X-XENO-PIN'] = S.data.pin;
+    if (S.data.token) headers['Authorization'] = 'Bearer ' + S.data.token;   /* this browser's link to the PS5 */
     return U.fetchJSON(path, { method: method, body: body, headers: headers, timeout: opts.timeout || 15000 }).then(function (r) {
       if (!S.data.serverOk) S.set('serverOk', true);
       return r;

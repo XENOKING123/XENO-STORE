@@ -137,6 +137,14 @@ class PairingTests(unittest.TestCase):
         st, b = self.srv.api("POST", "/api/pair", {"code": code})
         self.assertEqual(st, 200)
         self.assertEqual(len(b["token"]), 64)
+        # the web UI's Link page: loopback is "local"; a valid token reads as "linked"
+        st, info = self.srv.api("GET", "/api/pair")
+        self.assertTrue(info["local"])
+        self.assertFalse(info["linked"])
+        st, info = self.srv.api("GET", "/api/pair", headers={"Authorization": "Bearer " + b["token"]})
+        self.assertTrue(info["linked"])
+        st, info = self.srv.api("GET", "/api/pair", headers={"Authorization": "Bearer " + "0" * 64})
+        self.assertFalse(info["linked"])
 
     def test_04_strike_lockout(self):
         # Five wrong codes in a row lock pairing for a minute (429).

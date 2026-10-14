@@ -41,7 +41,7 @@
 #define LI_APP_DIR    "/user/app/" LI_TITLE_ID
 #define LI_CONTENT_ID "IV0000-" LI_TITLE_ID "_00-XENOKINGSTORE001"
 #define LI_DEEPLINK   "http://127.0.0.1:9095/"
-#define LI_TITLE_NAME "XENO STORE"
+#define LI_TITLE_NAME "XENO STORE Web"   /* the browser entry; the Games-row app is "XENO STORE" */
 
 /* The shortcut's param.json. applicationCategoryType 65536 (0x10000) marks a
  * deep-link shortcut rather than a full application. */

@@ -72,9 +72,90 @@
     paint();
   }
 
+  /* PC / phone browsers link to the PS5 first: "Show code on my PS5" puts a 6-digit code in a PS5
+     notification, the code typed here buys this browser a device token (sent as a Bearer header on
+     every call). The console's own browser (loopback) never sees this page. */
+  function linkGate() {
+    return api.pair({ quiet: true, timeout: 6000 }).then(function (r) {
+      if (!r || r.local || r.linked) return;
+      if (S.data.token) { S.data.token = ''; U.store.set('token', ''); }   /* forgotten by the PS5 */
+      return linkPage(r);
+    }, function () { /* offline or an older store: boot as before */ });
+  }
+  function linkPage(info) {
+    return new Promise(function (resolve) {
+      var html = document.documentElement;
+      html.classList.add('linking');
+      var page = h('div.link-page', { role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'link-title' });
+      var card = h('div.link-card');
+      page.appendChild(h('div.link-glow'));
+      page.appendChild(card);
+      card.appendChild(h('div.link-brand', [h('span.brand-badge', [h('img', { src: XS.logoSrc, alt: '' })]), h('b', { text: 'XENO STORE' })]));
+      card.appendChild(h('h1', { id: 'link-title', text: t('link.title') }));
+      card.appendChild(h('p.link-text', { text: t('link.text') }));
+      if (info.ip) card.appendChild(h('div.link-addr', [ui.svg('wifi'), h('span', { text: t('link.address', { addr: info.ip + ':' + (info.port || 9095) }) })]));
+      var steps = h('ol.link-steps');
+      ['link.step1', 'link.step2', 'link.step3'].forEach(function (k, i) { steps.appendChild(h('li', [h('span.n', { text: String(i + 1) }), h('span', { text: t(k) })])); });
+      card.appendChild(steps);
+      var show = h('button.btn.primary.lg.link-show', { nav: 'link-show', html: U.icon('bell') + '<span>' + U.escapeHtml(t('link.show')) + '</span>' });
+      card.appendChild(show);
+      var input = h('input.input.link-code', { nav: 'link-code', type: 'text', inputmode: 'numeric', autocomplete: 'one-time-code', maxlength: '6', placeholder: '000000', 'aria-label': t('link.codeLabel') });
+      var go = h('button.btn.lg.link-go', { nav: 'link-go', text: t('link.go') });
+      go.setAttribute('disabled', '');
+      card.appendChild(h('div.link-entry', [input, go]));
+      var status = h('div.link-status', { 'aria-live': 'polite' });
+      card.appendChild(status);
+      card.appendChild(h('p.link-note', [ui.svg('shield'), h('span', { text: t('link.note') })]));
+      function say(text, cls) { status.className = 'link-status' + (cls ? ' ' + cls : ''); status.textContent = text; }
+      function digits() { return (input.value || '').replace(/\D/g, '').slice(0, 6); }
+      var busy = false;
+      show.addEventListener('click', function () {
+        show.classList.add('busy');
+        api.pairShow().then(function () {
+          show.classList.remove('busy');
+          say(t('link.shown'), 'good');
+          input.focus();
+        }, function (err) {
+          show.classList.remove('busy');
+          var wait = err && err.data && err.data.retryAfter;
+          say(err && err.status === 429 ? t('link.wait', { n: wait || 10 }) : ui.errorText(err), 'bad');
+        });
+      });
+      function submit() {
+        var code = digits();
+        if (code.length !== 6 || busy) return;
+        busy = true; go.classList.add('busy'); say(t('link.linking'));
+        api.pairRedeem(code).then(function (r) {
+          S.data.token = r.token || '';
+          U.store.set('token', S.data.token);
+          say(t('link.done'), 'good');
+          page.classList.add('done');
+          setTimeout(function () { if (page.parentNode) page.parentNode.removeChild(page); html.classList.remove('linking'); resolve(); }, 600);
+        }, function (err) {
+          busy = false; go.classList.remove('busy');
+          var wait = err && err.data && err.data.retryAfter;
+          say(err && err.status === 403 ? t('link.bad') : err && err.status === 429 ? t('link.locked', { n: wait || 60 }) : ui.errorText(err), 'bad');
+          input.select();
+        });
+      }
+      input.addEventListener('input', function () {
+        var d = digits();
+        if (input.value !== d) input.value = d;
+        if (d.length === 6) { go.removeAttribute('disabled'); submit(); } else go.setAttribute('disabled', '');
+      });
+      input.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
+      go.addEventListener('click', submit);
+      document.body.appendChild(page);
+      setTimeout(function () { show.focus(); }, 50);
+    });
+  }
+
   function boot() {
     XS.logoSrc = (document.querySelector('.brand-badge img') || {}).src || '/logo.jpg';
     XS.nav.init();
+    linkGate().then(start);
+  }
+  function start() {
     api.settings().then(function (s) { S.data.settings = s; }, function () { S.data.settings = null; }).then(function () {
       A.applySettings(S.data.settings || {});
       R.mount();

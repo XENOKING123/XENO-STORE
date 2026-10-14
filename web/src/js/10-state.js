@@ -5,7 +5,7 @@
   var data = {
     catalog: null, games: [], byId: {}, byTitleId: {}, lists: {}, genres: [], sources: [],
     settings: null, queue: { jobs: [], summary: {} }, favorites: [], collections: [], recent: [],
-    status: null, storage: [], library: null, serverOk: true, online: true, pin: U.store.get('pin', '')
+    status: null, storage: [], library: null, serverOk: true, online: true, pin: U.store.get('pin', ''), token: U.store.get('token', '')
   };
   var subs = {};
   var state = {
@@ -22,8 +22,12 @@
       var games = (cat && cat.games) || [];
       var byId = {}, byTitle = {}, genreCount = {};
       var dg = (cat && cat.defaults && cat.defaults.game) || null, dr = (cat && cat.defaults && cat.defaults.release) || null;
+      var coverUse = {};
+      for (var c0 = 0; c0 < games.length; c0++) { var cv = games[c0].cover; if (cv) coverUse[cv] = (coverUse[cv] || 0) + 1; }
       for (var i = 0; i < games.length; i++) {
         var g = games[i];
+        /* art worth a front row: its own cover, not a shared collection thumbnail */
+        g._artOk = !!g.cover && coverUse[g.cover] === 1 && g.cover.indexOf('archive.org/services/img') < 0;
         /* compact catalogs leave empty members out; put them back so every screen sees the full shape */
         if (dg) fillDefaults(g, dg);
         if (!g.releases) g.releases = [];
@@ -127,11 +131,20 @@
   function buildLists(games) {
     var all = games.slice();
     function by(fn, desc) { var a = all.slice(); a.sort(function (x, y) { var p = fn(x), q = fn(y); return desc ? (q > p ? 1 : q < p ? -1 : 0) : (p > q ? 1 : p < q ? -1 : 0); }); return a; }
+    /* front rows: PS5 before PS4, real art before placeholders, then popularity */
+    function front(a, b) {
+      return ((b.platform === 'PS5') - (a.platform === 'PS5')) || ((b._artOk ? 1 : 0) - (a._artOk ? 1 : 0)) || ((b.popularity || 0) - (a.popularity || 0));
+    }
+    function sorted(list, key) {
+      return list.slice().sort(function (a, b) { var p = key(a), q = key(b); return (q > p ? 1 : q < p ? -1 : 0) || front(a, b); });
+    }
     var GB = 1e9;
+    var today = new Date().toISOString().slice(0, 10);
     return {
-      newest: by(function (g) { return g.addedAt || ''; }, true).slice(0, 40),
-      latest: by(function (g) { return g.releaseDate || ''; }, true).filter(function (g) { return g.releaseDate; }).slice(0, 40),
-      trending: by(function (g) { return g.popularity || 0; }, true).slice(0, 40),
+      topPs5: all.filter(function (g) { return g.platform === 'PS5' && g._artOk; }).sort(function (a, b) { return (b.popularity || 0) - (a.popularity || 0); }).slice(0, 40),
+      newest: sorted(all.filter(function (g) { return g._artOk; }), function (g) { return (g.addedAt || '').slice(0, 10); }).slice(0, 40),
+      latest: sorted(all.filter(function (g) { return g.releaseDate && g.releaseDate <= today && g._artOk; }), function (g) { return g.releaseDate; }).slice(0, 40),
+      trending: all.slice().sort(function (a, b) { return ((b.popularity || 0) - (a.popularity || 0)) || front(a, b); }).filter(function (g) { return g._artOk; }).slice(0, 40),
       verified: all.filter(function (g) { return g._direct && g._hasHash && g.verified; }).sort(function (a, b) { return (b.popularity || 0) - (a.popularity || 0); }).slice(0, 40),
       light: all.filter(function (g) { return g.sizeMax > 0 && g.sizeMax < 10 * GB; }).sort(function (a, b) { return (b.popularity || 0) - (a.popularity || 0); }).slice(0, 40),
       massive: all.filter(function (g) { return g.sizeMin > 80 * GB; }).sort(function (a, b) { return b.sizeMax - a.sizeMax; }).slice(0, 40),

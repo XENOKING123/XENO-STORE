@@ -73,7 +73,7 @@
     api.recentAdd(g.id).then(function () { var r = S.data.recent.filter(function (x) { return x !== g.id; }); r.unshift(g.id); S.set('recent', r.slice(0, 30)); }, function () { /* offline: ignore */ });
     var local = ca.enrichLocal(g), counts = ca.counts(g);
 
-    var bd = h('div.gp-backdrop'); bd.appendChild(ui.cover(g.hero || g.cover, g.heroFallback || g.coverFallback, g.title)); root.appendChild(bd);
+    var bd = h('div.gp-backdrop'); bd.appendChild(ui.cover(U.sharpArt(g.hero || g.cover, 1920), U.sharpArt(g.heroFallback || g.coverFallback, 1920), g.title)); root.appendChild(bd);
     root.style.setProperty('--gp-ambient', ca.hashTint(g.title, g.tint));
     ca.ambient(g.cover || g.hero, ca.hashTint(g.title, g.tint)).then(function (c) { if (current === g) root.style.setProperty('--gp-ambient', c); });
 

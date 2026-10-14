@@ -109,3 +109,9 @@ html[data-safe-mode="1"] .stage-ambient { display: none; }
   .hero.stage .stage-title { font-size: 32px; }
   .stage-bar { left: 18px; right: 18px; bottom: 22px; }
 }
+
+/* the banners float under the bar only while the stage is in view; scrolled down they get out of the way */
+@media (min-width: 1281px) {
+  html.on-discover .banners { transition: opacity .25s var(--ease), transform .25s var(--ease); }
+  html.on-discover:not(.stage-top) .banners { opacity: 0; transform: translate3d(0, -10px, 0); pointer-events: none; }
+}

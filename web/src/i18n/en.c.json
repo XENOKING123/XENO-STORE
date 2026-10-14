@@ -49,5 +49,26 @@
     "worksHere": "Works with your games",
     "allSaves": "All community saves",
     "browse": "Browse saves"
+  },
+  "link": {
+    "title": "Link to your PS5",
+    "text": "This browser isn't linked to your PS5 yet. Link it once, then browse, download and send games to your PS5 from here.",
+    "address": "PS5 at {addr}",
+    "step1": "Press “Show code on my PS5”",
+    "step2": "Your PS5 shows a 6-digit code in a notification",
+    "step3": "Type the code here",
+    "show": "Show code on my PS5",
+    "shown": "Code sent — look at the notification on your PS5",
+    "wait": "Wait {n} s before showing it again",
+    "codeLabel": "6-digit code",
+    "go": "Link",
+    "linking": "Linking…",
+    "bad": "That code isn't right — check the notification on your PS5",
+    "locked": "Too many tries — wait {n} s",
+    "done": "Linked! Opening XENO STORE…",
+    "note": "Only devices you link can control your store. You do this once per browser."
+  },
+  "discover4": {
+    "topPs5": "Top PS5 games"
   }
 }

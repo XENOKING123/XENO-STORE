@@ -8,6 +8,7 @@
     opts = opts || {};
     var headers = {};
     if (S.data.pin) headers['X-XENO-PIN'] = S.data.pin;
+    if (S.data.token) headers['Authorization'] = 'Bearer ' + S.data.token;   /* this browser's link to the PS5 */
     return U.fetchJSON(base + path, { method: method, body: body, headers: headers, timeout: opts.timeout }).then(function (r) {
       if (!S.data.serverOk) S.set('serverOk', true);
       return r;
@@ -65,7 +66,9 @@
     recentAdd: function (id) { return post('/api/recent', { id: id }, { quiet: true }); },
     exportAll: function () { return get('/api/export'); },
     importAll: function (obj) { return post('/api/import', obj); },
-    pair: function () { return get('/api/pair'); },
+    pair: function (opts) { return get('/api/pair', opts); },
+    pairShow: function () { return post('/api/pair/show', {}, { noPin: true }); },
+    pairRedeem: function (code) { return post('/api/pair', { code: code }, { noPin: true }); },
 
     /* Catalog: GET /catalog.json with ETag; cached copy in localStorage keeps browsing when the console is unreachable. */
     catalogEtag: '',

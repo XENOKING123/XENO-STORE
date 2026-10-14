@@ -49,5 +49,26 @@
     "worksHere": "Werkt met je games",
     "allSaves": "Alle community-saves",
     "browse": "Saves bekijken"
+  },
+  "link": {
+    "title": "Koppel je PS5",
+    "text": "Deze browser is nog niet aan je PS5 gekoppeld. Koppel hem één keer en blader, download en stuur games naar je PS5 vanaf hier.",
+    "address": "PS5 op {addr}",
+    "step1": "Druk op ‘Code op mijn PS5 tonen’",
+    "step2": "Je PS5 toont een 6-cijferige code in een melding",
+    "step3": "Typ de code hier",
+    "show": "Code op mijn PS5 tonen",
+    "shown": "Code verstuurd — kijk naar de melding op je PS5",
+    "wait": "Wacht {n} s voordat je hem opnieuw toont",
+    "codeLabel": "6-cijferige code",
+    "go": "Koppelen",
+    "linking": "Koppelen…",
+    "bad": "Die code klopt niet — controleer de melding op je PS5",
+    "locked": "Te veel pogingen — wacht {n} s",
+    "done": "Gekoppeld! XENO STORE wordt geopend…",
+    "note": "Alleen gekoppelde apparaten kunnen je store bedienen. Je doet dit één keer per browser."
+  },
+  "discover4": {
+    "topPs5": "Top PS5-games"
   }
 }

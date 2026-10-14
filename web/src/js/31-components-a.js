@@ -32,6 +32,7 @@
     opts = opts || {};
     var headers = {};
     if (S.data.pin) headers['X-XENO-PIN'] = S.data.pin;
+    if (S.data.token) headers['Authorization'] = 'Bearer ' + S.data.token;   /* this browser's link to the PS5 */
     return U.fetchJSON(path, { method: method, body: body, headers: headers, timeout: opts.timeout || 15000 }).then(null, function (err) {
       if (err.status === 401 && ui.askPin && !opts.noPin) return ui.askPin().then(function (ok) { return ok ? req(method, path, body, { noPin: true, timeout: opts.timeout }) : Promise.reject(err); });
       throw err;
