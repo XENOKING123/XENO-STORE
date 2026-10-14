@@ -6,19 +6,19 @@
   "payloads": [
     {
       "name": "XENO STORE",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "filename": "xeno-store.elf",
-      "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/v1.1.0/xeno-store.elf",
-      "sha256": "26a1a6a6f69a2247005f7b3f3af057d2f568c1a2f41cba15da6c58afe361a6aa",
+      "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/v1.1.1/xeno-store.elf",
+      "sha256": "ebc2d68c6f5303a6212d5e3ce2da4b3e1ddd8501f9367fc919640ec86fd3b4a6",
       "minFw": "",
       "notes": "Server only. Open http://<ps5-ip>:9095 (or http://xeno.local:9095) in the PS5 browser or on your phone. Recommended for Payload Manager auto-start."
     },
     {
       "name": "XENO STORE (opens browser)",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "filename": "xeno-store-browser.elf",
-      "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/v1.1.0/xeno-store-browser.elf",
-      "sha256": "6e29180173ca916456194afaed0079faaad05f06d47dba8d495555b78f76ed84",
+      "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/v1.1.1/xeno-store-browser.elf",
+      "sha256": "4bb6d4c7c9f0cb720e6707b7cc19d00bdec04e378e714c48b07b343eb4dd62bd",
       "minFw": "",
       "notes": "Same server, and it opens the PS5 web browser straight to the store. Pick this one when sending the payload by hand."
     }
