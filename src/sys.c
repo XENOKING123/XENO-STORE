@@ -24,10 +24,9 @@ typedef struct notify_request {
 } notify_request_t;
 extern int sceKernelSendNotificationRequest(int, notify_request_t *, size_t, int);
 extern int sceSystemServicePowerTick(void);
-#ifdef LAUNCH_BROWSER
+/* both PS5 builds can open the browser (sys_launch_browser); both link SceUserService + SceSystemService */
 extern int sceUserServiceInitialize(void *);
 extern int sceSystemServiceLaunchWebBrowser(const char *uri, void *);
-#endif
 #endif
 
 void sys_toast(const char *fmt, ...) {
