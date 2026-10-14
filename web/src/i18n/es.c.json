@@ -40,5 +40,14 @@
     "restarting": "Reiniciando XENO STORE…",
     "back": "XENO STORE ha vuelto · v{v}",
     "ready": "Actualización descargada: reinicia para terminar"
+  },
+  "saves3": {
+    "spotlight": "Partida destacada",
+    "rank": "N.º {n} en descargas",
+    "fresh": "Recién subida",
+    "autoResign": "Se vuelve a firmar para tu cuenta y se coloca en el juego automáticamente",
+    "worksHere": "Funciona con tus juegos",
+    "allSaves": "Todas las partidas de la comunidad",
+    "browse": "Ver partidas"
   }
 }

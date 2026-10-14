@@ -19,6 +19,7 @@ Each test spins up its own host-binary instance on a temp data dir.
 import hashlib
 import json
 import os
+import shutil
 import signal
 import sys
 import tempfile
@@ -303,6 +304,50 @@ class UsbWindowTests(unittest.TestCase):
         finally:
             srv.stop()
             rs.kill()
+
+
+class PageResolveTests(unittest.TestCase):
+    """"Get links" on a game page from a catalog page source: direct files and file-host
+    pages are listed, navigation links are not."""
+
+    def test_generic_page_lists_files_and_file_hosts(self):
+        import http.server, threading
+        page = (b'<html><body><a href="/">Home</a><a href="/category/ps5/">PS5</a>'
+                b'<a href="/files/PPSA01234-game.pkg">Download PKG</a>'
+                b'<a href="https://www.mediafire.com/file/abc123/PPSA01234.rar/file">Mediafire</a>'
+                b'<a href="https://www.mediafire.com/">Mediafire home</a>'
+                b'<a href="https://akirabox.com/x9Yz/file">AkiraBox</a>'
+                b'<a href="https://twitter.com/share">Share</a></body></html>')
+
+        class H(http.server.BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html")
+                self.send_header("Content-Length", str(len(page)))
+                self.end_headers()
+                self.wfile.write(page)
+
+            def log_message(self, *a):
+                pass
+        hs = http.server.ThreadingHTTPServer(("127.0.0.1", 0), H)
+        threading.Thread(target=hs.serve_forever, daemon=True).start()
+        tmp = tempfile.mkdtemp(prefix="xeno-resolve.")
+        srv = XenoServer(os.path.join(tmp, "data"), env={"XENO_HOST_RESOLVE_HOST": "127.0.0.1"}).start()
+        try:
+            url = "http://127.0.0.1:%d/some-game-ps5/" % hs.server_address[1]
+            st, b = srv.api("POST", "/api/links/resolve", {"url": url})
+            self.assertEqual(st, 200, b)
+            self.assertTrue(b["allowed"])
+            got = {(l["kind"], l["url"]) for l in b["links"]}
+            self.assertEqual(got, {
+                ("direct", "http://127.0.0.1:%d/files/PPSA01234-game.pkg" % hs.server_address[1]),
+                ("host", "https://www.mediafire.com/file/abc123/PPSA01234.rar/file"),
+                ("host", "https://akirabox.com/x9Yz/file"),
+            })
+        finally:
+            srv.stop()
+            hs.shutdown()
+            shutil.rmtree(tmp, ignore_errors=True)
 
 
 class UpdateRestartTests(unittest.TestCase):

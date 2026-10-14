@@ -1094,6 +1094,7 @@ static int tail_check(dl_job *j, const char *url, int64_t off, size_t len) {
     req.range_start = off;
     req.range_end = off + (int64_t)len - 1;
     req.follow_redirects = 8;
+    req.insecure_tls = j->insecure_tls;   /* same TLS policy as the transfer it checks */
     req.connect_timeout_ms = 15000;
     req.recv_timeout_ms = 30000;
     req.cancel_flag = &j->stop_io;
@@ -1634,6 +1635,21 @@ static int switch_mirror_locked(dl_job *j) {
   return 0;
 }
 
+/* A host that times out or answers 5xx / 429 gets a rest: the next attempt goes to the next
+ * mirror, wrapping back to the primary link. Resolved debrid links and replaced URLs stay put. */
+static int rotate_source_locked(dl_job *j) {
+  if (j->nmirrors <= 0 || j->via_active || j->url_replaced) return 0;
+  if (strcmp(j->seg_code, "network") != 0 && !status_is_transient(j->seg_status)) return 0;
+  int next = j->mirror_idx + 1;
+  if (next >= j->nmirrors) next = -1;
+  j->mirror_idx = next;
+  xstrlcpy(j->activeUrl, next < 0 ? j->url : j->mirrors[next], sizeof j->activeUrl);
+  char host[256];
+  util_url_host(j->activeUrl, host, sizeof host);
+  jlog_locked(j, "retry: next attempt via %s (%s)", next < 0 ? "the primary link" : "a mirror", host);
+  return 1;
+}
+
 static void worker_fail_locked(dl_job *j) {
   j->state = DL_FAILED;
   j->finishedAt = util_now();
@@ -1926,7 +1942,9 @@ static void run_job(dl_job *j) {
   pthread_mutex_lock(&queue_mu);
   if (j->fd >= 0) { close(j->fd); j->fd = -1; }
   if (out == OUT_STOPPED || j->cancel) {
-    /* the action that stopped us already set the state */
+    /* the action that stopped us already set the state; a pause or shutdown is not a failed
+     * attempt, so it does not use up the retry budget */
+    if ((j->cancel == DL_STOP_PAUSE || j->cancel == DL_STOP_SHUTDOWN) && j->attempts > 0) j->attempts--;
     j->speed = 0;
     j->eta = 0;
   } else if (out == OUT_RETRY) {
@@ -1936,6 +1954,7 @@ static void run_job(dl_job *j) {
       xsnprintf(j->message, sizeof j->message, "Gave up after %d attempts: %s", j->attempts, j->seg_error);
     } else {
       int delay = next_backoff(j->attempts - 1, j->retry_after);
+      if (rotate_source_locked(j) && delay > 3) delay = 3;   /* a different host needs no long back-off */
       j->state = DL_QUEUED;
       j->nextRetryAt = util_now() + delay;
       xstrlcpy(j->errorCode, j->seg_code, sizeof j->errorCode);
@@ -2313,7 +2332,9 @@ void dl_housekeeping_tick(void) {
   int running = 0, downloading = 0;
   for (int i = 0; i < n_jobs; i++) {
     if (jobs[i]->running && state_is_active(jobs[i]->state)) running++;
-    if (jobs[i]->state == DL_DOWNLOADING) downloading++;
+    /* hashing, extracting and installing a big game take minutes too: keep the console awake for them */
+    if (jobs[i]->state == DL_DOWNLOADING || jobs[i]->state == DL_VERIFYING || jobs[i]->state == DL_EXTRACTING ||
+        jobs[i]->state == DL_INSTALLING) downloading++;
   }
   int max_jobs = s.concurrentJobs < 1 ? 1 : s.concurrentJobs > 4 ? 4 : s.concurrentJobs;
   /* Schedule window (§17.5): queued jobs wait outside it unless "Start now". */
@@ -2499,7 +2520,8 @@ void dl_summary_get(dl_summary *out) {
     if (is_copy_job(j) && state_is_active(j->state)) out->copying++;
     if (state_is_unfinished(j->state) && j->total > j->written && j->state != DL_EXTRACTING) out->remaining += j->total - j->written;
     if (j->state == DL_DOWNLOADING) speed += j->speed;
-    if (j->state == DL_DOWNLOADING && s.keepAwake && !is_copy_job(j)) out->keepAwake = 1;
+    if ((j->state == DL_DOWNLOADING || j->state == DL_VERIFYING || j->state == DL_EXTRACTING || j->state == DL_INSTALLING) &&
+        s.keepAwake && !is_copy_job(j)) out->keepAwake = 1;
   }
   pthread_mutex_unlock(&queue_mu);
   out->speed = (int64_t)speed;

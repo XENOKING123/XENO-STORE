@@ -40,5 +40,14 @@
     "restarting": "XENO STORE yeniden başlatılıyor…",
     "back": "XENO STORE geri döndü · v{v}",
     "ready": "Güncelleme indirildi — bitirmek için yeniden başlat"
+  },
+  "saves3": {
+    "spotlight": "Öne çıkan kayıt",
+    "rank": "İndirmelerde {n}. sırada",
+    "fresh": "Yeni yüklendi",
+    "autoResign": "Hesabın için otomatik yeniden imzalanır ve oyuna yerleştirilir",
+    "worksHere": "Oyunlarınla çalışır",
+    "allSaves": "Tüm topluluk kayıtları",
+    "browse": "Kayıtlara göz at"
   }
 }

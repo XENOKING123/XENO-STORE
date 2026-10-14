@@ -31,17 +31,16 @@ from audit import audited_at_of, load_results as load_audit_results  # noqa: E40
 from enrich import psstore, seeds, steam  # noqa: E402
 from merge import GameDraft, catalog_content_signature, merge_drafts  # noqa: E402
 from netutil import BROWSER_UA, BudgetExceeded, Http, HttpError  # noqa: E402
-from schema import Catalog, SourceInfo, validate_catalog  # noqa: E402
+from schema import Catalog, SourceInfo, compact_catalog, validate_catalog  # noqa: E402
 from sources import REGISTRY, SourceContext, SourceSpec, get_sources  # noqa: E402
 from sources.base import drafts_from_previous  # noqa: E402
 
 PROJECT_ROOT = HERE.parent.parent          # repository root
-REPO_ROOT = PROJECT_ROOT.parent            # the repository (holds client/ with the bundled seeds)
 CATALOG_DIR = PROJECT_ROOT / "catalog"
 DEFAULT_OUT = CATALOG_DIR / "xeno-catalog.json"
 AUDIT_RESULTS = CATALOG_DIR / "snapshots" / "audit" / "results.json"
 JSON_SEPARATORS = (",", ":")
-MAX_NODES = 600_000                        # the console parser caps at 900k JSON values; stay well under
+MAX_NODES = 1_200_000                      # the console parser caps at 1.5M JSON values; stay well under
 
 # Politeness per host (seconds between requests); everything else uses 1 req/s.
 HOST_INTERVALS = {
@@ -264,7 +263,7 @@ def build(args: argparse.Namespace, log) -> int:
     enrichers = []
     seed_obj = None
     if not args.no_seeds:
-        seed_fn, seed_obj = seeds.enricher(REPO_ROOT, log)
+        seed_fn, seed_obj = seeds.enricher(PROJECT_ROOT, log)
         if seed_fn is not None:
             enrichers.append(seed_fn)
     steam_cache = steam.SteamCache(PROJECT_ROOT / steam.CACHE_FILE)
@@ -309,11 +308,12 @@ def build(args: argparse.Namespace, log) -> int:
             log("  " + e)
         return 2
 
-    nodes = count_nodes(doc)
+    wire = compact_catalog(doc)
+    nodes = count_nodes(wire)
     if nodes > MAX_NODES:
         log(f"TOO LARGE: {nodes} JSON nodes exceeds the {MAX_NODES} budget the console parser is sized for")
         return 2
-    size = write_json_atomic(out_path, doc, compact=True)
+    size = write_json_atomic(out_path, wire, compact=True)
     verified = sum(1 for g in doc["games"] for r in g["releases"] if r["verifiedAt"])
     write_json_atomic(revision_path, {
         "revision": doc["revision"], "generatedAt": doc["generatedAt"], "games": len(doc["games"]),

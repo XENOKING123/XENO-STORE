@@ -40,5 +40,14 @@
     "restarting": "Restarting XENO STORE…",
     "back": "XENO STORE is back · v{v}",
     "ready": "Update downloaded — restart to finish"
+  },
+  "saves3": {
+    "spotlight": "Save spotlight",
+    "rank": "#{n} most downloaded",
+    "fresh": "Fresh upload",
+    "autoResign": "Re-signed to your account and placed in the game automatically",
+    "worksHere": "Works with your games",
+    "allSaves": "All community saves",
+    "browse": "Browse saves"
   }
 }

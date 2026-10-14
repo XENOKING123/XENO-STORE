@@ -116,6 +116,107 @@
     c.addEventListener('click', function () { openSave(s); });
     return c;
   }
+
+  /* ---------- Save spotlight: the showcase band on the Saves screen and Discover ----------
+     The most downloaded saves (compatible ones first) on the game's art, with Install front and centre.
+     Auto-advances like the Discover stage; holds while you browse inside it, on other screens and in layers. */
+  var SPOT_PERIOD = 8000, SPOT_IDLE = 20000;
+  function spotPool(all, n) {
+    var pool = all.filter(function (s) { return s.url || s.id; }).slice();
+    pool.sort(function (a, b) {
+      var ca2 = compatible(a) ? 1 : 0, cb2 = compatible(b) ? 1 : 0;
+      return cb2 - ca2 || b.downloads - a.downloads || ((b.createdAt || '') < (a.createdAt || '') ? -1 : (b.createdAt || '') > (a.createdAt || '') ? 1 : 0);
+    });
+    return pool.slice(0, n || 6);
+  }
+  function spotArt(s) {
+    var g = s._game;
+    var src = (g && (g.hero || g.cover)) || s.cover || s.cover_path || s.screenshot || '';
+    var fb = (g && (g.heroFallback || g.coverFallback)) || s._coverFallback || '';
+    return ui.cover(ca.api.imageUrl(src), fb, s.title);
+  }
+  function spotlight(list, opts) {
+    opts = opts || {};
+    var pool = spotPool(list, opts.max || 6);
+    if (!pool.length) return null;
+    var pre = opts.id || 'spot';
+    var el = h('section.sv-spot' + (opts.compact ? '.compact' : ''), { data: { navRegion: '' }, 'aria-label': t('saves3.spotlight') });
+    var artA = h('i.sv-art.live'), artB = h('i.sv-art');
+    el.appendChild(h('div.sv-spot-art', [artA, artB]));
+    var body = h('div.sv-spot-body');
+    el.appendChild(body);
+    var picks = h('div.sv-spot-picks');
+    var tiles = pool.map(function (s, i) {
+      var b = h('button.sv-pick', { nav: pre + '-pick:' + i, data: { hints: 'select' }, 'aria-label': s.name + ' — ' + s.title }, [coverEl(s), h('span.n.ellipsis', { text: s.name })]);
+      b.addEventListener('click', function () { if (st.idx === i) openSave(s); else select(i); });
+      b.addEventListener('focus', function () { if (st.idx !== i) select(i); });
+      picks.appendChild(b);
+      return b;
+    });
+    if (pool.length > 1) el.appendChild(picks);
+    var bar = h('div.sv-spot-bar', [h('i')]);
+    if (pool.length > 1) el.appendChild(bar);
+    var st = { idx: -1, elapsed: 0, last: Date.now(), lastInput: 0, held: false, timer: 0, live: artA };
+    el.addEventListener('keydown', function () { st.lastInput = Date.now(); }, true);
+    el.addEventListener('pointerdown', function () { st.lastInput = Date.now(); }, true);
+    function paintBody(s, i) {
+      U.clear(body);
+      var rankText = s.downloads > 0 ? t('saves3.rank', { n: i + 1 }) : t('saves3.fresh');
+      body.appendChild(h('div.sv-spot-kicker', [h('span.rk-no', { text: String(i + 1) }), h('span', { text: t('saves3.spotlight') + ' · ' + rankText })]));
+      body.appendChild(h('h2.sv-spot-name', { text: s.name }));
+      body.appendChild(h('div.sv-spot-game.ellipsis', { text: s.title }));
+      body.appendChild(h('div.chips', [catChip(s.category), compatBadge(s)].concat(s.tags.slice(0, 3).map(function (x) { return h('span.chip.sm', { text: '#' + x }); }))));
+      if (s.description && !opts.compact) body.appendChild(h('p.sv-spot-desc.clamp2', { text: s.description }));
+      body.appendChild(h('div.sv-spot-meta', { text: metaLine(s) }));
+      var inst = h('button.btn.primary.lg', { nav: pre + '-install', html: U.icon('download') + '<span>' + U.escapeHtml(t('saves.install')) + '</span>' });
+      inst.addEventListener('click', function () { installSheet(s); });
+      var det = h('button.btn.lg', { nav: pre + '-details', html: U.icon('info') + '<span>' + U.escapeHtml(t('saves.details')) + '</span>' });
+      det.addEventListener('click', function () { openSave(s); });
+      var row = h('div.btn-row', [inst, det]);
+      if (opts.more) { var mo = h('button.btn.lg.ghost', { nav: pre + '-more', html: U.icon('grid') + '<span>' + U.escapeHtml(t('saves3.browse')) + '</span>' }); mo.addEventListener('click', opts.more); row.appendChild(mo); }
+      body.appendChild(row);
+      body.appendChild(h('div.sv-spot-note', [ui.svg('shield'), h('span', { text: t('saves3.autoResign') })]));
+      if (!U.reducedMotion()) { body.classList.remove('in'); void body.offsetWidth; body.classList.add('in'); }
+    }
+    function select(i) {
+      if (i === st.idx || !pool[i]) return;
+      var s = pool[i];
+      var next = st.live === artA ? artB : artA;
+      U.clear(next); next.appendChild(spotArt(s));
+      st.live.classList.remove('live'); st.live.classList.add('out');
+      next.classList.remove('out'); next.classList.add('live');
+      var prev = st.live; st.live = next;
+      setTimeout(function () { prev.classList.remove('out'); }, 950);
+      st.idx = i;
+      tiles.forEach(function (b, k) { b.classList.toggle('live', k === i); });
+      paintBody(s, i);
+      st.elapsed = 0;
+      var fill = bar.firstChild; if (fill) { bar.replaceChild(h('i'), fill); }
+    }
+    function held(now) {
+      if (!el.isConnected || document.hidden) return true;
+      var scrEl = el.closest('.screen'); if (scrEl && !scrEl.classList.contains('active')) return true;
+      if (XS.ui.layers.length || (ca.screensaver && ca.screensaver.active()) || (ca.safeMode && ca.safeMode())) return true;
+      return el.contains(document.activeElement) && now - st.lastInput < SPOT_IDLE;
+    }
+    function tick() {
+      if (!el.isConnected) { clearInterval(st.timer); return; }
+      var now = Date.now(), dt = now - st.last; st.last = now;
+      var hd2 = held(now);
+      if (hd2 !== st.held) { st.held = hd2; el.classList.toggle('held', hd2); }
+      if (hd2 || pool.length < 2) return;
+      st.elapsed += dt;
+      if (st.elapsed >= (U.reducedMotion() ? SPOT_PERIOD * 1.5 : SPOT_PERIOD)) select((st.idx + 1) % pool.length);
+    }
+    artA.appendChild(spotArt(pool[0]));
+    st.idx = 0;
+    tiles.forEach(function (b, k) { b.classList.toggle('live', k === 0); });
+    paintBody(pool[0], 0);
+    if (pool.length > 1) st.timer = setInterval(tick, 250);
+    el._spot = { select: select, size: pool.length, index: function () { return st.idx; } };
+    return el;
+  }
+
   /* Horizontal row for the game tab */
   function rowCard(s, i) {
     var r = h('div.save-row', { data: { save: s.id } });
@@ -374,7 +475,15 @@
     }
     function cmpDate(a, b) { return (b.createdAt || '') < (a.createdAt || '') ? -1 : (b.createdAt || '') > (a.createdAt || '') ? 1 : 0; }
     fetchAll().then(function () {
-      if (!scr.q && !scr.cat && !scr.compatOnly) { var nw = cache.all.slice().sort(cmpDate).slice(0, 12); var sec = rail(t('discover2.newSaves'), nw, { id: 'newest' }); if (sec) newestHost.appendChild(sec); }
+      if (!scr.q && !scr.cat && !scr.compatOnly) {
+        var sp = spotlight(cache.all, { id: 'sv-spot' }); if (sp) newestHost.appendChild(sp);
+        var nw = cache.all.slice().sort(cmpDate).slice(0, 12); var sec = rail(t('discover2.newSaves'), nw, { id: 'newest' }); if (sec) newestHost.appendChild(sec);
+        var pop = cache.all.filter(function (x) { return x.downloads > 0; }).sort(function (a, b) { return b.downloads - a.downloads; }).slice(0, 12);
+        var sec2 = pop.length >= 3 ? rail(t('saves.sort.popular'), pop, { id: 'popular' }) : null; if (sec2) newestHost.appendChild(sec2);
+        var works = cache.all.filter(compatible).sort(cmpDate).slice(0, 12);
+        var sec3 = works.length ? rail(t('saves3.worksHere'), works, { id: 'works' }) : null; if (sec3) newestHost.appendChild(sec3);
+        newestHost.appendChild(h('h2.sv-all-head', { text: t('saves3.allSaves') }));
+      }
       paintGrid();
     }, function (err) { U.clear(gridHost); gridHost.appendChild(ui.emptyState(t('saves.loadFailed'), ui.errorText(err), [h('button.btn', { nav: 'sv-retry', text: t('common.retry'), on: { click: render } })])); });
   }
@@ -584,6 +693,7 @@
   XS.saves = {
     count: function (g) { return fetchGame(g).then(function (l) { return l.length; }); },
     newest: function (n) { return fetchAll().then(function (list) { return list.slice().sort(function (a, b) { return (b.createdAt || '') < (a.createdAt || '') ? -1 : 1; }).slice(0, n || 12); }); },
+    spotlight: spotlight, all: function () { return fetchAll(); },
     rail: rail, card: card, renderGameTab: renderGameTab, openSave: openSave, install: installSheet, download: downloadFile, report: report, upload: uploadWizard,
     engine: engine, categories: CATS, invalidate: function () { cache.all = null; cache.byGame = {}; }
   };

@@ -40,5 +40,14 @@
     "restarting": "XENO STORE wordt opnieuw gestart…",
     "back": "XENO STORE is terug · v{v}",
     "ready": "Update gedownload — start opnieuw om af te ronden"
+  },
+  "saves3": {
+    "spotlight": "Uitgelichte save",
+    "rank": "Nr. {n} in downloads",
+    "fresh": "Net geüpload",
+    "autoResign": "Automatisch opnieuw ondertekend voor je account en in de game gezet",
+    "worksHere": "Werkt met je games",
+    "allSaves": "Alle community-saves",
+    "browse": "Saves bekijken"
   }
 }

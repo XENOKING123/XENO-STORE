@@ -327,7 +327,9 @@ class ExtDownloadTests(unittest.TestCase):
                 self.assertIn("127.0.0.1", svc["hosts"])
                 self.assertTrue(svc["hostsKnown"])
         st, s = self.srv.api("GET", "/api/settings")
-        self.assertEqual(s["settings"]["debrid"]["realdebrid"]["apiKey"], "rd-good")
+        self.assertEqual(s["settings"]["debrid"]["realdebrid"]["apiKey"], "****")   # masked; short keys show no tail
+        with open(os.path.join(self.data, "settings.json")) as f:
+            self.assertEqual(json.load(f)["debrid"]["realdebrid"]["apiKey"], "rd-good")
         labels = {"realdebrid": "Real-Debrid", "alldebrid": "AllDebrid", "torbox": "TorBox", "premiumize": "Premiumize"}
         expect_calls = {"realdebrid": ["unrestrict/link"], "alldebrid": ["link/unlock"],
                         "torbox": ["webdl/createwebdownload", "webdl/mylist", "webdl/requestdl"], "premiumize": ["transfer/directdl"]}

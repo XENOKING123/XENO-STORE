@@ -8,7 +8,7 @@ error strings and an empty list means the document is valid.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field, asdict
+from dataclasses import MISSING, dataclass, field, fields, asdict
 from datetime import date, datetime
 from typing import Any
 
@@ -269,6 +269,76 @@ class Catalog:
 
 
 # --------------------------------------------------------------------------- #
+# Compact wire form: members whose value is empty ("" / 0 / false / null / [])
+# and equal to the field default are left out of the file. Readers fill them
+# back from the root "defaults" object (the C payload already reads every
+# member with the same empty default). Halves the JSON values per game.
+# --------------------------------------------------------------------------- #
+
+def _field_defaults(cls) -> dict[str, Any]:
+    out: dict[str, Any] = {}
+    for f in fields(cls):
+        if f.default is not MISSING:
+            out[f.name] = f.default
+        elif f.default_factory is not MISSING:  # type: ignore[misc]
+            out[f.name] = f.default_factory()    # type: ignore[misc]
+    return out
+
+
+GAME_DEFAULTS = {k: v for k, v in _field_defaults(Game).items() if k != "releases"}
+RELEASE_DEFAULTS = _field_defaults(Release)
+
+
+def _is_empty_default(v: Any, dflt: Any) -> bool:
+    if v is None or dflt is None:
+        return v is None and dflt is None
+    if isinstance(v, bool) != isinstance(dflt, bool):
+        return False
+    return v == dflt and not v
+
+
+def _compact_obj(d: dict[str, Any], defaults: dict[str, Any]) -> dict[str, Any]:
+    return {k: v for k, v in d.items() if not (k in defaults and _is_empty_default(v, defaults[k]))}
+
+
+def _expand_obj(d: dict[str, Any], defaults: dict[str, Any]) -> dict[str, Any]:
+    out = dict(d)
+    for k, v in defaults.items():
+        if k not in out:
+            out[k] = list(v) if isinstance(v, list) else v
+    return out
+
+
+def compact_catalog(doc: dict[str, Any]) -> dict[str, Any]:
+    """Full catalog dict -> the compact form written to disk (adds root "defaults")."""
+    out = {k: v for k, v in doc.items() if k != "games"}
+    out["defaults"] = {"game": {k: v for k, v in GAME_DEFAULTS.items() if not v},
+                       "release": {k: v for k, v in RELEASE_DEFAULTS.items() if not v}}
+    games = []
+    for g in doc.get("games", []):
+        cg = _compact_obj({k: v for k, v in g.items() if k != "releases"}, GAME_DEFAULTS)
+        cg["releases"] = [_compact_obj(r, RELEASE_DEFAULTS) for r in g.get("releases", [])]
+        games.append(cg)
+    out["games"] = games
+    return out
+
+
+def expand_catalog(doc: dict[str, Any]) -> dict[str, Any]:
+    """Compact (or full) catalog dict -> full dict with every member present."""
+    out = {k: v for k, v in doc.items() if k not in ("games", "defaults")}
+    games = []
+    for g in doc.get("games", []) or []:
+        if not isinstance(g, dict):
+            games.append(g)
+            continue
+        eg = _expand_obj(g, GAME_DEFAULTS)
+        eg["releases"] = [_expand_obj(r, RELEASE_DEFAULTS) if isinstance(r, dict) else r for r in (g.get("releases") or [])]
+        games.append(eg)
+    out["games"] = games
+    return out
+
+
+# --------------------------------------------------------------------------- #
 # Validation
 # --------------------------------------------------------------------------- #
 
@@ -284,6 +354,7 @@ def validate_catalog(doc: dict[str, Any], max_errors: int = 200) -> list[str]:
     plus structural problems (bad id format, unknown format/kind/genre, duplicate
     release ids inside a game, mirrors that are not URLs).
     """
+    doc = expand_catalog(doc) if isinstance(doc, dict) and isinstance(doc.get("games"), list) else doc
     errors: list[str] = []
 
     def err(msg: str) -> None:

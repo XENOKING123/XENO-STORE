@@ -250,10 +250,15 @@
   function savesRailHost() {
     var host = h('div', { data: { railHost: 'saves' } });
     if (!XS.saves || !S.data.serverOk) return host;
-    XS.saves.newest(12).then(function (list) {
-      if (!list.length) return;
-      var sec = XS.saves.rail(t('discover2.newSaves'), list, { id: 'saves', more: function () { XS.router.go('saves'); } });
-      if (sec && host.isConnected) { U.clear(host); host.appendChild(sec); }
+    XS.saves.all().then(function (all) {
+      if (!all.length || !host.isConnected) return;
+      var goSaves = function () { XS.router.go('saves'); };
+      var sp = XS.saves.spotlight(all, { id: 'd-spot', compact: true, max: 5, more: goSaves });
+      var list = all.slice().sort(function (a, b) { return (b.createdAt || '') < (a.createdAt || '') ? -1 : 1; }).slice(0, 12);
+      var sec = XS.saves.rail(t('discover2.newSaves'), list, { id: 'saves', more: goSaves });
+      U.clear(host);
+      if (sp) host.appendChild(sp);
+      if (sec) host.appendChild(sec);
     }, function () { /* offline: no rail */ });
     return host;
   }

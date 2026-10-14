@@ -40,5 +40,14 @@
     "restarting": "XENO STORE を再起動しています…",
     "back": "XENO STORE が戻りました · v{v}",
     "ready": "アップデートをダウンロードしました — 再起動して完了"
+  },
+  "saves3": {
+    "spotlight": "注目のセーブデータ",
+    "rank": "ダウンロード数 {n} 位",
+    "fresh": "新着",
+    "autoResign": "あなたのアカウント用に自動で再署名され、ゲームに配置されます",
+    "worksHere": "あなたのゲームに対応",
+    "allSaves": "コミュニティのセーブデータすべて",
+    "browse": "セーブデータを見る"
   }
 }

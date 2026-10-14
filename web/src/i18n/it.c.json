@@ -40,5 +40,14 @@
     "restarting": "Riavvio di XENO STORE…",
     "back": "XENO STORE è tornato · v{v}",
     "ready": "Aggiornamento scaricato: riavvia per completare"
+  },
+  "saves3": {
+    "spotlight": "Salvataggio in evidenza",
+    "rank": "N. {n} per download",
+    "fresh": "Appena caricato",
+    "autoResign": "Rifirmato per il tuo account e inserito nel gioco automaticamente",
+    "worksHere": "Funziona con i tuoi giochi",
+    "allSaves": "Tutti i salvataggi della community",
+    "browse": "Sfoglia i salvataggi"
   }
 }

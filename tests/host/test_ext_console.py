@@ -435,8 +435,8 @@ class ConsoleTests(unittest.TestCase):
         self.assertEqual(s["downloads"]["preferFormat"], "FFPFSC")   # canonical spelling
         self.assertFalse(s["downloads"]["turboStart"])
         self.assertEqual(s["downloads"]["installOrder"], "dlc,game,backport,update")   # missing kinds appended
-        self.assertEqual(s["debrid"]["realdebrid"]["apiKey"], "RDKEY123")
-        self.assertEqual(s["debrid"]["torbox"]["apiKey"], "TBKEY")
+        self.assertEqual(s["debrid"]["realdebrid"]["apiKey"], "****")        # keys never leave the console
+        self.assertEqual(s["debrid"]["torbox"]["apiKey"], "****")
         self.assertEqual(s["debrid"]["preferred"], "realdebrid")
         self.assertEqual(s["saves"]["uploadHost"], "catbox")
         self.assertEqual(s["saves"]["backend"]["url"], "https://abc.supabase.co")   # trailing slash stripped
@@ -458,11 +458,16 @@ class ConsoleTests(unittest.TestCase):
         st, ex = self.srv.api("GET", "/api/export")
         for k in ("debrid", "saves", "browse"):
             self.assertIn(k, ex["settings"])
-        ex["settings"]["debrid"]["realdebrid"]["apiKey"] = "FROM-IMPORT"
+        self.assertEqual(ex["settings"]["debrid"]["realdebrid"]["apiKey"], "****")
+        st, b = self.srv.api("POST", "/api/import", ex)          # a masked echo keeps the stored key
+        self.assertEqual(st, 200, b)
+        with open(os.path.join(self.data, "settings.json")) as f:
+            self.assertEqual(json.load(f)["debrid"]["realdebrid"]["apiKey"], "RDKEY123")
+        ex["settings"]["debrid"]["realdebrid"]["apiKey"] = "FROM-IMPORT-KEY"
         st, b = self.srv.api("POST", "/api/import", ex)
         self.assertEqual(st, 200, b)
         st, b = self.srv.api("GET", "/api/settings")
-        self.assertEqual(b["settings"]["debrid"]["realdebrid"]["apiKey"], "FROM-IMPORT")
+        self.assertEqual(b["settings"]["debrid"]["realdebrid"]["apiKey"], "****-KEY")
         # restore the defaults this suite relies on
         st, b = self.srv.api("PUT", "/api/settings", {
             "general": {"screensaver": True, "screensaverMinutes": 3},

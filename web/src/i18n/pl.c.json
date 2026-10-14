@@ -40,5 +40,14 @@
     "restarting": "Ponowne uruchamianie XENO STORE…",
     "back": "XENO STORE wrócił · v{v}",
     "ready": "Aktualizacja pobrana — uruchom ponownie, aby dokończyć"
+  },
+  "saves3": {
+    "spotlight": "Zapis w centrum uwagi",
+    "rank": "Nr {n} wśród pobrań",
+    "fresh": "Świeżo dodany",
+    "autoResign": "Automatycznie podpisany dla twojego konta i umieszczony w grze",
+    "worksHere": "Działa z twoimi grami",
+    "allSaves": "Wszystkie zapisy społeczności",
+    "browse": "Przeglądaj zapisy"
   }
 }

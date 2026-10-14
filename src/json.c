@@ -151,15 +151,20 @@ char *jw_detach(jw *w, size_t *len) {
 
 #define JV_NONE 0xFFFFFFFFu
 
+/* 24 bytes per value: keys and text are offsets into jdoc.text, so a big catalog costs
+ * 40% less memory than with pointers. */
 typedef struct jnode {
-  uint8_t type;
   uint32_t next;       /* sibling index or JV_NONE */
   uint32_t first;      /* first child (containers) */
   uint32_t count;      /* children (containers) / string length (strings) */
-  const char *key;     /* object member key (unescaped, NUL-terminated) */
-  const char *s;       /* string/number text (NUL-terminated) */
-  int b;               /* bool value */
+  uint32_t key;        /* 1 + offset of the member key in text (unescaped, NUL-terminated); 0 = none */
+  uint32_t s;          /* offset of the string/number text in text (NUL-terminated) */
+  uint8_t type;
+  uint8_t b;           /* bool value */
 } jnode;
+
+#define NKEY(d, n) ((n)->key ? (const char *)(d)->text + (n)->key - 1 : (const char *)NULL)
+#define NSTR(d, n) ((const char *)(d)->text + (n)->s)
 
 struct jdoc {
   char *text;
@@ -307,7 +312,7 @@ static uint32_t parse_container(parser *ps, uint8_t type) {
     }
     uint32_t child = parse_value(ps);
     if (child == JV_NONE) { ps->err = 1; return JV_NONE; }
-    ps->d->nodes[child].key = key;
+    ps->d->nodes[child].key = key ? (uint32_t)(key - ps->d->text) + 1 : 0;
     if (last == JV_NONE) ps->d->nodes[self].first = child;
     else ps->d->nodes[last].next = child;
     last = child;
@@ -336,7 +341,7 @@ static uint32_t parse_value(parser *ps) {
     if (!s) return JV_NONE;
     uint32_t n = node_new(ps, JV_STR);
     if (n == JV_NONE) return JV_NONE;
-    ps->d->nodes[n].s = s;
+    ps->d->nodes[n].s = (uint32_t)(s - ps->d->text);
     ps->d->nodes[n].count = (uint32_t)len;
     return n;
   }
@@ -362,7 +367,7 @@ static uint32_t parse_value(parser *ps) {
       ps->p++;
     uint32_t n = node_new(ps, JV_NUM);
     if (n == JV_NONE) return JV_NONE;
-    ps->d->nodes[n].s = start;
+    ps->d->nodes[n].s = (uint32_t)(start - ps->d->text);
     ps->d->nodes[n].count = (uint32_t)(ps->p - start);
     return n;
   }
@@ -370,6 +375,7 @@ static uint32_t parse_value(parser *ps) {
 }
 
 jdoc *json_parse(const char *text, size_t len, size_t max_nodes, int max_depth) {
+  if (len >= 0xFFFFFFF0u) return NULL;   /* offsets are 32-bit */
   jdoc *d = calloc(1, sizeof *d);
   if (!d) return NULL;
   d->max_nodes = max_nodes ? max_nodes : 200000;
@@ -386,7 +392,7 @@ jdoc *json_parse(const char *text, size_t len, size_t max_nodes, int max_depth) 
   /* Number literals need NUL termination for strtod: terminate them now that
    * parsing is done (the next char is always punctuation/whitespace). */
   for (size_t i = 0; i < d->n; i++) {
-    if (d->nodes[i].type == JV_NUM) ((char *)d->nodes[i].s)[d->nodes[i].count] = 0;
+    if (d->nodes[i].type == JV_NUM) d->text[d->nodes[i].s + d->nodes[i].count] = 0;
   }
   return d;
 }
@@ -414,7 +420,8 @@ jv jv_get(jv obj, const char *key) {
   const jnode *n = N(obj);
   if (!n || n->type != JV_OBJ) return none;
   for (uint32_t i = n->first; i != JV_NONE; i = obj.d->nodes[i].next) {
-    if (obj.d->nodes[i].key && strcmp(obj.d->nodes[i].key, key) == 0) { jv r = { obj.d, i }; return r; }
+    const char *k = NKEY(obj.d, &obj.d->nodes[i]);
+    if (k && strcmp(k, key) == 0) { jv r = { obj.d, i }; return r; }
   }
   return none;
 }
@@ -446,11 +453,11 @@ size_t jv_len(jv c) {
   return (n && (n->type == JV_ARR || n->type == JV_OBJ)) ? n->count : 0;
 }
 
-const char *jv_key(jv m) { const jnode *n = N(m); return n ? n->key : NULL; }
+const char *jv_key(jv m) { const jnode *n = N(m); return n ? NKEY(m.d, n) : NULL; }
 
 const char *jv_str(jv v, const char *dflt) {
   const jnode *n = N(v);
-  return (n && n->type == JV_STR) ? n->s : dflt;
+  return (n && n->type == JV_STR) ? NSTR(v.d, n) : dflt;
 }
 
 size_t jv_strlen(jv v) { const jnode *n = N(v); return (n && n->type == JV_STR) ? n->count : 0; }
@@ -459,18 +466,18 @@ int64_t jv_i64(jv v, int64_t dflt) {
   const jnode *n = N(v);
   if (!n) return dflt;
   if (n->type == JV_NUM) {
-    if (strpbrk(n->s, ".eE")) { double d = strtod(n->s, NULL); return (int64_t)d; }
-    return (int64_t)strtoll(n->s, NULL, 10);
+    if (strpbrk(NSTR(v.d, n), ".eE")) { double d = strtod(NSTR(v.d, n), NULL); return (int64_t)d; }
+    return (int64_t)strtoll(NSTR(v.d, n), NULL, 10);
   }
   if (n->type == JV_BOOL) return n->b;
-  if (n->type == JV_STR) { int64_t x; return (n->s[0] && sscanf(n->s, "%lld", (long long *)&x) == 1) ? x : dflt; }
+  if (n->type == JV_STR) { int64_t x; return (NSTR(v.d, n)[0] && sscanf(NSTR(v.d, n), "%lld", (long long *)&x) == 1) ? x : dflt; }
   return dflt;
 }
 
 double jv_dbl(jv v, double dflt) {
   const jnode *n = N(v);
   if (!n) return dflt;
-  if (n->type == JV_NUM) return strtod(n->s, NULL);
+  if (n->type == JV_NUM) return strtod(NSTR(v.d, n), NULL);
   if (n->type == JV_BOOL) return n->b;
   return dflt;
 }
@@ -479,8 +486,8 @@ int jv_bool(jv v, int dflt) {
   const jnode *n = N(v);
   if (!n) return dflt;
   if (n->type == JV_BOOL) return n->b;
-  if (n->type == JV_NUM) return strtod(n->s, NULL) != 0.0;
-  if (n->type == JV_STR) return strcmp(n->s, "true") == 0 || strcmp(n->s, "1") == 0;
+  if (n->type == JV_NUM) return strtod(NSTR(v.d, n), NULL) != 0.0;
+  if (n->type == JV_STR) return strcmp(NSTR(v.d, n), "true") == 0 || strcmp(NSTR(v.d, n), "1") == 0;
   return dflt;
 }
 
@@ -495,8 +502,8 @@ void jw_value(jw *w, jv v) {
   switch (n->type) {
     case JV_NULL: jw_null(w); break;
     case JV_BOOL: jw_bool(w, n->b); break;
-    case JV_NUM: jw_raw(w, n->s, n->count); break;
-    case JV_STR: jw_strn(w, n->s, n->count); break;
+    case JV_NUM: jw_raw(w, NSTR(v.d, n), n->count); break;
+    case JV_STR: jw_strn(w, NSTR(v.d, n), n->count); break;
     case JV_ARR:
       jw_arr_begin(w);
       JV_FOREACH(it, v) jw_value(w, it);

@@ -40,5 +40,14 @@
     "restarting": "Reiniciando a XENO STORE…",
     "back": "A XENO STORE voltou · v{v}",
     "ready": "Atualização baixada — reinicie para concluir"
+  },
+  "saves3": {
+    "spotlight": "Save em destaque",
+    "rank": "Nº {n} em downloads",
+    "fresh": "Recém-enviado",
+    "autoResign": "Reassinado para sua conta e colocado no jogo automaticamente",
+    "worksHere": "Funciona com seus jogos",
+    "allSaves": "Todos os saves da comunidade",
+    "browse": "Ver saves"
   }
 }

@@ -2,11 +2,11 @@
 
 Inputs, read straight from this repository (never copied):
 
-* ``client/src-tauri/resources/titles-seed.zip``
+* ``catalog/seeds/titles-seed.zip``
   * ``All_Titles.json`` — 69,552 PS4/PS5 titles: ``titleId`` (``CUSA00002_00``), ``conceptId``,
     official ``name``, ``contentId`` (``EP9000-CUSA00002_00-…``), ``region`` (content-id prefix), ``publisherId``;
   * ``cheatslist.json`` — ``{"entries":[{"id":"CUSA00002","version":"01.00","formats":{json|shn|mc4:{cheats:[...]}}}]}``.
-* ``client/public/covers.json`` — ``{"titles": {"<lower-case title>": "<PlayStation CDN url>" | "no-image"}}``.
+* ``catalog/seeds/covers.json`` — ``{"titles": {"<lower-case title>": "<PlayStation CDN url>" | "no-image"}}``.
 
 What a game gets: ``titleIds`` filled by exact normalized-name match when a source only knew the name,
 official names for title-id-only entries, ``conceptId`` → ``psStoreUrl``, region hints from the
@@ -25,8 +25,8 @@ from typing import Any, Callable
 from merge import clean_title, normalize_title, platform_for_title_id
 from schema import Game
 
-SEED_ZIP = Path("client/src-tauri/resources/titles-seed.zip")   # relative to the repository root
-COVERS_JSON = Path("client/public/covers.json")
+SEED_ZIP = Path("catalog/seeds/titles-seed.zip")   # relative to the repository root
+COVERS_JSON = Path("catalog/seeds/covers.json")
 PS_STORE_CONCEPT = "https://store.playstation.com/en-us/concept/"
 MAX_FILLED_TITLE_IDS = 4
 

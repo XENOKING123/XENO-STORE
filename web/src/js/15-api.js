@@ -80,9 +80,12 @@
           if (res.status === 304) return resolve({ unchanged: true });
           if (!res.ok) throw new Error('http_' + res.status);
           var et = res.headers.get('ETag') || '';
-          return res.json().then(function (cat) {
+          return res.text().then(function (txt) {
+            var cat = JSON.parse(txt);
             api.catalogEtag = et;
-            try { localStorage.setItem('xs.catalog', JSON.stringify(cat)); } catch (e) { /* too big for this browser: fine */ }
+            /* keep the raw text as the offline copy; a catalog bigger than the browser quota drops the stale one */
+            try { if (txt.length < 4500000) localStorage.setItem('xs.catalog', txt); else localStorage.removeItem('xs.catalog'); }
+            catch (e) { try { localStorage.removeItem('xs.catalog'); } catch (e2) { /* storage blocked */ } }
             resolve({ catalog: cat, etag: et });
           });
         }).catch(function (err) {

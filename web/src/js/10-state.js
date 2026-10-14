@@ -21,8 +21,13 @@
       data.catalog = cat;
       var games = (cat && cat.games) || [];
       var byId = {}, byTitle = {}, genreCount = {};
+      var dg = (cat && cat.defaults && cat.defaults.game) || null, dr = (cat && cat.defaults && cat.defaults.release) || null;
       for (var i = 0; i < games.length; i++) {
         var g = games[i];
+        /* compact catalogs leave empty members out; put them back so every screen sees the full shape */
+        if (dg) fillDefaults(g, dg);
+        if (!g.releases) g.releases = [];
+        if (dr) for (var ri = 0; ri < g.releases.length; ri++) fillDefaults(g.releases[ri], dr);
         byId[g.id] = g;
         g._nt = U.normTitle(g.title);
         g._series = U.seriesKey(g.title);
@@ -91,6 +96,14 @@
     }
   };
 
+  function fillDefaults(o, d) {
+    for (var k in d) {
+      if (Object.prototype.hasOwnProperty.call(d, k) && !Object.prototype.hasOwnProperty.call(o, k)) {
+        var v = d[k];
+        o[k] = Array.isArray(v) ? [] : (v && typeof v === 'object' ? {} : v);
+      }
+    }
+  }
   function kinds(g) {
     var k = {};
     var rs = g.releases || [];

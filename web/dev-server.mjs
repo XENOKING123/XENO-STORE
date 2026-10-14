@@ -142,9 +142,18 @@ function convertSnapshots() {
   return { schemaVersion: 1, revision, generatedAt: new Date().toISOString(), name: 'XENO STORE Catalog (dev mock)', sources, genres: [...genreSet].sort(), games: list };
 }
 
+// The file on disk is the compact wire form (empty members left out, see tools/catalog/schema.py);
+// the mock mutates games, so give it the full shape first.
+function expandCatalog(cat) {
+  const dg = (cat.defaults && cat.defaults.game) || {}, dr = (cat.defaults && cat.defaults.release) || {};
+  const fill = (o, d) => { for (const k of Object.keys(d)) if (!(k in o)) o[k] = Array.isArray(d[k]) ? [] : d[k]; return o; };
+  for (const g of cat.games || []) { fill(g, dg); g.releases = (g.releases || []).map((r) => fill(r, dr)); }
+  delete cat.defaults;
+  return cat;
+}
 const catalogPath = resolve(argValue('--catalog', join(ROOT, 'catalog', 'xeno-catalog.json')));
 let catalog;
-if (existsSync(catalogPath)) { catalog = JSON.parse(readFileSync(catalogPath, 'utf8')); log('info', `catalog: ${catalogPath} (revision ${catalog.revision}, ${catalog.games.length} games)`); }
+if (existsSync(catalogPath)) { catalog = expandCatalog(JSON.parse(readFileSync(catalogPath, 'utf8'))); log('info', `catalog: ${catalogPath} (revision ${catalog.revision}, ${catalog.games.length} games)`); }
 else { catalog = convertSnapshots(); log('info', `catalog: converted from snapshots (${catalog.games.length} games, ${catalog.games.reduce((n, g) => n + g.releases.length, 0)} releases)`); }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 

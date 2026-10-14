@@ -40,5 +40,14 @@
     "restarting": "XENO STORE wird neu gestartet…",
     "back": "XENO STORE ist zurück · v{v}",
     "ready": "Update heruntergeladen — zum Abschließen neu starten"
+  },
+  "saves3": {
+    "spotlight": "Spielstand-Spotlight",
+    "rank": "Platz {n} der Downloads",
+    "fresh": "Neu hochgeladen",
+    "autoResign": "Automatisch für dein Konto neu signiert und ins Spiel gelegt",
+    "worksHere": "Passt zu deinen Spielen",
+    "allSaves": "Alle Community-Spielstände",
+    "browse": "Spielstände ansehen"
   }
 }

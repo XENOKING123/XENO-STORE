@@ -40,5 +40,14 @@
     "restarting": "Redémarrage de XENO STORE…",
     "back": "XENO STORE est de retour · v{v}",
     "ready": "Mise à jour téléchargée — redémarrez pour terminer"
+  },
+  "saves3": {
+    "spotlight": "Sauvegarde à la une",
+    "rank": "N° {n} des téléchargements",
+    "fresh": "Tout juste publiée",
+    "autoResign": "Re-signée pour ton compte et placée dans le jeu automatiquement",
+    "worksHere": "Compatible avec tes jeux",
+    "allSaves": "Toutes les sauvegardes de la communauté",
+    "browse": "Parcourir les sauvegardes"
   }
 }

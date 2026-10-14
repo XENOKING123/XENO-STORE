@@ -95,7 +95,18 @@ void settings_saves_root(const settings_t *s, char *out, size_t cap) {
 
 /* ---- JSON (de)serialization --------------------------------------------- */
 
-static void write_settings(jw *w, const settings_t *s) {
+/* Debrid keys leave the console only as "****" + the last 4 characters; settings.json on the
+ * console keeps the real key. A PUT or import carrying a masked value keeps the stored key. */
+#define KEY_MASK "****"
+static void write_key(jw *w, const char *key, int mask) {
+  if (!mask || !key[0]) { jw_kv_str(w, "apiKey", key); return; }
+  char out[16];
+  size_t n = strlen(key);
+  xsnprintf(out, sizeof out, KEY_MASK "%s", n > 8 ? key + n - 4 : "");
+  jw_kv_str(w, "apiKey", out);
+}
+
+static void write_settings(jw *w, const settings_t *s, int mask) {
   jw_obj_begin(w);
   jw_kv_int(w, "v", 1);
   jw_key(w, "general"); jw_obj_begin(w);
@@ -120,10 +131,10 @@ static void write_settings(jw *w, const settings_t *s) {
   jw_kv_bool(w, "deleteArchiveAfterExtract", s->deleteArchiveAfterExtract);
   jw_obj_end(w);
   jw_key(w, "debrid"); jw_obj_begin(w);
-  jw_key(w, "realdebrid"); jw_obj_begin(w); jw_kv_str(w, "apiKey", s->debrid.realdebrid.apiKey); jw_obj_end(w);
-  jw_key(w, "alldebrid"); jw_obj_begin(w); jw_kv_str(w, "apiKey", s->debrid.alldebrid.apiKey); jw_obj_end(w);
-  jw_key(w, "torbox"); jw_obj_begin(w); jw_kv_str(w, "apiKey", s->debrid.torbox.apiKey); jw_obj_end(w);
-  jw_key(w, "premiumize"); jw_obj_begin(w); jw_kv_str(w, "apiKey", s->debrid.premiumize.apiKey); jw_obj_end(w);
+  jw_key(w, "realdebrid"); jw_obj_begin(w); write_key(w, s->debrid.realdebrid.apiKey, mask); jw_obj_end(w);
+  jw_key(w, "alldebrid"); jw_obj_begin(w); write_key(w, s->debrid.alldebrid.apiKey, mask); jw_obj_end(w);
+  jw_key(w, "torbox"); jw_obj_begin(w); write_key(w, s->debrid.torbox.apiKey, mask); jw_obj_end(w);
+  jw_key(w, "premiumize"); jw_obj_begin(w); write_key(w, s->debrid.premiumize.apiKey, mask); jw_obj_end(w);
   jw_kv_str(w, "preferred", s->debrid.preferred);
   jw_obj_end(w);
   jw_key(w, "sources"); jw_obj_begin(w);
@@ -328,6 +339,8 @@ static int merge_into(settings_t *s, jv o, char *err, size_t errcap) {
                                                 {"torbox", s->debrid.torbox.apiKey}, {"premiumize", s->debrid.premiumize.apiKey}};
     for (size_t i = 0; i < XS_ARRAY_LEN(svc); i++) {
       jv e = jv_get(db, svc[i].k);
+      const char *incoming = jv_type(e) == JV_OBJ ? jv_get_str(e, "apiKey", "") : jv_str(e, "");
+      if (strncmp(incoming, KEY_MASK, sizeof KEY_MASK - 1) == 0) continue;   /* a masked echo: keep the stored key */
       if (jv_type(e) == JV_OBJ) merge_str(e, "apiKey", svc[i].dst, SET_DEBRID_KEY_LEN);
       else if (jv_type(e) == JV_STR) xstrlcpy(svc[i].dst, jv_str(e, ""), SET_DEBRID_KEY_LEN);   /* {"torbox":"key"} shorthand */
       else if (jv_type(e) == JV_NULL) svc[i].dst[0] = 0;
@@ -479,7 +492,7 @@ static jdoc *load_json(const char *name) {
 static void save_settings_locked(void) {
   jw w;
   jw_init(&w);
-  write_settings(&w, &S);
+  write_settings(&w, &S, 0);
   save_json("settings.json", &w);
 }
 
@@ -644,7 +657,7 @@ int settings_merge(jv obj, char *err, size_t errcap) {
 
 void settings_write_json(jw *w) {
   pthread_mutex_lock(&settings_mu);
-  write_settings(w, &S);
+  write_settings(w, &S, 1);
   pthread_mutex_unlock(&settings_mu);
 }
 
@@ -773,7 +786,7 @@ void settings_export_json(jw *w) {
   pthread_mutex_lock(&settings_mu);
   jw_kv_int(w, "v", 1);
   jw_kv_i64(w, "exportedAt", (int64_t)util_now());
-  jw_key(w, "settings"); write_settings(w, &S);
+  jw_key(w, "settings"); write_settings(w, &S, 1);
   jw_key(w, "favorites"); jw_arr_begin(w);
   for (int i = 0; i < n_favorites; i++) jw_str(w, favorites[i]);
   jw_arr_end(w);

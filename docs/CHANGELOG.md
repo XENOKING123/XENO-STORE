@@ -2,6 +2,26 @@
 
 All notable changes to XENO STORE. The version lives in `VERSION`; releases are tagged `v<VERSION>`.
 
+## 1.1.1 — 2026-10-14
+
+### Catalog
+- Room for the full online catalog (5,000+ games from every source): the file leaves empty fields out and the store fills them back in, which halves its size, and the console keeps each JSON value in 24 bytes instead of 40, so it can read 1.5 million values in the same memory as 900k before.
+- The 6-hourly sync enriches games again with official titles, cheat counts and covers from the bundled seeds.
+- The offline copy kept by the browser is replaced, not left stale, when a catalog no longer fits.
+- "Get links" works on every page source (SuperPSX, pkg.games, PSPKG, ArabicPS4Games, RomsFun, RomsPure, EspacyPKG) and also lists file-host pages such as Mediafire, 1fichier, AkiraBox, DataNodes and Pixeldrain.
+
+### Saves
+- Save spotlight: the Saves screen opens on a showcase of the most downloaded community saves (compatible ones first) with Install front and centre, followed by Newest, Most downloaded and Works with your games rails. Discover shows a compact spotlight above the community saves rail.
+
+### Downloads
+- A host that times out or answers 5xx / 429 makes the next attempt use the next mirror, with a short wait instead of the full back-off.
+- Pausing, resuming or rebooting no longer uses up the retry budget.
+- The resume tail check follows the "Allow insecure TLS" setting like the transfer itself.
+- The console stays awake while a big game is verified, extracted or installed, not only while it downloads.
+
+### Privacy
+- Debrid API keys never leave the console: settings and exports show `****` plus the last four characters, and sending a masked value back keeps the stored key.
+
 ## 1.1.0 — 2026-10-13
 
 ### Home

@@ -10,16 +10,25 @@
     "unaudited": 2592
   },
   "backports": 6,
-  "bytes": 3601870,
+  "bytes": 2637351,
   "changed": true,
   "droppedGames": {},
   "droppedReleases": {
     "duplicate_url": 8
   },
   "droppedSamples": [],
-  "elapsed": 2.0,
+  "elapsed": 6.5,
   "enrichment": {
     "psStoreCache": 0,
+    "seeds": {
+      "cheats": 543,
+      "conceptIds": 1905,
+      "covers": 420,
+      "games": 1965,
+      "namesResolved": 0,
+      "regions": 869,
+      "titleIdsFilled": 420
+    },
     "steamCache": 0
   },
   "formats": {
@@ -29,7 +38,7 @@
     "exFAT": 673
   },
   "games": 1965,
-  "generatedAt": "2026-10-13T23:21:49Z",
+  "generatedAt": "2026-10-14T00:05:50Z",
   "genres": {
     "Action": 239,
     "Adventure": 136,
@@ -53,14 +62,14 @@
   },
   "mergedGroups": 332,
   "mode": "offline",
-  "nodes": 159991,
+  "nodes": 79699,
   "platforms": {
     "HOMEBREW": 0,
     "PS4": 1163,
     "PS5": 802
   },
   "releases": 2592,
-  "revision": 4,
+  "revision": 5,
   "sources": [
     {
       "draftGames": 1505,
@@ -196,9 +205,9 @@
     }
   ],
   "verifiedReleases": 370,
-  "withCheats": 0,
+  "withCheats": 543,
   "withMetacritic": 0,
-  "withPsStoreUrl": 0,
+  "withPsStoreUrl": 1905,
   "withScreenshots": 1290,
-  "withTitleIds": 1490
+  "withTitleIds": 1910
 }

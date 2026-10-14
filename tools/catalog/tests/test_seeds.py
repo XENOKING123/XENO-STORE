@@ -113,11 +113,11 @@ class EnrichTests(unittest.TestCase):
             logs = []
             self.assertIsNone(seeds.Seeds.load(tmp, logs.append))
             self.assertTrue(any("not found" in m for m in logs))
-            (tmp / seeds.SEED_ZIP).parent.mkdir(parents=True)
+            (tmp / seeds.SEED_ZIP).parent.mkdir(parents=True, exist_ok=True)
             with zipfile.ZipFile(tmp / seeds.SEED_ZIP, "w") as z:
                 z.writestr("All_Titles.json", json.dumps(fixture_json("seeds_titles.json")))
                 z.writestr("cheatslist.json", json.dumps(fixture_json("seeds_cheats.json")))
-            (tmp / seeds.COVERS_JSON).parent.mkdir(parents=True)
+            (tmp / seeds.COVERS_JSON).parent.mkdir(parents=True, exist_ok=True)
             (tmp / seeds.COVERS_JSON).write_text(json.dumps(fixture_json("seeds_covers.json")), encoding="utf-8")
             s = seeds.Seeds.load(tmp, logs.append)
             self.assertIsNotNone(s)
@@ -136,7 +136,7 @@ class EnrichTests(unittest.TestCase):
 
     def test_real_repo_seeds_when_present(self):
         from fakes import PROJECT_ROOT
-        repo = PROJECT_ROOT.parent
+        repo = PROJECT_ROOT
         if not (repo / seeds.SEED_ZIP).exists():
             self.skipTest("bundled seeds not in this checkout")
         s = seeds.Seeds.load(repo, lambda m: None)

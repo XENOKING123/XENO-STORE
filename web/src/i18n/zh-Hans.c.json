@@ -40,5 +40,14 @@
     "restarting": "正在重启 XENO STORE…",
     "back": "XENO STORE 已恢复 · v{v}",
     "ready": "更新已下载 — 重启以完成"
+  },
+  "saves3": {
+    "spotlight": "存档聚光灯",
+    "rank": "下载量第 {n} 名",
+    "fresh": "新上传",
+    "autoResign": "自动为你的账户重新签名并放入游戏",
+    "worksHere": "适用于你的游戏",
+    "allSaves": "全部社区存档",
+    "browse": "浏览存档"
   }
 }

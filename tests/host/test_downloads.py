@@ -148,6 +148,7 @@ class DownloadTests(unittest.TestCase):
         self.assertEqual(b["job"]["state"], "queued")
         j = self.srv.wait_job(jid, "done", timeout=120)
         self.assert_clean_final(j, self.sha["big.bin"])
+        self.assertEqual(j["attempts"], 1)   # the paused attempt does not use up the retry budget
         st, lg = self.srv.api("GET", f"/api/queue/{jid}/log")
         self.assertTrue(any("resuming with" in ln for ln in lg["lines"]), lg["lines"])
 

@@ -48,7 +48,16 @@ static cat_state *cur;
 static int64_t embedded_rev = -1, cached_rev = -1;
 static char data_dir[512];
 static const char *const ALLOWED_HOSTS[] = {"dlpsgame.com", "archive.org", "raw.githubusercontent.com", "github.com",
-                                            "api.github.com", "prosperopatches.com", "orbispatches.com", "vikingfile.com"};
+                                            "api.github.com", "prosperopatches.com", "orbispatches.com", "vikingfile.com",
+                                            /* the catalog's page sources (catalog/sources.json, kind "page") */
+                                            "superpsx.com", "pkg.games", "pspkg.com", "arabicps4games.com", "romsfun.com",
+                                            "romspure.cc", "espacypkg.com"};
+
+/* File hosts a game page links to. Their links are file pages, not files: the download engine
+ * resolves them (debrid, provider-page detection), so "Get links" lists them as kind "host". */
+static const char *const FILE_HOSTS[] = {"mediafire.com", "1fichier.com", "pixeldrain.com", "gofile.io", "akirabox.com",
+                                         "akirabox.to", "datanodes.to", "vikingfile.com", "mega.nz", "buzzheavier.com",
+                                         "qiwi.gg", "rootz.so", "krakenfiles.com", "send.cm", "ranoz.gg", "uploadhaven.com"};
 
 /* ---- blob refcount ------------------------------------------------------ */
 
@@ -122,7 +131,7 @@ static int build_index(cat_state *s) {
  * for the life of the state when embedded (it points into assets.h). */
 static cat_state *state_build(const unsigned char *text, size_t len, const unsigned char *gz, size_t gz_len,
                               int embedded, const char *source, char *err, size_t errcap) {
-  jdoc *doc = json_parse((const char *)text, len, 900000, 32);
+  jdoc *doc = json_parse((const char *)text, len, 1500000, 32);   /* 24 B per value: 36 MB at the cap */
   if (!doc) { xsnprintf(err, errcap, "catalog is not valid JSON"); return NULL; }
   jv root = json_root(doc);
   if (jv_type(root) != JV_OBJ || jv_type(jv_get(root, "games")) != JV_ARR) {
@@ -302,7 +311,7 @@ static int catalog_refresh_inner(int force, int *updated, char *err, size_t errc
     }
     if (remote < 0 && !force) { xsnprintf(err, errcap, "Could not read revision.json (%s)", xhttp_last_error()); return -1; }
   }
-  char *txt = fetch_text(s.catalogUrl, 60000, 48u << 20, &len, &resp);
+  char *txt = fetch_text(s.catalogUrl, 120000, 48u << 20, &len, &resp);
   if (!txt) { xsnprintf(err, errcap, "Catalog download failed: %s", xhttp_last_error()); return -1; }
   if (resp.status != 200) { xsnprintf(err, errcap, "Catalog download returned HTTP %d", resp.status); free(txt); return -1; }
   cat_state *ns = state_build((unsigned char *)txt, len, NULL, 0, 0, "cached", err, errcap);
@@ -659,6 +668,20 @@ int catalog_links_check(jv urls, jw *w) {
 
 int catalog_host_allowed(const char *host) {
   for (size_t i = 0; i < XS_ARRAY_LEN(ALLOWED_HOSTS); i++) if (util_host_matches(host, ALLOWED_HOSTS[i])) return 1;
+#ifdef XENO_HOST
+  const char *extra = getenv("XENO_HOST_RESOLVE_HOST");   /* host tests: a local page server */
+  if (extra && *extra && strcmp(host, extra) == 0) return 1;
+#endif
+  return 0;
+}
+
+static int link_is_file_host(const char *url) {
+  char host[256];
+  xurl u;
+  if (util_url_parse(url, &u) != 0) return 0;
+  if (!u.path[0] || strcmp(u.path, "/") == 0) return 0;   /* the host's home page, not a file */
+  util_url_host(url, host, sizeof host);
+  for (size_t i = 0; i < XS_ARRAY_LEN(FILE_HOSTS); i++) if (util_host_matches(host, FILE_HOSTS[i])) return 1;
   return 0;
 }
 
@@ -893,6 +916,8 @@ static int resolve_generic(link_set *ls, const char *page_url, const char *host,
       char fn[256];
       util_url_filename(abs, fn, sizeof fn);
       link_add(ls, abs, fn, -1, "direct");
+    } else if (link_is_file_host(abs)) {
+      link_add(ls, abs, NULL, -1, "host");
     }
   }
   (void)host;
