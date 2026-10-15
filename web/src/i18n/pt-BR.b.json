@@ -189,6 +189,7 @@
     "backUpAllText": "{n, plural, one{# save} other{# saves}} de {name} serão compactados um a um na unidade de backup. Cada título é um trabalho.",
     "backupAllNone": "Nada para fazer backup",
     "backupAllStarted": "{n, plural, one{# backup iniciado} other{# backups iniciados}}",
+    "backupAllSkipped": "{n, plural, one{# save ficou sem backup} other{# saves ficaram sem backup}}",
     "saveBackupJob": "Backup de save",
     "backupFailed": "O backup falhou · {title}",
     "inProgress": "Em andamento",

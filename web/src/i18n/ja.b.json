@@ -189,6 +189,7 @@
     "backUpAllText": "{name} の{n, plural, other{#個のセーブ}}を1つずつバックアップドライブに zip します。各タイトルが1ジョブです。",
     "backupAllNone": "バックアップするものがありません",
     "backupAllStarted": "{n, plural, other{#件のバックアップを開始}}",
+    "backupAllSkipped": "{n, plural, other{#件のセーブはバックアップされませんでした}}",
     "saveBackupJob": "セーブのバックアップ",
     "backupFailed": "バックアップ失敗・{title}",
     "inProgress": "進行中",

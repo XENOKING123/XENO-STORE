@@ -371,7 +371,8 @@
         cb.api.savesBackupAll(fg.id).then(function (res) {
           row.classList.remove('busy');
           var n = res.started || (res.jobs || []).length;
-          ui.toast({ cls: n ? 'gold' : 'good', title: n ? t('lib2.backupAllStarted', { n: n }) : t('lib2.backupAllNone'), action: n ? { label: t('lib2.savesHub'), onClick: function () { XS.router.go('saveshub'); } } : null });
+          if (n || !(res.skipped || []).length) ui.toast({ cls: n ? 'gold' : 'good', title: n ? t('lib2.backupAllStarted', { n: n }) : t('lib2.backupAllNone'), action: n ? { label: t('lib2.savesHub'), onClick: function () { XS.router.go('saveshub'); } } : null });
+          cb.backupSkipped(res);
         }, function (err) { row.classList.remove('busy'); ui.errorToast(err, t('lib2.backUpAll')); });
       });
     }, function (err) { row.classList.remove('busy'); ui.errorToast(err, t('lib2.backUpAll')); });

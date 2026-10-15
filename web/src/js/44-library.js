@@ -655,8 +655,8 @@
       if (!ok) return;
       cb.api.savesBackupAll(sh.user.id).then(function (r) {
         var ids = r.jobs || [];
-        if (!ids.length) { ui.toast({ cls: 'good', title: t('lib2.backupAllNone') }); return; }
-        ui.toast({ cls: 'gold', title: t('lib2.backupAllStarted', { n: r.started || ids.length }) });
+        if (ids.length) ui.toast({ cls: 'gold', title: t('lib2.backupAllStarted', { n: r.started || ids.length }) });
+        if (!cb.backupSkipped(r) && !ids.length) ui.toast({ cls: 'good', title: t('lib2.backupAllNone') });
         ids.forEach(function (j) { var id = typeof j === 'string' ? j : (j && j.id); if (id) trackJob({ id: id, title: t('lib2.saveBackupJob'), state: 'queued' }, ''); });
       }, function (err) { ui.errorToast(err, t('lib2.backUpAll')); });
     });

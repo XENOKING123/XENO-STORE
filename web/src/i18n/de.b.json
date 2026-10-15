@@ -189,6 +189,7 @@
     "backUpAllText": "{n, plural, one{# Save} other{# Saves}} von {name} werden einer nach dem anderen auf das Backup-Laufwerk gezippt. Jeder Titel ist ein Job.",
     "backupAllNone": "Nichts zu sichern",
     "backupAllStarted": "{n, plural, one{# Backup gestartet} other{# Backups gestartet}}",
+    "backupAllSkipped": "{n, plural, one{# Spielstand wurde nicht gesichert} other{# Spielstände wurden nicht gesichert}}",
     "saveBackupJob": "Save-Backup",
     "backupFailed": "Backup fehlgeschlagen · {title}",
     "inProgress": "Läuft",

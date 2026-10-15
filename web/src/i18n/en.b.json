@@ -189,6 +189,7 @@
     "backUpAllText": "{n, plural, one{# save} other{# saves}} of {name} will be zipped one by one to the backup drive. Each title is one job.",
     "backupAllNone": "Nothing to back up",
     "backupAllStarted": "{n, plural, one{# backup started} other{# backups started}}",
+    "backupAllSkipped": "{n, plural, one{# save was not backed up} other{# saves were not backed up}}",
     "saveBackupJob": "Save backup",
     "backupFailed": "Backup failed · {title}",
     "inProgress": "In progress",

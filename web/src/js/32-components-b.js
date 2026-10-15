@@ -152,6 +152,13 @@
   cb.busy = function (text) { return h('div.panel.busy-row', [h('div.row', [h('span.skel', { style: { width: '18px', height: '18px', borderRadius: '50%', flex: '0 0 auto' } }), h('span.dim', { text: text })])]); };
   cb.spinnerBtn = function (btn, on) { if (!btn) return; btn.classList.toggle('busy', !!on); if (on) btn.setAttribute('aria-disabled', 'true'); else btn.removeAttribute('aria-disabled'); };
   cb.okToast = function (title, desc) { return ui.toast({ cls: 'good', title: title, desc: desc || '' }); };
+  /* "Back up all": the saves whose backup did not start (another backup, restore, install or transfer holds them),
+     with the console's reason. A dialog, so the toasts of the backups that did start cannot push it away. */
+  cb.backupSkipped = function (r) {
+    var s = (r && r.skipped) || [];
+    if (s.length) ui.dialog({ title: t('lib2.backupAllSkipped', { n: s.length }), body: s.slice(0, 6).map(function (x) { return h('p.dim', { text: x.message || x.titleId }); }).concat(s.length > 6 ? [h('p.dim', { text: '…' })] : []), buttons: [{ label: t('common.close'), primary: true, autofocus: true }] });
+    return s.length;
+  };
   /* Two confirmations in a row for destructive, irreversible actions (uninstall game, delete folder). */
   cb.doubleConfirm = function (title, text, okLabel, secondText) {
     return ui.confirm(title, text, okLabel, true).then(function (ok) {

@@ -189,6 +189,7 @@
     "backUpAllText": "{n, plural, one{# save} other{# saves}} van {name} worden een voor een naar de back-upschijf gezipt. Elke titel is één taak.",
     "backupAllNone": "Niets om te back-uppen",
     "backupAllStarted": "{n, plural, one{# back-up gestart} other{# back-ups gestart}}",
+    "backupAllSkipped": "{n, plural, one{# save is niet geback-upt} other{# saves zijn niet geback-upt}}",
     "saveBackupJob": "Save-back-up",
     "backupFailed": "Back-up mislukt · {title}",
     "inProgress": "Bezig",

@@ -189,6 +189,7 @@
     "backUpAllText": "{n, plural, one{# sauvegarde} other{# sauvegardes}} de {name} seront compressées une par une vers le disque de sauvegarde. Chaque titre est une tâche.",
     "backupAllNone": "Rien à sauvegarder",
     "backupAllStarted": "{n, plural, one{# sauvegarde démarrée} other{# sauvegardes démarrées}}",
+    "backupAllSkipped": "{n, plural, one{# partie n’a pas été sauvegardée} other{# parties n’ont pas été sauvegardées}}",
     "saveBackupJob": "Sauvegarde de partie",
     "backupFailed": "Échec de la sauvegarde · {title}",
     "inProgress": "En cours",

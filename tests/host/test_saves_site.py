@@ -47,7 +47,6 @@ import os
 import re
 import shutil
 import struct
-import subprocess
 import sys
 import tempfile
 import threading
@@ -1011,21 +1010,10 @@ try {
 """
 
 
-def playwright_module():
-    """The Playwright package node can load (the web UI checks use the same one), or None."""
-    node = shutil.which("node")
-    if not node:
-        return None
-    for cand in (os.environ.get("XENO_PLAYWRIGHT", ""), "/opt/node22/lib/node_modules/playwright", "playwright"):
-        if cand and subprocess.run([node, "-e", "require.resolve(process.argv[1])", cand], capture_output=True).returncode == 0:
-            return cand
-    return None
-
-
 class RefreshButtonTests(Base):
     @classmethod
     def setUpClass(cls):
-        cls.pw = playwright_module()
+        cls.pw = harness.playwright_module()
         if not cls.pw:
             raise unittest.SkipTest("node with Playwright is not installed")
         cls.files = Files()
@@ -1047,17 +1035,7 @@ class RefreshButtonTests(Base):
     def test_01_refresh_lists_the_site_again_once(self):
         self.assertTrue(any(s["id"].startswith("sb:") for s in self.store()["saves"]))   # the console has its copy
         listed = len(self.site.requests("GET", "/rest/v1/ps5_save_collection"))
-        script = os.path.join(self.tmp, "refresh.mjs")
-        with open(script, "w", encoding="utf-8") as f:
-            f.write(REFRESH_SCRIPT)
-        env = dict(os.environ, XENO_PLAYWRIGHT=self.pw)
-        if not env.get("PLAYWRIGHT_BROWSERS_PATH") and os.path.isdir("/opt/pw-browsers"):
-            env["PLAYWRIGHT_BROWSERS_PATH"] = "/opt/pw-browsers"
-        r = subprocess.run([shutil.which("node"), script, self.srv.base], capture_output=True, text=True, timeout=180, env=env, cwd=self.tmp)
-        if r.returncode != 0 and "Executable doesn't exist" in r.stderr:
-            self.skipTest("Playwright has no Chromium here")
-        self.assertEqual(r.returncode, 0, r.stderr[-2000:])
-        asked = json.loads(r.stdout.strip().splitlines()[-1])
+        asked = harness.run_ui_script(self, self.pw, self.tmp, REFRESH_SCRIPT, self.srv.base)
         self.assertEqual([q for q in asked if "refresh=1" in q], ["?refresh=1"], asked)   # the first click; the others are throttled
         self.assertEqual(len(self.site.requests("GET", "/rest/v1/ps5_save_collection")) - listed, 1)
 

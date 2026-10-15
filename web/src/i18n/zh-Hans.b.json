@@ -189,6 +189,7 @@
     "backUpAllText": "{n, plural, other{# 个存档}}（属于 {name}）将逐个打包到备份驱动器。每个标题是一个任务。",
     "backupAllNone": "没有可备份的内容",
     "backupAllStarted": "{n, plural, other{已开始 # 个备份}}",
+    "backupAllSkipped": "{n, plural, other{# 个存档未备份}}",
     "saveBackupJob": "存档备份",
     "backupFailed": "备份失败 · {title}",
     "inProgress": "进行中",

@@ -189,6 +189,7 @@
     "backUpAllText": "{n, plural, one{# salvataggio} other{# salvataggi}} di {name} verranno compressi in zip uno a uno sull'unità di backup. Ogni titolo è un lavoro.",
     "backupAllNone": "Niente di cui fare il backup",
     "backupAllStarted": "{n, plural, one{# backup avviato} other{# backup avviati}}",
+    "backupAllSkipped": "{n, plural, one{# salvataggio non è stato copiato} other{# salvataggi non sono stati copiati}}",
     "saveBackupJob": "Backup del salvataggio",
     "backupFailed": "Backup fallito · {title}",
     "inProgress": "In corso",

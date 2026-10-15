@@ -189,6 +189,7 @@
     "backUpAllText": "{n, plural, one{# zapis} few{# zapisy} many{# zapisów} other{# zapisu}} gracza {name} zostanie spakowany kolejno na dysk kopii zapasowych. Każdy tytuł to jedno zadanie.",
     "backupAllNone": "Nic do skopiowania",
     "backupAllStarted": "{n, plural, one{Rozpoczęto # kopię zapasową} few{Rozpoczęto # kopie zapasowe} many{Rozpoczęto # kopii zapasowych} other{Rozpoczęto # kopii zapasowej}}",
+    "backupAllSkipped": "{n, plural, one{Nie utworzono kopii # zapisu} few{Nie utworzono kopii # zapisów} many{Nie utworzono kopii # zapisów} other{Nie utworzono kopii # zapisu}}",
     "saveBackupJob": "Kopia zapasowa zapisu",
     "backupFailed": "Kopia nie powiodła się · {title}",
     "inProgress": "W toku",

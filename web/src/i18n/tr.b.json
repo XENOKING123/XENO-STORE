@@ -189,6 +189,7 @@
     "backUpAllText": "{name} profilinin {n, plural, one{# kaydı} other{# kaydı}} tek tek yedek sürücüsüne ziplenecek. Her başlık bir iştir.",
     "backupAllNone": "Yedeklenecek bir şey yok",
     "backupAllStarted": "{n, plural, one{# yedek başlatıldı} other{# yedek başlatıldı}}",
+    "backupAllSkipped": "{n, plural, one{# kayıt yedeklenmedi} other{# kayıt yedeklenmedi}}",
     "saveBackupJob": "Kayıt yedeği",
     "backupFailed": "Yedek başarısız · {title}",
     "inProgress": "Sürüyor",

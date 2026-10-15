@@ -27,7 +27,10 @@ garlic-savemgr src/main.c route by route, single recv() per request included):
     and refused while the title runs;
   * a backup takes the same (profile, title) claim as an install or restore:
     refused (busy) while one runs, skipped with its reason by "back up all",
-    and given back whether the backup worked or failed;
+    and given back whether the backup worked or failed; both "Back up all"
+    buttons of the UI (Saves hub, Settings) show the skipped saves with the
+    console's reason (the real UI in Chromium, when node and Playwright are
+    installed);
   * Garlic down: status/setup report it, POST /api/saves/garlic/start sends
     the pinned companion release (downloaded, sha256 checked) to a fake ELF
     loader and waits for the port, and falls back to an ELF on the console
@@ -1013,6 +1016,79 @@ class PinnedPlaceholderTests(Base):
         self.assertEqual(self.files.log.count("/pin/garlic-savemgr.elf"), 2)
         self.assertNotIn("/garlic-placeholder.elf", self.files.log)
         self.assertEqual(self.loader.received, [])
+
+
+# ---------------------------------------------------------------------------
+# "Back up all" in the UI the console serves: the skipped saves are shown
+# ---------------------------------------------------------------------------
+
+BACKUP_ALL_SCRIPT = r"""
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.XENO_PLAYWRIGHT);
+const base = process.argv[2];
+const answers = JSON.parse(process.argv[3]);
+const browser = await chromium.launch();
+try {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await page.addInitScript(() => { localStorage.setItem('xs.wizardDone', 'true'); });   // no first-run wizard over the screen
+  // the console's answers while another operation holds a save (test_13d checks the console's side)
+  let n = 0;
+  await page.route('**/api/saves/backup', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(answers[n++]) }));
+  await page.goto(base + '/');
+  await page.waitForFunction(() => window.XS && XS.router && document.querySelector('#scr-discover'), null, { timeout: 30000 });
+  const backUpAll = async (button) => {
+    await page.click(button);
+    const answered = page.waitForResponse((r) => new URL(r.url()).pathname === '/api/saves/backup');
+    await page.click('.dialog-wrap [data-nav-id="dlg-1"]');                   // the confirmation
+    await answered;
+    await page.waitForTimeout(1000);
+    const shown = await page.evaluate(() => ({
+      dialogs: Array.from(document.querySelectorAll('.dialog-wrap .dialog')).map((d) => d.innerText),
+      toasts: Array.from(document.querySelectorAll('#toasts .toast')).map((d) => d.innerText),
+    }));
+    await page.evaluate(() => { document.querySelectorAll('#toasts .toast').forEach((e) => e.remove()); });
+    if (shown.dialogs.length) await page.click('.dialog-wrap [data-nav-id="dlg-0"]');
+    await page.waitForTimeout(500);
+    return shown;
+  };
+  const out = {};
+  await page.evaluate(() => XS.router.go('saveshub'));
+  await page.waitForSelector('#scr-saveshub [data-nav-id^="sh-user-"]', { timeout: 30000 });
+  out.hub = await backUpAll('#scr-saveshub [data-nav-id="sh-backup-all"]');
+  await page.evaluate(() => XS.router.go('settings'));
+  out.settings = await backUpAll('#scr-settings [data-nav-id="sv-backupall"]');
+  console.log(JSON.stringify(out));
+} finally {
+  await browser.close();
+}
+"""
+
+
+class BackupAllUiTests(Base):
+    @classmethod
+    def setUpClass(cls):
+        cls.pw = harness.playwright_module()
+        if not cls.pw:
+            raise unittest.SkipTest("node with Playwright is not installed")
+        super().setUpClass()
+
+    def test_01_skipped_saves_are_shown_with_the_reason(self):
+        busy = {"titleId": TITLE, "kind": "ps5", "error": "busy",
+                "message": "another backup, restore, install or transfer of the %s save is still running — wait for it to finish" % TITLE}
+        answers = [{"ok": True, "jobs": [], "started": 0, "skipped": [busy]},                      # the only save is held
+                   {"ok": True, "jobs": ["j-other"], "started": 1, "skipped": [busy]}]             # one started, one held
+        out = harness.run_ui_script(self, self.pw, self.tmp, BACKUP_ALL_SCRIPT, self.srv.base, json.dumps(answers))
+        hub, settings = out["hub"], out["settings"]
+        # the Saves hub: no "Nothing to back up", the held save and why
+        self.assertEqual(len(hub["dialogs"]), 1, hub)
+        self.assertIn("1 save was not backed up", hub["dialogs"][0])
+        self.assertIn(busy["message"], hub["dialogs"][0])
+        self.assertFalse([x for x in hub["toasts"] if "Nothing to back up" in x], hub)
+        # Settings: the backup that started and the one that did not
+        self.assertEqual(len(settings["dialogs"]), 1, settings)
+        self.assertIn(busy["message"], settings["dialogs"][0])
+        self.assertTrue([x for x in settings["toasts"] if "1 backup started" in x], settings)
 
 
 if __name__ == "__main__":

@@ -189,6 +189,7 @@
     "backUpAllText": "{n, plural, one{# partida} other{# partidas}} de {name} se comprimirán una a una en la unidad de copias. Cada título es un trabajo.",
     "backupAllNone": "Nada que respaldar",
     "backupAllStarted": "{n, plural, one{# copia iniciada} other{# copias iniciadas}}",
+    "backupAllSkipped": "{n, plural, one{# partida no se respaldó} other{# partidas no se respaldaron}}",
     "saveBackupJob": "Copia de partida",
     "backupFailed": "La copia falló · {title}",
     "inProgress": "En curso",

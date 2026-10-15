@@ -189,6 +189,7 @@
     "backUpAllText": "{name}의 {n, plural, other{세이브 #개}}이(가) 백업 드라이브에 하나씩 압축됩니다. 각 타이틀이 하나의 작업입니다.",
     "backupAllNone": "백업할 항목 없음",
     "backupAllStarted": "{n, plural, other{백업 #개 시작됨}}",
+    "backupAllSkipped": "{n, plural, other{세이브 #개를 백업하지 못했습니다}}",
     "saveBackupJob": "세이브 백업",
     "backupFailed": "백업 실패 · {title}",
     "inProgress": "진행 중",
