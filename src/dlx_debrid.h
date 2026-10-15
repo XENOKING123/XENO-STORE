@@ -9,6 +9,7 @@
 
 #include "json.h"
 #include <stddef.h>
+#include <stdint.h>
 
 #define DLX_DEBRID_N 4
 
@@ -44,5 +45,11 @@ int dlx_debrid_resolve(const char *service, const char *url, volatile int *cance
  * in a short-lived thread). Called from the housekeeping tick. */
 void dlx_debrid_tick(void);
 int dlx_debrid_host_supported(const char *service, const char *host);   /* 1 yes, 0 no, -1 unknown list */
+/* Same answer as dlx_debrid_host_supported, plus the service's largest file
+ * for that host in *limit (bytes, 0 = no limit known; TorBox reports one per
+ * host, lowered to the daily allowance left). Memory only. */
+int dlx_debrid_host_info(const char *service, const char *host, int64_t *limit);
+/* 1 while the service's account and host list are being refreshed. */
+int dlx_debrid_busy(const char *service);
 
 #endif

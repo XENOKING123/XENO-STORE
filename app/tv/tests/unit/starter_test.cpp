@@ -1,5 +1,6 @@
 // Orbit Store TV app - Starting Orbit through the ELF loader.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "fixture.hpp"
 #include "orbit/screens.hpp"
@@ -12,11 +13,13 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include <atomic>
 #include <cstdlib>
 #include <fstream>
+#include <iterator>
 #include <string>
 
 namespace orbit
@@ -51,6 +54,7 @@ struct TempDir
     {
         char name[] = "/tmp/orbit-starter-XXXXXX";
         path = mkdtemp(name);
+        mkdir((path + "/xeno").c_str(), 0700);
     }
     ~TempDir()
     {
@@ -59,10 +63,11 @@ struct TempDir
     starter::Locations locations() const
     {
         starter::Locations where;
-        where.saved_elf = path + "/saved.elf";
-        where.saved_version = path + "/saved-version.txt";
-        where.bundled_elf = path + "/bundled.elf";
-        where.bundled_version = path + "/version.txt";
+        // As on the console: /data/xeno-store and the package's /app0/xeno.
+        where.saved_elf = path + "/xeno-store.elf";
+        where.saved_version = path + "/xeno-store.elf.version";
+        where.bundled_elf = path + "/xeno/xeno-store.elf";
+        where.bundled_version = path + "/xeno/version.txt";
         return where;
     }
 };
@@ -179,6 +184,138 @@ TEST(Starter, PrefersTheSavedCopyUnlessThePackageIsNewer)
     EXPECT_TRUE(starter::choose(where).path.empty());
 }
 
+TEST(Starter, StartsXenoStoresSavedOrBundledCopyThroughTheLoader)
+{
+    const starter::Locations where;
+    EXPECT_EQ(where.saved_elf, "/data/xeno-store/xeno-store.elf");
+    EXPECT_EQ(where.saved_version, "/data/xeno-store/xeno-store.elf.version");
+    EXPECT_EQ(where.bundled_elf, "/app0/xeno/xeno-store.elf");
+    EXPECT_EQ(where.bundled_version, "/app0/xeno/version.txt");
+    EXPECT_EQ(where.loader_port, 9021);
+}
+
+TEST(Starter, AvoidingTheSavedCopyChoosesTheBundledOne)
+{
+    TempDir dir;
+    const starter::Locations where = dir.locations();
+    write(where.saved_elf, elf_bytes(2048, 's'));
+    write(where.saved_version, "1.2.2"); // as update_apply writes it: no newline
+    write(where.bundled_elf, elf_bytes(4096, 'b'));
+    write(where.bundled_version, "1.2.1\n");
+    EXPECT_EQ(starter::choose(where).path, where.saved_elf);
+    const starter::Payload avoided = starter::choose(where, true);
+    EXPECT_EQ(avoided.path, where.bundled_elf);
+    EXPECT_EQ(avoided.version, "1.2.1");
+    EXPECT_TRUE(avoided.saved_avoided);
+
+    // Only the bundled copy is readable: it is chosen either way.
+    std::remove(where.saved_elf.c_str());
+    EXPECT_EQ(starter::choose(where).path, where.bundled_elf);
+    EXPECT_EQ(starter::choose(where, true).path, where.bundled_elf);
+    EXPECT_FALSE(starter::choose(where, true).saved_avoided);
+
+    // Without a readable bundled copy, the saved one is still sent.
+    write(where.saved_elf, elf_bytes(2048, 's'));
+    write(where.bundled_elf, "not an ELF");
+    EXPECT_EQ(starter::choose(where, true).path, where.saved_elf);
+}
+
+TEST(Starter, SendsToTheLoaderPortOfItsLocations)
+{
+    TempDir dir;
+    starter::Locations where = dir.locations();
+    const std::string bytes = elf_bytes(300000, 'x');
+    write(where.bundled_elf, bytes);
+    write(where.bundled_version, "1.2.1\n");
+    Loader loader;
+    where.loader_port = loader.port;
+    std::vector<std::string> lines;
+    starter::LoaderStarter starter(where, [&](const std::string &line) { lines.push_back(line); });
+    const starter::Result result = starter.start();
+    EXPECT_EQ(result.outcome, Outcome::sent) << result.detail;
+    EXPECT_STREQ(result.source, "bundled");
+    EXPECT_EQ(result.version, "1.2.1");
+    EXPECT_EQ(loader.take(), bytes); // every byte, in order
+    ASSERT_EQ(lines.size(), 1u);
+    EXPECT_NE(lines[0].find("copy=bundled version=1.2.1 bytes=300000"), std::string::npos);
+}
+
+TEST(Starter, LoaderStarterSendsTheBundledCopyWhileTheSavedOneIsAvoided)
+{
+    TempDir dir;
+    starter::Locations where = dir.locations();
+    write(where.saved_elf, elf_bytes(2048, 's'));
+    write(where.saved_version, "1.2.2");
+    const std::string bundled = elf_bytes(8192, 'b');
+    write(where.bundled_elf, bundled);
+    write(where.bundled_version, "1.2.1\n");
+    Loader loader;
+    where.loader_port = loader.port;
+    std::vector<std::string> lines;
+    starter::LoaderStarter starter(where, [&](const std::string &line) { lines.push_back(line); });
+    EXPECT_FALSE(starter.avoid_saved());
+    starter.set_avoid_saved(true);
+    const starter::Result result = starter.start();
+    EXPECT_EQ(result.outcome, Outcome::sent);
+    EXPECT_STREQ(result.source, "bundled");
+    EXPECT_EQ(loader.take(), bundled);
+    ASSERT_EQ(lines.size(), 1u);
+    EXPECT_NE(lines[0].find("start: sent copy=bundled (saved copy did not answer) version=1.2.1"),
+              std::string::npos)
+        << lines[0];
+}
+
+std::string slurp(const std::string &path)
+{
+    std::ifstream in(path, std::ios::binary);
+    if (!in)
+        return "(none)";
+    return std::string(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
+}
+
+// XENO STORE: the bundled copy that stands in for a saved update that never
+// answered finds an expired hand-off marker, so it sets that update aside and
+// runs itself instead of handing the same file to the loader again.
+TEST(Starter, TheBundledStandInLeavesAnExpiredHandOffMarker)
+{
+    TempDir dir;
+    starter::Locations where = dir.locations();
+    const std::string marker = starter::handoff_marker(where);
+    EXPECT_EQ(marker, dir.path + "/handoff.pending");
+    EXPECT_EQ(starter::handoff_marker(starter::Locations{}), "/data/xeno-store/handoff.pending");
+    write(where.saved_elf, elf_bytes(2048, 's'));
+    write(where.saved_version, "1.2.2");
+    write(where.bundled_elf, elf_bytes(8192, 'b'));
+    write(where.bundled_version, "1.2.1\n");
+
+    {
+        Loader loader;
+        where.loader_port = loader.port;
+        starter::LoaderStarter starter(where);
+        EXPECT_EQ(starter.next_version(), "1.2.2");
+        EXPECT_EQ(starter.start().outcome, Outcome::sent);
+        EXPECT_EQ(slurp(marker), "(none)"); // the saved copy itself: the backend handles it
+    }
+    {
+        starter::LoaderStarter starter(where, closed_port());
+        starter.set_avoid_saved(true);
+        EXPECT_EQ(starter.next_version(), "1.2.1");
+        EXPECT_EQ(starter.start().outcome, Outcome::no_loader);
+        EXPECT_EQ(slurp(marker), "(none)"); // nothing started: nothing set aside later
+    }
+    {
+        Loader loader;
+        where.loader_port = loader.port;
+        starter::LoaderStarter starter(where);
+        starter.set_avoid_saved(true);
+        const starter::Result result = starter.start();
+        EXPECT_EQ(result.outcome, Outcome::sent);
+        EXPECT_STREQ(result.source, "bundled");
+        EXPECT_EQ(slurp(marker), "0 tv-app\n");
+        EXPECT_EQ(slurp(marker + ".tv-app"), "(none)");
+    }
+}
+
 TEST(Starter, StreamsThePayloadToTheLoader)
 {
     TempDir dir;
@@ -250,6 +387,23 @@ class CountingStarter final : public starter::Starter
     }
 };
 
+// Reports which copy it sent: the saved one unless told to avoid it.
+class CopyStarter final : public starter::Starter
+{
+  public:
+    std::vector<bool> avoided; // avoid_saved() at each call
+    starter::Result start() override
+    {
+        avoided.push_back(avoid_saved());
+        starter::Result result;
+        result.outcome = Outcome::sent;
+        result.source = avoid_saved() ? "bundled" : "saved";
+        result.version = avoid_saved() ? "1.2.1" : "1.2.2";
+        result.detail = "detail";
+        return result;
+    }
+};
+
 // Orbit refusing connections until `online` is set, then the fixture backend.
 // Stop Orbit is accepted here; the test decides when Orbit goes away.
 struct Console
@@ -312,6 +466,44 @@ TEST(StoreStart, StartsOrbitOnceWhenNothingAnswersThenClearsWhenItDoes)
     store.tick();
     EXPECT_EQ(starter.calls, 1);
     EXPECT_EQ(store.state().link, Link::offline);
+}
+
+TEST(StoreStart, ASavedCopyThatNeverAnswersIsAvoidedUntilACopyAnswers)
+{
+    Console console;
+    CopyStarter starter;
+    Store store(console.transport, &starter);
+    store.set_answer_waits(0.0, 0.0);
+    store.poll_once(); // sends the saved copy
+    store.poll_once(); // it never answered
+    store.tick();
+    EXPECT_EQ(store.state().starting, Starting::failed);
+    EXPECT_TRUE(starter.avoid_saved());
+    store.start_orbit(); // Try again: the bundled copy
+    store.poll_once();
+    ASSERT_EQ(starter.avoided.size(), 2u);
+    EXPECT_FALSE(starter.avoided[0]);
+    EXPECT_TRUE(starter.avoided[1]);
+    console.online = true;
+    store.poll_once();
+    store.tick();
+    EXPECT_EQ(store.state().link, Link::online);
+    EXPECT_FALSE(starter.avoid_saved()); // cleared after success
+}
+
+TEST(StoreStart, ABundledCopyThatNeverAnswersDoesNotSetTheSavedOneAside)
+{
+    Console console;
+    CopyStarter starter;
+    starter.set_avoid_saved(true); // sends the bundled copy
+    Store store(console.transport, &starter);
+    store.set_answer_waits(0.0, 0.0);
+    store.poll_once();
+    starter.set_avoid_saved(false);
+    store.poll_once(); // the bundled copy never answered
+    store.tick();
+    EXPECT_EQ(store.state().starting, Starting::failed);
+    EXPECT_FALSE(starter.avoid_saved());
 }
 
 TEST(StoreStart, ReportsAMissingLoaderAndRetriesOnlyWhenAsked)
@@ -598,7 +790,7 @@ TEST(StoreRestart, DoesNotMistakeATemporaryConnectionLossForANewProcess)
     store.poll_once();
     store.tick();
     EXPECT_EQ(store.state().restart, Restart::failed);
-    EXPECT_NE(store.state().restart_detail.find("previous Orbit session"), std::string::npos);
+    EXPECT_NE(store.state().restart_detail.find("previous XENO STORE session"), std::string::npos);
 }
 
 TEST(StoreRestart, OlderFallbackDoesNotLowerTheExpectedInstalledVersion)

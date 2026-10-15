@@ -1,5 +1,6 @@
 // Orbit Store TV app - Library: the games on the console and its drives.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 //
 // The browser storefront's Library (src/Library.tsx, src/LibraryActions.tsx,
 // docs/library.md) for a controller. Orbit reads ShadowMount's local games API;
@@ -110,19 +111,19 @@ std::string checked_time(double unix)
     return format_age(unix, unix_seconds());
 }
 
-// .library-label: a small outlined tag, tinted by meaning.
+// .library-label: a small outlined tag, tinted by meaning (the web's chips):
+// neutral, installed (good), on drive (accent), mounted (gold), source missing (bad).
 float label(hui::gfx::DrawList &list, const ui::Type &type, float x, float y, std::string_view text,
             int tint)
 {
-    static const ui::Color kInk[] = {ui::color::text3, ui::Color::rgb(0xd0d0d0),
-                                     ui::Color::rgb(0xd0d0d0), ui::Color::rgb(0xd0d0d0),
-                                     ui::Color::rgb(0xd0d0d0)};
+    static const ui::Color kInk[] = {ui::color::text2, ui::color::ok, ui::color::accent,
+                                     ui::color::action_hi, ui::color::bad};
     static const ui::Color kFill[] = {
-        ui::Color{0, 0, 0, 0}, ui::Color::rgb(0xffffff, 0.13f), ui::Color::rgb(0xffffff, 0.1f),
-        ui::Color::rgb(0xffffff, 0.12f), ui::Color::rgb(0xffffff, 0.09f)};
+        ui::Color{0, 0, 0, 0}, ui::color::ok.with_alpha(0.08f), ui::color::accent.with_alpha(0.12f),
+        ui::color::gold_soft, ui::color::bad.with_alpha(0.1f)};
     static const ui::Color kEdge[] = {
-        ui::color::line, ui::Color::rgb(0xffffff, 0.25f), ui::Color::rgb(0xffffff, 0.22f),
-        ui::Color::rgb(0xffffff, 0.24f), ui::Color::rgb(0xffffff, 0.25f)};
+        ui::color::line, ui::color::ok.with_alpha(0.35f), ui::color::accent.with_alpha(0.4f),
+        ui::color::gold_line, ui::color::bad.with_alpha(0.35f)};
     const float width = type.regular.measure(text, 14.0f) + 20.0f;
     list.bordered_rect({x, y, width, 26.0f}, 5.0f, kFill[tint], 1.0f, kEdge[tint]);
     ui::text(list, type.regular, text, x + 10.0f, y + 18.0f, 14.0f, kInk[tint]);
@@ -972,14 +973,14 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
     if (!message.empty())
     {
         const ui::Rect box{ui::kGutter, y, 800.0f, ready ? 82.0f : 72.0f};
-        list.rounded_rect(box, 12.0f, ui::Color::rgb(0xffffff, 0.16f));
+        list.rounded_rect(box, 12.0f, ui::color::accent.with_alpha(0.14f));
         ui::text_fit(list, type.semibold, tr(message), box.x + 22.0f, box.y + 32.0f, 17.0f,
-                     box.w - 44.0f, ui::Color::rgb(0xd0d0d0));
+                     box.w - 44.0f, ui::color::text);
         if (ready)
             ui::text(list, type.regular,
                      tr("Showing the last successful result. Game and drive status may have "
                         "changed."),
-                     box.x + 22.0f, box.y + 60.0f, 15.0f, ui::Color::rgb(0xd0d0d0));
+                     box.x + 22.0f, box.y + 60.0f, 15.0f, ui::color::text2);
         y += 96.0f;
     }
 
@@ -990,9 +991,9 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
         ui::text(list, type.light, busy ? tr("Finding your games") : tr("Connect your library"), 960.0f,
                  y + 270.0f, 32.0f, ui::color::text, ui::Align::center);
         ui::paragraph(list, type.regular,
-                      busy ? tr("Reading installed titles and drive availability from ShadowMount.")
-                           : tr("Library uses ShadowMount\xE2\x80\x99s local games API on your PS5. "
-                             "Start a version with that API enabled, then refresh here."),
+                      busy ? tr("Reading your drives\xE2\x80\xA6")
+                           : tr("The Library lists the games XENO STORE finds in the homebrew "
+                             "and xeno-store folders of your drives."),
                       960.0f, y + 316.0f, 20.0f, 600.0f, 30.0f, ui::color::text2, 3,
                       ui::Align::center);
         if (!busy)
@@ -1015,7 +1016,7 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
     {
         const StorageJob &job = library.storage_job;
         const ui::Rect box{ui::kGutter, y, 1720.0f, 54.0f};
-        list.rounded_rect(box, 14.0f, ui::Color::rgb(0xffffff, 0.09f));
+        list.rounded_rect(box, 14.0f, ui::color::white.with_alpha(0.09f));
         const float progress = job.state == "completed" ? 1.0f
                                : job.total > 0.0
                                    ? static_cast<float>(std::min(1.0, job.processed / job.total))
@@ -1049,15 +1050,15 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
         const ui::Rect first_tab = rect(Kind::view, 0);
         ui::surface(list, {first_tab.x, first_tab.y, 740.0f, 58.0f}, 29.0f, ui::color::field);
         list.line(890.0f, first_tab.y, 890.0f, first_tab.y + 58.0f, 1.0f,
-                  ui::Color::rgb(0xffffff, 0.1f));
+                  ui::color::white.with_alpha(0.1f));
         for (int v = 0; v < kViewCount; ++v)
         {
             const ui::Rect r = rect(Kind::view, v).inset(5.0f);
             const bool on = v == view_;
             ui::focus_ring(list, r, r.h * 0.5f, amount(Kind::view, v));
             if (on)
-                list.rounded_rect(r, r.h * 0.5f, ui::Color::rgb(0xf4f4f4));
-            const ui::Color ink = on ? ui::Color::rgb(0x080808) : ui::color::text2;
+                list.rounded_rect(r, r.h * 0.5f, ui::color::focus_fill);
+            const ui::Color ink = on ? ui::color::focus_ink : ui::color::text2;
             ui::text(list, type.medium, tr(kViews[v]), r.cx(), r.cy() + 7.0f, 20.0f, ink,
                      ui::Align::center);
         }
@@ -1069,7 +1070,9 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
         ui::icon_search(list, search.x + 34.0f, search.cy(), 24.0f, ui::color::text2);
         ui::text_fit(list, type.regular, query_.empty() ? tr("Search your library") : query_,
                      search.x + 60.0f, search.cy() + 7.0f, 20.0f, search.w - 90.0f,
-                     query_.empty() ? ui::color::text3 : ui::color::text);
+                     !query_.empty()                       ? ui::color::text
+                     : amount(Kind::search, 0) > 0.5f      ? ui::color::text2
+                                                           : ui::color::text3);
         const ui::Rect location = rect(Kind::location, 0);
         ui::select_field(list, type, location, location_.empty() ? std::string(tr("All locations")) : i18n::place(location_),
                          amount(Kind::location, 0), picker_.open && picking_ == Kind::location,
@@ -1084,8 +1087,8 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
                      ey + 40.0f, 32.0f, ui::color::text, ui::Align::center);
             ui::paragraph(list, type.regular,
                           library.games.empty()
-                              ? tr("ShadowMount has not reported any installed or on-drive games. "
-                                "Refresh after its inventory updates.")
+                              ? tr("No games found in the homebrew and xeno-store folders of "
+                                "your drives.")
                               : tr("Try a different title, status or location."),
                           960.0f, ey + 86.0f, 20.0f, 640.0f, 30.0f, ui::color::text2, 2,
                           ui::Align::center);
@@ -1115,12 +1118,11 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
                 }
                 else
                 {
-                    // .library-cover with the Orbit mark when no artwork matches.
-                    list.gradient_rect(r, ui::kArtRadius, ui::Color::rgb(0x242424),
-                                       ui::Color::rgb(0x151515));
-                    if (ctx_.mark != 0)
-                        list.image(ctx_.mark, r.inset(48.0f), hui::gfx::kFullUv,
-                                   ui::Color::rgb(0xffffff, 0.6f));
+                    // .library-cover with the brand badge when no artwork matches.
+                    list.gradient_rect(r, ui::kArtRadius, ui::color::night2, ui::color::night3);
+                    if (ctx_.loader_mark != 0)
+                        list.image(ctx_.loader_mark, r.inset(48.0f), hui::gfx::kFullUv,
+                                   ui::color::white.with_alpha(0.3f));
                 }
                 list.pop_transform();
                 if (!game.on_drive)
@@ -1162,7 +1164,7 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
             y + (library.has_storage_job && library.storage_job.id > 0 ? 70.0f : 0.0f);
         ui::text(list, type.light, tr("Your drives"), ui::kGutter, top + 40.0f, 33.0f, ui::color::text);
         ui::text(list, type.regular,
-                 tr("Capacity as ShadowMount reports it. Select a drive to see its games."),
+                 tr("Capacity of your drives. Select a drive to see its games."),
                  ui::kGutter, top + 72.0f, 17.0f, ui::color::text2);
         const std::vector<LibraryDrive> &drives = state.library_storage.drives;
         if (drives.empty())
@@ -1181,8 +1183,8 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
             const bool on = drive.id == drive_id_ || (drive_id_.empty() && d == 0);
             ui::focus_ring(list, r, 18.0f, amount(Kind::drive, d));
             list.bordered_rect(
-                r, 18.0f, on ? ui::Color::rgb(0xffffff, 0.12f) : ui::Color::rgb(0xffffff, 0.04f),
-                1.0f, on ? ui::Color::rgb(0xffffff, 0.55f) : ui::Color{0, 0, 0, 0});
+                r, 18.0f, on ? ui::color::gold_soft : ui::color::white.with_alpha(0.04f),
+                1.0f, on ? ui::color::gold_line : ui::Color{0, 0, 0, 0});
             ui::text_fit(list, type.regular, i18n::place(drive.label), r.x + 26.0f, r.y + 42.0f, 20.0f,
                          r.w - 52.0f, ui::color::text);
             ui::text_fit(list, type.regular, drive.path, r.x + 26.0f, r.y + 70.0f, 17.0f,
@@ -1234,7 +1236,7 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
                 const ui::Rect r = rect(Kind::storage_game, g);
                 const float focus = amount(Kind::storage_game, g);
                 ui::focus_ring(list, r, 12.0f, focus);
-                list.rounded_rect(r, 12.0f, ui::Color::rgb(0xffffff, 0.04f + 0.04f * focus));
+                list.rounded_rect(r, 12.0f, ui::color::white.with_alpha(0.04f + 0.04f * focus));
                 ui::text_fit(list, type.medium, game.title, r.x + 20.0f, r.cy() + 7.0f, 19.0f,
                              900.0f, ui::color::text);
                 ui::text(list, type.regular,
@@ -1244,10 +1246,14 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
                          r.x + r.w - 20.0f, r.cy() + 7.0f, 17.0f, ui::color::text2,
                          ui::Align::right);
             }
+            // XENO STORE reads the sizes with the list: nothing to measure on request.
             if (!games.empty())
                 ui::paragraph(list, type.regular,
-                              tr("Sizes are measured on request. Shared source files can appear under "
-                              "more than one title, so these sizes are not a drive total."),
+                              library.can("list_games")
+                                  ? tr("Sizes are measured on request. Shared source files can appear under "
+                                       "more than one title, so these sizes are not a drive total.")
+                                  : tr("Shared source files can appear under more than one title, so "
+                                       "these sizes are not a drive total."),
                               ui::kGutter,
                               rect(Kind::storage_game, static_cast<int>(games.size()) - 1).y +
                                   100.0f,
@@ -1299,9 +1305,8 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
             ui::text(overlay, type.light, tr("Scan your drives?"), left, panel.y + 100.0f, 36.0f,
                      ui::color::text);
             ui::paragraph(overlay, type.regular,
-                          tr("ShadowMount will search its configured locations for games. It may "
-                          "register games on the console or mount detected sources. If a game is "
-                          "running, the scan may wait until it is safe."),
+                          tr("XENO STORE checks your drives again and asks ShadowMountPlus to "
+                          "register new games."),
                           left, panel.y + 150.0f, 19.0f, panel.w - 112.0f, 30.0f, ui::color::text2,
                           4);
             const float sw = ui::button_width(type, tr("Start scan"), 18.0f);
@@ -1344,13 +1349,13 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
                 ui::text_fit(overlay, type.regular, tr(library.action.message), left, note_y + 20.0f,
                              17.0f, panel.w - 112.0f,
                              library.action.state == "error" ? ui::color::bad
-                                                             : ui::Color::rgb(0xd0d0d0));
+                                                             : ui::color::text2);
                 note_y += 34.0f;
             }
             if (library.stale)
                 ui::text(overlay, type.regular,
                          tr("Saved snapshot. Refresh the library before relying on these statuses."),
-                         left, note_y + 20.0f, 17.0f, ui::Color::rgb(0xd0d0d0));
+                         left, note_y + 20.0f, 17.0f, ui::color::text2);
             if (mode_ == 0)
             {
                 static const char *const kActions[] = {nullptr, /* i18n */ "Copy to drive", /* i18n */ "Move to drive"};
@@ -1377,8 +1382,7 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
                 if (!game->managed)
                 {
                     ui::text(overlay, type.regular,
-                             tr("This item supports viewing details only. ShadowMount does not manage "
-                             "its source."),
+                             tr("XENO STORE can copy or move game images only."),
                              left, fy, 15.0f, ui::color::text3);
                     fy += 26.0f;
                 }
@@ -1405,6 +1409,9 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
                                                      ? tr("Not reported")
                                                      : format_bytes(game->installed_size)},
                 };
+                // XENO STORE: without mounting there is no mount status to report.
+                if (!library.can("mount_game") && !library.can("unmount_game"))
+                    facts.erase(facts.begin() + 1);
                 // The label column fits the longest label, which runs long in German.
                 float label_w = 220.0f;
                 for (const Fact &fact : facts)
@@ -1426,7 +1433,7 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
                 // .library-action-confirm
                 const ui::Rect box{left - 20.0f, 380.0f, panel.w - 72.0f,
                                    mode_ == 1 ? 260.0f : 450.0f};
-                overlay.rounded_rect(box, 16.0f, ui::Color::rgb(0x000000, 0.18f));
+                overlay.rounded_rect(box, 16.0f, ui::color::shadow.with_alpha(0.18f));
                 const std::string heading =
                     mode_ == 1   ? std::string(tr("Unmount this game?"))
                     : mode_ == 2 ? tr("Copy {title}", {{"title", game->title}})
@@ -1481,16 +1488,15 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
                                          !state.library_storage.error.empty()
                                              ? tr(state.library_storage.error)
                                              : tr("Checking available destinations\xE2\x80\xA6"),
-                                         left, ny, 16.0f, box.w - 40.0f, ui::Color::rgb(0xd0d0d0));
+                                         left, ny, 16.0f, box.w - 40.0f, ui::color::text2);
                         else if (destinations().empty())
                             ui::text_fit(
                                 overlay, type.regular,
-                                tr("Connect another writable drive, or configure another scan "
-                                "location in ShadowMount."),
-                                left, ny, 16.0f, box.w - 40.0f, ui::Color::rgb(0xd0d0d0));
+                                tr("Connect another writable drive."),
+                                left, ny, 16.0f, box.w - 40.0f, ui::color::text2);
                     }
                     ui::paragraph(overlay, type.regular,
-                                  tr("Orbit checks the source and free space before starting. Pause "
+                                  tr("XENO STORE checks the source and free space before starting. Pause "
                                   "active and queued downloads first. Existing destination files "
                                   "are not overwritten."),
                                   left, box.y + 316.0f, 15.0f, box.w - 40.0f, 23.0f,
@@ -1538,7 +1544,7 @@ void LibraryScreen::draw(Frame &frame, bool focused) const
         overlay.push_opacity(in);
         overlay.push_transform(1.0f, 0.0f, 0.0f, 0.0f, 60.0f * (1.0f - in));
         const ui::Rect panel{0.0f, kKeyboardTop, 1920.0f, 1080.0f - kKeyboardTop};
-        overlay.glass(frame.glass_texture, panel, 0.0f, ui::Color::rgb(0xffffff));
+        overlay.glass(frame.glass_texture, panel, 0.0f, ui::color::white);
         overlay.rounded_rect(panel, 0.0f, ui::color::night1.with_alpha(0.78f));
         hui::ui::Canvas canvas{overlay, ctx_.fonts, frame.glass_texture, ctx_.clock};
         keyboard_.draw(canvas);

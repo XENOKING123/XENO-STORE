@@ -1,5 +1,6 @@
 // Orbit Store TV app - Typed calls to the Orbit backend's local API v1.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 //
 // Every call blocks on the transport; run them on a worker thread. The app
 // runs on the console itself, so it takes the backend's loopback-only local
@@ -51,7 +52,7 @@ struct Art
 class Client
 {
   public:
-    explicit Client(http::Transport &transport, http::Transport *companion = nullptr) : transport_(transport), companion_(companion)
+    explicit Client(http::Transport &transport) : transport_(transport)
     {
     }
 
@@ -65,7 +66,6 @@ class Client
     }
 
     Result<System> system();
-    Result<bool> set_zero(bool enabled);
     Result<Sources> sources();
     Result<Debrid> debrid();
     Result<BrowserSession> browser_session();
@@ -131,20 +131,21 @@ class Client
     Result<TvAppStatus> tv_app();
     Result<TvAppStatus> tv_app_action(const UpdateRequest &request);
 
+    // XENO STORE: a store older than this app's API (1.2.x) has no /api/v1.
+    // Its GET /api/status names it; the value is its version, or empty when
+    // the reply is not XENO STORE's.
+    Result<std::string> legacy_version();
+    // Asks that older store to stop (POST /api/system/stop). It accepts this
+    // from the console unless a PIN is set (401).
+    Result<bool> legacy_stop();
+
   private:
-    void refresh_zero();
-    http::Response zero_send(std::string path, const char *method = "GET", std::string body = {}, std::size_t limit = 0);
-    bool zero_enabled_ = false;
-    std::string zero_address_, zero_token_;
-    int zero_port_ = 0;
-    std::vector<Job> zero_jobs_;
     Result<BrowserSession> browser_request(std::string body = {});
     http::Response send(const char *method, std::string path, std::string body = {},
                         std::size_t max_bytes = 0);
     template <typename T> bool fail(const http::Response &response, Result<T> *result);
 
     http::Transport &transport_;
-    http::Transport *companion_; // optional injected transport for offline protocol tests
     std::string token_;
 };
 

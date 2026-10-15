@@ -97,6 +97,13 @@ static int usb_chunk_in_window_locked(const dl_job *j, const dl_chunk *c) {
 }
 
 static pthread_mutex_t queue_mu = PTHREAD_MUTEX_INITIALIZER;
+/* Serialises queue.json writes: the snapshot and its write happen under it, so
+ * an older snapshot can never land after a newer one, and two writers never
+ * share queue.json.tmp. Lock order: save_mu, then queue_mu. */
+static pthread_mutex_t save_mu = PTHREAD_MUTEX_INITIALIZER;
+static int saves_frozen;           /* dl_freeze_saves(); guarded by save_mu */
+static volatile int save_failed;   /* the last queue.json write failed (dl_state_healthy) */
+static volatile int stop_hold;     /* dl_pause_all_for_stop() succeeded: start no new work */
 static dl_job *jobs[DL_MAX_JOBS];
 static int n_jobs;
 static char data_dir[512];
@@ -495,19 +502,43 @@ static char *queue_text_locked(size_t *len) {
   return jw_detach(&w, len);
 }
 
-void dl_save_queue(void) {
-  size_t len;
+/* Writes queue.json from `txt` (NULL = the snapshot could not be built) and
+ * records the outcome for dl_state_healthy(). Caller holds save_mu, not queue_mu. */
+static int write_queue_text_saving(char *txt, size_t len) {
+  if (saves_frozen) { free(txt); return 0; }
+  char path[600];
+  xsnprintf(path, sizeof path, "%s/queue.json", data_dir);
+  int oom = txt == NULL;
+  int rc = txt ? util_write_file_atomic(path, txt, len) : -1;
+  free(txt);
+  if (rc != 0) {
+    /* keep it dirty so the housekeeping tick tries again; warn once per outage */
+    pthread_mutex_lock(&queue_mu);
+    queue_dirty = 1;
+    pthread_mutex_unlock(&queue_mu);
+    if (!save_failed) LOGW("queue: cannot write %s%s", path, oom ? " (out of memory)" : "");
+    save_failed = 1;
+  } else if (save_failed) {
+    LOGI("queue: %s saved again", path);
+    save_failed = 0;
+  }
+  return rc;
+}
+
+int dl_save_queue(void) {
+  size_t len = 0;
+  pthread_mutex_lock(&save_mu);
   pthread_mutex_lock(&queue_mu);
   char *txt = queue_text_locked(&len);
   queue_dirty = 0;
   last_save_ms = util_now_ms();
   pthread_mutex_unlock(&queue_mu);
-  if (!txt) return;
-  char path[600];
-  xsnprintf(path, sizeof path, "%s/queue.json", data_dir);
-  if (util_write_file_atomic(path, txt, len) != 0) LOGW("queue: cannot write %s", path);
-  free(txt);
+  int rc = write_queue_text_saving(txt, len);
+  pthread_mutex_unlock(&save_mu);
+  return rc;
 }
+
+int dl_state_healthy(void) { return !save_failed; }
 
 /* ---- sidecar (<final>.xpart.json) --------------------------------------- */
 
@@ -1525,6 +1556,30 @@ static void install_run(dl_job *j);
 static void mark_installing_locked(dl_job *j);
 
 /* Completion steps (SPEC §7.4). */
+
+/* An extraction that stopped short leaves the archive whole. Unless the user
+ * cancelled, removed or restarted the job, or replaced its link, the job stays
+ * a finished download whose extraction failed: Extract runs it again, and a
+ * Pause, the TV stop or a shutdown never leave a paused row that Resume would
+ * download again from zero. Caller holds queue_mu. */
+static void extract_stopped_locked(dl_job *j) {
+  if (j->cancel != DL_STOP_CANCEL && j->cancel != DL_STOP_REMOVE && !j->url_replaced) {
+    int closing = j->cancel == DL_STOP_SHUTDOWN;
+    j->state = DL_DONE;
+    j->nextRetryAt = 0;
+    xstrlcpy(j->extract.message, closing ? "Extraction stopped when XENO STORE closed" : "Extraction stopped",
+             sizeof j->extract.message);
+    xstrlcpy(j->message, closing ? "Extraction stopped when XENO STORE closed — press Extract to retry"
+                                 : "Extraction stopped — press Extract to retry", sizeof j->message);
+    int64_t have = util_file_size(j->path);
+    if (have > 0) j->written = j->total = have;
+  }
+  xstrlcpy(j->extract.state, "failed", sizeof j->extract.state);
+  j->phase[0] = 0;
+  j->speed = 0;
+  j->eta = 0;
+}
+
 static int finish_job(dl_job *j) {
   settings_t s;
   settings_get(&s);
@@ -1615,7 +1670,12 @@ static int finish_job(dl_job *j) {
   if (s.toasts && s.onComplete) sys_toast("✓ %s downloaded (%s)", j->title, fb);
   if (want_extract) {
     int xr = dlx_extract_run(j, &s);
-    if (xr == 1) return OUT_STOPPED;
+    if (xr == 1) {
+      pthread_mutex_lock(&queue_mu);
+      extract_stopped_locked(j);
+      pthread_mutex_unlock(&queue_mu);
+      return OUT_STOPPED;
+    }
     pthread_mutex_lock(&queue_mu);
     int extracted_image = xr == 0 && j->extract.dir[0] && util_file_exists(j->extract.dir);
     int extracted_folder = xr == 0 && !extracted_image;
@@ -2011,7 +2071,16 @@ static void *job_worker(void *arg) {
     j->nchunks = 0;
     j->discard_partial = 0;
   }
-  if (j->delete_files_pending && !j->remove_pending) { remove_partial_files(j); j->delete_files_pending = 0; }
+  if (j->delete_files_pending && !j->remove_pending) {
+    /* cancel {deleteFiles}: the partial is gone, so the job must not claim its bytes
+     * (a cancelled row with written > 0 offers "Resume" over a deleted file) */
+    remove_partial_files(j);
+    j->delete_files_pending = 0;
+    j->written = 0;
+    free(j->chunks);
+    j->chunks = NULL;
+    j->nchunks = 0;
+  }
   /* run_job() returns only after wait_segments() saw the last segment exit */
   j->running = 0;
   queue_dirty = 1;
@@ -2149,7 +2218,7 @@ static void *extract_thread(void *arg) {
   settings_get(&s);
   int rc = dlx_extract_run(j, &s);
   pthread_mutex_lock(&queue_mu);
-  if (rc == 1) { if (!j->cancel) { j->state = DL_DONE; xstrlcpy(j->message, "Extraction stopped", sizeof j->message); } xstrlcpy(j->extract.state, "failed", sizeof j->extract.state); j->phase[0] = 0; }
+  if (rc == 1) extract_stopped_locked(j);
   j->running = 0;
   queue_dirty = 1;
   pthread_mutex_unlock(&queue_mu);
@@ -2368,8 +2437,9 @@ void dl_housekeeping_tick(void) {
       queue_dirty = 1;
     }
   }
-  /* Higher priority first, then queue order. */
-  for (int prio_pass = 0; prio_pass < 2 && running < max_jobs; prio_pass++) {
+  /* Higher priority first, then queue order. Nothing new starts once the TV
+   * app's stop paused the queue (dl_pause_all_for_stop): the process is draining. */
+  for (int prio_pass = 0; prio_pass < 2 && running < max_jobs && !stop_hold; prio_pass++) {
     int best = -1;
     for (int i = 0; i < n_jobs && running < max_jobs; i++) {
       dl_job *j = jobs[i];
@@ -2382,7 +2452,7 @@ void dl_housekeeping_tick(void) {
     else break;
   }
   if (now_ms - last_install_poll_ms >= 2000) { last_install_poll_ms = now_ms; ntok += poll_installs(&s, toks + ntok, 16 - ntok); }
-  int n_inst = group_tick_locked(&s, to_install, 8, &want_scan);
+  int n_inst = stop_hold ? 0 : group_tick_locked(&s, to_install, 8, &want_scan);
   int dirty = queue_dirty;
   int any_running = running > 0;
   pthread_mutex_unlock(&queue_mu);
@@ -2487,6 +2557,7 @@ int dl_init(const char *dir, int port) {
 
 void dl_shutdown(void) {
   pthread_mutex_lock(&queue_mu);
+  stop_hold = 1;   /* the scheduler starts nothing more (the port may still be open) */
   int n = 0;
   for (int i = 0; i < n_jobs; i++) {
     dl_job *j = jobs[i];
@@ -2498,12 +2569,24 @@ void dl_shutdown(void) {
   for (int i = 0; i < 100; i++) {   /* ≤ 5 s */
     pthread_mutex_lock(&queue_mu);
     int busy = 0;
-    for (int k = 0; k < n_jobs; k++) if (jobs[k]->running && state_is_active(jobs[k]->state)) busy++;
+    for (int k = 0; k < n_jobs; k++) {
+      dl_job *j = jobs[k];
+      if (!j->running || !state_is_active(j->state)) continue;
+      if (!j->cancel) { j->cancel = DL_STOP_SHUTDOWN; j->stop_io = 1; }   /* started meanwhile (an API action) */
+      busy++;
+    }
     pthread_mutex_unlock(&queue_mu);
     if (!busy) break;
     util_sleep_ms(50);
   }
   dl_save_queue();
+}
+
+void dl_freeze_saves(void) {
+  pthread_mutex_lock(&save_mu);
+  saves_frozen = 1;
+  pthread_mutex_unlock(&save_mu);
+  dlx_stats_freeze();
 }
 
 /* ---- queries ------------------------------------------------------------ */
@@ -2628,6 +2711,173 @@ int dl_find_job_by_path(const char *path, char *id, size_t cap) {
   pthread_mutex_lock(&queue_mu);
   for (int i = 0; i < n_jobs; i++) {
     if (strcmp(jobs[i]->path, path) == 0 || strcmp(jobs[i]->xpart, path) == 0) { xstrlcpy(id, jobs[i]->id, cap); rc = 0; break; }
+  }
+  pthread_mutex_unlock(&queue_mu);
+  return rc;
+}
+
+int dl_workers_running(void) {
+  int n = 0;
+  pthread_mutex_lock(&queue_mu);
+  for (int i = 0; i < n_jobs; i++) if (jobs[i]->running) n++;
+  pthread_mutex_unlock(&queue_mu);
+  return n;
+}
+
+static void act_stop_locked(dl_job *j, int reason, dl_state new_state, const char *msg);
+
+/* What dl_pause_all_for_stop() changed, so a failed save can put it back. */
+typedef struct stop_prev {
+  char id[16];
+  dl_state state;
+  time_t nextRetryAt;
+  int signalled;                      /* a running worker was asked to stop */
+  char message[256], error[256], errorCode[32];
+} stop_prev;
+
+int dl_pause_all_for_stop(const char *msg) {
+  stop_prev *prev = calloc(DL_MAX_JOBS, sizeof *prev);
+  if (!prev) { LOGE("queue: out of memory before the stop pause"); return -1; }
+  int n = 0;
+  size_t len = 0;
+  pthread_mutex_lock(&save_mu);
+  pthread_mutex_lock(&queue_mu);
+  for (int i = 0; i < n_jobs; i++) {
+    const dl_job *j = jobs[i];
+    if (j->state != DL_INSTALLING) continue;
+    /* starting (the DPI probes run on its thread), or etaHEN's DPI is still
+     * reading the package through our /pkgsrv/ token */
+    if (j->running || (strcmp(j->install.state, "installing") == 0 && strcmp(j->install.via, "dpi12800") == 0)) {
+      pthread_mutex_unlock(&queue_mu);
+      pthread_mutex_unlock(&save_mu);
+      free(prev);
+      LOGI("queue: stop refused: %s is installing from this XENO STORE", j->id);
+      return DL_PAUSE_INSTALLING;
+    }
+  }
+  for (int i = 0; i < n_jobs && n < DL_MAX_JOBS; i++) {
+    dl_job *j = jobs[i];
+    if (j->remove_pending || (j->state != DL_QUEUED && !state_is_active(j->state))) continue;
+    stop_prev *p = &prev[n++];
+    xstrlcpy(p->id, j->id, sizeof p->id);
+    p->state = j->state;
+    p->nextRetryAt = j->nextRetryAt;
+    p->signalled = j->running && state_is_active(j->state);
+    xstrlcpy(p->message, j->message, sizeof p->message);
+    xstrlcpy(p->error, j->error, sizeof p->error);
+    xstrlcpy(p->errorCode, j->errorCode, sizeof p->errorCode);
+    act_stop_locked(j, DL_STOP_PAUSE, DL_PAUSED, msg);
+    jlog_locked(j, "paused: XENO STORE is stopping");
+  }
+  stop_hold = 1;
+  char *txt = queue_text_locked(&len);
+  queue_dirty = 0;
+  last_save_ms = util_now_ms();
+  pthread_mutex_unlock(&queue_mu);
+  int rc = write_queue_text_saving(txt, len);
+  if (rc != 0) {
+    /* Not saved: undo, so nothing is left paused by a stop that did not happen.
+     * A worker already told to stop keeps winding down; its job goes back to the
+     * queue (the scheduler restarts it once the worker has exited), and an
+     * interrupted extraction goes back to "done" (Extract runs it again). */
+    pthread_mutex_lock(&queue_mu);
+    stop_hold = 0;
+    for (int k = 0; k < n; k++) {
+      dl_job *j = find_locked(prev[k].id);
+      if (!j || j->state != DL_PAUSED) continue;   /* changed meanwhile: leave it */
+      if (!prev[k].signalled) { j->state = prev[k].state; j->nextRetryAt = prev[k].nextRetryAt; }
+      else { j->state = prev[k].state == DL_EXTRACTING ? DL_DONE : DL_QUEUED; j->nextRetryAt = 0; }
+      xstrlcpy(j->message, prev[k].message, sizeof j->message);
+      xstrlcpy(j->error, prev[k].error, sizeof j->error);
+      xstrlcpy(j->errorCode, prev[k].errorCode, sizeof j->errorCode);
+      jlog_locked(j, "stop cancelled: the queue could not be saved");
+    }
+    queue_dirty = 1;
+    pthread_mutex_unlock(&queue_mu);
+    LOGW("queue: stop refused, queue.json could not be written (%d job(s) left as they were)", n);
+  } else {
+    LOGI("queue: %d job(s) paused for the stop, queue saved", n);
+  }
+  pthread_mutex_unlock(&save_mu);
+  free(prev);
+  return rc != 0 ? -1 : n;
+}
+
+/* Caller holds queue_mu. */
+static void brief_fill_locked(dl_brief *b, const dl_job *j, int index) {
+  memset(b, 0, sizeof *b);
+  xstrlcpy(b->id, j->id, sizeof b->id);
+  xstrlcpy(b->type, j->type[0] ? j->type : "download", sizeof b->type);
+  xstrlcpy(b->kind, j->kind, sizeof b->kind);
+  xstrlcpy(b->gameId, j->gameId, sizeof b->gameId);
+  xstrlcpy(b->releaseId, j->releaseId, sizeof b->releaseId);
+  xstrlcpy(b->titleId, j->titleId, sizeof b->titleId);
+  xstrlcpy(b->title, j->title, sizeof b->title);
+  xstrlcpy(b->format, j->format, sizeof b->format);
+  xstrlcpy(b->filename, j->filename, sizeof b->filename);
+  xstrlcpy(b->sourceId, j->sourceId, sizeof b->sourceId);
+  xstrlcpy(b->root, j->root, sizeof b->root);
+  xstrlcpy(b->path, j->path, sizeof b->path);
+  xstrlcpy(b->srcPath, j->srcPath, sizeof b->srcPath);
+  xstrlcpy(b->phase, j->phase, sizeof b->phase);
+  xstrlcpy(b->message, j->message, sizeof b->message);
+  xstrlcpy(b->error, j->error, sizeof b->error);
+  xstrlcpy(b->errorCode, j->errorCode, sizeof b->errorCode);
+  xstrlcpy(b->via, j->via, sizeof b->via);
+  xstrlcpy(b->viaService, j->viaService, sizeof b->viaService);
+  xstrlcpy(b->extractState, j->extract.state, sizeof b->extractState);
+  xstrlcpy(b->extractDir, j->extract.dir, sizeof b->extractDir);
+  xstrlcpy(b->extractMessage, j->extract.message, sizeof b->extractMessage);
+  xstrlcpy(b->installState, j->install.state, sizeof b->installState);
+  xstrlcpy(b->installMessage, j->install.message, sizeof b->installMessage);
+  b->state = j->state;
+  b->total = j->total;
+  b->written = j->written;
+  b->speed = j->speed;
+  b->nextRetryAt = j->nextRetryAt;
+  b->addedAt = j->addedAt;
+  b->finishedAt = j->finishedAt;
+  b->verified = j->verified;
+  b->synthetic = j->synthetic;
+  b->running = j->running;
+  b->cancel = j->cancel;
+  b->removePending = j->remove_pending;
+  b->restHit = j->rest_hit;
+  b->move = j->move;
+  b->priority = j->priority;
+  b->index = index;
+}
+
+int dl_brief_list(dl_brief **out) {
+  *out = NULL;
+  pthread_mutex_lock(&queue_mu);
+  int want = n_jobs;
+  pthread_mutex_unlock(&queue_mu);
+  for (int attempt = 0; attempt < 4; attempt++) {
+    dl_brief *buf = NULL;
+    if (want > 0 && !(buf = malloc((size_t)want * sizeof *buf))) return -1;
+    pthread_mutex_lock(&queue_mu);
+    if (n_jobs > want) {   /* grew between the count and the copy: size it again */
+      want = n_jobs;
+      pthread_mutex_unlock(&queue_mu);
+      free(buf);
+      continue;
+    }
+    int n = n_jobs;
+    for (int i = 0; i < n; i++) brief_fill_locked(&buf[i], jobs[i], i);
+    pthread_mutex_unlock(&queue_mu);
+    if (n == 0) { free(buf); buf = NULL; }
+    *out = buf;
+    return n;
+  }
+  return -1;
+}
+
+int dl_brief_get(const char *id, dl_brief *out) {
+  int rc = -1;
+  pthread_mutex_lock(&queue_mu);
+  for (int i = 0; i < n_jobs; i++) {
+    if (strcmp(jobs[i]->id, id) == 0) { brief_fill_locked(out, jobs[i], i); rc = 0; break; }
   }
   pthread_mutex_unlock(&queue_mu);
   return rc;
@@ -2783,8 +3033,14 @@ int dl_add(const dl_add_req *r, char *job_id, size_t idcap, char *code, size_t c
     return -1;
   }
   xstrlcpy(j->via, via, sizeof j->via);
-  if (!kind[0]) { cat_game cg; cat_release cr; kind = (j->releaseId[0] && catalog_find_release(j->gameId, j->releaseId, &cg, &cr) == 0 && cr.kind[0]) ? cr.kind : "game"; }
-  xstrlcpy(j->kind, kind, sizeof j->kind);
+  if (!kind[0]) {   /* copied while cr is alive: it is block-scoped to keep 12 KB off the worker stacks */
+    cat_game cg;
+    cat_release cr;
+    xstrlcpy(j->kind, (j->releaseId[0] && catalog_find_release(j->gameId, j->releaseId, &cg, &cr) == 0 && cr.kind[0]) ? cr.kind : "game",
+             sizeof j->kind);
+  } else {
+    xstrlcpy(j->kind, kind, sizeof j->kind);
+  }
   util_lower(j->kind);
   if (strcmp(j->kind, "game") && strcmp(j->kind, "update") && strcmp(j->kind, "dlc") && strcmp(j->kind, "backport") && strcmp(j->kind, "app") && strcmp(j->kind, "bundle"))
     xstrlcpy(j->kind, "game", sizeof j->kind);
@@ -3090,7 +3346,9 @@ int dl_action(const char *id, const char *action, jv body, char *code, size_t cc
       xstrlcpy(j->message, "Queued", sizeof j->message);
     } else rc = -1;
   } else if (strcmp(action, "cancel") == 0) {
-    if (state_is_unfinished(st) && !busy) {
+    /* A failed job can be cancelled too (it keeps or deletes its partial like any
+     * unfinished one); `busy` still refuses a job whose worker has not exited. */
+    if ((state_is_unfinished(st) || st == DL_FAILED) && !busy) {
       act_stop_locked(j, DL_STOP_CANCEL, DL_CANCELLED, "Cancelled");
       if (delete_files) { if (j->running) j->delete_files_pending = 1; else { remove_partial_files(j); j->written = 0; free(j->chunks); j->chunks = NULL; j->nchunks = 0; } }
     } else rc = -1;
@@ -3149,6 +3407,10 @@ int dl_action(const char *id, const char *action, jv body, char *code, size_t cc
   } else if (strcmp(action, "extract") == 0) {
     /* (Re)extract a finished ZIP download on its own worker thread. */
     if ((st == DL_DONE || st == DL_EXTRACTED) && !j->running && dlx_extract_applies(j) && util_file_exists(j->path) && !is_copy_job(j)) {
+      /* optional {"password":"..."}: the archive password to try first (kept for
+       * resume like a catalogue password, never logged; callers validate it) */
+      const char *pw = jv_get_str(body, "password", "");
+      if (*pw) xstrlcpy(j->extractPassword, pw, sizeof j->extractPassword);
       j->running = 1;
       j->cancel = 0;
       j->stop_io = 0;

@@ -1,6 +1,7 @@
 // Orbit Store TV app - The interface language: lookups, plurals and the
 // number and date formats the browser version gets from Intl.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "orbit/i18n.hpp"
 
@@ -206,7 +207,7 @@ TEST_F(I18nTest, DatesMatchTheBrowsersMediumStyle)
 
 TEST_F(I18nTest, ShippedHungarianCatalogueAndFormats)
 {
-    ASSERT_TRUE(i18n::load(std::string(HUI_SOURCE_DIR) + "/../i18n", "hu"));
+    ASSERT_TRUE(i18n::load(std::string(HUI_SOURCE_DIR) + "/i18n", "hu"));
     EXPECT_EQ(i18n::language(), "hu");
     EXPECT_STREQ(tr("Browse"), "Böngészés");
     EXPECT_STREQ(tr("Download to PS5"), "Letöltés PS5-re");
@@ -221,6 +222,17 @@ TEST_F(I18nTest, ShippedHungarianCatalogueAndFormats)
     EXPECT_EQ(i18n::percent(12.5), "12,5%");
     EXPECT_EQ(i18n::date(2026, 9, 5), "2026. szept. 5.");
     EXPECT_EQ(i18n::date(2026, 3, 5), "2026. márc. 5.");
+}
+
+TEST_F(I18nTest, LanguagesTheFontsCannotDrawStayInEnglishAndHungarianStillLoads)
+{
+    // Japanese, Korean, Chinese (Traditional, Simplified) and Arabic.
+    for (const int code : {0, 9, 10, 11, 21})
+        EXPECT_EQ(i18n::from_system(code), "en") << code;
+    EXPECT_EQ(i18n::from_system(24), "hu");
+    ASSERT_TRUE(i18n::load(std::string(HUI_SOURCE_DIR) + "/i18n", "hu"));
+    EXPECT_EQ(i18n::language(), "hu");
+    EXPECT_STREQ(tr("Browse"), "Böngészés");
 }
 
 TEST(I18n, SystemLanguagesMapToTheClosestCatalogue)

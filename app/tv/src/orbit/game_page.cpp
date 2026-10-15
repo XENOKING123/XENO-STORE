@@ -1,5 +1,6 @@
 // Orbit Store TV app - Artwork-led game hub and controller download sheets.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 #include "orbit/screens.hpp"
 #include "orbit/i18n.hpp"
 #include <algorithm>
@@ -22,9 +23,36 @@ std::string primary_label(const Release &release, bool again, bool waiting,
     if (!again && collection.kind == CollectionState::Kind::library && collection.library != nullptr)
         return tr("View in Library");
     if (torbox) return tr("Download via TorBox");
+    if (release.browser_available && !state.browser.active && !(state.have_browser && state.browser.available))
+        return tr("Open browser version"); // XENO STORE: no provider capture on the console
     if (release.browser_available)
         return state.browser.active ? std::string(tr("View verification")) : tr("Open {provider} on PS5", {{"provider",release.provider}});
     return collection.job != nullptr || again ? tr("Download again") : tr("Download to PS5");
+}
+// XENO STORE starts the notes of an update, add-on or backport with a sentence
+// for its kind: that sentence is translated, the catalogue's own words after
+// it are shown as they are.
+std::string release_notes(const std::string &notes)
+{
+    static constexpr const char *kKinds[] = {
+        /* i18n */ "Update. Install the base game first.",
+        /* i18n */ "Add-on content. Needs the base game.",
+        /* i18n */ "Backport for older firmware.",
+    };
+    for (const char *kind : kKinds)
+    {
+        const std::string_view sentence(kind);
+        if (notes.compare(0, sentence.size(), sentence) == 0)
+            return std::string(tr(sentence)) + notes.substr(sentence.size());
+    }
+    constexpr std::string_view kUpdate = "Update ", kFirst = ". Install the base game first.";
+    const std::size_t end = notes.find(kFirst);
+    if (notes.compare(0, kUpdate.size(), kUpdate) == 0 && end != std::string::npos &&
+        end > kUpdate.size())
+        return tr("Update {version}. Install the base game first.",
+                  {{"version", notes.substr(kUpdate.size(), end - kUpdate.size())}}) +
+               notes.substr(end + kFirst.size());
+    return notes;
 }
 std::string heading(std::string value)
 {
@@ -78,11 +106,13 @@ bool GamePage::primary_enabled(const Release &release, const Offer &now) const
 {
     const auto &state = ctx_.store.state();
     if (!state.paired || waiting_) return false;
-    if (state.system.zero_enabled && !state.system.zero_error.empty()) return false;
     if (!now.show_download) return true;
     // Viewing/cancelling an existing session must remain possible after its
     // selected drive disconnects. This action never creates another session.
     if (!torbox_ && release.browser_available && state.browser.active) return true;
+    // XENO STORE: without provider capture, the browser version takes over; no drive is needed.
+    if (!torbox_ && release.browser_available && !(state.have_browser && state.browser.available))
+        return static_cast<bool>(ctx_.open_game_browser);
     if (now.drive == nullptr || !now.plan.enough || state.system.platform == "desktop") return false;
     if (torbox_) return state.debrid.supports(release);
     return !release.browser_available || (state.have_browser && state.browser.available &&
@@ -155,8 +185,8 @@ GamePage::Layout GamePage::compose(hui::gfx::DrawList *list, Sheet sheet, bool f
             list->push_opacity(enabled ? 1 : 0.4f);
             if (checked)
             {
-                list->circle(x + 34, y + 44, 15, ui::color::text);
-                ui::icon_check(*list, x + 34, y + 44, 18, ui::color::night1);
+                list->circle(x + 34, y + 44, 15, ui::color::focus_fill);
+                ui::icon_check(*list, x + 34, y + 44, 18, ui::color::focus_ink);
             }
             else list->ring(x + 34, y + 44, 14, 1, ui::color::text3);
             ui::paragraph(*list, type.medium, title, x + 68, y + 47, 27, text_width, 35, ui::color::text, 999);
@@ -225,7 +255,7 @@ GamePage::Layout GamePage::compose(hui::gfx::DrawList *list, Sheet sheet, bool f
             }
         }
         y += 140;
-        paragraph(error_,kLeft,y,1000,21);
+        paragraph(error_,kLeft,y,1000,21,ui::color::bad);
         out.end = y;
         return out;
     }
@@ -256,8 +286,8 @@ GamePage::Layout GamePage::compose(hui::gfx::DrawList *list, Sheet sheet, bool f
                 release.title_id + (release.version.empty()?"":" \xC2\xB7 v"+release.version) + " \xC2\xB7 " + format_bytes(release.size_bytes));
         if (now.show_download)
         {
-            setting(Slot::delivery,684,tr("Download using"),state.system.zero_enabled ? "Orbit Zero" : torbox_ ? "TorBox" : tr("{provider} directly",{{"provider",release.provider}}),
-                    state.system.zero_enabled ? "Uses your computer preference" : state.debrid.supports(release) && !torbox_ ? tr("TorBox available") : "");
+            setting(Slot::delivery,684,tr("Download using"),torbox_ ? "TorBox" : tr("{provider} directly",{{"provider",release.provider}}),
+                    state.debrid.supports(release) && !torbox_ ? tr("TorBox available") : "");
             setting(Slot::drive,1252,tr("Save to"),now.drive ? i18n::place(now.drive->label) : tr("Select storage"),
                     now.drive ? tr("{size} free",{{"size",format_bytes(now.drive->free_bytes)}}) : "");
         }
@@ -265,25 +295,26 @@ GamePage::Layout GamePage::compose(hui::gfx::DrawList *list, Sheet sheet, bool f
         const float width_notes=1040;
         const float notes_top=y;
         if (!release.compression.empty()) {
-            paragraph(tr("Compressed download. Orbit checks the files and available space before extraction. A password may be required."),116,y,width_notes,20); y+=16;
+            paragraph(tr("ZIP download. XENO STORE extracts it after the download finishes."),116,y,width_notes,20); y+=16;
         }
-        if (!release.notes.empty()) { paragraph(release.notes,116,y,width_notes,20); y+=16; }
-        if (now.show_download && release.browser_available && !torbox_)
+        if (!release.notes.empty()) { paragraph(release_notes(release.notes),116,y,width_notes,20); y+=16; }
+        const bool capture = state.have_browser && state.browser.available;
+        if (now.show_download && release.browser_available && !torbox_ && capture)
         {
             paragraph(tr("{provider}: start here",{{"provider",release.provider}}),116,y,width_notes,25,ui::color::text);y+=16;
             paragraph(tr("1. Select Open {provider} on PS5. Your selected game and drive are kept.",{{"provider",release.provider}}),116,y,width_notes,20);y+=12;
-            paragraph(release.source_id=="akirabox"
-                ? tr("Complete verification on AkiraBox, then wait for Orbit to check the download link.")
-                : release.source_id=="datanodes"
-                ? tr("Scroll to the bottom, select Continue to Download, then Free Download. Wait for the countdown and select Start Download.")
-                : tr("2. On {provider}, complete any verification and select Download.",{{"provider",release.provider}}),116,y,width_notes,20);y+=12;
-            paragraph(tr("3. Return to the Orbit Store app. Orbit checks the file and adds it to Downloads."),116,y,width_notes,20);y+=16;
-            if (!state.have_browser || !state.browser.available)
-            {
-                paragraph(state.browser_error.empty() ? tr("Provider verification is available on the PS5 only.")
-                                                     : std::string(tr(std::string_view(state.browser_error))),116,y,width_notes,20);
-                y+=12;
-            }
+            paragraph(tr("2. On {provider}, complete any verification and select Download.",{{"provider",release.provider}}),116,y,width_notes,20);y+=12;
+            paragraph(tr("3. Return to the XENO STORE app. XENO STORE checks the file and adds it to Downloads."),116,y,width_notes,20);y+=16;
+        }
+        if (now.show_download && release.browser_available && !torbox_ && !capture)
+        {
+            // XENO STORE: the console has no provider capture. The backend says why
+            // (browser.message); the browser version finishes the download.
+            paragraph(tr("{provider}: start here",{{"provider",release.provider}}),116,y,width_notes,25,ui::color::text);y+=16;
+            paragraph(state.have_browser && !state.browser.message.empty() ? std::string(tr(std::string_view(state.browser.message)))
+                      : state.browser_error.empty() ? tr("Provider verification is available on the PS5 only.")
+                                                    : std::string(tr(std::string_view(state.browser_error))),116,y,width_notes,20);y+=12;
+            paragraph(tr("Select Open browser version to continue with this game in the browser version of XENO STORE."),116,y,width_notes,20);y+=16;
         }
         if(now.show_download && release.browser_available && !torbox_)
             out.controls.push_back({Slot::reading,0,{116,notes_top,width_notes,y-notes_top},true,false});
@@ -309,7 +340,7 @@ GamePage::Layout GamePage::compose(hui::gfx::DrawList *list, Sheet sheet, bool f
                 tr("Not enough space after unfinished downloads. Free space or cancel an item in Downloads."),116,y,width_notes);
             y+=16;
         }
-        paragraph(error_,116,y,width_notes);
+        paragraph(error_,116,y,width_notes,22.0f,ui::color::bad);
         control(Slot::primary,0,{1252,842,554,84},"",primary_enabled(release,now),true,true);
     }
     else if (sheet == Sheet::source)
@@ -330,7 +361,7 @@ GamePage::Layout GamePage::compose(hui::gfx::DrawList *list, Sheet sheet, bool f
         y+=card(Slot::choice,0,116,y,1690,tr("{provider} directly",{{"provider",release.provider}}),"",!torbox_,!waiting_)+18;
         const bool connected=state.debrid.connected || torbox_;
         y+=card(Slot::choice,1,116,y,1690,connected ? "TorBox" : tr("Set up TorBox"),
-                connected ? delivery_note(release) : tr("Connect your TorBox account in App settings."),torbox_,
+                connected ? delivery_note(release) : tr("Connect TorBox in XENO STORE Settings, Debrid (browser version)."),torbox_,
                 !waiting_ && (connected ? state.debrid.supports(release) : static_cast<bool>(ctx_.open_download) || static_cast<bool>(ctx_.open_browser)))+18;
     }
     else if (sheet == Sheet::storage)
@@ -344,7 +375,7 @@ GamePage::Layout GamePage::compose(hui::gfx::DrawList *list, Sheet sheet, bool f
         if (state.drives.empty()) paragraph(tr("Connect a writable drive to your PS5."),116,y,1690);
         y+=12;budget(116,y,1690);
         if (now.drive && list)
-            ui::progress_bar(*list,{116,y,1690,10},now.drive->total_bytes>0 ? static_cast<float>(1-now.drive->free_bytes/now.drive->total_bytes) : 0,ui::color::text);
+            ui::progress_bar(*list,{116,y,1690,10},now.drive->total_bytes>0 ? static_cast<float>(1-now.drive->free_bytes/now.drive->total_bytes) : 0,ui::color::gold);
         y+=34;
         paragraph(tr("Estimates include paused and failed downloads. Other apps can change free space."),116,y,1690,20);
     }
@@ -421,8 +452,7 @@ Intent GamePage::activate(const Control &control,const Game &game,const Release 
     case Slot::about: show_sheet(Sheet::about,Slot::back);break;
     case Slot::source: show_sheet(Sheet::source,Slot::choice,option_);break;
     case Slot::delivery:
-        if(state.system.zero_enabled) intent.toast="Change the download preference in Orbit Zero on your computer.";
-        else show_sheet(Sheet::delivery,Slot::choice,torbox_?1:0);break;
+        show_sheet(Sheet::delivery,Slot::choice,torbox_?1:0);break;
     case Slot::drive:
     {
         int at=0;
@@ -460,6 +490,15 @@ Intent GamePage::activate(const Control &control,const Game &game,const Release 
         {intent.kind=Intent::Kind::show_job;intent.id=now.collection.job->id;}
         else if(!download_again_ && now.collection.kind==CollectionState::Kind::library && now.collection.library)
         {intent.kind=Intent::Kind::show_library;intent.id=now.collection.library->title_id;intent.detail=now.collection.library->source_key;}
+        else if(release.browser_available && !torbox_ && !state.browser.active &&
+                !(state.have_browser && state.browser.available))
+        {
+            // XENO STORE: this game's page in the browser version takes over.
+            error_.clear();
+            feedback.play(hui::audio::Cue::launch);
+            if(!ctx_.open_game_browser || !ctx_.open_game_browser(game.id))
+                intent.toast=tr("The browser could not be opened.");
+        }
         else if(release.browser_available && !torbox_)
         {
             error_.clear();
@@ -492,10 +531,6 @@ Intent GamePage::update(const InputFrame &input,float dt,Feedback &feedback,bool
         waiting_=false;action_serial_=ctx_.store.action().serial;
         if(ctx_.store.action().error.empty())
         {
-            if(ctx_.store.action().created_job=="zero-provider") {
-                intent.toast="Continue in the provider window on your computer. Your download will appear here when it starts.";
-                show_sheet(Sheet::none);return intent;
-            }
             intent.kind=Intent::Kind::show_job;intent.id=ctx_.store.action().created_job;
             intent.toast=tr("Added to your downloads");return intent;
         }
@@ -599,10 +634,10 @@ void GamePage::draw(Frame &frame,bool focused) const
     scene.pop_transform();scene.pop_clip();
     if(sheet_==Sheet::none)return;
     auto &list=frame.overlay;
-    list.rounded_rect({0,0,1920,1080},0,ui::Color::rgb(0x000000,0.35f));
+    list.rounded_rect({0,0,1920,1080},0,ui::color::scrim.with_alpha(0.5f));
     const ui::Rect panel{70,320,1780,710};
-    list.shadow(panel,30,50,ui::Color::rgb(0x000000,0.5f));
-    list.gradient_rect(panel,30,ui::Color::rgb(0x242424,0.98f),ui::Color::rgb(0x101010,0.99f));
+    list.shadow(panel,30,50,ui::color::shadow.with_alpha(0.5f));
+    list.gradient_rect(panel,30,ui::color::night2.with_alpha(0.98f),ui::color::night1.with_alpha(0.99f));
     list.bordered_rect(panel,30,ui::Color{0,0,0,0},1,ui::color::line);
     const auto &release=game->releases[static_cast<std::size_t>(std::clamp(option_,0,static_cast<int>(game->releases.size())-1))];
     const auto now=offer(release);
@@ -615,7 +650,7 @@ void GamePage::draw(Frame &frame,bool focused) const
     list.pop_transform();list.pop_clip();
     if(sheet_==Sheet::downloads)
     {
-        list.rounded_rect({1226,738,596,253},22,ui::Color::rgb(0x111111,0.98f));
+        list.rounded_rect({1226,738,596,253},22,ui::color::night0.with_alpha(0.98f));
         if(now.show_download && now.drive)
         {
             list.rounded_rect({1252,765,554,1},0,ui::color::line);

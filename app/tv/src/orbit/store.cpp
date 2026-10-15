@@ -1,5 +1,6 @@
 // Orbit Store TV app - The app's view of Orbit, kept in sync on a worker thread.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "orbit/store.hpp"
 #include "orbit/i18n.hpp"
@@ -33,7 +34,7 @@ constexpr int kSettingsEvery = 20;
 std::string catalog_key(const System &system, const Sources &sources)
 {
     std::string key = system.version;
-    key += system.zero_enabled ? "|zero:" + system.zero_address : "|console";
+    key += "|console";
     key += '|';
     key += std::to_string(system.catalogue_revision);
     key += '|';
@@ -79,7 +80,7 @@ const std::vector<LibraryGame> &Snapshot::library_games() const
 }
 
 Store::Store(http::Transport &transport, starter::Starter *starter)
-    : client_(transport), starter_(starter)
+    : client_(transport), starter_(starter), start_wait_(kStartWait), restart_answer_(kRestartAnswer)
 {
 }
 
@@ -226,7 +227,7 @@ void Store::poll_browser()
     {
         state_.have_browser = result.ok();
         state_.browser_error = result.status == 404
-            ? tr("Update Orbit to open provider pages.") : result.error;
+            ? tr("Update XENO STORE to open provider pages.") : result.error;
         if (result.ok()) state_.browser = std::move(result.value);
         ++state_.serial;
     });
@@ -421,6 +422,7 @@ void Store::post_failure(const std::string &error, bool unreachable)
                 if (state_.link != Link::offline)
                     state_.offline_since = now_seconds();
                 state_.link = Link::offline;
+                state_.outdated = false; // the port is free again
             }
             ++state_.serial;
         });
@@ -466,7 +468,7 @@ void Store::continue_restart(bool unreachable)
             if (now - restart_since_ > kRestartStop)
             {
                 restart_ = Restart::idle;
-                post_restart(Restart::failed, tr("Orbit didn\xE2\x80\x99t stop. Try again."));
+                post_restart(Restart::failed, tr("XENO STORE didn\xE2\x80\x99t stop. Try again."));
             }
             return;
         }
@@ -476,7 +478,7 @@ void Store::continue_restart(bool unreachable)
         restart_send_at_ = now + restart_grace_;
         restart_attempts_ = 0;
         restart_sent_ = false;
-        post_restart(Restart::starting, tr("Orbit stopped."));
+        post_restart(Restart::starting, tr("XENO STORE stopped."));
         return;
     }
     if ((restart_ == Restart::manual || restart_ == Restart::failed) && retry)
@@ -501,7 +503,9 @@ void Store::continue_restart(bool unreachable)
     if (restart_sent_ && restart_attempts_ >= kRestartAttempts)
     {
         restart_ = Restart::failed;
-        post_restart(Restart::failed, tr("Orbit didn\xE2\x80\x99t answer after it was started."));
+        if (restart_sent_saved_)
+            starter_->set_avoid_saved(true); // a saved update that never answers: try the bundled copy next
+        post_restart(Restart::failed, tr("XENO STORE didn\xE2\x80\x99t answer after it was started."));
         return;
     }
     if (now < restart_send_at_)
@@ -514,12 +518,19 @@ void Store::continue_restart(bool unreachable)
         // A newer bundled payload can supersede an older saved copy. Falling
         // back to an older bundle must not lower the version we promised to
         // restart, or a missing/corrupt saved update would look successful.
+        // XENO STORE: with the saved copy set aside after it never answered,
+        // the bundled copy actually sent is the one expected back. A copy older
+        // than the one that ran before (a payload sender started a newer
+        // release) does not lower the expectation: poll_once reports it.
+        restart_sent_saved_ = std::string_view(result.source) == "saved";
+        restart_sent_version_ = result.version;
         if (!result.version.empty() &&
             (restart_expected_version_.empty() ||
+             (starter_->avoid_saved() && !restart_sent_saved_) ||
              starter::compare_versions(result.version, restart_expected_version_) > 0))
             restart_expected_version_ = result.version;
         restart_sent_ = true;
-        restart_deadline_ = now_seconds() + kRestartAnswer;
+        restart_deadline_ = now_seconds() + restart_answer_;
         post_restart(Restart::starting, std::move(result.detail));
         break;
     case starter::Outcome::no_loader:
@@ -561,7 +572,9 @@ void Store::start_if_needed(bool refused)
         if (now_seconds() < start_deadline_)
             return;
         start_waiting_ = false;
-        post_start(Starting::failed, tr("Orbit didn\xE2\x80\x99t answer after it was started."));
+        if (start_sent_saved_)
+            starter_->set_avoid_saved(true); // a saved update that never answers: try the bundled copy next
+        post_start(Starting::failed, tr("XENO STORE didn\xE2\x80\x99t answer after it was started."));
         return;
     }
     const bool automatic = refused && !auto_start_used_;
@@ -574,7 +587,8 @@ void Store::start_if_needed(bool refused)
     {
     case starter::Outcome::sent:
         start_waiting_ = true;
-        start_deadline_ = now_seconds() + kStartWait;
+        start_sent_saved_ = std::string_view(result.source) == "saved";
+        start_deadline_ = now_seconds() + start_wait_;
         post_start(Starting::waiting, std::move(result.detail));
         break;
     case starter::Outcome::no_loader:
@@ -602,9 +616,70 @@ void Store::post_queue(std::vector<Job> jobs, std::vector<Drive> drives, bool ha
         });
 }
 
+// XENO STORE: runs on the worker when the port gives a whole reply without
+// this app's API: an older XENO STORE (1.2.x answers 404) or another program.
+// Waiting would never end and starting a copy would only see the port taken,
+// so the screen says what runs there; polling goes on, and the screen clears
+// by itself once the store is updated or stopped.
+void Store::poll_outdated()
+{
+    if (replacing_ && restart_ == Restart::stopping)
+    {
+        // The outdated store answers for a moment after it agrees to stop.
+        if (now_seconds() - restart_since_ > kRestartStop)
+        {
+            restart_ = Restart::idle;
+            replacing_ = false;
+            post_restart(Restart::idle, {});
+            inbox_.post(
+                [this]
+                {
+                    setting_.setting = Setting::service_replace;
+                    setting_.error = tr("XENO STORE didn\xE2\x80\x99t stop. Try again.");
+                    ++setting_.serial;
+                });
+        }
+        return;
+    }
+    if (restart_ != Restart::idle)
+    {
+        // A restart brought back a store without this app's API (a payload
+        // manager started an old copy): nothing sent from here can start now.
+        restart_ = Restart::idle;
+        replacing_ = false;
+        post_restart(Restart::idle, {});
+    }
+    if (start_waiting_ || start_state_ != Starting::idle)
+    {
+        start_waiting_ = false;
+        post_start(Starting::idle, {});
+    }
+    api::Result<std::string> legacy = client_.legacy_version();
+    worker_link_ = Link::offline;
+    inbox_.post(
+        [this, version = legacy.ok() ? legacy.value : std::string()]() mutable
+        {
+            if (state_.link != Link::offline)
+                state_.offline_since = now_seconds();
+            state_.link = Link::offline;
+            state_.link_error.clear();
+            state_.outdated = true;
+            state_.outdated_version = std::move(version);
+            ++state_.serial;
+        });
+}
+
 void Store::poll_once()
 {
     api::Result<System> system = client_.system();
+    // A whole reply that is neither this app's API nor a passing refusal
+    // (timeout, rate limit, busy or stopping server).
+    if (!system.ok() && !system.unreachable() && system.status != 408 && system.status != 429 &&
+        (system.status < 500 || system.status == 501))
+    {
+        poll_outdated();
+        return;
+    }
     if (!system.ok())
     {
         post_failure(system.error, system.unreachable());
@@ -624,36 +699,55 @@ void Store::poll_once()
         if (restart_ != Restart::idle && now_seconds() - restart_since_ > kRestartStop)
         {
             restart_ = Restart::idle;
-            post_restart(Restart::failed, tr("Orbit is still running. Try restarting it again."));
+            post_restart(Restart::failed, tr("XENO STORE is still running. Try restarting it again."));
         }
         return;
     }
-    if (restart_ == Restart::stopping &&
+    if (restart_ == Restart::stopping && !replacing_ &&
         (restart_previous_instance_.empty() || system.value.instance_id == restart_previous_instance_))
     {
         // Orbit answers for a moment after it agrees to stop.
         if (now_seconds() - restart_since_ > kRestartStop)
         {
             restart_ = Restart::idle;
-            post_restart(Restart::failed, tr("Orbit is still running. Try restarting it again."));
+            post_restart(Restart::failed, tr("XENO STORE is still running. Try restarting it again."));
         }
     }
     else if (restart_ != Restart::idle)
     {
         restart_ = Restart::idle;
-        if (!restart_expected_version_.empty() && system.value.version != restart_expected_version_)
+        replacing_ = false;
+        const std::string &running = system.value.version;
+        // A slow saved update that answers after the bundled copy was sent in
+        // its place is the version the stop reply promised: also a success.
+        const bool expected = restart_expected_version_.empty() || running == restart_expected_version_ ||
+                              (!restart_promised_version_.empty() && running == restart_promised_version_);
+        if (!expected && !restart_expect_saved_ && running == restart_sent_version_ &&
+            starter::compare_versions(running, restart_expected_version_) < 0)
+            // XENO STORE: the copy this app can send is older than the release
+            // a payload sender had started. Not a failed start, but not what ran.
+            post_restart(Restart::older,
+                tr("XENO STORE {running} is running: this app can only start {running}. Start XENO STORE {expected} from your payload manager again to keep using it.",
+                   {{"running", running}, {"expected", restart_expected_version_}}));
+        else if (!expected)
+            // The saved-copy advice only where the stop reply named a saved update.
             post_restart(Restart::failed,
-                tr("Orbit {running} is running, but {expected} was selected. Start the saved payload from /data/orbit-store/orbit_store.elf.",
-                   {{"running", system.value.version}, {"expected", restart_expected_version_}}));
+                restart_expect_saved_
+                    ? tr("XENO STORE {running} is running, but {expected} was selected. Start the saved payload from /data/xeno-store/xeno-store.elf.",
+                         {{"running", running}, {"expected", restart_expected_version_}})
+                    : tr("XENO STORE {running} is running, but {expected} was selected.",
+                         {{"running", running}, {"expected", restart_expected_version_}}));
         else if (!restart_previous_instance_.empty() &&
                  (system.value.instance_id.empty() || system.value.instance_id == restart_previous_instance_))
-            post_restart(Restart::failed, tr("The previous Orbit session is still running. Wait for it to stop, then start the saved payload."));
+            post_restart(Restart::failed, tr("The previous XENO STORE session is still running. Wait for it to stop, then start the saved payload."));
         else
             post_restart(Restart::done, system.value.version);
         session_refresh_.store(true); // a new pairing code
     }
     observed_version_ = system.value.version;
     observed_instance_ = system.value.instance_id;
+    if (starter_ != nullptr)
+        starter_->set_avoid_saved(false); // a copy answers: the saved one gets its chance again
     // Connecting to an existing service consumes automatic startup too. A
     // later stop from the browser must not immediately respawn the old copy.
     auto_start_used_ = true;
@@ -684,12 +778,6 @@ void Store::poll_once()
         api::Result<std::vector<Release>> catalog = client_.catalog();
         if (catalog.ok())
         {
-            if(system.value.zero_enabled) {
-                auto &rows=catalog.value;
-                rows.erase(std::remove_if(rows.begin(),rows.end(),[&](const Release &r){
-                    return !sources.value.acknowledged || !contains(sources.value.enabled,r.source_id);
-                }),rows.end());
-            }
             games = group_games(catalog.value);
             have_games = true;
             catalog_key_ = key;
@@ -730,6 +818,8 @@ void Store::poll_once()
             if (state_.link != Link::online)
                 state_.link_error.clear();
             state_.link = Link::online;
+            state_.outdated = false;
+            state_.outdated_version.clear();
             state_.system = std::move(system);
             state_.have_system = true;
             state_.sources = std::move(sources);
@@ -835,10 +925,12 @@ void Store::poll_settings()
     api::Result<TvAppStatus> tv = client_.tv_app();
     settings_busy_ = (catalogue.ok() && catalogue.value.busy) ||
                      (service.ok() && service.value.busy) || (tv.ok() && tv.value.busy);
+    std::string next = starter_ != nullptr ? starter_->next_version() : std::string();
     inbox_.post(
         [this, catalogue = std::move(catalogue), service = std::move(service),
-         tv = std::move(tv)]() mutable
+         tv = std::move(tv), next = std::move(next)]() mutable
         {
+            state_.next_start_version = std::move(next);
             if (catalogue.ok())
             {
                 state_.catalogue = std::move(catalogue.value);
@@ -864,10 +956,6 @@ void Store::run_setting(Command &command)
     std::string error;
     switch (command.setting)
     {
-    case Setting::zero:
-        error = client_.set_zero(command.flag).error;
-        catalog_key_.clear();
-        break;
     case Setting::download_limit:
     {
         const int limit = command.a.size() == 1 ? command.a[0] - '0' : 0;
@@ -957,6 +1045,10 @@ void Store::run_setting(Command &command)
         error = result.error;
         if (result.ok() && command.setting == Setting::service_restart)
         {
+            replacing_ = false;
+            restart_sent_version_.clear();
+            restart_promised_version_ = result.value.saved_version;
+            restart_expect_saved_ = !result.value.saved_version.empty();
             restart_expected_version_ = result.value.saved_version.empty()
                 ? (result.value.running_version.empty() ? observed_version_ : result.value.running_version)
                 : result.value.saved_version;
@@ -980,10 +1072,37 @@ void Store::run_setting(Command &command)
         error = result.error;
         break;
     }
+    case Setting::service_replace:
+    {
+        // XENO STORE: the outdated store stops (saving its queue); the restart
+        // steps then start this app's copy once the port is free.
+        api::Result<bool> result = client_.legacy_stop();
+        if (result.ok())
+        {
+            replacing_ = true;
+            restart_expect_saved_ = false;
+            restart_sent_saved_ = false;
+            restart_expected_version_.clear();
+            restart_promised_version_.clear();
+            restart_sent_version_.clear();
+            restart_previous_instance_.clear();
+            restart_ = Restart::stopping;
+            restart_since_ = now_seconds();
+            post_restart(Restart::stopping, {});
+        }
+        else
+        {
+            error = result.status == 401 || result.status == 403
+                        ? tr("This XENO STORE asks for its PIN. Update it in the browser version instead.")
+                        : result.error;
+        }
+        break;
+    }
     case Setting::none:
         break;
     }
-    if (command.setting != Setting::service_restart || !error.empty())
+    if (command.setting != Setting::service_replace &&
+        (command.setting != Setting::service_restart || !error.empty()))
         poll_settings();
     {
         Lock lock(mutex_);

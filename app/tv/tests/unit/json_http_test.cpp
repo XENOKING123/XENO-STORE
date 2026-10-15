@@ -1,5 +1,6 @@
 // Orbit Store TV app - JSON reading and HTTP framing.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "orbit/http.hpp"
 #include "orbit/json.hpp"
@@ -74,8 +75,9 @@ TEST(Http, FormatsGetsAndJsonPostsWithoutAnOrigin)
 {
     http::Request get;
     get.path = "/api/v1/system";
-    const std::string g = http::format_request(get, "127.0.0.1", 34177);
-    EXPECT_EQ(g.rfind("GET /api/v1/system HTTP/1.1\r\nHost: 127.0.0.1:34177\r\n", 0), 0u);
+    const std::string g = http::format_request(get, "127.0.0.1", 9095);
+    EXPECT_EQ(g.rfind("GET /api/v1/system HTTP/1.1\r\nHost: 127.0.0.1:9095\r\n", 0), 0u);
+    EXPECT_NE(g.find("\r\nUser-Agent: XenoStoreTV\r\n"), std::string::npos);
     EXPECT_EQ(g.find("Authorization"), std::string::npos);
     EXPECT_EQ(g.find("Content-Length"), std::string::npos);
 
@@ -84,7 +86,7 @@ TEST(Http, FormatsGetsAndJsonPostsWithoutAnOrigin)
     post.path = "/api/v1/downloads";
     post.body = "{\"a\":1}";
     post.bearer = "abc";
-    const std::string p = http::format_request(post, "127.0.0.1", 34177);
+    const std::string p = http::format_request(post, "127.0.0.1", 9095);
     EXPECT_NE(p.find("Authorization: Bearer abc\r\n"), std::string::npos);
     EXPECT_NE(p.find("Content-Type: application/json\r\nContent-Length: 7\r\n"), std::string::npos);
     EXPECT_EQ(p.find("Origin"), std::string::npos);
@@ -135,7 +137,7 @@ TEST(Http, ReportsARefusedConnectionAsUnreachable)
     const http::Response response = transport.send(request);
     EXPECT_EQ(response.status, 0);
     EXPECT_FALSE(response.error.empty());
-    http::SocketTransport bad("not-an-address", 34177, 500);
+    http::SocketTransport bad("not-an-address", 9095, 500);
     EXPECT_EQ(bad.send(request).error, "invalid backend address");
 }
 

@@ -1,5 +1,6 @@
 // Orbit Store TV app - The storefront's screens and what they share.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 //
 // Screens are immediate mode, like the kit: update() owns state and
 // animation, draw() is const and only records shapes. A screen never talks to
@@ -63,14 +64,17 @@ struct Context
     const hui::ui::Fonts &fonts; // the kit's slots, for glyphs and the keyboard
     Store &store;
     ArtCache &art;
-    std::uint32_t mark = 0;        // the planet mark, 128 px
-    std::uint32_t loader_mark = 0; // the mark with a faint ring, 256 px
+    std::uint32_t mark = 0;        // the brand badge (brand.hpp), 128 px
+    std::uint32_t loader_mark = 0; // the same badge, 256 px, for large drawings
     std::string today;             // YYYY-MM-DD, for Latest releases
     std::string app_version;       // this app's contentVersion
     // Opens the browser version of Orbit; empty where it is not possible.
     std::function<bool()> open_browser;
     // Opens the exact option and destination; the browser still asks to proceed.
     std::function<bool(const BrowserSelection &)> open_download;
+    // Opens this game in the browser version (browser_game_url); empty where it
+    // is not possible.
+    std::function<bool(const std::string &game_id)> open_game_browser;
     float clock = 0.0f; // seconds since the app opened
 };
 
@@ -495,6 +499,12 @@ class GamePage final : public Screen
 
 };
 
+// XENO STORE: the text of a restart that needs the player (Restart::manual or
+// failed). It names the saved copy only when the last status reported one
+// (saved_version), since XENO STORE saves a copy only with an update.
+std::string restart_notice_text(Restart restart, const std::string &saved_version,
+                                const std::string &detail);
+
 // App settings (the browser's Sources, Pairing, Storage, Game catalogue,
 // Update / reinstall and TV app panels) as one page: sections on the left,
 // the chosen one on the right. Updates keep the two programs apart: this TV
@@ -509,7 +519,6 @@ class SettingsScreen final : public Screen
         pairing,
         catalogue,
         updates,
-        zero,
         more,
         count,
     };
@@ -549,7 +558,6 @@ class SettingsScreen final : public Screen
         restart_cancel,
         restart_retry,
         open_browser,
-        zero_toggle,
         archives_toggle,
         download_limit_less,
         download_limit_more,
@@ -570,7 +578,6 @@ class SettingsScreen final : public Screen
     void build_catalogue(Pane &pane) const;
     void build_updates(Pane &pane) const;
     void build_more(Pane &pane) const;
-    void build_zero(Pane &pane) const;
     std::vector<Control> controls(float *height = nullptr) const;
     void activate(const Control &control, Intent &intent, Feedback &feedback);
     void load_draft();
@@ -630,6 +637,16 @@ class App
     {
         return downloads_;
     }
+    // Preview and tests: the last toast and the seconds it still shows (each
+    // new toast starts the count again; 0 once it has gone).
+    const std::string &toast() const
+    {
+        return toast_;
+    }
+    float toast_left() const
+    {
+        return toast_time_;
+    }
 
   private:
     enum class Area : std::uint8_t
@@ -643,6 +660,14 @@ class App
     void draw_game_header(hui::gfx::DrawList &list) const;
     bool status_offline(const Snapshot &state) const;
     void draw_status(Frame &frame) const;
+    // XENO STORE: the buttons on the outdated-store screen, left to right.
+    enum class StatusButton : std::uint8_t
+    {
+        replace, // stop the outdated store and start this app's copy
+        browser, // the browser version, where the store updates itself
+    };
+    int status_buttons(const Snapshot &state, StatusButton (&out)[2]) const;
+    void draw_outdated(hui::gfx::DrawList &list, const Snapshot &state) const;
     bool update_badge() const;    // an update for the TV app or the download service
     bool content_blocked() const; // setup or an empty catalogue on Discover/Browse
     void draw_blocked(hui::gfx::DrawList &list) const;
@@ -682,6 +707,8 @@ class App
     ui::Ease game_in_;
     std::vector<ui::Ease> top_focus_;
     float status_age_ = 0.0f;
+    int status_focus_ = 0;    // the focused button on the outdated-store screen
+    std::string status_note_; // why that screen's last action did nothing
 };
 
 } // namespace orbit

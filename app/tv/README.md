@@ -1,5 +1,40 @@
 # Orbit Store for TV (native app)
 
+Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
+
+## XENO STORE
+
+This folder is the **XENO STORE TV app**: title `PPSA99500`, its
+`contentVersion` taken from the repository's `VERSION`, and a client of
+`xeno-store.elf` on `127.0.0.1:9095` through the `/api/v1` dialect
+(`docs/API.md` §13 in the repository). It is Orbit Store 1.2.0's TV app,
+ported to XENO STORE's backend, brand and paths; `NOTICE` lists the
+provenance, every licence and every changed file.
+
+- **Build** from the repository root, not in this folder:
+  `make tv-deps && make tv && make ffpkg` packs `dist/PPSA99500.ffpkg`;
+  `make tv-test` runs the unit tests and `make tv-preview` /
+  `make tv-preview-live` draw previews on the PC. There is no `make ffpkg`
+  in `app/tv`, and no payload is staged here: `tools/make_ffpkg.py` bundles
+  the store's ELF as `/app0/xeno/xeno-store.elf`. See `app/README.md`.
+- **Starting the store.** When nothing answers on port 9095, the app sends
+  the saved update `/data/xeno-store/xeno-store.elf` or its bundled copy,
+  whichever is newer, to the ELF loader on port 9021. An older XENO STORE
+  without `/api/v1` (1.2.x) on the port is named on the opening screen,
+  with **Replace it now** and **Open browser version**.
+- **Install** as `app/README.md` ("How people install it") describes: the
+  store's **Install the XENO STORE app**, or `PPSA99500.ffpkg` copied to
+  `/data/homebrew/`.
+- **Log:** `/download0/hui/dev/app.log` in the app's sandbox, that is
+  `/mnt/sandbox/PPSA99500_000/download0/hui/dev/app.log` over FTP while it
+  runs.
+
+Everything below describes upstream Orbit Store 1.2.0 and is kept for
+provenance. Its ports, paths, title ID and commands are Orbit's; sections
+marked *Upstream only* do not apply to this app.
+
+---
+
 Native TV app **1.4.0**, bundled with the **Orbit Store 1.1.0 service**.
 
 A full-screen PS5 app for Orbit's storefront, drawn by the GPU instead of
@@ -41,7 +76,7 @@ screen for screen:
 Connect TorBox in the browser's **App settings → Debrid**, then select
 **Download using → TorBox** on a supported game's native download page.
 Without an account, **Set up TorBox** opens the browser with your game, source and destination preserved. The queue labels these jobs **via TorBox**. Account connection and host/file
-limits still apply. See [TorBox connection and recovery](../docs/debrid.md).
+limits still apply. See TorBox connection and recovery (upstream `docs/debrid.md`).
 
 For Vikingfile, choose the download option and save location, then select
 **Open Vikingfile on PS5**. This opens Vikingfile directly in the PS5 browser.
@@ -71,7 +106,8 @@ right (Right or Cross to enter it, Circle or Left to leave).
   (`POST /api/v1/storage/preferred`), or Choose automatically. Starting a
   download on another drive still makes that drive the default, as before.
   An Orbit older than this endpoint says it needs updating.
-- **Pair a device**: the console's address (`http://<PS5 IP>:34177`, from
+- **Pair a device**: the console's address (`http://<PS5 IP>:34177` in Orbit,
+  `:9095` in XENO STORE, from
   the console session) and the six-digit code, read again whenever the
   section opens and after Orbit restarts.
 - **Game catalogue**: games, catalogue revision, when it was last checked,
@@ -114,6 +150,8 @@ once. Nothing is downloaded or installed until it is chosen.
 
 ### Starting Orbit
 
+*Upstream only: XENO STORE's starter is described in the preface.*
+
 When the first status request is refused (nothing listens on port 34177),
 the app sends Orbit to the loader once, shows **Starting Orbit…** and waits up
 to 30 seconds for it to answer. It sends the copy Orbit saved in
@@ -127,6 +165,9 @@ package can't downgrade an Orbit you updated. The log records each
 attempt (`[ORBIT] start: ...`).
 
 ## Install on the PS5
+
+*Upstream only: XENO STORE's app is `PPSA99500`; see the preface and
+`app/README.md`.*
 
 1. Stop a running Orbit first (App settings, Stop Orbit, in the browser
    version, or restart the console and run the jailbreak). A second copy of
@@ -159,7 +200,7 @@ while it runs). Close it with the PS button and Close Application.
 
 Orbit follows the PS5 system language when the app starts. English, German, Spanish, French, Hungarian, Italian, Dutch, Polish, Brazilian Portuguese, Russian and Turkish are supported; other languages use English. Close and reopen the app after changing the console language. The language preference in the browser version applies only to that browser.
 
-The interface translations share `i18n/` with the browser. The build packages them under `assets/i18n/`. Game names and descriptions keep the catalogue’s original text. For translation checks, see [BUILDING.md](../BUILDING.md#interface-languages).
+The interface translations share `i18n/` with the browser. The build packages them under `assets/i18n/`. Game names and descriptions keep the catalogue’s original text. For translation checks, run `make tv-check` from the repository root (`tools/i18n-coverage.py`).
 
 ## Controls
 
@@ -177,50 +218,21 @@ the D-pad, choose with Cross, close with Circle.
 
 ## Build
 
-Everything runs in the app's build image (Ubuntu 24.04 with Clang 18,
-Mesa, .NET 8). On Apple silicon the image adds the x86-64 compiler builtins
-from Ubuntu's archive at a pinned checksum.
-
-Build Orbit first: the package carries `build/orbit_store.elf` (see
-[BUILDING.md](../BUILDING.md)). The commands mount the repository root so the
-app build can read it.
-
-```sh
-docker build -t orbit-app-build:0.1 app
-docker run --rm -v "$PWD:/work" -w /work/app orbit-app-build:0.1 make ffpkg   # dist/PPSA99177{,.ffpkg,.zip}
-docker run --rm -v "$PWD:/work" -w /work/app orbit-app-build:0.1 make preview # build/preview/pictures/*.png
-docker run --rm -v "$PWD:/work" -w /work/app orbit-app-build:0.1 make test    # unit tests, sanitizers on
-```
-
-`ORBIT_PAYLOAD=<path>` bundles another build of Orbit, and
-`ORBIT_PAYLOAD=none` builds an app without one, which only waits for Orbit.
-The version written next to the copy comes from its `Orbit-Store/<version>`
-user agent.
-
-The first build fetches pinned dependencies into `app/.deps/` (ignored): the
-PS5 payload SDK v0.42, the ps5-opengl 1.0.0 SDK, PacBrew v0.40.2 (for
-libwebp), zlib 1.3.2, GoogleTest 1.17.0 and, for `.ffpkg`, UFS2Tool. Each is
-checked against a SHA-256 or commit in `tools/`.
-
+*Upstream only.* Orbit built the app in its own build image with `make ffpkg`
+in its `app/` folder, which also staged Orbit's payload. XENO STORE builds it
+from the repository root (see the preface); the same image is `Dockerfile`
+here. The first build fetches pinned dependencies into `app/tv/.deps/`
+(ignored): the PS5 payload SDK, the ps5-opengl SDK, PacBrew (for libwebp),
+zlib and GoogleTest. Each is checked against a SHA-256 or commit in `tools/`.
 
 ### Previews without a console
 
-`make preview` runs the real app code on the PC (Mesa, surfaceless EGL) with
-scripted controller input and writes a picture per step. It uses a built-in
-stand-in backend with invented games and generated art (`host/fixture.cpp`).
-To preview against a running Orbit backend instead, run the desktop backend
-and give the preview its network:
-
-```sh
-docker run -d --name orbit-tv-backend -v "$PWD:/work" --entrypoint /work/build/orbit-host \
-  orbit-build:0.1 --state /work/build/live-state
-docker run --rm --network container:orbit-tv-backend -v "$PWD:/work" -w /work/app \
-  -e ORBIT_BACKEND=127.0.0.1:34177 orbit-app-build:0.1 bash tools/preview.sh build/preview/live
-```
-
-Choose sources once in that backend (as on first run) or the app shows its
-setup screen. Pictures are the PC's rendering; frame rate, sound and
-controller feel are console checks.
+`make tv-preview` runs the real app code on the PC (Mesa, surfaceless EGL)
+with scripted controller input and writes a picture per step. It uses a
+built-in stand-in backend with invented games and generated art
+(`host/fixture.cpp`). `make tv-preview-live` previews against the desktop
+build of XENO STORE instead. Pictures are the PC's rendering; frame rate,
+sound and controller feel are console checks.
 
 ## How it is built
 
@@ -249,7 +261,7 @@ tooling/, tools/ the native PS5 build: compile, link, FSELF signing, packaging
   finished download, or a related copy).
 - **Artwork.** `GET /api/v1/art/<gameId>/<cover|hero>` on the backend fetches
   the catalogue's own HTTPS URL on its workers and caches it (see
-  [the API](../docs/api.md)). The app decodes WebP with libwebp (scaled while
+  the upstream `docs/api.md`). The app decodes WebP with libwebp (scaled while
   decoding) and PNG/JPEG with stb_image, at drawing size, on its own worker,
   then uploads at most two textures per frame. The heap is fixed at 128 MiB,
   so at most 64 covers and 4 banners stay resident.
@@ -262,25 +274,18 @@ tooling/, tools/ the native PS5 build: compile, link, FSELF signing, packaging
 
 ## Installing from Orbit
 
+*Upstream only: XENO STORE installs and updates the app through
+`/api/v1/tv-app` and the release's `updates/tv-app.json` (see `app/README.md`).*
+
 Once a release carries the app, people install it from the browser version:
 **App settings → TV app → Install on this PS5**, and update it there or in
 the app itself (**App settings → Updates**). Orbit downloads the image,
 checks it and places it in `/data/homebrew/` (see the TV app installer in
-[docs/api.md](../docs/api.md)). The same panel links to the latest GitHub
+the upstream `docs/api.md`). The same panel links to the latest GitHub
 release for installing by hand.
 
-Orbit finds the app through `tv-app.json` at the root of the public
-repository's `main` branch:
-
-`npm run release:package` generates the exact feed. It contains `name`,
-`filename`, the app's own semantic `version` (1.4.0), the official FFPKG
-release `url`, its SHA-256 `checksum` and byte `size`. The app version is
-derived from content version `01.004.000`; the release/service version is
-1.1.0. Do not hand-copy example hashes or sizes into the live feed.
-
-Upload `dist/PPSA99177.ffpkg` to the release first, then publish the feed.
-Until the feed exists, the panel says the app hasn't been published yet.
-The package command generates the feed with the exact image size and checksum.
+Orbit found the app through a `tv-app.json` feed that its own release
+tooling generated with the image's exact size and checksum.
 
 ## Provenance and licences
 
@@ -296,7 +301,8 @@ The app is GPL-3.0-or-later, like Orbit.
   They are unmodified except `tools/bake-fonts.sh` (Orbit's font table),
   `tools/build-tests.sh` (links libwebp, adds `host/`), `tools/build.sh`
   (copies the staged Orbit payload into the package) and the new
-  `tools/preview.sh` and `tools/stage-payload.sh`.
+  `tools/preview.sh` and `tools/stage-payload.sh` (deleted in XENO STORE; see
+  `NOTICE`).
 - `assets/audio/sfx/glass` are the kit's interface sounds (BlackBearReloaded,
   distributed under the kit's licence).
 - Inter 4.1 (`third_party/fonts`, SIL Open Font License 1.1); the baked atlases
@@ -308,18 +314,17 @@ The app is GPL-3.0-or-later, like Orbit.
   libwebp 1.4.0 from PacBrew (BSD-3-Clause, `../licenses/libwebp-*`), and the
   kit's clean-room `libc.prx` shim generated from `tooling/`.
 - Carried in the package: Orbit's own `orbit_store.elf`, with the components
-  listed in [THIRD-PARTY-NOTICES.md](../THIRD-PARTY-NOTICES.md).
-
-`npm run release:package` includes the exact app and payload source, the full
-ps5-opengl release with its source archives and patches, both payload SDK
-versions, the linked WebP and C++ runtime sources, and their notices. See
-[THIRD-PARTY-NOTICES.md](../THIRD-PARTY-NOTICES.md) and
-[BUILDING.md](../BUILDING.md) for the inventory and rebuild instructions.
+  listed in Orbit's `THIRD-PARTY-NOTICES.md`. XENO STORE's package carries
+  `xeno-store.elf` instead; `NOTICE` and the release's corresponding-source
+  bundle (`tools/tv/make_source_bundle.py`) list what XENO STORE ships.
 
 ### Orbit Zero
+
+*Upstream only: Orbit Zero is not part of XENO STORE, and this app has no
+Orbit Zero controls.*
 
 These controls require the matching Orbit Store 1.0.0 FFPKG, receiver ELF and Orbit Zero desktop app. Earlier packages do not support Zero. Orbit Zero 1.1.0 and the matching native app support the same 11 interface languages. PS4 browsing needs the 1.1.0 receiver and native app 1.4.0.
 
 Pair Orbit Zero on the computer with the running, matching Orbit ELF. In the TV app, open **App settings → Orbit Zero → Enable Orbit Zero**. The native storefront then uses the computer's catalogue and artwork; Download follows the computer's saved preference. Downloads shows the internet rate and the transfer rate to the PS5 separately. Keep the computer and Orbit Zero running while it transfers. Vikingfile verification opens on the computer, with a prompt to continue there. Turning this mode off affects new downloads; existing computer transfers retain their original route.
 
-**Computer** is the default preference. **Prefer PS5** probes the selected source before starting a new direct console download and falls back to the computer when the console cannot fetch it. The computer and PS5 may use Wi-Fi or Ethernet on the same reachable local network; only direct console downloads require the PS5 to have internet access. See the [companion API](../docs/api.md#native-orbit-zero-controls-development) for registration, routing and token boundaries.
+**Computer** is the default preference. **Prefer PS5** probes the selected source before starting a new direct console download and falls back to the computer when the console cannot fetch it. The computer and PS5 may use Wi-Fi or Ethernet on the same reachable local network; only direct console downloads require the PS5 to have internet access. Orbit's companion API documented registration, routing and token boundaries.

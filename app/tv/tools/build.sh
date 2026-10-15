@@ -2,6 +2,7 @@
 # ps5-native-app-boilerplate - Native Linux/WSL application build.
 # Copyright (C) 2026 BlackBearReloaded
 # SPDX-License-Identifier: GPL-3.0-or-later
+# Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 #
 # Compiles, links, signs, validates, and assembles the root skeleton app.
 
@@ -251,13 +252,14 @@ for asset in icon0.png pic0.dds pic1.dds snd0.at9; do
     [[ -f $root/sce_sys/$asset ]] && cp "$root/sce_sys/$asset" "$app/sce_sys/$asset"
 done
 [[ ! -d $root/assets ]] || cp -a "$root/assets" "$app/assets"
-# Orbit Store: the interface catalogues, shared with the browser version
-# (i18n/ at the repository root). English is the key and needs no file.
+# Orbit Store: the interface catalogues (i18n/ in this app folder). English
+# is the key and needs no file.
 mkdir -p "$app/assets/i18n"
-for catalogue in "$root"/../i18n/*.json; do
+for catalogue in "$root"/i18n/*.json; do
     [[ $(basename "$catalogue") == en.json ]] || cp "$catalogue" "$app/assets/i18n/"
 done
-# Orbit Store: extra files staged by the Makefile (Orbit itself, in orbit/).
+# Orbit Store: extra files from APP_EXTRA_DIR, when it is set. XENO STORE's
+# Makefile sets none: tools/make_ffpkg.py stages xeno/ into the image itself.
 [[ -z ${APP_EXTRA_DIR:-} || ! -d $root/$APP_EXTRA_DIR ]] || cp -a "$root/$APP_EXTRA_DIR/." "$app/"
 # Directory listing returns nothing under /app0 on the console, so each
 # audio folder carries an index of its files (read by save::list_files).

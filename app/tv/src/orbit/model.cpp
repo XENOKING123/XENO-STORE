@@ -1,5 +1,6 @@
 // Orbit Store TV app - The Orbit API's data, and the storefront rules built on it.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "orbit/model.hpp"
 
@@ -291,11 +292,8 @@ std::vector<Job> parse_jobs(const json::Value &value)
         job.received = item.number("received");
         job.total = item.number("total");
         job.speed = item.number("speed");
-        job.computer_received = item.number("computerReceived");
-        job.download_speed = item.number("downloadSpeed");
         job.extracted = item.number("extracted");
         job.extract_total = item.number("extractTotal");
-        job.send_total = item.number("sendTotal");
         job.retry_at = item.number("retryAt");
         job.order = static_cast<int>(item["order"].as_int());
         jobs.push_back(std::move(job));

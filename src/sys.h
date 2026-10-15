@@ -14,6 +14,10 @@ const char *sys_platform(void);        /* "ps5" | "host" */
 int sys_launch_browser(const char *url);  /* PS5 only; a logged no-op on host */
 /* Milliseconds since the store last opened the browser (a large value when never). */
 int64_t sys_browser_opened_ago_ms(void);
-int sys_local_ip(char *out, size_t cap);  /* first non-loopback IPv4; "127.0.0.1" fallback */
+/* The first non-loopback, non-link-local IPv4 address that is up: 0 and out
+ * filled, or -1 when there is none (out then holds "127.0.0.1", which callers
+ * that publish an address, such as /api/v1/session, must not send).
+ * Thread-safe (inet_ntop into a local buffer). */
+int sys_local_ip(char *out, size_t cap);
 
 #endif

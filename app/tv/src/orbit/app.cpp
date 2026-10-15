@@ -1,7 +1,8 @@
 // Orbit Store TV app - The app: top bar, tabs, the game page, status and dialogs.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
-#include "orbit/mark.hpp"
+#include "orbit/brand.hpp"
 #include "orbit/screens.hpp"
 #include "orbit/i18n.hpp"
 
@@ -29,18 +30,37 @@ constexpr float kTabGap = 6.0f;
 constexpr float kIcon = 56.0f; // .top-icon: 2.8 rem
 constexpr float kSearchX = 1724.0f;
 constexpr float kSettingsX = 1792.0f;
-constexpr const char *kBrand = "Orbit Store";
+constexpr const char *kBrand = "XENO STORE";
 // How long the opening screen shows before "Orbit isn't running".
 constexpr float kOpeningGrace = 2.5f;
 
 // Where the BETA label starts and how wide it is.
 float beta_x(const ui::Type &type)
 {
-    return ui::kGutter + 40.0f + 14.0f + type.regular.measure(kBrand, 22.0f) + 14.0f;
+    return ui::kGutter + 40.0f + 14.0f + brand::wordmark_width(type, kBrand, 22.0f) + 14.0f;
 }
 float beta_width(const ui::Type &type)
 {
     return type.semibold.measure(tr("BETA"), 13.0f) + 4.0f + 2.0f * 7.6f;
+}
+
+// The brand, as the web's .brand: the round badge in a gold ring, the
+// wordmark, and the BETA label outlined in gold. x is the brand's left edge.
+void draw_brand(hui::gfx::DrawList &list, const ui::Type &type, std::uint32_t badge, float x)
+{
+    if (badge != 0)
+    {
+        list.glow({x - 2.0f, kTopY - 22.0f, 44.0f, 44.0f}, 22.0f, 12.0f,
+                  ui::color::gold.with_alpha(0.22f));
+        list.ring(x + 20.0f, kTopY, 24.5f, 2.0f, ui::color::gold);
+        list.image(badge, {x - 2.0f, kTopY - 22.0f, 44.0f, 44.0f}, hui::gfx::kFullUv,
+                   ui::color::white);
+    }
+    const float name = brand::draw_wordmark(list, type, kBrand, x + 54.0f, kTopY + 8.0f, 22.0f);
+    const ui::Rect beta{x + 54.0f + name + 14.0f, kTopY - 12.5f, beta_width(type), 25.0f};
+    list.bordered_rect(beta, 4.0f, ui::color::gold_soft, 1.0f, ui::color::gold_line);
+    ui::text(list, type.semibold, tr("BETA"), beta.cx(), kTopY + 4.7f, 13.0f, ui::color::action_hi,
+             ui::Align::center);
 }
 
 ui::Rect tab_rect(const ui::Type &type, int index)
@@ -222,10 +242,34 @@ void App::update(const InputFrame &input, float dt, Feedback &feedback)
     status_age_ += dt;
 
     const InputFrame idle{};
-    const bool ready = state.have_system && state.link != Link::connecting &&
+    const bool ready = state.have_system && !state.outdated && state.link != Link::connecting &&
                        (state.have_catalog || state.setup_needed());
     if (!ready)
     {
+        // XENO STORE: an outdated store holds the port. Left and right choose
+        // a button, Cross uses it; the screen clears by itself after an update.
+        if (state.outdated)
+        {
+            StatusButton buttons[2];
+            const int count = status_buttons(state, buttons);
+            if (count == 0)
+                return;
+            if (input.nav == Direction::left)
+                status_focus_ = 0;
+            else if (input.nav == Direction::right)
+                status_focus_ = count - 1;
+            status_focus_ = std::clamp(status_focus_, 0, count - 1);
+            if (input.is_pressed(Action::confirm))
+            {
+                feedback.play(hui::audio::Cue::launch);
+                status_note_.clear();
+                if (buttons[status_focus_] == StatusButton::replace)
+                    ctx_.store.replace_outdated();
+                else if (!ctx_.open_browser())
+                    status_note_ = tr("The browser could not be opened.");
+            }
+            return;
+        }
         // The opening and offline screens move on by themselves. Once Orbit is
         // known not to be running, Cross asks the store to start it again.
         if (status_offline(state) && ctx_.store.can_start() && input.is_pressed(Action::confirm))
@@ -431,17 +475,10 @@ void App::draw_top_bar(hui::gfx::DrawList &list) const
 {
     const ui::Type &type = ctx_.type;
     const Snapshot &state = ctx_.store.state();
-    // The brand: mark, name and the BETA label, as on the web.
-    if (ctx_.mark != 0)
-        list.image(ctx_.mark, {ui::kGutter - 2.0f, kTopY - 22.0f, 44.0f, 44.0f}, hui::gfx::kFullUv,
-                   ui::Color::rgb(0xffffff));
-    ui::text(list, type.regular, kBrand, ui::kGutter + 54.0f, kTopY + 8.0f, 22.0f, ui::color::text);
-    const ui::Rect beta{beta_x(type), kTopY - 12.5f, beta_width(type), 25.0f};
-    list.bordered_rect(beta, 4.0f, ui::Color{0, 0, 0, 0}, 1.0f, ui::Color::rgb(0xffffff, 0.3f));
-    ui::text(list, type.semibold, tr("BETA"), beta.cx(), kTopY + 4.7f, 13.0f, ui::color::text,
-             ui::Align::center);
+    // The brand: badge, name and the BETA label, as on the web.
+    draw_brand(list, type, ctx_.mark, ui::kGutter);
 
-    // Tabs: text buttons, the current one in a pale pill.
+    // Tabs: text buttons, the current one in a pale pill over a gold bar.
     const int active = active_jobs(state);
     char count[16];
     std::snprintf(count, sizeof(count), "%d", active);
@@ -457,8 +494,12 @@ void App::draw_top_bar(hui::gfx::DrawList &list) const
         const float focus = top_focus_[static_cast<std::size_t>(i)].value;
         ui::focus_ring(list, r, r.h * 0.5f, focus);
         if (current)
-            list.bordered_rect(r, r.h * 0.5f, ui::Color::rgb(0xffffff, 0.13f), 1.0f,
-                               ui::Color::rgb(0xffffff, 0.2f));
+        {
+            list.bordered_rect(r, r.h * 0.5f, ui::color::white.with_alpha(0.1f), 1.0f,
+                               ui::color::white.with_alpha(0.16f));
+            list.rounded_rect({r.x + kTabPad, r.y + r.h - 7.0f, r.w - 2.0f * kTabPad, 3.0f}, 1.5f,
+                              ui::color::gold);
+        }
         ui::text(list, type.regular, tr(kTabs[i]), r.x + kTabPad, kTopY + 8.0f, kTabSize,
                  current || focus > 0.5f ? ui::color::text : ui::color::text2);
         if (counted)
@@ -466,8 +507,8 @@ void App::draw_top_bar(hui::gfx::DrawList &list) const
             const ui::Rect pill{r.x + r.w - kTabPad - count_width, kTopY - 11.0f, count_width,
                                 22.0f};
             list.rounded_rect(pill, 11.0f, ui::color::action);
-            ui::text(list, type.semibold, count, pill.cx(), kTopY + 5.0f, 14.0f, ui::color::night1,
-                     ui::Align::center);
+            ui::text(list, type.semibold, count, pill.cx(), kTopY + 5.0f, 14.0f,
+                     ui::color::action_ink, ui::Align::center);
         }
     }
 
@@ -483,7 +524,7 @@ void App::draw_top_bar(hui::gfx::DrawList &list) const
         const float focus = top_focus_[static_cast<std::size_t>(icon.index)].value;
         ui::focus_ring(list, {icon.x - kIcon * 0.5f, kTopY - kIcon * 0.5f, kIcon, kIcon},
                        kIcon * 0.5f, focus);
-        list.circle(icon.x, kTopY, kIcon * 0.5f, ui::Color::rgb(0xffffff, 0.08f));
+        list.circle(icon.x, kTopY, kIcon * 0.5f, ui::color::white.with_alpha(0.08f));
         if (icon.index == kSearchItem)
         {
             ui::icon_search(list, icon.x, kTopY, 26.0f, ui::color::text);
@@ -505,7 +546,7 @@ void App::draw_top_bar(hui::gfx::DrawList &list) const
             const ui::Rect tag{
                 std::min(icon.x - width * 0.5f, 1920.0f - ui::kGutter - width + 28.0f),
                 kTopY + kIcon * 0.5f + 11.0f, width, 28.0f};
-            list.rounded_rect(tag, 14.0f, ui::Color::rgb(0x141414, 0.92f));
+            list.rounded_rect(tag, 14.0f, ui::color::popover);
             ui::text(list, type.regular, icon.label, tag.cx(), tag.cy() + 5.4f, 15.0f,
                      ui::color::text, ui::Align::center);
             list.pop_opacity();
@@ -517,8 +558,76 @@ void App::draw_top_bar(hui::gfx::DrawList &list) const
 // attempt to start it has ended.
 bool App::status_offline(const Snapshot &state) const
 {
-    return state.link == Link::offline && !starting_now(state) &&
+    const bool restarting = state.restart == Restart::stopping || state.restart == Restart::starting;
+    return state.link == Link::offline && !starting_now(state) && !restarting &&
            (status_age_ > kOpeningGrace || state.starting != Starting::idle);
+}
+
+int App::status_buttons(const Snapshot &state, StatusButton (&out)[2]) const
+{
+    const SettingResult &result = ctx_.store.setting_result();
+    // Only a store that names itself can be replaced or updated; nothing while
+    // a replacement is under way.
+    if (state.outdated_version.empty() || state.restart == Restart::stopping ||
+        (result.busy && result.setting == Setting::service_replace))
+        return 0;
+    int count = 0;
+    if (ctx_.store.can_start())
+        out[count++] = StatusButton::replace;
+    if (ctx_.open_browser)
+        out[count++] = StatusButton::browser;
+    return count;
+}
+
+// XENO STORE: something answers on the port without this app's API.
+void App::draw_outdated(hui::gfx::DrawList &list, const Snapshot &state) const
+{
+    const ui::Type &type = ctx_.type;
+    const bool known = !state.outdated_version.empty();
+    const std::string title =
+        known ? tr("XENO STORE {version} is too old for this app", {{"version", state.outdated_version}})
+              : std::string(tr("Another program is using XENO STORE\xE2\x80\x99s port"));
+    const char *body =
+        !known ? tr("Close the program that uses port 9095, or restart your PS5 so this app can start "
+                    "XENO STORE.")
+        : ctx_.store.can_start()
+            ? tr("Update it in the browser version under Settings \xE2\x86\x92 Updates, or replace it "
+                 "with the copy in this app.")
+            : tr("Update it in the browser version under Settings \xE2\x86\x92 Updates. This screen "
+                 "reconnects by itself.");
+    ui::text(list, type.light, title, 960.0f, 590.0f, 52.0f, ui::color::text, ui::Align::center);
+    ui::text(list, type.regular, body, 960.0f, 646.0f, 26.0f, ui::color::text2, ui::Align::center);
+    const SettingResult &result = ctx_.store.setting_result();
+    std::string detail;
+    if (state.restart == Restart::stopping || (result.busy && result.setting == Setting::service_replace))
+        detail = tr("Stopping the download service\xE2\x80\xA6");
+    else if (result.setting == Setting::service_replace && !result.error.empty())
+        detail = result.error;
+    else
+        detail = status_note_;
+    if (!detail.empty())
+        ui::text(list, type.regular, detail, 960.0f, 694.0f, 21.0f, ui::color::text3,
+                 ui::Align::center);
+    StatusButton buttons[2];
+    const int count = status_buttons(state, buttons);
+    const char *labels[2] = {};
+    float widths[2] = {};
+    float total = 0.0f;
+    for (int i = 0; i < count; ++i)
+    {
+        labels[i] = buttons[i] == StatusButton::replace ? tr("Replace it now") : tr("Open browser version");
+        widths[i] = ui::button_width(type, labels[i]);
+        total += widths[i] + (i > 0 ? 24.0f : 0.0f);
+    }
+    float x = 960.0f - total * 0.5f;
+    const int focus = std::clamp(status_focus_, 0, std::max(0, count - 1));
+    for (int i = 0; i < count; ++i)
+    {
+        ui::button(list, type, {x, 760.0f, widths[i], ui::kButtonHeight}, labels[i],
+                   i == 0 ? ui::ButtonKind::primary : ui::ButtonKind::secondary,
+                   i == focus ? 1.0f : 0.0f);
+        x += widths[i] + 24.0f;
+    }
 }
 
 void App::draw_status(Frame &frame) const
@@ -527,54 +636,70 @@ void App::draw_status(Frame &frame) const
     const ui::Type &type = ctx_.type;
     const Snapshot &state = ctx_.store.state();
     const bool offline = status_offline(state);
-    const float size = 220.0f;
+    const bool replacing = state.restart == Restart::stopping || state.restart == Restart::starting;
+    const bool dim = state.outdated ? !replacing : offline;
+    const float size = 160.0f;
     const float x = 960.0f - size * 0.5f;
     const float y = 330.0f - size * 0.5f;
-    // A breathing blue glow behind the mark, and the light running round its ring.
+    // A breathing blue glow behind the badge, and the gold rim turning round it
+    // once every 2.4 s, as the web's brand badge does.
     const float breathe = 0.5f + 0.5f * std::sin(ctx_.clock * 2.6f);
-    list.glow({x + 40.0f, y + 40.0f, size - 80.0f, size - 80.0f}, size * 0.5f, 120.0f,
-              ui::Color::rgb(0xffffff, (offline ? 0.18f : 0.30f) + 0.16f * breathe));
+    list.glow({x + 20.0f, y + 20.0f, size - 40.0f, size - 40.0f}, size * 0.5f, 120.0f,
+              ui::color::accent.with_alpha((dim ? 0.08f : 0.16f) + 0.1f * breathe));
     const float in = std::clamp(ctx_.clock / 0.7f, 0.0f, 1.0f);
     list.push_opacity(in);
     list.push_transform(0.88f + 0.12f * in, 960.0f, 330.0f, 0.0f, 0.0f);
-    if (ctx_.loader_mark != 0)
-        list.image(offline ? ctx_.mark : ctx_.loader_mark, {x, y, size, size}, hui::gfx::kFullUv,
-                   ui::Color::rgb(0xffffff, offline ? 0.55f : 1.0f));
-    if (!offline)
-        mark::draw_light(list, x, y, size, std::fmod(ctx_.clock / 2.4f, 1.0f));
+    const std::uint32_t badge = ctx_.loader_mark != 0 ? ctx_.loader_mark : ctx_.mark;
+    if (badge != 0)
+        list.image(badge, {x, y, size, size}, hui::gfx::kFullUv,
+                   ui::color::white.with_alpha(dim ? 0.55f : 1.0f));
+    if (!dim)
+        brand::draw_rim(list, x, y, size, std::fmod(ctx_.clock / 2.4f, 1.0f));
     list.pop_transform();
     list.pop_opacity();
 
+    if (state.outdated)
+    {
+        draw_outdated(list, state);
+        return;
+    }
     if (!offline)
     {
-        if (starting_now(state))
+        if (starting_now(state) || replacing)
         {
-            ui::text(list, type.light, tr("Starting Orbit\xE2\x80\xA6"), 960.0f, 590.0f, 44.0f,
+            ui::text(list, type.light, tr("Starting XENO STORE\xE2\x80\xA6"), 960.0f, 590.0f, 44.0f,
                      ui::color::text, ui::Align::center);
             ui::text(list, type.regular,
-                     tr("Orbit keeps running in the background after you close this app."), 960.0f,
+                     tr("XENO STORE keeps running in the background after you close this app."), 960.0f,
                      646.0f, 26.0f, ui::color::text2, ui::Align::center);
             return;
         }
-        ui::text(list, type.light, tr("Opening Orbit Store\xE2\x80\xA6"), 960.0f, 590.0f, 44.0f,
+        ui::text(list, type.light, tr("Opening XENO STORE\xE2\x80\xA6"), 960.0f, 590.0f, 44.0f,
                  ui::color::text, ui::Align::center);
         return;
     }
-    const char *title = state.starting == Starting::failed ? tr("Orbit didn\xE2\x80\x99t start")
-                                                           : tr("Orbit isn\xE2\x80\x99t running");
-    const char *body = tr("Start Orbit from your payload manager. This screen reconnects by itself.");
-    if (state.starting == Starting::no_loader)
-        body = tr("Start Orbit from your payload manager, or run your jailbreak again so this app "
+    // A replacement of an outdated store that could not start this app's copy
+    // reads like a start of its own.
+    const bool restart_ended = state.restart == Restart::manual || state.restart == Restart::failed;
+    const Starting shown = state.starting != Starting::idle   ? state.starting
+                           : state.restart == Restart::manual ? Starting::no_loader
+                           : state.restart == Restart::failed ? Starting::failed
+                                                              : Starting::idle;
+    const char *title = shown == Starting::failed ? tr("XENO STORE didn\xE2\x80\x99t start")
+                                                  : tr("XENO STORE isn\xE2\x80\x99t running");
+    const char *body = tr("Start XENO STORE from your payload manager. This screen reconnects by itself.");
+    if (shown == Starting::no_loader)
+        body = tr("Start XENO STORE from your payload manager, or run your jailbreak again so this app "
                "can start it.");
-    else if (state.starting == Starting::failed)
-        body = tr("Check that Orbit is set up in your payload manager, then try again.");
+    else if (shown == Starting::failed)
+        body = tr("Check that XENO STORE is set up in your payload manager, then try again.");
     ui::text(list, type.light, title, 960.0f, 590.0f, 52.0f, ui::color::text, ui::Align::center);
     ui::text(list, type.regular, body, 960.0f, 646.0f, 26.0f, ui::color::text2, ui::Align::center);
     // The connection error itself stays as the system reports it.
     const std::string detail =
-        !state.start_detail.empty()
-            ? state.start_detail
-            : tr("Waiting for Orbit on this console ({detail})",
+        !state.start_detail.empty()                       ? state.start_detail
+        : restart_ended && !state.restart_detail.empty() ? state.restart_detail
+            : tr("Waiting for XENO STORE on this console ({detail})",
                  {{"detail", state.link_error.empty() ? std::string(tr("no answer"))
                                                       : state.link_error}});
     ui::text(list, type.regular, detail, 960.0f, 694.0f, 21.0f, ui::color::text3,
@@ -593,10 +718,10 @@ void App::draw_blocked(hui::gfx::DrawList &list) const
     const ui::Type &type = ctx_.type;
     const Snapshot &state = ctx_.store.state();
     const bool setup = state.setup_needed() && !state.sources.acknowledged;
-    const char *title = setup                           ? tr("Finish setting up Orbit")
+    const char *title = setup                           ? tr("Finish setting up XENO STORE")
                         : state.sources.enabled.empty() ? tr("No sources enabled")
                                                         : tr("No games from your selected sources");
-    const char *body = setup ? tr("Choose where Orbit gets your downloads and accept the download "
+    const char *body = setup ? tr("Choose where XENO STORE gets your downloads and accept the download "
                                "notice. It takes a moment, and you can change it anytime.")
                              : tr("Choose another source in App settings. This screen updates by "
                                "itself.");
@@ -612,36 +737,29 @@ void App::draw_game_header(hui::gfx::DrawList &list) const
 {
     // A game page is its own screen: Back and the brand, no tabs or tools.
     const ui::Type &type = ctx_.type;
-    list.circle(ui::kGutter + kIcon * 0.5f, kTopY, kIcon * 0.5f, ui::Color::rgb(0xffffff, 0.08f));
+    list.circle(ui::kGutter + kIcon * 0.5f, kTopY, kIcon * 0.5f,
+                ui::color::white.with_alpha(0.08f));
     ui::icon_back(list, ui::kGutter + kIcon * 0.5f, kTopY, 24.0f, ui::color::text);
-    const float x = ui::kGutter + kIcon + 36.0f;
-    if (ctx_.mark != 0)
-        list.image(ctx_.mark, {x - 2.0f, kTopY - 22.0f, 44.0f, 44.0f}, hui::gfx::kFullUv,
-                   ui::Color::rgb(0xffffff));
-    const float name =
-        ui::text(list, type.regular, kBrand, x + 54.0f, kTopY + 8.0f, 22.0f, ui::color::text);
-    const ui::Rect beta{x + 54.0f + name + 14.0f, kTopY - 12.5f, beta_width(type), 25.0f};
-    list.bordered_rect(beta, 4.0f, ui::Color{0, 0, 0, 0}, 1.0f, ui::Color::rgb(0xffffff, 0.3f));
-    ui::text(list, type.semibold, tr("BETA"), beta.cx(), kTopY + 4.7f, 13.0f, ui::color::text,
-             ui::Align::center);
+    draw_brand(list, type, ctx_.mark, ui::kGutter + kIcon + 36.0f);
 }
 
 void App::draw(Frame &frame) const
 {
     const Snapshot &state = ctx_.store.state();
-    // The browser's body: navy to near-black, lit from the top left towards
-    // #133070 (the shader adds its highlight, so it gets the difference).
-    frame.backdrop.mode = hui::gfx::BackdropMode::gradient;
-    frame.backdrop.colors[0] = ui::color::night1;
+    // The web UI's canvas: deep blue with its slow aurora clouds. The shader's
+    // first colour is the top: the web's glow spot sits there, over --bg0.
+    frame.backdrop.mode = hui::gfx::BackdropMode::aurora;
+    frame.backdrop.colors[0] = ui::color::glow;
     frame.backdrop.colors[1] = ui::color::night0;
-    frame.backdrop.colors[2] = ui::Color::rgb(0x101010);
+    frame.backdrop.colors[2] = ui::color::aurora1;
+    frame.backdrop.colors[3] = ui::color::aurora2;
     frame.backdrop.params[0] = 0.08f;
     frame.backdrop.params[1] = 0.0f;
     frame.backdrop.params[2] = 1.0f;
     frame.backdrop.time = ctx_.clock;
 
     hui::gfx::DrawList &scene = frame.scene;
-    const bool ready = state.have_system && state.link != Link::connecting &&
+    const bool ready = state.have_system && !state.outdated && state.link != Link::connecting &&
                        (state.have_catalog || state.setup_needed());
     if (!ready)
     {
@@ -666,6 +784,9 @@ void App::draw(Frame &frame) const
     // behind them they darken the navy page.
     if (game_open_ || discover_art)
         draw_veils(scene, discover_art);
+    // App settings are read over that art: a scrim keeps their text legible.
+    if (settings_open_ && (game_open_ || discover_art))
+        scene.rounded_rect({0.0f, 0.0f, 1920.0f, 1080.0f}, 0.0f, ui::color::scrim);
 
     if (settings_open_)
     {
@@ -696,17 +817,17 @@ void App::draw(Frame &frame) const
     if (restarting && !settings_open_)
         banner = tr("Restarting the download service\xE2\x80\xA6");
     else if (state.link == Link::offline && !restarting)
-        banner = tr("Connection lost. Reconnecting to Orbit\xE2\x80\xA6");
+        banner = tr("Connection lost. Reconnecting to XENO STORE\xE2\x80\xA6");
     else if (!state.system.state_healthy)
-        banner = tr("Orbit cannot save its queue. Check free space on the console\xE2\x80\x99s "
+        banner = tr("XENO STORE cannot save its queue. Check free space on the console\xE2\x80\x99s "
                  "internal storage.");
     if (banner != nullptr)
     {
         const float width = type.medium.measure(banner, 21.0f) + 64.0f;
         const ui::Rect pill{960.0f - width * 0.5f, 150.0f, width, 52.0f};
         overlay.rounded_rect(pill, 26.0f,
-                             restarting ? ui::Color::rgb(0x242424, 0.95f)
-                                        : ui::Color::rgb(0x242424, 0.92f));
+                             restarting ? ui::color::night3.with_alpha(0.95f)
+                                        : ui::color::night3.with_alpha(0.92f));
         ui::text(overlay, type.medium, banner, pill.cx(), pill.cy() + 7.0f, 21.0f,
                  restarting ? ui::color::text : ui::color::bad, ui::Align::center);
     }
@@ -718,12 +839,12 @@ void App::draw(Frame &frame) const
         const ui::Rect pill{960.0f - width * 0.5f, 900.0f, width, 64.0f};
         overlay.push_opacity(std::clamp(alpha, 0.0f, 1.0f));
         overlay.shadow({pill.x, pill.y + 10.0f, pill.w, pill.h}, 32.0f, 30.0f,
-                       ui::Color::rgb(0x000000, 0.5f));
+                       ui::color::shadow.with_alpha(0.5f));
         overlay.rounded_rect(pill, 32.0f, ui::color::night3);
         if (toast_update_)
         {
             overlay.circle(pill.x + 40.0f, pill.cy(), 16.0f, ui::color::action);
-            ui::icon_download(overlay, pill.x + 40.0f, pill.cy(), 18.0f, ui::color::text);
+            ui::icon_download(overlay, pill.x + 40.0f, pill.cy(), 18.0f, ui::color::action_ink);
         }
         else
         {

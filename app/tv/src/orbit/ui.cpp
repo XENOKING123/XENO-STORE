@@ -1,5 +1,6 @@
 // Orbit Store TV app - The storefront's look: tokens and drawing helpers.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "orbit/ui.hpp"
 #include "orbit/i18n.hpp"
@@ -45,10 +46,20 @@ void focus_ring(DrawList &list, const Rect &r, float radius, float amount)
 {
     if (amount <= 0.01f)
         return;
-    // The browser's --ring: 3 px of white hugging the shape, then the glow.
-    list.glow(r.inset(-4.0f), radius + 4.0f, 13.0f, Color::rgb(0xffffff, 0.33f * amount));
-    list.bordered_rect(r.inset(-3.0f), radius + 3.0f, Color{0, 0, 0, 0}, 3.0f,
-                       Color::rgb(0xffffff, amount));
+    // The browser's --focus-ring: 3 px of gold round the shape, then the glow.
+    // A 2 px dark gap keeps the ring apart from gold fills and bright art. The
+    // glow is a stack of fading rings, so it never tints a translucent fill.
+    constexpr float kGlow[] = {0.22f, 0.15f, 0.1f, 0.06f, 0.035f, 0.015f};
+    for (int i = 0; i < 6; ++i)
+    {
+        const float out = 7.0f + 2.0f * static_cast<float>(i);
+        list.bordered_rect(r.inset(-out), radius + out, Color{0, 0, 0, 0}, 2.0f,
+                           color::gold.with_alpha(kGlow[i] * amount));
+    }
+    list.bordered_rect(r.inset(-2.0f), radius + 2.0f, Color{0, 0, 0, 0}, 2.0f,
+                       color::night0.with_alpha(0.9f * amount));
+    list.bordered_rect(r.inset(-5.0f), radius + 5.0f, Color{0, 0, 0, 0}, 3.0f,
+                       color::gold.with_alpha(amount));
 }
 
 float button_width(const Type &type, std::string_view label, float size, ButtonKind kind)
@@ -72,24 +83,24 @@ void button(DrawList &list, const Type &type, const Rect &r, std::string_view la
     {
     case ButtonKind::primary:
         fill = color::action;
-        ink = color::night1;
+        ink = color::action_ink;
         break;
     case ButtonKind::light:
-        fill = color::text;
-        ink = color::night0;
+        fill = color::action;
+        ink = color::action_ink;
         break;
     case ButtonKind::danger:
-        fill = Color::rgb(0xffffff, 0.16f);
-        ink = Color::rgb(0xffffff);
+        fill = color::bad.with_alpha(0.2f);
+        ink = color::text;
         break;
     default:
-        fill = Color::rgb(0xffffff, 0.1f);
+        fill = color::accent.with_alpha(0.16f); // the web's .btn
         break;
     }
     if (!enabled)
     {
         fill = kind == ButtonKind::primary ? color::action.with_alpha(0.4f)
-                                           : Color::rgb(0xffffff, 0.04f);
+                                           : color::white.with_alpha(0.04f);
         ink = color::text.with_alpha(0.4f);
     }
     focus_ring(list, r, r.h * 0.5f, focus); // the glow goes behind the fill
@@ -148,9 +159,15 @@ void image_cover(DrawList &list, std::uint32_t texture, int width, int height, c
 }
 
 void cover_placeholder(DrawList &list, const Type &type, const Rect &r, std::string_view title,
-                       float radius)
+                       float radius, std::uint32_t badge)
 {
-    list.gradient_rect(r, radius, color::night3, color::night2);
+    list.gradient_rect(r, radius, color::night2, color::night3);
+    if (badge != 0)
+    {
+        const float side = std::min(r.w, r.h) * 0.62f;
+        list.image(badge, {r.cx() - side * 0.5f, r.cy() - side * 0.5f, side, side},
+                   hui::gfx::kFullUv, color::white.with_alpha(0.3f));
+    }
     // The title's initial, large and quiet, until the art arrives.
     std::string initial;
     for (const char c : title)
@@ -162,21 +179,21 @@ void cover_placeholder(DrawList &list, const Type &type, const Rect &r, std::str
         }
     }
     orbit::ui::text(list, type.light, initial, r.cx(), r.cy() + r.h * 0.17f, r.h * 0.46f,
-                    Color::rgb(0xffffff, 0.16f), Align::center);
+                    color::text.with_alpha(0.16f), Align::center);
 }
 
 void progress_bar(DrawList &list, const Rect &r, float fraction, Color fill)
 {
     fraction = std::clamp(fraction, 0.0f, 1.0f);
-    list.rounded_rect(r, r.h * 0.5f, Color::rgb(0xffffff, 0.14f));
+    list.rounded_rect(r, r.h * 0.5f, color::white.with_alpha(0.14f));
     if (fraction > 0.0f)
         list.rounded_rect({r.x, r.y, std::max(r.h, r.w * fraction), r.h}, r.h * 0.5f, fill);
 }
 
 void modal(DrawList &list, const Rect &r)
 {
-    list.shadow({r.x, r.y + 30.0f, r.w, r.h}, kPanelRadius, 90.0f, Color::rgb(0x000000, 0.6f));
-    list.gradient_rect(r, kPanelRadius, Color::rgb(0x242424), Color::rgb(0x151515));
+    list.shadow({r.x, r.y + 30.0f, r.w, r.h}, kPanelRadius, 90.0f, color::shadow.with_alpha(0.6f));
+    list.gradient_rect(r, kPanelRadius, color::night2, color::night1);
     list.bordered_rect(r, kPanelRadius, Color{0, 0, 0, 0}, 1.0f, color::line);
 }
 
@@ -204,7 +221,7 @@ void select_field(DrawList &list, const Type &type, const Rect &r, std::string_v
         surface(list, r, radius, open ? color::glass_on : color::glass);
     else
         surface(list, r, radius, open ? color::field_open : color::field);
-    const Color ink = enabled ? color::text : color::text3;
+    const Color ink = enabled ? color::text : focus > 0.5f ? color::text2 : color::text3;
     text_fit(list, type.regular, value, r.x + pad, r.cy() + 6.5f, 18.0f, r.w - pad - 50.0f, ink);
     icon_chevron(list, r.x + r.w - 30.0f, r.cy(), 20.0f, color::text2, open);
 }
@@ -234,17 +251,17 @@ void select_menu(DrawList &list, const Type &type, const Rect &trigger,
     list.push_opacity(in);
     list.push_transform(1.0f, 0.0f, 0.0f, 0.0f, (below ? -8.0f : 8.0f) * (1.0f - in));
     list.shadow({menu.x, menu.y + 22.0f, menu.w, menu.h}, kRadius, 60.0f,
-                Color::rgb(0x000000, 0.55f));
+                color::shadow.with_alpha(0.55f));
     if (glass_texture != 0)
     {
-        list.glass(glass_texture, menu, kRadius, Color::rgb(0xffffff));
+        list.glass(glass_texture, menu, kRadius, color::white);
         list.rounded_rect(menu, kRadius, color::popover);
     }
     else
     {
         list.rounded_rect(menu, kRadius, color::popover.with_alpha(0.97f));
     }
-    list.bordered_rect(menu, kRadius, Color{0, 0, 0, 0}, 1.0f, Color::rgb(0xffffff, 0.08f));
+    list.bordered_rect(menu, kRadius, Color{0, 0, 0, 0}, 1.0f, color::white.with_alpha(0.08f));
     for (int r = 0; r < rows; ++r)
     {
         const int i = first + r;
@@ -252,18 +269,16 @@ void select_menu(DrawList &list, const Type &type, const Rect &trigger,
                        menu.w - 2.0f * kPad, kRow};
         const bool is_active = i == active;
         const bool is_selected = i == selected;
-        // The controller's option is the cursor: solid white, like a focused tile.
+        // The controller's option is the cursor: solid gold, as a selected pill.
         if (is_active)
-            list.rounded_rect(row, 13.0f, Color::rgb(0xf4f4f4));
-        const Color ink = is_active     ? Color::rgb(0x080808)
-                          : is_selected ? color::text
-                                        : color::text2;
+            list.rounded_rect(row, 13.0f, color::focus_fill);
+        const Color ink = is_active ? color::focus_ink : is_selected ? color::text : color::text2;
         text_fit(list, is_selected ? type.medium : type.regular,
                  options[static_cast<std::size_t>(i)], row.x + 18.0f, row.cy() + 6.5f, 18.0f,
                  row.w - 70.0f, ink);
         if (is_selected)
             icon_check(list, row.x + row.w - 26.0f, row.cy(), 18.0f,
-                       is_active ? color::night1 : color::text, 2.4f);
+                       is_active ? color::focus_ink : color::text, 2.4f);
     }
     list.pop_transform();
     list.pop_opacity();

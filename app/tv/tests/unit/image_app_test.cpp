@@ -1,9 +1,9 @@
 // Orbit Store TV app - Image decoding, the mark, and the app driven by input.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "fixture.hpp"
 #include "orbit/image.hpp"
-#include "orbit/mark.hpp"
 #include "orbit/screens.hpp"
 #include "support.hpp"
 
@@ -103,23 +103,6 @@ TEST(Image, ResizeAveragesAndAmbientIsASoftDarkenedWash)
     EXPECT_EQ(wash.width, 16);
     EXPECT_LT(wash.rgba[0], 128); // darkened
     EXPECT_EQ(wash.rgba[3], 255);
-}
-
-TEST(Mark, HasThePlanetTheGapAndTheHiddenBackRing)
-{
-    const image::Pixels mark = mark::render(512);
-    const auto alpha = [&](int x, int y)
-    { return mark.rgba[(static_cast<std::size_t>(y) * 512 + x) * 4 + 3]; };
-    EXPECT_EQ(alpha(256, 200), 255); // the planet
-    EXPECT_EQ(alpha(10, 10), 0);     // the corner is transparent
-    EXPECT_EQ(alpha(454, 182), 255); // the ring's right end
-    // The ring is tilted 22 degrees: its lowest point in front of the planet's
-    // centre is at (256, 262) + 64 * (sin 22, cos 22).
-    EXPECT_EQ(alpha(280, 321), 255); // the front ring crossing the planet
-    // The gap cut around the front ring, inside the planet, is transparent.
-    EXPECT_LT(alpha(272, 301), 128);
-    const image::Pixels faint = mark::render(64, 0.3f);
-    EXPECT_EQ(faint.width, 64);
 }
 
 // ---- the whole app, driven by controller input against the fixture ----
@@ -357,6 +340,94 @@ TEST(App, NativeVikingDelayedStartDoesNotUndoClosingTheProgressPanel)
     EXPECT_TRUE(h.store.run_next_action()); // Cancel, not an underlying game control.
     h.settle();
     EXPECT_EQ(h.store.state().browser.state,"cancelled");
+}
+
+// XENO STORE has no provider capture on the console: /browser is idle with
+// available:false and a message. The page shows that message in place of the
+// three steps, and its primary button opens the game in the browser version.
+std::string idle_browser(const std::string &message)
+{
+    return R"({"available":false,"active":false,"id":"","state":"idle","title":"","jobId":"","message":)" +
+           json::quote(message) + "}";
+}
+
+std::size_t drawn_glyphs(AppHarness &h)
+{
+    Frame frame;
+    h.app.draw(frame);
+    std::size_t glyphs = 0;
+    for (const hui::gfx::DrawList *list : {&frame.scene, &frame.overlay})
+        for (const auto &instance : list->instances())
+            glyphs += instance.params[3] == static_cast<float>(hui::gfx::Shape::glyph) ? 1u : 0u;
+    return glyphs;
+}
+
+TEST(App, BrowserOnlyOptionShowsTheBackendsMessageWithoutProviderCapture)
+{
+    const std::string message = "Vikingfile asks for a human check, so XENO STORE cannot fetch it by "
+                                "itself. Download it with TorBox, or open this game in the browser "
+                                "version.";
+    const std::string extra = " Thanks for waiting.";
+    std::size_t glyphs[2] = {};
+    for (int i = 0; i < 2; ++i)
+    {
+        AppHarness h;
+        h.browser_override = idle_browser(i == 0 ? message : message + extra);
+        h.store.poll_once();
+        h.settle();
+        ASSERT_TRUE(h.store.state().have_browser);
+        ASSERT_FALSE(h.store.state().browser.available);
+        h.app.open_game("ironclad-skies");
+        h.settle();
+        h.press(Action::confirm); // Download options
+        h.settle();
+        glyphs[i] = drawn_glyphs(h);
+    }
+    // Only the message differs, so the second page draws exactly its extra letters.
+    std::size_t letters = 0;
+    for (const char c : extra)
+        letters += c == ' ' ? 0u : 1u;
+    EXPECT_EQ(glyphs[1], glyphs[0] + letters);
+}
+
+TEST(App, BrowserOnlyOptionOpensTheGameInTheBrowserVersion)
+{
+    AppHarness h;
+    h.browser_override = idle_browser("Vikingfile asks for a human check.");
+    h.store.poll_once();
+    h.settle();
+    std::vector<std::string> opened;
+    h.context.open_game_browser = [&](const std::string &game_id)
+    {
+        opened.push_back(game_id);
+        return true;
+    };
+    h.app.open_game("ironclad-skies");
+    h.settle();
+    h.press(Action::confirm); // Download options, focused on Open browser version
+    h.press(Action::confirm);
+    ASSERT_EQ(opened.size(), 1u);
+    EXPECT_EQ(opened[0], "ironclad-skies");
+    EXPECT_EQ(browser_game_url(opened[0]), "http://127.0.0.1:9095/?tv=1#game/ironclad-skies");
+    // Nothing is queued and no provider page is started.
+    EXPECT_FALSE(h.store.action().busy);
+    EXPECT_FALSE(h.store.browser_action().busy);
+    EXPECT_FALSE(h.store.run_next_action());
+    for (const http::Request &request : h.transport.seen)
+        EXPECT_FALSE(request.method == "POST" &&
+                     (request.path == "/api/v1/browser" || request.path == "/api/v1/downloads"));
+
+    // Where the browser cannot be opened, the button stays disabled.
+    AppHarness plain;
+    plain.browser_override = idle_browser("Vikingfile asks for a human check.");
+    plain.store.poll_once();
+    plain.settle();
+    plain.app.open_game("ironclad-skies");
+    plain.settle();
+    plain.press(Action::confirm);
+    plain.press(Action::confirm);
+    EXPECT_FALSE(plain.store.browser_action().busy);
+    EXPECT_FALSE(plain.store.run_next_action());
 }
 
 TEST(App, CircleLeavesTheGamePageAndTabsSwitchWithL1R1)
@@ -765,10 +836,20 @@ TEST(App, SurvivesRandomInputEverywhere)
 
 TEST(App, BrowserHandoffCannotChangeTheLocalOriginOrSmuggleACommand)
 {
-    EXPECT_EQ(orbit::browser_handoff_url({"game-a", "ppsa12345-viking", "usb1"}),
-              "http://127.0.0.1:34177/#download?game=game-a&release=ppsa12345-viking&storage=usb1");
-    EXPECT_TRUE(orbit::browser_handoff_url({"game-a", "r&start=true", "usb1"}).empty());
-    EXPECT_TRUE(orbit::browser_handoff_url({"https://example.com", "r", "usb1"}).empty());
-    EXPECT_TRUE(orbit::browser_handoff_url({"game-a", "r", ""}).empty());
-    EXPECT_TRUE(orbit::browser_handoff_url({std::string(64, 'a'), "r", "usb1"}).empty());
+    // TorBox setup opens XENO STORE's Settings; nothing selected reaches the address.
+    const std::string settings = "http://127.0.0.1:9095/?tv=1#settings";
+    EXPECT_EQ(orbit::browser_handoff_url({"game-a", "ppsa12345-viking", "usb1"}), settings);
+    EXPECT_EQ(orbit::browser_handoff_url({"game-a", "r&start=true", "usb1"}), settings);
+    EXPECT_EQ(orbit::browser_handoff_url({"https://example.com", "r", "usb1"}), settings);
+    EXPECT_EQ(orbit::browser_handoff_url({"game-a", "r", ""}), settings);
+    EXPECT_EQ(orbit::browser_handoff_url({std::string(64, 'a'), "r", "usb1"}), settings);
+    // A game's page: the ID is percent-encoded, whatever its length.
+    EXPECT_EQ(orbit::browser_game_url("ironclad-skies"),
+              "http://127.0.0.1:9095/?tv=1#game/ironclad-skies");
+    EXPECT_EQ(orbit::browser_game_url("a b/c?d#e&f.g_h~i"),
+              "http://127.0.0.1:9095/?tv=1#game/a%20b%2Fc%3Fd%23e%26f.g_h~i");
+    EXPECT_EQ(orbit::browser_game_url("caf\xC3\xA9"), "http://127.0.0.1:9095/?tv=1#game/caf%C3%A9");
+    const std::string long_id(70, 'x');
+    EXPECT_EQ(orbit::browser_game_url(long_id), "http://127.0.0.1:9095/?tv=1#game/" + long_id);
+    EXPECT_TRUE(orbit::browser_game_url("").empty());
 }

@@ -1,5 +1,6 @@
 // Orbit Store TV app - Starting Orbit when it isn't running.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "orbit/starter.hpp"
 #include "orbit/i18n.hpp"
@@ -155,7 +156,7 @@ int compare_versions(std::string_view a, std::string_view b)
     return 0;
 }
 
-Payload choose(const Locations &where)
+Payload choose(const Locations &where, bool avoid_saved)
 {
     Payload saved = candidate(where.saved_elf, where.saved_version, "saved");
     Payload bundled = candidate(where.bundled_elf, where.bundled_version, "bundled");
@@ -165,8 +166,47 @@ Payload choose(const Locations &where)
         return saved;
     // The saved copy is what payload managers start and what Orbit's updater
     // refreshes, so it wins unless this package carries a newer release.
-    return compare_versions(bundled.version, saved.version) > 0 ? bundled : saved;
+    if (compare_versions(bundled.version, saved.version) > 0)
+        return bundled;
+    // XENO STORE: unless the saved copy was sent and never answered.
+    bundled.saved_avoided = avoid_saved;
+    return avoid_saved ? bundled : saved;
 }
+
+std::string handoff_marker(const Locations &where)
+{
+    const std::size_t slash = where.saved_elf.rfind('/');
+    if (slash == std::string::npos)
+        return {};
+    return where.saved_elf.substr(0, slash + 1) + "handoff.pending";
+}
+
+namespace
+{
+
+// "0 tv-app": time 0 is always older than the backend's hand-off window, and
+// "tv-app" is no build's version. Written beside the file and renamed into
+// place; best effort, as the folder may not be writable from the app.
+bool write_expired_marker(const std::string &path)
+{
+    if (path.empty())
+        return false;
+    const std::string temp = path + ".tv-app";
+    const int fd = open(temp.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd < 0)
+        return false;
+    static constexpr char kLine[] = "0 tv-app\n";
+    const bool written = write(fd, kLine, sizeof kLine - 1) == static_cast<ssize_t>(sizeof kLine - 1);
+    close(fd);
+    if (!written || rename(temp.c_str(), path.c_str()) != 0)
+    {
+        unlink(temp.c_str());
+        return false;
+    }
+    return true;
+}
+
+} // namespace
 
 Outcome send(const std::string &path, std::uint16_t port, int timeout_ms, std::string *error)
 {
@@ -235,7 +275,7 @@ Outcome send(const std::string &path, std::uint16_t port, int timeout_ms, std::s
                 continue;
             if (n <= 0)
             {
-                *error = tr("The ELF loader stopped taking Orbit part way.");
+                *error = tr("The ELF loader stopped taking XENO STORE part way.");
                 outcome = Outcome::failed;
                 break;
             }
@@ -259,28 +299,44 @@ Outcome send(const std::string &path, std::uint16_t port, int timeout_ms, std::s
     return outcome;
 }
 
+LoaderStarter::LoaderStarter(Locations where, std::function<void(const std::string &)> log)
+    : where_(std::move(where)), log_(std::move(log))
+{
+}
+
 LoaderStarter::LoaderStarter(Locations where, std::uint16_t port,
                              std::function<void(const std::string &)> log)
-    : where_(std::move(where)), port_(port), log_(std::move(log))
+    : LoaderStarter(std::move(where), std::move(log))
 {
+    where_.loader_port = port;
 }
 
 Result LoaderStarter::start()
 {
     Result result;
-    const Payload payload = choose(where_);
+    const Payload payload = choose(where_, avoid_saved_);
+    result.source = payload.source;
     if (payload.path.empty())
     {
         result.outcome = Outcome::no_payload;
-        result.detail = tr("No copy of Orbit was found to start.");
+        result.detail = tr("No copy of XENO STORE was found to start.");
     }
     else
     {
         result.version = payload.version;
+        // XENO STORE: the bundled copy stands in for a saved update that never
+        // answered. Without a marker it would find that newer update, hand the
+        // same file to the loader again and exit; the expired marker makes it
+        // set the update aside and run itself. Removed again when nothing was
+        // started, so a later start does not retire the update by mistake.
+        const std::string marker = payload.saved_avoided ? handoff_marker(where_) : std::string();
+        const bool marked = write_expired_marker(marker);
         std::string error;
-        result.outcome = send(payload.path, port_, 10000, &error);
+        result.outcome = send(payload.path, where_.loader_port, 10000, &error);
+        if (marked && result.outcome != Outcome::sent)
+            unlink(marker.c_str());
         result.detail = result.outcome == Outcome::sent
-                            ? tr("Sent Orbit {version} to the ELF loader.",
+                            ? tr("Sent XENO STORE {version} to the ELF loader.",
                                  {{"version", payload.version.empty()
                                                   ? std::string(tr("(version unknown)"))
                                                   : payload.version}})
@@ -289,13 +345,19 @@ Result LoaderStarter::start()
     if (log_)
     {
         char line[320];
-        std::snprintf(line, sizeof(line), "start: %s copy=%s version=%s bytes=%lld: %s",
+        std::snprintf(line, sizeof(line), "start: %s copy=%s%s version=%s bytes=%lld: %s",
                       outcome_name(result.outcome), payload.source,
+                      payload.saved_avoided ? " (saved copy did not answer)" : "",
                       payload.version.empty() ? "?" : payload.version.c_str(), payload.bytes,
                       result.detail.c_str());
         log_(line);
     }
     return result;
+}
+
+std::string LoaderStarter::next_version()
+{
+    return choose(where_, avoid_saved_).version;
 }
 
 } // namespace orbit::starter

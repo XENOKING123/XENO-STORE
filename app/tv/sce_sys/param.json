@@ -12,10 +12,10 @@
   "attribute": 0,
   "attribute2": 0,
   "attribute3": 0,
-  "conceptId": "99177",
+  "conceptId": "99500",
   "contentBadgeType": 1,
-  "contentId": "UP9000-PPSA99177_00-ORBITSTORETV0001",
-  "contentVersion": "01.005.000",
+  "contentId": "IV0000-PPSA99500_00-XENOSTORE0000000",
+  "contentVersion": "01.002.001",
   "downloadDataSize": 256,
   "gameIntent": {
     "permittedIntents": [
@@ -31,7 +31,46 @@
   "localizedParameters": {
     "defaultLanguage": "en-US",
     "en-US": {
-      "titleName": "Orbit Store"
+      "titleName": "XENO STORE"
+    },
+    "ar-AE": {
+      "titleName": "XENO STORE"
+    },
+    "de-DE": {
+      "titleName": "XENO STORE"
+    },
+    "es-ES": {
+      "titleName": "XENO STORE"
+    },
+    "fr-FR": {
+      "titleName": "XENO STORE"
+    },
+    "it-IT": {
+      "titleName": "XENO STORE"
+    },
+    "ja-JP": {
+      "titleName": "XENO STORE"
+    },
+    "ko-KR": {
+      "titleName": "XENO STORE"
+    },
+    "nl-NL": {
+      "titleName": "XENO STORE"
+    },
+    "pl-PL": {
+      "titleName": "XENO STORE"
+    },
+    "pt-BR": {
+      "titleName": "XENO STORE"
+    },
+    "ru-RU": {
+      "titleName": "XENO STORE"
+    },
+    "tr-TR": {
+      "titleName": "XENO STORE"
+    },
+    "zh-Hans": {
+      "titleName": "XENO STORE"
     }
   },
   "masterVersion": "01.00",
@@ -42,6 +81,6 @@
   },
   "requiredSystemSoftwareVersion": "0x0000000000000000",
   "sdkVersion": "0x0000000000000000",
-  "titleId": "PPSA99177",
+  "titleId": "PPSA99500",
   "versionFileUri": ""
 }

@@ -1,0 +1,1667 @@
+{
+ "schemaVersion": 1,
+ "revision": 2000000000,
+ "generatedAt": "2026-10-15T00:00:00Z",
+ "name": "XENO STORE TV fixture catalogue",
+ "defaults": {
+  "game": {
+   "about": "",
+   "addedAt": "",
+   "ageRating": null,
+   "author": "",
+   "backports": 0,
+   "category": "",
+   "cheats": 0,
+   "compat": [],
+   "conceptId": 0,
+   "cover": "",
+   "coverFallback": "",
+   "description": "",
+   "developer": "",
+   "dlc": 0,
+   "featured": 0,
+   "features": [],
+   "genres": [],
+   "hero": "",
+   "heroFallback": "",
+   "languages": [],
+   "metacritic": null,
+   "popularity": 0.0,
+   "psStoreUrl": "",
+   "publisher": "",
+   "region": "",
+   "releaseDate": "",
+   "screenshots": [],
+   "series": "",
+   "sizeMax": 0,
+   "sizeMin": 0,
+   "steamId": 0,
+   "supportsPs5": false,
+   "tagline": "",
+   "titleIds": [],
+   "updates": 0,
+   "verified": false,
+   "year": 0
+  },
+  "release": {
+   "addedAt": "",
+   "backportFw": "",
+   "browserUrl": "",
+   "compat": "",
+   "consoleVerified": false,
+   "filename": "",
+   "health": "",
+   "md5": "",
+   "mirrors": [],
+   "notes": "",
+   "password": "",
+   "provider": "",
+   "region": "",
+   "requiresFw": "",
+   "sha1": "",
+   "sha256": "",
+   "sizeBytes": 0,
+   "titleId": "",
+   "verifiedAt": "",
+   "version": ""
+  }
+ },
+ "sources": [
+  {
+   "id": "archive",
+   "name": "Archive.org",
+   "kind": "direct",
+   "homepage": "https://archive.org",
+   "notice": "Public archive. Direct downloads with Range support; sizes and hashes come from item metadata."
+  },
+  {
+   "id": "vikingfile",
+   "name": "Vikingfile",
+   "kind": "browser",
+   "homepage": "https://vikingfile.com",
+   "notice": "Needs a human check in the PS5 browser (or on your phone) before the file link works."
+  },
+  {
+   "id": "dlpsgame",
+   "name": "DLPSGAME",
+   "kind": "page",
+   "homepage": "https://dlpsgame.com",
+   "notice": "Game pages list mirrors per version (base, updates, DLC).",
+   "password": "DLPSGAME.COM"
+  },
+  {
+   "id": "pkgzone",
+   "name": "pkg-zone",
+   "kind": "direct",
+   "homepage": "https://pkg-zone.com",
+   "notice": "Homebrew apps, emulators and tools as PKG files (Homebrew tab)."
+  }
+ ],
+ "genres": [
+  "Action",
+  "Adventure",
+  "RPG",
+  "Horror",
+  "Racing",
+  "Shooter",
+  "Sports",
+  "Strategy",
+  "Simulation",
+  "Fighting",
+  "Puzzle",
+  "Platformer",
+  "Indie",
+  "Family",
+  "Music"
+ ],
+ "games": [
+  {
+   "id": "fx-tidewater-ps5",
+   "slug": "fx-tidewater",
+   "title": "Tidewater",
+   "platform": "PS5",
+   "_case": "R2 kind order (game, backport, update, dlc) against catalogue order; notes prefixes; JSON escapes in the description; art WebP cover and hero; an AVIF coverFallback that is never needed",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90001"
+   ],
+   "genres": [
+    "Adventure",
+    "Action"
+   ],
+   "tagline": "Chart a drowned coast, one tide at a time.",
+   "description": "Sail a flooded \"archipelago\" in a boat you rebuild.\nEvery tide uncovers a path \\ and hides one.\tTabs too.",
+   "publisher": "Tin Sparrow",
+   "releaseDate": "2026-09-12",
+   "addedAt": "2026-10-03",
+   "region": "EUR",
+   "cover": "{{ART}}/art/fx-tidewater-ps5/cover.webp",
+   "hero": "{{ART}}/art/fx-tidewater-ps5/hero.webp",
+   "coverFallback": "{{ART}}/art/fx-tidewater-ps5/fallback/cover.avif",
+   "releases": [
+    {
+     "id": "fx-tidewater-dlc",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "dlc",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/set-dlc.pkg",
+     "sizeBytes": 1572864,
+     "filename": "PPSA90001 Tidewater Season Pass.pkg",
+     "health": "ok",
+     "notes": "Season pass.",
+     "verifiedAt": "2026-10-01",
+     "region": "EUR"
+    },
+    {
+     "id": "fx-tidewater-update",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "update",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/set-update.pkg",
+     "sizeBytes": 1048576,
+     "filename": "PPSA90001 Tidewater Update 1.02.pkg",
+     "health": "ok",
+     "version": "01.020",
+     "verifiedAt": "2026-10-01",
+     "region": "EUR"
+    },
+    {
+     "id": "fx-tidewater-backport",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "backport",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "PPSA90001 Tidewater Backport.pkg",
+     "health": "ok",
+     "backportFw": "9.00",
+     "verifiedAt": "2026-10-01",
+     "region": "EUR"
+    },
+    {
+     "id": "fx-tidewater-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90001 Tidewater.ffpfsc",
+     "health": "ok",
+     "version": "01.000.000",
+     "notes": "Languages: English",
+     "verifiedAt": "2026-10-01",
+     "region": "EUR",
+     "mirrors": [
+      "{{FILES}}/ok/small.bin"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fx-neon-courier-ps5",
+   "slug": "fx-neon-courier",
+   "title": "Neon Courier",
+   "platform": "PS5",
+   "_case": "R2 direct before browser; a Vikingfile release with a browserUrl (browserAvailable true, directAvailable false) whose URL is a local file (TorBox tests); art PNG cover and hero",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90002"
+   ],
+   "genres": [
+    "Racing"
+   ],
+   "tagline": "Deliver anything before sunrise.",
+   "publisher": "Night Shift Studio",
+   "releaseDate": "2026-08-30",
+   "addedAt": "2026-09-20",
+   "region": "USA",
+   "cover": "{{ART}}/art/fx-neon-courier-ps5/cover.png",
+   "hero": "{{ART}}/art/fx-neon-courier-ps5/hero.png",
+   "releases": [
+    {
+     "id": "fx-neon-courier-vf",
+     "sourceId": "vikingfile",
+     "format": "exFAT",
+     "kind": "game",
+     "provider": "Vikingfile",
+     "url": "{{FILES}}/ok/mid.bin",
+     "sizeBytes": 33554432,
+     "filename": "PPSA90002 Neon Courier.exfat",
+     "health": "ok",
+     "browserUrl": "https://vikingfile.com/f/FxNeonCourier",
+     "verifiedAt": "2026-10-01"
+    },
+    {
+     "id": "fx-neon-courier-exfat",
+     "sourceId": "archive",
+     "format": "exFAT",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/mid.bin",
+     "sizeBytes": 33554432,
+     "filename": "PPSA90002.exfat",
+     "health": "ok",
+     "verifiedAt": "2026-10-01",
+     "browserUrl": "https://archive.org/details/fx-neon-courier"
+    }
+   ]
+  },
+  {
+   "id": "fx-ember-hollow-ps5",
+   "slug": "fx-ember-hollow",
+   "title": "Ember Hollow",
+   "platform": "PS5",
+   "_case": "R2 health: flaky last, an unaudited release (health \"\") ranks with ok and keeps catalogue order; art JPEG cover and hero",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90003"
+   ],
+   "genres": [
+    "RPG"
+   ],
+   "publisher": "Lantern & Oak",
+   "releaseDate": "2026-07-18",
+   "addedAt": "2026-09-01",
+   "cover": "{{ART}}/art/fx-ember-hollow-ps5/cover.jpg",
+   "hero": "{{ART}}/art/fx-ember-hollow-ps5/hero.jpg",
+   "releases": [
+    {
+     "id": "fx-ember-hollow-flaky",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90003 Ember Hollow.ffpfsc",
+     "health": "flaky",
+     "verifiedAt": "2026-10-01"
+    },
+    {
+     "id": "fx-ember-hollow-unaudited",
+     "sourceId": "archive",
+     "format": "exFAT",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90003 Ember Hollow A.exfat",
+     "verifiedAt": "2026-10-01"
+    },
+    {
+     "id": "fx-ember-hollow-ok",
+     "sourceId": "archive",
+     "format": "exFAT",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90003 Ember Hollow B.exfat",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-glass-orchard-ps5",
+   "slug": "fx-glass-orchard",
+   "title": "Glass Orchard",
+   "platform": "PS5",
+   "_case": "R2 verifiedAt set first, and health outranks verifiedAt; FFPKG; art GIF cover with a WebP fallback, square hero without a fallback",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90004"
+   ],
+   "genres": [
+    "Puzzle"
+   ],
+   "publisher": "Small Hours",
+   "releaseDate": "2026-06-02",
+   "addedAt": "2026-08-15",
+   "cover": "{{ART}}/art/fx-glass-orchard-ps5/cover.gif",
+   "hero": "{{ART}}/art/fx-glass-orchard-ps5/hero-square.webp",
+   "coverFallback": "{{ART}}/art/fx-glass-orchard-ps5/fallback/cover.webp",
+   "releases": [
+    {
+     "id": "fx-glass-orchard-unverified",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90004 Glass Orchard.ffpfsc",
+     "health": "ok"
+    },
+    {
+     "id": "fx-glass-orchard-verified",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90004 Glass Orchard v2.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    },
+    {
+     "id": "fx-glass-orchard-ffpkg",
+     "sourceId": "archive",
+     "format": "FFPKG",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90004.ffpkg",
+     "health": "flaky",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-starfall-rally-ps5",
+   "slug": "fx-starfall-rally",
+   "title": "Starfall Rally",
+   "platform": "PS5",
+   "_case": "R2 kind outranks source kind (a Vikingfile game before an archive update); equal keys keep catalogue order; a Vikingfile release without browserUrl is still browser-only (R6); art animated WebP cover, no fallback",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90005"
+   ],
+   "genres": [
+    "Racing",
+    "Sports"
+   ],
+   "publisher": "Brightline",
+   "releaseDate": "2026-05-05",
+   "addedAt": "2026-08-01",
+   "cover": "{{ART}}/art/fx-starfall-rally-ps5/anim.webp",
+   "hero": "{{ART}}/art/fx-starfall-rally-ps5/hero.webp",
+   "releases": [
+    {
+     "id": "fx-starfall-rally-update",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "update",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/set-update.pkg",
+     "sizeBytes": 1048576,
+     "filename": "PPSA90005 Update.pkg",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    },
+    {
+     "id": "fx-starfall-rally-vf",
+     "sourceId": "vikingfile",
+     "format": "exFAT",
+     "kind": "game",
+     "provider": "Vikingfile",
+     "url": "https://vikingfile.com/f/FxStarfall",
+     "sizeBytes": 33554432,
+     "filename": "PPSA90005.exfat",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    },
+    {
+     "id": "fx-starfall-rally-first",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90005 First.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    },
+    {
+     "id": "fx-starfall-rally-second",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90005 Second.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-paper-lanterns-ps5",
+   "slug": "fx-paper-lanterns",
+   "title": "Paper Lanterns",
+   "platform": "PS5",
+   "_case": "title ID from the release (lower case in the file, upper-cased), ahead of the game titleIds and the filename; FFPFS",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA99999"
+   ],
+   "genres": [
+    "Family"
+   ],
+   "publisher": "Kite Works",
+   "addedAt": "2026-07-01",
+   "cover": "{{ART}}/art/fx-paper-lanterns-ps5/cover.webp",
+   "hero": "{{ART}}/art/fx-paper-lanterns-ps5/hero.webp",
+   "releases": [
+    {
+     "id": "fx-paper-lanterns-ffpfs",
+     "sourceId": "archive",
+     "format": "FFPFS",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA77777 Paper Lanterns.ffpfs",
+     "health": "ok",
+     "titleId": "ppsa90006",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-quiet-harbour-ps4",
+   "slug": "fx-quiet-harbour",
+   "title": "Quiet Harbour",
+   "platform": "PS4",
+   "_case": "title ID from the game titleIds[0] (upper-cased); region from the game when the release has none",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "cusa90007",
+    "CUSA90008"
+   ],
+   "genres": [
+    "Simulation"
+   ],
+   "publisher": "Harbour Lights",
+   "region": "USA",
+   "addedAt": "2026-06-20",
+   "cover": "{{ART}}/art/fx-quiet-harbour-ps4/cover.png",
+   "releases": [
+    {
+     "id": "fx-quiet-harbour-pkg",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "Quiet Harbour.pkg",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-frostline-ps4",
+   "slug": "fx-frostline",
+   "title": "Frostline",
+   "platform": "PS4",
+   "_case": "title ID from the filename (no release titleId, no game titleIds); PS4 lower-cased",
+   "artworkLayout": "wide",
+   "genres": [
+    "Action"
+   ],
+   "publisher": "Polar Bear Games",
+   "addedAt": "2026-06-10",
+   "cover": "{{ART}}/art/fx-frostline-ps4/cover.jpg",
+   "releases": [
+    {
+     "id": "fx-frostline-pkg",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "CUSA12345 Frostline v1.00.pkg",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-signal-fire-ps5",
+   "slug": "fx-signal-fire",
+   "title": "Signal Fire",
+   "platform": "PS5",
+   "_case": "title ID from the URL path (filename has none; range_server ignores the unknown mode PLJM12345, so the file is served locally); cover shared with fx-moss-lantern-ps4 (not an archive thumbnail): cover 404",
+   "artworkLayout": "wide",
+   "genres": [
+    "Horror"
+   ],
+   "publisher": "Ember Light",
+   "addedAt": "2026-05-30",
+   "cover": "{{ART}}/art/shared-collection/cover.png",
+   "releases": [
+    {
+     "id": "fx-signal-fire-exfat",
+     "sourceId": "archive",
+     "format": "exFAT",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok,PLJM12345/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "Signal Fire.exfat",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-moss-lantern-ps4",
+   "slug": "fx-moss-lantern",
+   "title": "Moss Lantern",
+   "platform": "PS4",
+   "_case": "no title ID anywhere (\"\"); a `_N.pkg` part name; cover shared with fx-signal-fire-ps5",
+   "artworkLayout": "wide",
+   "addedAt": "2026-05-29",
+   "cover": "{{ART}}/art/shared-collection/cover.png",
+   "releases": [
+    {
+     "id": "fx-moss-lantern-part1",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "Moss Lantern Collection_1.pkg",
+     "health": "ok"
+    }
+   ]
+  },
+  {
+   "id": "fx-iron-meridian-ps5",
+   "slug": "fx-iron-meridian",
+   "title": "Iron Meridian",
+   "platform": "PS5",
+   "_case": "releaseDate \"TBA\" -> \"\"; addedAt missing (sparse) -> \"\"; no genres -> \"\"",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90011"
+   ],
+   "releaseDate": "TBA",
+   "publisher": "Meridian Works",
+   "cover": "{{ART}}/art/fx-iron-meridian-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-iron-meridian-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90011 Iron Meridian.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-copper-coast-ps4",
+   "slug": "fx-copper-coast",
+   "title": "Copper Coast",
+   "platform": "PS4",
+   "_case": "releaseDate \"2026-7-1\" -> \"\"; date-only addedAt -> T00:00:00Z",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "CUSA90012"
+   ],
+   "releaseDate": "2026-7-1",
+   "addedAt": "2026-10-01",
+   "genres": [
+    "Strategy"
+   ],
+   "cover": "{{ART}}/art/fx-copper-coast-ps4/cover.webp",
+   "releases": [
+    {
+     "id": "fx-copper-coast-pkg",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "CUSA90012 Copper Coast.pkg",
+     "health": "ok",
+     "verifiedAt": "2026-10-01",
+     "region": "ASIA"
+    }
+   ]
+  },
+  {
+   "id": "fx-aurora-drift-ps5",
+   "slug": "fx-aurora-drift",
+   "title": "Aurora Drift",
+   "platform": "PS5",
+   "_case": "featured feed hero[1] (visible): rank 1",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90013"
+   ],
+   "genres": [
+    "Racing"
+   ],
+   "tagline": "Ride the lights ✨ über alles — 東京 🚀",
+   "releaseDate": "2026-10-10",
+   "addedAt": "2026-10-12",
+   "cover": "{{ART}}/art/fx-aurora-drift-ps5/cover.webp",
+   "hero": "{{ART}}/art/fx-aurora-drift-ps5/hero.webp",
+   "releases": [
+    {
+     "id": "fx-aurora-drift-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90013 Aurora Drift.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-hollow-crown-ps5",
+   "slug": "fx-hollow-crown",
+   "title": "Hollow Crown",
+   "platform": "PS5",
+   "_case": "featured feed hero[2] (visible): rank 2; also featured 1, ranked once",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90014"
+   ],
+   "featured": 1,
+   "genres": [
+    "RPG",
+    "Action"
+   ],
+   "releaseDate": "2026-10-02",
+   "addedAt": "2026-10-05",
+   "cover": "{{ART}}/art/fx-hollow-crown-ps5/cover.webp",
+   "hero": "{{ART}}/art/fx-hollow-crown-ps5/hero.webp",
+   "releases": [
+    {
+     "id": "fx-hollow-crown-exfat",
+     "sourceId": "archive",
+     "format": "exFAT",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90014 Hollow Crown.exfat",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-crown-of-ash-ps5",
+   "slug": "fx-crown-of-ash",
+   "title": "Crown of Ash",
+   "platform": "PS5",
+   "_case": "catalogue featured 3: rank 3 (after the two feed heroes)",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90015"
+   ],
+   "featured": 3,
+   "genres": [
+    "Fighting"
+   ],
+   "releaseDate": "2026-09-01",
+   "addedAt": "2026-09-30",
+   "cover": "{{ART}}/art/fx-crown-of-ash-ps5/cover.webp",
+   "hero": "{{ART}}/art/fx-crown-of-ash-ps5/hero.webp",
+   "releases": [
+    {
+     "id": "fx-crown-of-ash-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90015 Crown of Ash.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-velvet-static-ps5",
+   "slug": "fx-velvet-static",
+   "title": "Velvet Static",
+   "platform": "PS5",
+   "_case": "catalogue featured 7: rank 4",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90016"
+   ],
+   "featured": 7,
+   "genres": [
+    "Music"
+   ],
+   "releaseDate": "2026-08-08",
+   "addedAt": "2026-09-29",
+   "cover": "{{ART}}/art/fx-velvet-static-ps5/cover.webp",
+   "hero": "{{ART}}/art/fx-velvet-static-ps5/hero.webp",
+   "releases": [
+    {
+     "id": "fx-velvet-static-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90016 Velvet Static.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-the-extraordinarily-long-collectors-edition-title-of-a-test-game-xyzzzz-ps5",
+   "slug": "fx-the-extraordinarily-long-collectors-edition-title-of-a-test-game-xyzzzz",
+   "title": "The Extraordinarily Long Collector's Edition",
+   "platform": "PS5",
+   "_case": "a 78-character game id: kept",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90017"
+   ],
+   "addedAt": "2026-04-01",
+   "cover": "{{ART}}/art/fx-the-extraordinarily-long-collectors-edition-title-of-a-test-game-xyzzzz-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-long-id-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90017 Long.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx space game-ps5",
+   "slug": "fx space game",
+   "title": "Space In The Id",
+   "platform": "PS5",
+   "_case": "a game id with a space: skipped (fails [A-Za-z0-9._-]{1,95})",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90018"
+   ],
+   "addedAt": "2026-04-02",
+   "cover": "{{ART}}/art/fx-space-game/cover.webp",
+   "releases": [
+    {
+     "id": "fx-space-id-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90018.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-paper-moon-ps4",
+   "slug": "fx-paper-moon",
+   "title": "Paper Moon",
+   "platform": "PS4",
+   "_case": "dlpsgame PAGE only: hidden; featured 2 and feed hero[0] are both skipped",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "CUSA90019"
+   ],
+   "featured": 2,
+   "addedAt": "2026-10-09",
+   "cover": "{{ART}}/art/fx-paper-moon-ps4/cover.webp",
+   "releases": [
+    {
+     "id": "fx-paper-moon-page",
+     "sourceId": "dlpsgame",
+     "format": "PAGE",
+     "kind": "game",
+     "provider": "DLPSGAME",
+     "url": "https://dlpsgame.com/fx-paper-moon/",
+     "health": "page",
+     "password": "DLPSGAME.COM",
+     "browserUrl": "https://dlpsgame.com/fx-paper-moon/"
+    }
+   ]
+  },
+  {
+   "id": "fx-static-bloom-ps5",
+   "slug": "fx-static-bloom",
+   "title": "Static Bloom",
+   "platform": "PS5",
+   "_case": "a dlpsgame (kind page) PKG file link with a size, and an archive RAR: both hidden, so the game is hidden",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90020"
+   ],
+   "addedAt": "2026-04-03",
+   "cover": "{{ART}}/art/fx-static-bloom-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-static-bloom-dlps-pkg",
+     "sourceId": "dlpsgame",
+     "format": "PKG",
+     "kind": "game",
+     "provider": "DLPSGAME",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "PPSA90020 Static Bloom.pkg",
+     "health": "ok",
+     "browserUrl": "https://dlpsgame.com/fx-static-bloom/",
+     "password": "DLPSGAME.COM"
+    },
+    {
+     "id": "fx-static-bloom-rar",
+     "sourceId": "archive",
+     "format": "RAR",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90020 Static Bloom.rar",
+     "health": "ok"
+    }
+   ]
+  },
+  {
+   "id": "fx-pixel-shell-homebrew",
+   "slug": "fx-pixel-shell",
+   "title": "Pixel Shell",
+   "platform": "HOMEBREW",
+   "_case": "HOMEBREW app from pkgzone: hidden",
+   "artworkLayout": "wide",
+   "category": "Tool",
+   "author": "Fixture",
+   "supportsPs5": true,
+   "addedAt": "2026-04-04",
+   "cover": "{{ART}}/art/fx-pixel-shell-homebrew/cover.webp",
+   "releases": [
+    {
+     "id": "fx-pixel-shell-pkg",
+     "sourceId": "pkgzone",
+     "format": "PKG",
+     "kind": "app",
+     "provider": "pkg-zone",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "Pixel Shell.pkg",
+     "health": "ok"
+    }
+   ]
+  },
+  {
+   "id": "fx-orbital-tools-ps5",
+   "slug": "fx-orbital-tools",
+   "title": "Orbital Tools",
+   "platform": "PS5",
+   "_case": "a PS5 game whose only release comes from pkgzone (direct kind): hidden",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90022"
+   ],
+   "addedAt": "2026-04-05",
+   "cover": "{{ART}}/art/fx-orbital-tools-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-orbital-tools-pkg",
+     "sourceId": "pkgzone",
+     "format": "PKG",
+     "kind": "game",
+     "provider": "pkg-zone",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "PPSA90022 Orbital Tools.pkg",
+     "health": "ok"
+    }
+   ]
+  },
+  {
+   "id": "fx-dust-runner-ps4",
+   "slug": "fx-dust-runner",
+   "title": "Dust Runner",
+   "platform": "PS4",
+   "_case": "ZIP only: hidden; with TV_SHOW_ZIP one \"Unknown\" zip option",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "CUSA90023"
+   ],
+   "addedAt": "2026-04-06",
+   "cover": "{{ART}}/art/fx-dust-runner-ps4/cover.webp",
+   "releases": [
+    {
+     "id": "fx-dust-runner-zip",
+     "sourceId": "archive",
+     "format": "ZIP",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/folder.zip",
+     "sizeBytes": 3147604,
+     "filename": "Dust Runner.zip",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-glass-tide-ps5",
+   "slug": "fx-glass-tide",
+   "title": "Glass Tide",
+   "platform": "PS5",
+   "_case": "ZIP + FFPFSC + 7z: the FFPFSC only; with TV_SHOW_ZIP the ZIP comes first (catalogue order); 7z always hidden",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA05555"
+   ],
+   "addedAt": "2026-04-07",
+   "cover": "{{ART}}/art/fx-glass-tide-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-glass-tide-zip",
+     "sourceId": "archive",
+     "format": "ZIP",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/single.zip",
+     "sizeBytes": 4195738,
+     "filename": "PPSA05555 Glass Tide.zip",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    },
+    {
+     "id": "fx-glass-tide-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA05555 Glass Tide.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    },
+    {
+     "id": "fx-glass-tide-7z",
+     "sourceId": "archive",
+     "format": "7z",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA05555 Glass Tide.7z",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-sunken-choir-ps4",
+   "slug": "fx-sunken-choir",
+   "title": "Sunken Choir",
+   "platform": "PS4",
+   "_case": "RAR and 7z only: hidden (also with TV_SHOW_ZIP)",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "CUSA90025"
+   ],
+   "addedAt": "2026-04-08",
+   "cover": "{{ART}}/art/fx-sunken-choir-ps4/cover.webp",
+   "releases": [
+    {
+     "id": "fx-sunken-choir-rar",
+     "sourceId": "archive",
+     "format": "RAR",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "CUSA90025.rar",
+     "health": "ok"
+    },
+    {
+     "id": "fx-sunken-choir-7z",
+     "sourceId": "archive",
+     "format": "7z",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "CUSA90025.7z",
+     "health": "ok"
+    }
+   ]
+  },
+  {
+   "id": "fx-null-signal-ps5",
+   "slug": "fx-null-signal",
+   "title": "Null Signal",
+   "platform": "PS5",
+   "_case": "sizeBytes 0 (explicit) and missing (sparse): hidden",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90026"
+   ],
+   "addedAt": "2026-04-09",
+   "cover": "{{ART}}/art/fx-null-signal-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-null-signal-zero",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "filename": "PPSA90026 Null Signal.ffpfsc",
+     "health": "ok"
+    },
+    {
+     "id": "fx-null-signal-missing",
+     "sourceId": "archive",
+     "format": "exFAT",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "filename": "PPSA90026 Null Signal.exfat",
+     "health": "ok"
+    }
+   ]
+  },
+  {
+   "id": "fx-ridge-runner-ps4",
+   "slug": "fx-ridge-runner",
+   "title": "Ridge Runner",
+   "platform": "PS4",
+   "_case": "FPKG is tier A",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "CUSA90027"
+   ],
+   "genres": [
+    "Platformer"
+   ],
+   "addedAt": "2026-04-10",
+   "cover": "{{ART}}/art/fx-ridge-runner-ps4/cover.webp",
+   "hero": "{{ART}}/art/fx-ridge-runner-ps4/hero.webp",
+   "releases": [
+    {
+     "id": "fx-ridge-runner-fpkg",
+     "sourceId": "archive",
+     "format": "FPKG",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "CUSA90027 Ridge Runner.fpkg",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-collection-a-ps4",
+   "slug": "fx-collection-a",
+   "title": "Collection A",
+   "platform": "PS4",
+   "_case": "shared archive services/img cover, no fallback: cover 404 at once",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "CUSA90031"
+   ],
+   "addedAt": "2026-03-01",
+   "cover": "https://archive.org/services/img/ps4-jailbreak-backups-us-eu-cusa",
+   "releases": [
+    {
+     "id": "fx-collection-a-pkg",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "CUSA90031 Collection.pkg",
+     "health": "ok"
+    }
+   ]
+  },
+  {
+   "id": "fx-collection-b-ps4",
+   "slug": "fx-collection-b",
+   "title": "Collection B",
+   "platform": "PS4",
+   "_case": "shared archive services/img cover, AVIF coverFallback (skipped): cover 404",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "CUSA90032"
+   ],
+   "addedAt": "2026-03-01",
+   "cover": "https://archive.org/services/img/ps4-jailbreak-backups-us-eu-cusa",
+   "coverFallback": "{{ART}}/art/fx-collection-b-ps4/fallback/cover.avif",
+   "releases": [
+    {
+     "id": "fx-collection-b-pkg",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "CUSA90032 Collection.pkg",
+     "health": "ok"
+    }
+   ]
+  },
+  {
+   "id": "fx-collection-c-ps4",
+   "slug": "fx-collection-c",
+   "title": "Collection C",
+   "platform": "PS4",
+   "_case": "shared archive services/img cover, WebP coverFallback: the fallback",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "CUSA90033"
+   ],
+   "addedAt": "2026-03-01",
+   "cover": "https://archive.org/services/img/ps4-jailbreak-backups-us-eu-cusa",
+   "coverFallback": "{{ART}}/art/fx-collection-c-ps4/fallback/cover.webp",
+   "releases": [
+    {
+     "id": "fx-collection-c-pkg",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "CUSA90033 Collection.pkg",
+     "health": "ok"
+    }
+   ]
+  },
+  {
+   "id": "fx-mirror-lake-ps5",
+   "slug": "fx-mirror-lake",
+   "title": "Mirror Lake",
+   "platform": "PS5",
+   "_case": "hero == cover: hero 404 at once, cover served",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90040"
+   ],
+   "addedAt": "2026-03-02",
+   "cover": "{{ART}}/art/fx-mirror-lake-ps5/cover.webp",
+   "hero": "{{ART}}/art/fx-mirror-lake-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-mirror-lake-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90040 Mirror Lake.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-tall-tales-ps5",
+   "slug": "fx-tall-tales",
+   "title": "Tall Tales",
+   "platform": "PS5",
+   "_case": "square hero refused, wide heroFallback served",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90041"
+   ],
+   "addedAt": "2026-03-03",
+   "cover": "{{ART}}/art/fx-tall-tales-ps5/cover.webp",
+   "hero": "{{ART}}/art/fx-tall-tales-ps5/hero-square.png",
+   "heroFallback": "{{ART}}/art/fx-tall-tales-ps5/fallback/hero.webp",
+   "releases": [
+    {
+     "id": "fx-tall-tales-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90041 Tall Tales.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-giant-steps-ps5",
+   "slug": "fx-giant-steps",
+   "title": "Giant Steps",
+   "platform": "PS5",
+   "_case": "9000-px PNG cover refused (side > 8192), JPEG coverFallback served",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90042"
+   ],
+   "addedAt": "2026-03-04",
+   "cover": "{{ART}}/art/fx-giant-steps-ps5/huge-9000.png",
+   "coverFallback": "{{ART}}/art/fx-giant-steps-ps5/fallback/cover.jpg",
+   "releases": [
+    {
+     "id": "fx-giant-steps-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90042 Giant Steps.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-wide-open-ps5",
+   "slug": "fx-wide-open",
+   "title": "Wide Open",
+   "platform": "PS5",
+   "_case": "2000x2000 PNG cover over the 1,048,576-px cover cap, no fallback: 404",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90043"
+   ],
+   "addedAt": "2026-03-05",
+   "cover": "{{ART}}/art/fx-wide-open-ps5/big-2000.png",
+   "releases": [
+    {
+     "id": "fx-wide-open-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90043 Wide Open.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-ink-well-ps5",
+   "slug": "fx-ink-well",
+   "title": "Ink Well",
+   "platform": "PS5",
+   "_case": "CMYK JPEG cover refused, PNG coverFallback served",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90044"
+   ],
+   "addedAt": "2026-03-06",
+   "cover": "{{ART}}/art/fx-ink-well-ps5/cmyk.jpg",
+   "coverFallback": "{{ART}}/art/fx-ink-well-ps5/fallback/cover.png",
+   "releases": [
+    {
+     "id": "fx-ink-well-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90044 Ink Well.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-harbor-lights-ps5",
+   "slug": "fx-harbor-lights",
+   "title": "Harbor Lights",
+   "platform": "PS5",
+   "_case": "Library: PPSA01234.exfat on a root matches this option exactly (no version, same filename and size)",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA01234"
+   ],
+   "genres": [
+    "Adventure"
+   ],
+   "addedAt": "2026-02-01",
+   "cover": "{{ART}}/art/fx-harbor-lights-ps5/cover.webp",
+   "hero": "{{ART}}/art/fx-harbor-lights-ps5/hero.webp",
+   "releases": [
+    {
+     "id": "fx-harbor-lights-exfat",
+     "sourceId": "archive",
+     "format": "exFAT",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA01234.exfat",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-lantern-rite-ps4",
+   "slug": "fx-lantern-rite",
+   "title": "Lantern Rite",
+   "platform": "PS4",
+   "_case": "Library: a catalogue-named PKG without a title ID in its name (resolved by tvcat_by_filename)",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "CUSA00002"
+   ],
+   "addedAt": "2026-02-02",
+   "cover": "{{ART}}/art/fx-lantern-rite-ps4/cover.webp",
+   "releases": [
+    {
+     "id": "fx-lantern-rite-pkg",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "Lantern Rite.pkg",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-bramble-path-ps4",
+   "slug": "fx-bramble-path",
+   "title": "Bramble Path",
+   "platform": "PS4",
+   "_case": "Library: CUSA00001.pkg on a root",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "CUSA00001"
+   ],
+   "addedAt": "2026-02-03",
+   "cover": "{{ART}}/art/fx-bramble-path-ps4/cover.webp",
+   "releases": [
+    {
+     "id": "fx-bramble-path-pkg",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "CUSA00001.pkg",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-long-haul-ps5",
+   "slug": "fx-long-haul",
+   "title": "Long Haul",
+   "platform": "PS5",
+   "_case": "Downloads: a throttled file that stays \"downloading\"",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90050"
+   ],
+   "addedAt": "2026-01-01",
+   "cover": "{{ART}}/art/fx-long-haul-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-long-haul-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/slow/big.bin",
+     "sizeBytes": 67108864,
+     "filename": "PPSA90050 Long Haul.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-dead-link-ps5",
+   "slug": "fx-dead-link",
+   "title": "Dead Link",
+   "platform": "PS5",
+   "_case": "Downloads: a 404 file that fails",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90051"
+   ],
+   "addedAt": "2026-01-02",
+   "cover": "{{ART}}/art/fx-dead-link-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-dead-link-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/f404/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90051 Dead Link.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-second-wind-ps5",
+   "slug": "fx-second-wind",
+   "title": "Second Wind",
+   "platform": "PS5",
+   "_case": "Downloads: a 429 first, then the file (retrying)",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90052"
+   ],
+   "addedAt": "2026-01-03",
+   "cover": "{{ART}}/art/fx-second-wind-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-second-wind-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/r429/small.bin",
+     "sizeBytes": 8388608,
+     "filename": "PPSA90052 Second Wind.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-vast-archive-ps5",
+   "slug": "fx-vast-archive",
+   "title": "Vast Archive",
+   "platform": "PS5",
+   "_case": "Downloads: the largest real size (296,579,432,448 bytes): never enough space",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90053"
+   ],
+   "addedAt": "2026-01-04",
+   "cover": "{{ART}}/art/fx-vast-archive-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-vast-archive-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/big.bin",
+     "sizeBytes": 296579432448,
+     "filename": "PPSA90053 Vast Archive.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-viking-only-ps5",
+   "slug": "fx-viking-only",
+   "title": "Viking Only",
+   "platform": "PS5",
+   "_case": "Vikingfile only (with and without browserUrl): browser-only options; create with direct delivery gets 409",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90054"
+   ],
+   "addedAt": "2026-01-05",
+   "cover": "{{ART}}/art/fx-viking-only-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-viking-only-a",
+     "sourceId": "vikingfile",
+     "format": "exFAT",
+     "kind": "game",
+     "provider": "Vikingfile",
+     "url": "https://vikingfile.com/f/FxVikingA",
+     "sizeBytes": 33554432,
+     "filename": "PPSA90054 Viking Only.exfat",
+     "health": "ok",
+     "browserUrl": "https://vikingfile.com/f/FxVikingA",
+     "verifiedAt": "2026-10-01"
+    },
+    {
+     "id": "fx-viking-only-b",
+     "sourceId": "vikingfile",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Vikingfile",
+     "url": "https://vik1ngfile.site/f/FxVikingB",
+     "sizeBytes": 33554432,
+     "filename": "PPSA90054 Viking Only.ffpfsc",
+     "health": "ok"
+    }
+   ]
+  },
+  {
+   "id": "fx-locked-vault-ps5",
+   "slug": "fx-locked-vault",
+   "title": "Locked Vault",
+   "platform": "PS5",
+   "_case": "ZIP needing a custom password (secretpw.zip, password xeno-secret-42): hidden by default; with TV_SHOW_ZIP the download fails extraction and asks for the archive password",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA07002"
+   ],
+   "addedAt": "2025-12-01",
+   "cover": "{{ART}}/art/fx-locked-vault-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-locked-vault-zip",
+     "sourceId": "archive",
+     "format": "ZIP",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/secretpw.zip",
+     "sizeBytes": 4614,
+     "filename": "PPSA07002 Locked Vault.zip",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-off-by-one-ps5",
+   "slug": "fx-off-by-one",
+   "title": "Off By One",
+   "platform": "PS5",
+   "_case": "Downloads: the server sends one byte more than the catalogue size (8 MiB - 1): total stays the catalogue size",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "PPSA90055"
+   ],
+   "addedAt": "2025-12-02",
+   "cover": "{{ART}}/art/fx-off-by-one-ps5/cover.webp",
+   "releases": [
+    {
+     "id": "fx-off-by-one-ffpfsc",
+     "sourceId": "archive",
+     "format": "FFPFSC",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/small.bin",
+     "sizeBytes": 8388607,
+     "filename": "PPSA90055 Off By One.ffpfsc",
+     "health": "ok",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "id": "fx-cafe-lumiere-ps4",
+   "slug": "fx-cafe-lumiere",
+   "title": "Café Lumière — 光の喫茶店",
+   "platform": "PS4",
+   "_case": "UTF-8 title and publisher passed through unchanged; release region overrides the game region",
+   "artworkLayout": "wide",
+   "titleIds": [
+    "CUSA90056"
+   ],
+   "region": "EUR",
+   "publisher": "Éditions Soleil",
+   "genres": [
+    "Indie"
+   ],
+   "addedAt": "2025-12-03",
+   "cover": "{{ART}}/art/fx-cafe-lumiere-ps4/cover.webp",
+   "releases": [
+    {
+     "id": "fx-cafe-lumiere-pkg",
+     "sourceId": "archive",
+     "format": "PKG",
+     "kind": "game",
+     "provider": "Archive.org",
+     "url": "{{FILES}}/ok/tiny.pkg",
+     "sizeBytes": 2097152,
+     "filename": "CUSA90056 Café Lumière.pkg",
+     "health": "ok",
+     "region": "JPN",
+     "verifiedAt": "2026-10-01"
+    }
+   ]
+  }
+ ]
+}

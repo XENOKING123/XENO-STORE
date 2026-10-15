@@ -1,5 +1,6 @@
 // Orbit Store TV app - App settings: sources, storage, pairing, the catalogue and updates.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 //
 // The browser version's settings (src/Sources.tsx, src/Pairing.tsx,
 // src/CatalogueUpdates.tsx, src/Updates.tsx, src/TvApp.tsx) on one page for
@@ -33,13 +34,13 @@ constexpr float kViewBottom = 990.0f; // and stops above the hints
 constexpr float kCardRadius = 14.0f;
 constexpr int kSectionCount = static_cast<int>(SettingsScreen::Section::count);
 constexpr const char *kSections[] = {/* i18n */ "Download sources", /* i18n */ "Storage", /* i18n */ "Pair a device",
-                                     /* i18n */ "Game catalogue",   /* i18n */ "Updates", "Orbit Zero", /* i18n */ "More settings"};
-constexpr const char *kSavedElf = "/data/orbit-store/orbit_store.elf";
+                                     /* i18n */ "Game catalogue",   /* i18n */ "Updates", /* i18n */ "More settings"};
+constexpr const char *kSavedElf = "/data/xeno-store/xeno-store.elf";
+constexpr int kMaxDownloads = 4; // XENO STORE runs 1 to 4 downloads at once
 constexpr const char *kNotice =
-    /* i18n */ "You are responsible for checking that your downloads are lawful. Third-party downloads are "
-    "at your own risk. Only download content you have permission to access and use, following "
-    "applicable law and the provider\xE2\x80\x99s terms. Public links do not prove permission, "
-    "and Orbit does not guarantee the files\xE2\x80\x99 safety or authenticity.";
+    /* i18n */ "XENO STORE does not host game files. The catalog links to public archives and "
+    "community pages; it is your responsibility to only download what you are allowed to. Hosts "
+    "can be slow, rate-limited or go offline.";
 
 int seconds_until(double unix_time)
 {
@@ -141,14 +142,14 @@ struct SettingsScreen::Pane
         if (list != nullptr)
         {
             list->rounded_rect({x, y, width, h}, 12.0f,
-                               bad ? ui::Color::rgb(0xffffff, 0.14f)
-                                   : ui::Color::rgb(0xffffff, 0.16f));
+                               bad ? ui::color::bad.with_alpha(0.14f)
+                                   : ui::color::accent.with_alpha(0.14f));
             if (!title.empty())
                 ui::text(*list, type.semibold, title, x + pad, y + pad + 20.0f, 20.0f,
-                         bad ? ui::Color::rgb(0xffffff) : ui::color::text);
+                         bad ? ui::color::bad : ui::color::text);
             if (lines > 0)
                 ui::paragraph(*list, type.regular, text, x + pad, y + pad + title_h + size, size, w,
-                              line, bad ? ui::Color::rgb(0xffffff) : ui::Color::rgb(0xd0d0d0), 99);
+                              line, bad ? ui::color::text : ui::color::text2, 99);
         }
         y += h + 18.0f;
     }
@@ -162,7 +163,7 @@ struct SettingsScreen::Pane
         const std::size_t i = cards.size(); // cards don't nest
         card_tops.push_back(y);
         if (list != nullptr && laid_out != nullptr && i < laid_out->size())
-            list->bordered_rect((*laid_out)[i], 20.0f, ui::Color::rgb(0xffffff, 0.04f), 1.0f,
+            list->bordered_rect((*laid_out)[i], 20.0f, ui::color::white.with_alpha(0.04f), 1.0f,
                                 ui::color::line);
         x += 32.0f;
         width -= 64.0f;
@@ -308,9 +309,6 @@ void SettingsScreen::build(Pane &pane) const
     case Section::updates:
         build_updates(pane);
         break;
-    case Section::zero:
-        build_zero(pane);
-        break;
     default:
         build_more(pane);
         break;
@@ -337,23 +335,24 @@ void SettingsScreen::build_sources(Pane &pane) const
     {
         const SourceOption &option = state.sources.options[static_cast<std::size_t>(i)];
         const bool on = contains(draft_, option.id);
-        browser_only_source = browser_only_source || option.id == "vikingfile" || option.id == "akirabox" || option.id == "datanodes";
+        browser_only_source = browser_only_source || option.id == "vikingfile";
         const float w = type.medium.measure(option.label, 21.0f) + 104.0f;
         const ui::Rect r{cx, cy, w, 60.0f};
         if (pane.list != nullptr)
         {
             ui::focus_ring(*pane.list, r, 30.0f, pane.amount());
-            pane.list->rounded_rect(
-                r, 30.0f, on ? ui::Color::rgb(0xffffff, 0.26f) : ui::Color::rgb(0xffffff, 0.08f));
+            pane.list->bordered_rect(
+                r, 30.0f, on ? ui::color::gold_soft : ui::color::white.with_alpha(0.08f), 1.0f,
+                on ? ui::color::gold_line : ui::Color{0, 0, 0, 0});
             const float mx = r.x + 22.0f + 13.0f;
             if (on)
             {
                 pane.list->circle(mx, r.cy(), 13.0f, ui::color::action);
-                ui::icon_check(*pane.list, mx, r.cy(), 15.0f, ui::color::night1, 2.4f);
+                ui::icon_check(*pane.list, mx, r.cy(), 15.0f, ui::color::action_ink, 2.4f);
             }
             else
             {
-                pane.list->ring(mx, r.cy(), 12.0f, 2.0f, ui::Color::rgb(0xffffff, 0.55f));
+                pane.list->ring(mx, r.cy(), 12.0f, 2.0f, ui::color::white.with_alpha(0.55f));
             }
             ui::text(*pane.list, type.medium, option.label, mx + 13.0f + 18.0f, r.cy() + 7.5f,
                      21.0f, ui::color::text);
@@ -371,10 +370,6 @@ void SettingsScreen::build_sources(Pane &pane) const
         if (contains(draft_, "vikingfile"))
             pane.fine(tr("On {provider}, complete any verification and select the site’s {button} button.",
                          {{"provider", "Vikingfile"}, {"button", tr("Download")}}));
-        if (contains(draft_, "akirabox"))
-            pane.fine(tr("Complete verification on AkiraBox, then wait for Orbit to check the download link."));
-        if (contains(draft_, "datanodes"))
-            pane.fine(tr("Scroll to the bottom, select Continue to Download, then Free Download. Wait for the countdown and select Start Download."));
     }
 
     // .source-notice, then .source-acknowledgement.
@@ -390,17 +385,17 @@ void SettingsScreen::build_sources(Pane &pane) const
     if (pane.list != nullptr)
     {
         ui::focus_ring(*pane.list, box, 16.0f, pane.amount());
-        pane.list->rounded_rect(box, 16.0f, ui::Color::rgb(0xffffff, 0.06f));
+        pane.list->rounded_rect(box, 16.0f, ui::color::white.with_alpha(0.06f));
         const float mx = box.x + 26.0f + 16.0f;
         const float my = box.y + 22.0f + 16.0f;
         if (draft_acknowledged_)
         {
             pane.list->circle(mx, my, 16.0f, ui::color::action);
-            ui::icon_check(*pane.list, mx, my, 18.0f, ui::color::night1, 2.6f);
+            ui::icon_check(*pane.list, mx, my, 18.0f, ui::color::action_ink, 2.6f);
         }
         else
         {
-            pane.list->ring(mx, my, 15.0f, 2.0f, ui::Color::rgb(0xffffff, 0.55f));
+            pane.list->ring(mx, my, 15.0f, 2.0f, ui::color::white.with_alpha(0.55f));
         }
         ui::paragraph(*pane.list, type.regular, agree, box.x + 76.0f, box.y + 22.0f + 21.0f, 19.0f,
                       text_w, 28.0f, ui::color::text, 4);
@@ -448,14 +443,13 @@ void SettingsScreen::build_storage(Pane &pane) const
             ui::DrawList &list = *pane.list;
             ui::focus_ring(list, r, kCardRadius, pane.amount());
             list.bordered_rect(r, kCardRadius,
-                               chosen ? ui::Color::rgb(0xffffff, 0.25f)
-                                      : ui::Color::rgb(0x151515, 0.8f),
-                               1.0f, chosen ? ui::Color::rgb(0xffffff) : ui::color::line);
+                               chosen ? ui::color::gold_soft : ui::color::night2.with_alpha(0.8f),
+                               1.0f, chosen ? ui::color::gold_line : ui::color::line);
             const float mx = r.x + 24.0f + 14.0f;
             if (chosen)
             {
                 list.circle(mx, r.cy(), 14.0f, ui::color::action);
-                ui::icon_check(list, mx, r.cy(), 16.0f, ui::color::night1, 2.4f);
+                ui::icon_check(list, mx, r.cy(), 16.0f, ui::color::action_ink, 2.4f);
             }
             else
             {
@@ -499,16 +493,17 @@ void SettingsScreen::build_storage(Pane &pane) const
                         "starts with the first drive available."));
     if (error_setting_ == Setting::storage)
         pane.error(error_);
-    pane.fine(tr("Downloads save inside the drive\xE2\x80\x99s homebrew folder."));
+    pane.fine(tr("Games save in the drive\xE2\x80\x99s homebrew folder; PKG files in "
+                 "xeno-store/pkg."));
     pane.gap(12.0f);
     pane.rule();
     pane.heading(tr("Simultaneous downloads"));
-    pane.body(tr("Choose 1–8 games. One by default. Lowering the limit lets current downloads finish."));
+    pane.body(tr("Choose 1–4 games. One by default. Lowering the limit lets current downloads finish."));
     pane.version_row(tr("Simultaneous downloads"), std::to_string(state.system.concurrent_downloads));
     pane.buttons({{Kind::download_limit_less, tr("Decrease download limit"), ui::ButtonKind::secondary,
                    !result.busy && state.system.concurrent_downloads > 1},
                   {Kind::download_limit_more, tr("Increase download limit"), ui::ButtonKind::secondary,
-                   !result.busy && state.system.concurrent_downloads < 8}});
+                   !result.busy && state.system.concurrent_downloads < kMaxDownloads}});
     if (result.setting == Setting::download_limit) pane.error(result.error);
     pane.gap(12.0f);
     pane.rule();
@@ -532,7 +527,7 @@ void SettingsScreen::build_pairing(Pane &pane) const
     const Snapshot &state = ctx_.store.state();
     const ui::Type &type = ctx_.type;
     pane.heading(tr("Pair a phone or computer"));
-    pane.body(tr("Browse Orbit and queue downloads from another device on the same network as "
+    pane.body(tr("Browse XENO STORE and queue downloads from another device on the same network as "
               "this PS5. Downloads still run on this console."));
     pane.gap(16.0f);
 
@@ -542,7 +537,7 @@ void SettingsScreen::build_pairing(Pane &pane) const
         if (pane.list != nullptr)
         {
             pane.list->circle(pane.x + 20.0f, pane.y + 20.0f, 20.0f,
-                              ui::Color::rgb(0xffffff, 0.1f));
+                              ui::color::white.with_alpha(0.1f));
             char digit[4];
             std::snprintf(digit, sizeof(digit), "%d", number);
             ui::text(*pane.list, type.semibold, digit, pane.x + 20.0f, pane.y + 27.0f, 19.0f,
@@ -552,10 +547,10 @@ void SettingsScreen::build_pairing(Pane &pane) const
         }
         pane.y += 56.0f;
     };
-    step(1, tr("Open Orbit in a web browser"));
+    step(1, tr("Open XENO STORE in a web browser"));
     const std::string address =
-        !state.address.empty() ? "http://" + state.address + ":34177"
-                               : tr("Your PS5\xE2\x80\x99s IP address, port {port}", {{"port", "34177"}});
+        !state.address.empty() ? "http://" + state.address + ":9095"
+                               : tr("Your PS5\xE2\x80\x99s IP address, port {port}", {{"port", "9095"}});
     if (pane.list != nullptr)
         ui::text_fit(*pane.list, type.medium, address, pane.x + 60.0f, pane.y + 36.0f,
                      state.address.empty() ? 28.0f : 40.0f, pane.width - 60.0f, ui::color::text);
@@ -566,6 +561,9 @@ void SettingsScreen::build_pairing(Pane &pane) const
         pane.width -= 60.0f;
         pane.fine(tr("Find it on the PS5 in Settings \xE2\x86\x92 Network \xE2\x86\x92 Connection "
                   "Status."));
+        // XENO STORE answers mDNS names on the local network too.
+        pane.fine(tr("Or open {url} from a phone or computer on the same network.",
+                     {{"url", "http://xeno.local:9095"}}));
         pane.x -= 60.0f;
         pane.width += 60.0f;
     }
@@ -579,7 +577,7 @@ void SettingsScreen::build_pairing(Pane &pane) const
                  pane.y + 82.0f, 96.0f, ui::color::text);
     pane.y += 118.0f;
     pane.fine(
-        tr("The code changes when Orbit restarts. Devices you\xE2\x80\x99ve paired stay paired."));
+        tr("The code changes when XENO STORE restarts. Devices you\xE2\x80\x99ve paired stay paired."));
 }
 
 // ---- Game catalogue (src/CatalogueUpdates.tsx) ----
@@ -591,13 +589,7 @@ void SettingsScreen::build_catalogue(Pane &pane) const
     const SettingResult &result = ctx_.store.setting_result();
     const bool sending = result.busy && result.setting == Setting::catalogue;
     pane.heading(tr("Game catalogue"));
-    if(state.system.zero_enabled) {
-        pane.body("Orbit Zero supplies the catalogue and artwork from your computer. Refresh the catalogue in the desktop app to get new games.");
-        pane.version_row("Games",std::to_string(state.games.size()));
-        pane.error(state.system.zero_error);
-        return;
-    }
-    pane.body(tr("New games arrive without reinstalling Orbit. Your PS5 checks when Orbit starts "
+    pane.body(tr("New games arrive without reinstalling XENO STORE. Your PS5 checks when XENO STORE starts "
               "and every six hours, and keeps a saved catalogue for browsing offline."));
     if (state.have_catalogue_status)
     {
@@ -621,12 +613,12 @@ void SettingsScreen::build_catalogue(Pane &pane) const
     pane.buttons({{Kind::refresh_catalogue, label, ui::ButtonKind::secondary,
                    catalogue.available && !catalogue.busy && !sending && wait == 0}});
     if (state.have_catalogue_status && !catalogue.available)
-        pane.fine(tr("Refreshing works with Orbit running on your PS5. This copy uses its bundled "
+        pane.fine(tr("Refreshing works with XENO STORE running on your PS5. This copy uses its bundled "
                   "catalogue."));
     if (error_setting_ == Setting::catalogue && !error_.empty())
-        pane.notice({}, tr(error_));
+        pane.notice({}, tr(error_), true);
     else if (!catalogue.error.empty())
-        pane.notice({}, tr(catalogue.error));
+        pane.notice({}, tr(catalogue.error), true);
 }
 
 // ---- Updates: this app (src/TvApp.tsx) and the download service (src/Updates.tsx) ----
@@ -637,7 +629,7 @@ void SettingsScreen::build_updates(Pane &pane) const
     const SettingResult &result = ctx_.store.setting_result();
     const double now = unix_seconds();
     pane.heading(tr("Updates"));
-    pane.body(tr("Orbit has two parts, updated separately: this TV app, and the download service "
+    pane.body(tr("XENO STORE has two parts, updated separately: this TV app, and the download service "
               "that keeps running after you close it."));
     pane.gap(10.0f);
 
@@ -646,7 +638,7 @@ void SettingsScreen::build_updates(Pane &pane) const
     const std::string running = app_release_version(ctx_.app_version);
     const bool tv_sending = result.busy && (result.setting == Setting::tv_check ||
                                             result.setting == Setting::tv_install);
-    pane.begin_card(tr("TV app"), tr("Orbit Store for TV, the app you\xE2\x80\x99re using now."));
+    pane.begin_card(tr("TV app"), tr("XENO STORE for TV, the app you\xE2\x80\x99re using now."));
     pane.version_row(tr("This app"), running.empty() ? tr("Unknown") : running);
     const bool tv_newer = !tv.latest_version.empty() && !running.empty() &&
                           starter::compare_versions(tv.latest_version, running) > 0;
@@ -660,12 +652,8 @@ void SettingsScreen::build_updates(Pane &pane) const
                          tv.latest_version + " \xC2\xB7 " + format_bytes(tv.size));
     if (!state.have_tv_app || !tv.available)
     {
-        // Orbit before 0.6.0 has no TV app installer at all.
-        pane.fine(state.have_tv_app ? tr("Updates work with Orbit running on your PS5.")
-                  : state.have_service_update
-                      ? tr("Checking for TV app updates needs Orbit 0.6.0 or later. Update the "
-                        "download service below.")
-                      : tr("Loading\xE2\x80\xA6"));
+        pane.fine(state.have_tv_app ? tr("Updates work with XENO STORE running on your PS5.")
+                                    : tr("Loading\xE2\x80\xA6"));
     }
     else
     {
@@ -712,7 +700,7 @@ void SettingsScreen::build_updates(Pane &pane) const
         if (confirm_replace_)
         {
             pane.notice(tr("Replace your copy?"),
-                        tr("The TV app in /data/homebrew is a copy you placed yourself. Orbit "
+                        tr("The TV app in /data/homebrew is a copy you placed yourself. XENO STORE "
                            "replaces it with release {version}. This app keeps running until you "
                            "close it.",
                            {{"version", tv.latest_version}}));
@@ -724,23 +712,23 @@ void SettingsScreen::build_updates(Pane &pane) const
         {
             const std::string version = tv_waiting ? tv.installed_version : tv.latest_version;
             pane.notice(tr("TV app {version} is installed", {{"version", version}}),
-                        tr("Close Orbit Store (press the PS button, then Close Application) and "
+                        tr("Close XENO STORE (press the PS button, then Close Application) and "
                            "open it again from your Games row. If version {running} still opens, "
                            "restart your PS5.",
                            {{"running", running}}));
         }
         if (tv.installed == "none" && tv_newer)
-            pane.notice({}, tr("Orbit updates the TV app in /data/homebrew, and this copy is "
-                               "somewhere else. Download release {version} from Orbit\xE2\x80\x99s "
+            pane.notice({}, tr("XENO STORE updates the TV app in /data/homebrew, and this copy is "
+                               "somewhere else. Download release {version} from XENO STORE\xE2\x80\x99s "
                                "GitHub releases and replace your copy yourself.",
                                {{"version", tv.latest_version}}));
         if (tv.installed == "folder")
-            pane.notice({}, tr("This app is installed as the folder /data/homebrew/PPSA99177. Keep "
-                            "updating that copy yourself, or remove the folder so Orbit can "
+            pane.notice({}, tr("This app is installed as the folder /data/homebrew/PPSA99500. Keep "
+                            "updating that copy yourself, or remove the folder so XENO STORE can "
                             "install and update it."));
         if (tv.installed == "blocked")
             pane.notice({}, tr("Something other than the TV app is at "
-                            "/data/homebrew/PPSA99177.ffpkg. Move it away to install updates "
+                            "/data/homebrew/PPSA99500.ffpkg. Move it away to install updates "
                             "here."));
         if (error_setting_ == Setting::tv_check || error_setting_ == Setting::tv_install)
             pane.error(error_);
@@ -755,7 +743,7 @@ void SettingsScreen::build_updates(Pane &pane) const
                                                  result.setting == Setting::service_install ||
                                                  result.setting == Setting::service_restart);
     pane.begin_card(tr("Download service"),
-                    tr("Orbit, which downloads your games and keeps running after you close this "
+                    tr("XENO STORE, which downloads your games and keeps running after you close this "
                     "app."));
     const std::string &running_service =
         !service.running_version.empty() ? service.running_version : state.system.version;
@@ -766,6 +754,8 @@ void SettingsScreen::build_updates(Pane &pane) const
         pane.version_row(tr("Latest release"), service.latest_version);
 
     const Restart restart = state.restart;
+    if (restart == Restart::older)
+        pane.notice(tr("An older XENO STORE is running"), state.restart_detail, true);
     if (restart == Restart::stopping || restart == Restart::starting)
     {
         pane.notice(restart == Restart::stopping ? tr("Stopping the download service\xE2\x80\xA6")
@@ -774,23 +764,16 @@ void SettingsScreen::build_updates(Pane &pane) const
     }
     else if (restart == Restart::manual || restart == Restart::failed)
     {
-        std::string text =
-            restart == Restart::manual
-                ? tr("This app can\xE2\x80\x99t start Orbit here. Run {path} from your payload "
-                     "manager. This screen reconnects by itself.",
-                     {{"path", kSavedElf}})
-                : tr("Run {path} from your payload manager, or try again.", {{"path", kSavedElf}});
-        if (!state.restart_detail.empty())
-            text += " (" + state.restart_detail + ")";
-        pane.notice(restart == Restart::manual ? tr("Start Orbit from your payload manager")
-                                               : tr("Orbit didn\xE2\x80\x99t restart"),
+        const std::string text = restart_notice_text(restart, service.saved_version, state.restart_detail);
+        pane.notice(restart == Restart::manual ? tr("Start XENO STORE from your payload manager")
+                                               : tr("XENO STORE didn\xE2\x80\x99t restart"),
                     text, restart == Restart::failed);
         if (ctx_.store.can_start())
             pane.buttons({{Kind::restart_retry, tr("Try again"), ui::ButtonKind::primary}});
     }
     else if (!state.have_service_update || !service.available)
     {
-        pane.fine(tr("Updates work with Orbit running on your PS5."));
+        pane.fine(tr("Updates work with XENO STORE running on your PS5."));
     }
     else
     {
@@ -829,7 +812,7 @@ void SettingsScreen::build_updates(Pane &pane) const
         pane.buttons(row);
         std::string status;
         if (service.phase == "downloading")
-            status = tr("Downloading Orbit: {size}", {{"size", format_bytes(service.received)}});
+            status = tr("Downloading XENO STORE: {size}", {{"size", format_bytes(service.received)}});
         else if (service.phase == "saving")
             status = tr("Saving the verified release\xE2\x80\xA6");
         else if (wait > 0 && !service.busy)
@@ -845,17 +828,27 @@ void SettingsScreen::build_updates(Pane &pane) const
         if (service.restart_required && !confirm_restart_)
             pane.notice(tr("Restart to finish updating"),
                         service.saved_version.empty()
-                            ? std::string(tr("Orbit\xE2\x80\x99s update is saved. It runs the next "
-                                             "time Orbit starts. Restart the download service to "
+                            ? std::string(tr("XENO STORE\xE2\x80\x99s update is saved. It runs the next "
+                                             "time XENO STORE starts. Restart the download service to "
                                              "use it now."))
-                            : tr("Orbit {version} is saved. It runs the next time Orbit starts. "
+                            : tr("XENO STORE {version} is saved. It runs the next time XENO STORE starts. "
                                  "Restart the download service to use it now.",
                                  {{"version", service.saved_version}}));
         if (confirm_restart_)
         {
+            // XENO STORE: say so before stopping when the copy this app can
+            // start is older than the one running (a payload sender started it).
+            const std::string &next = state.next_start_version;
+            const bool older = !next.empty() && !running_service.empty() &&
+                               starter::compare_versions(next, running_service) < 0;
             pane.notice(tr("Restart the download service?"),
-                        tr("Active downloads pause. This app stops Orbit and starts it again, then "
-                        "you can resume your downloads from Downloads."));
+                        older ? tr("Active downloads pause. This app can only start XENO STORE {next}, and "
+                                   "{running} is running now. To keep {running}, restart it from your "
+                                   "payload manager instead.",
+                                   {{"next", next}, {"running", running_service}})
+                              : std::string(tr("Active downloads pause. This app stops XENO STORE and "
+                                               "starts it again, then you can resume your downloads "
+                                               "from Downloads.")));
             pane.buttons(
                 {{Kind::restart_confirm, tr("Restart now"), ui::ButtonKind::primary, !disabled},
                  {Kind::restart_cancel, tr("Not now")}});
@@ -870,34 +863,35 @@ void SettingsScreen::build_updates(Pane &pane) const
     pane.end_card();
 }
 
-// ---- More: what stays in the browser version ----
-
-void SettingsScreen::build_zero(Pane &pane) const
+std::string restart_notice_text(Restart restart, const std::string &saved_version,
+                                const std::string &detail)
 {
-    const auto &system=ctx_.store.state().system;
-    pane.heading("Orbit Zero");
-    pane.body("Use your computer to download games and transfer them to this PS5 over Wi-Fi or Ethernet.");
-    pane.fine("Open Orbit Zero on your computer, connect to this console and enter the PS5 pairing code. Then enable it here.");
-    if(system.zero_configured) {
-        pane.version_row("Computer",system.zero_address);
-        pane.version_row("Orbit Zero",system.zero_enabled ? "Enabled" : "Off");
-        if(system.zero_enabled) pane.body(system.zero_preference=="prefer-ps5" ?
-            "Your preference uses the PS5 when the selected source is reachable, otherwise your computer. Running downloads keep their route." :
-            "Downloads run on your computer and transfer to your selected PS5 drive. Keep Orbit Zero open.");
-        pane.error(system.zero_error);
-        pane.buttons({{Kind::zero_toggle,system.zero_enabled?"Turn off Orbit Zero":"Enable Orbit Zero",ui::ButtonKind::primary,!ctx_.store.setting_result().busy}});
-        if(ctx_.store.setting_result().setting==Setting::zero) pane.error(ctx_.store.setting_result().error);
-    } else pane.body("No computer paired. Use Console setup in the desktop app to connect.");
+    const bool manual = restart == Restart::manual;
+    std::string text =
+        saved_version.empty()
+            ? std::string(manual ? tr("Start XENO STORE from your payload manager. This screen "
+                                      "reconnects by itself.")
+                                 : tr("Check that XENO STORE is set up in your payload manager, then "
+                                      "try again."))
+        : manual ? tr("This app can\xE2\x80\x99t start XENO STORE here. Run {path} from your payload "
+                      "manager. This screen reconnects by itself.",
+                      {{"path", kSavedElf}})
+                 : tr("Run {path} from your payload manager, or try again.", {{"path", kSavedElf}});
+    if (!detail.empty())
+        text += " (" + detail + ")";
+    return text;
 }
+
+// ---- More: what stays in the browser version ----
 
 void SettingsScreen::build_more(Pane &pane) const
 {
     const Snapshot &state = ctx_.store.state();
     pane.heading(tr("More settings"));
     pane.body(tr("Auto-start, payload managers and diagnostics are in the browser version of "
-              "Orbit."));
-    pane.fine(tr("On this PS5, the browser version is the Orbit Store icon in your Media area. On a "
-              "phone or computer, pair it under Pair a device."));
+              "XENO STORE, under Settings, Setup and Diagnostics."));
+    pane.fine(tr("On this PS5, the browser version is the XENO STORE Web icon in your Media area. On "
+              "a phone or computer, pair it under Pair a device."));
     if (ctx_.open_browser)
         pane.buttons({{Kind::open_browser, tr("Open browser version"), ui::ButtonKind::primary}});
     pane.gap(12.0f);
@@ -916,13 +910,12 @@ void SettingsScreen::activate(const Control &control, Intent &intent, Feedback &
     feedback.play(hui::audio::Cue::select);
     switch (control.kind)
     {
-    case Kind::zero_toggle:
-        error_.clear();ctx_.store.set_zero(!state.system.zero_enabled);break;
     case Kind::download_limit_less:
     case Kind::download_limit_more:
         if (!ctx_.store.setting_result().busy) {
-            const int limit = state.system.concurrent_downloads + (control.kind == Kind::download_limit_more ? 1 : -1);
-            if (limit >= 1 && limit <= 8) ctx_.store.set_download_limit(limit);
+            // An older limit above XENO STORE's range steps down into it.
+            const int limit = std::clamp(state.system.concurrent_downloads + (control.kind == Kind::download_limit_more ? 1 : -1), 1, kMaxDownloads);
+            if (limit != state.system.concurrent_downloads) ctx_.store.set_download_limit(limit);
         }
         break;
     case Kind::archives_toggle:
@@ -1287,10 +1280,11 @@ void SettingsScreen::draw(Frame &frame, bool focused) const
         const float focus = nav_focus_[i];
         ui::focus_ring(list, r, r.h * 0.5f, focus);
         if (current)
-            list.bordered_rect(r, r.h * 0.5f, ui::Color::rgb(0xffffff, 0.13f), 1.0f,
-                               ui::Color::rgb(0xffffff, 0.2f));
+            list.bordered_rect(r, r.h * 0.5f, ui::color::gold_soft, 1.0f, ui::color::gold_line);
         ui::text(list, type.medium, tr(kSections[i]), r.x + 30.0f, r.cy() + 7.5f, 21.0f,
-                 current || focus > 0.5f ? ui::color::text : ui::color::text2);
+                 current           ? ui::color::gold
+                 : focus > 0.5f    ? ui::color::text
+                                   : ui::color::text2);
         if (static_cast<Section>(i) == Section::updates && update_available())
             list.circle(r.x + r.w - 32.0f, r.cy(), 7.0f, ui::color::action_hi);
     }

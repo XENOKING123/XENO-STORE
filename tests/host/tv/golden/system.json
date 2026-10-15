@@ -1,0 +1,16 @@
+{
+ "name": "XENO STORE",
+ "version": "<version>",
+ "instanceId": "<hex32>",
+ "stopping": false,
+ "platform": "host",
+ "paired": false,
+ "localSessionAvailable": true,
+ "stateHealthy": true,
+ "catalogueRevision": 2097152000765721,
+ "preferredStorage": "internal",
+ "deleteArchives": true,
+ "concurrentDownloads": 1,
+ "httpPort": "<port>",
+ "safeMode": false
+}

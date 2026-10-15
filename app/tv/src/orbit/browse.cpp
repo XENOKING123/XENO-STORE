@@ -1,5 +1,6 @@
 // Orbit Store TV app - Browse: search, filters and every game as a grid.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 //
 // The browser storefront's Browse (src/App.tsx, src/browse.ts): a search by
 // name or title ID, All games or Favourites, then Source, Format, Region, Download
@@ -508,7 +509,7 @@ void BrowseScreen::draw(Frame &frame, bool focused) const
     if (filters_.query.empty())
     {
         ui::text(list, type.regular, tr("Search games or title ID"), field.x + 60.0f, field.cy() + 7.0f,
-                 20.0f, ui::color::text3);
+                 20.0f, field_focus_.value > 0.5f ? ui::color::text2 : ui::color::text3);
     }
     else
     {
@@ -523,7 +524,7 @@ void BrowseScreen::draw(Frame &frame, bool focused) const
     ui::surface(list, {ui::kGutter, kChipsY, 370.0f, kChipHeight}, kChipHeight * .5f,
                 ui::color::field);
     list.line(512.0f, kChipsY + 8.0f, 512.0f, kChipsY + kChipHeight - 8.0f, 1.0f,
-              ui::Color::rgb(0xffffff, 0.1f));
+              ui::color::white.with_alpha(0.1f));
     float x = ui::kGutter;
     for (int c = 0; c < 2; ++c)
     {
@@ -532,10 +533,10 @@ void BrowseScreen::draw(Frame &frame, bool focused) const
         const bool on = (c == 1) == filters_.favourites;
         ui::focus_ring(list, lit, lit.h * 0.5f, control_focus_[c]);
         if (on)
-            list.rounded_rect(lit, lit.h * 0.5f, ui::Color::rgb(0xf4f4f4));
+            list.rounded_rect(lit, lit.h * 0.5f, ui::color::focus_fill);
 
         ui::text(list, type.medium, tr(kChips[c]), chip.cx(), chip.cy() + 7.0f, 20.0f,
-                 on ? ui::Color::rgb(0x080808) : ui::color::text, ui::Align::center);
+                 on ? ui::color::focus_ink : ui::color::text, ui::Align::center);
         x += chip.w;
     }
 
@@ -586,8 +587,9 @@ void BrowseScreen::draw(Frame &frame, bool focused) const
                 // .tile-favorite: a gold star in a dark disc, top right.
                 const float scale = 1.0f;
                 list.push_transform(scale, r.cx(), r.cy(), 0.0f, 0.0f);
-                list.circle(r.x + r.w - 25.0f, r.y + 25.0f, 15.0f, ui::Color::rgb(0x141414, 0.87f));
-                list.star(r.x + r.w - 25.0f, r.y + 25.5f, 8.0f, ui::Color::rgb(0xffffff));
+                list.circle(r.x + r.w - 25.0f, r.y + 25.0f, 15.0f,
+                            ui::color::night0.with_alpha(0.87f));
+                list.star(r.x + r.w - 25.0f, r.y + 25.5f, 8.0f, ui::color::gold);
                 list.pop_transform();
             }
             draw_tile_caption(ctx_, list, game,
@@ -619,7 +621,7 @@ void BrowseScreen::draw(Frame &frame, bool focused) const
         overlay.push_opacity(in);
         overlay.push_transform(1.0f, 0.0f, 0.0f, 0.0f, 60.0f * (1.0f - in));
         const ui::Rect panel{0.0f, kKeyboardTop, 1920.0f, 1080.0f - kKeyboardTop};
-        overlay.glass(frame.glass_texture, panel, 0.0f, ui::Color::rgb(0xffffff));
+        overlay.glass(frame.glass_texture, panel, 0.0f, ui::color::white);
         overlay.rounded_rect(panel, 0.0f, ui::color::night1.with_alpha(0.78f));
         overlay.rounded_rect({0.0f, kKeyboardTop, 1920.0f, 1.5f}, 0.0f, ui::color::line);
         hui::ui::Canvas canvas{overlay, ctx_.fonts, frame.glass_texture, ctx_.clock};

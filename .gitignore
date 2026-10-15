@@ -13,3 +13,8 @@ node_modules/
 __pycache__/
 *.pyc
 .DS_Store
+# TV app (app/tv): pinned dependencies, build outputs and the generated loader shim.
+app/tv/.deps/
+app/tv/build/
+app/tv/dist/
+app/tv/runtime/libc.prx

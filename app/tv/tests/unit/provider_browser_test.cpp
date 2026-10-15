@@ -1,5 +1,6 @@
 // Native provider sessions use the same authenticated service workflow.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 #include "fixture.hpp"
 #include "orbit/api.hpp"
 #include "orbit/store.hpp"
@@ -83,6 +84,26 @@ TEST(ProviderBrowser, LostStartReplyIsReconciledWithoutReplayingOrQueueing)
     EXPECT_FALSE(store.action().busy);
 }
 
+// The preview's fixture answers as XENO STORE does: no provider capture, the
+// reason in the idle session, a start refused with it, versions 1.2.x.
+TEST(ProviderBrowser, XenoDialectHasNoCaptureAndSaysWhy)
+{
+    host::Fixture fixture(host::FixtureMode::normal, host::Dialect::xeno);
+    ScriptedTransport transport;
+    transport.reply=[&](const http::Request &request) { return fixture.send(request); };
+    Store store(transport);store.poll_once();store.tick();
+    EXPECT_EQ(store.state().system.version,"1.2.1");
+    ASSERT_TRUE(store.state().have_browser);
+    EXPECT_FALSE(store.state().browser.available);
+    EXPECT_FALSE(store.state().browser.active);
+    EXPECT_NE(store.state().browser.message.find("browser version"),std::string::npos);
+    store.start_browser("ironclad-skies-viking","usb0");
+    ASSERT_TRUE(store.run_next_action());store.tick();
+    EXPECT_FALSE(store.state().browser.active);
+    EXPECT_NE(store.browser_action().error.find("Vikingfile"),std::string::npos);
+    EXPECT_EQ(store.state().jobs.size(),6u);
+}
+
 TEST(ProviderBrowser, OlderBackendAndReadFailureDisableNewStartsWithoutFakeCompletion)
 {
     host::Fixture fixture(host::FixtureMode::normal);
@@ -94,6 +115,6 @@ TEST(ProviderBrowser, OlderBackendAndReadFailureDisableNewStartsWithoutFakeCompl
     EXPECT_FALSE(store.state().have_browser);
     EXPECT_FALSE(store.state().browser.available);
     EXPECT_EQ(store.state().link,Link::online);
-    EXPECT_EQ(store.state().browser_error,"Update Orbit to open provider pages.");
+    EXPECT_EQ(store.state().browser_error,"Update XENO STORE to open provider pages.");
 }
 } // namespace orbit

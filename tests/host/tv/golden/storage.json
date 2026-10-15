@@ -1,0 +1,32 @@
+[
+ {
+  "id": "root0",
+  "label": "R1",
+  "path": "<root:1>/homebrew",
+  "freeBytes": "<bytes>",
+  "totalBytes": "<bytes>",
+  "pendingBytes": 0,
+  "projectedFreeBytes": "<bytes>",
+  "external": true
+ },
+ {
+  "id": "root1",
+  "label": "R2",
+  "path": "<root:2>/homebrew",
+  "freeBytes": "<bytes>",
+  "totalBytes": "<bytes>",
+  "pendingBytes": 0,
+  "projectedFreeBytes": "<bytes>",
+  "external": true
+ },
+ {
+  "id": "internal",
+  "label": "Internal storage",
+  "path": "<root:0>/homebrew",
+  "freeBytes": "<bytes>",
+  "totalBytes": "<bytes>",
+  "pendingBytes": 0,
+  "projectedFreeBytes": "<bytes>",
+  "external": false
+ }
+]

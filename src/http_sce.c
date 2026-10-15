@@ -623,6 +623,11 @@ static xhttp_conn *open_follow(const xhttp_req *req, xhttp_resp *resp) {
         conn_release(c);
         return NULL;
       }
+      if (req->redirect_ok && !req->redirect_ok(next, req->redirect_user)) {
+        xhttp_set_error("redirect refused by policy");
+        conn_release(c);
+        return NULL;
+      }
       conn_release(c);
       hops++;
       xstrlcpy(url, next, sizeof url);

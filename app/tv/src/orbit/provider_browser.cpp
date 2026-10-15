@@ -1,5 +1,6 @@
 // Orbit Store TV app - Provider verification without the browser storefront.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 #include "orbit/screens.hpp"
 #include "orbit/i18n.hpp"
 
@@ -57,9 +58,9 @@ void App::draw_provider(Frame &frame) const
     const auto &browser = state.browser;
     const auto &action = ctx_.store.browser_action();
     const auto &type = ctx_.type;
-    list.rounded_rect({0,0,1920,1080},0,ui::Color::rgb(0x000000,0.72f));
+    list.rounded_rect({0,0,1920,1080},0,ui::color::scrim);
     const ui::Rect panel{280,220,1360,660};
-    list.shadow(panel,30,40,ui::Color::rgb(0x000000,0.4f));
+    list.shadow(panel,30,40,ui::color::shadow.with_alpha(0.4f));
     ui::surface(list,panel,30,ui::color::night2);
     ui::text(list,type.medium,tr("Provider verification"),330,286,30,ui::color::text2);
     ui::text_fit(list,type.medium,browser.title.empty() ? tr("Provider verification") : browser.title,
@@ -72,7 +73,7 @@ void App::draw_provider(Frame &frame) const
         : browser.state == "validating" ? tr("Checking your file")
         : browser.state == "waiting-link" ? tr("Waiting for the download link")
         : browser.state == "opening" ? tr("Opening the download page on your PS5…")
-        : tr("Select Download, then return to Orbit.");
+        : tr("Select Download, then return to XENO STORE.");
     ui::paragraph(list,type.medium,heading,330,411,26,1260,35,ui::color::text,3);
     const std::string message = !state.have_browser ? state.browser_error
         : browser.state == "idle" && !action.busy

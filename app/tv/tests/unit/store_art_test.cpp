@@ -1,5 +1,6 @@
 // Orbit Store TV app - The API client, the synced snapshot and the artwork cache.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "fixture.hpp"
 #include "orbit/api.hpp"
@@ -36,7 +37,7 @@ TEST(Api, CarriesTheTokenAndExplainsRefusals)
     EXPECT_EQ(created.error, "This game's source is turned off.");
     EXPECT_EQ(transport.seen.back().bearer, "tok");
     EXPECT_EQ(transport.seen.back().body, R"({"releaseId":"rel-1","storageId":"usb0"})");
-    EXPECT_EQ(client.system().error, "Orbit could not complete this request.");
+    EXPECT_EQ(client.system().error, "XENO STORE could not complete this request.");
 }
 
 TEST(Api, NeverPutsUnsafeIdsIntoPaths)

@@ -80,7 +80,9 @@ xeno-store/
     snapshots/              vendored upstream inputs for offline builds
   tools/
     gen_assets.py           embeds web/dist/index.html, catalog, logo, icon into src/assets.h (+ gzip variants)
-    make_ffpkg.py           builds dist/PPSA99500.ffpkg, the Games-row app (launcher + ELF in a UFS2 image)
+    make_ffpkg.py           builds dist/PPSA99500.ffpkg, the Games-row app (the TV app + ELF in a UFS2 image;
+                            the native launcher when no TV app folder is built)
+    tv/                     the TV app's packaging checks, source bundle and live preview harness (§19)
     ufs2_check.py           checks that image file by file against the staged app
     make_homebrew.py        optional: dist/XENO-STORE/ homebrew-launcher folder (+zip), not released
     catalog/                §10 pipeline (stdlib Python 3.10+)
@@ -91,6 +93,10 @@ xeno-store/
   updates/
     payloads.json           Payload-Manager repository format (itsPLK) + our own updater feed
     messages.json           in-app announcements ({id, ts, texts{lang}})
+  app/
+    tv/                     the native TV app (PPSA99500's eboot.bin), vendored from Orbit Store 1.2.0's TV app
+                            (GPL-3.0-or-later; app/tv/NOTICE), with its own Makefile and pinned toolchain (§19)
+    native-launcher/        the previous Games-row launcher, kept as the fallback build (`make eboot`)
   homebrew/
     homebrew.json           etaHEN/itemzflow homebrew metadata
     sce_sys/param.json      PS5 app metadata (titleId XENO00002)
@@ -121,13 +127,15 @@ Targets (all run from the repository root):
 | `make catalog` | `python3 tools/catalog/build_catalog.py --offline` → `catalog/xeno-catalog.json` (+ `--validate`) |
 | `make assets` | `python3 tools/gen_assets.py` → `src/assets.h` (needs web + catalog) |
 | `make host` | host binary `build/host/xeno-store` with `cc` (gcc/clang). `-DXENO_HOST=1`. Links OpenSSL if `pkg-config --exists openssl`, else HTTP only. |
-| `make test` | `make host` then `tests/host/run.sh` |
+| `make test` | `make host`, `make launcher-test` and `make tools-test` (the release tools' checks, `tools/tests`), then `tests/host/run.sh` |
 | `make ps5` | cross-compile `xeno-store.elf` (needs `PS5_PAYLOAD_SDK`) |
-| `make eboot` | `app/build_eboot.sh` → `app/dist/eboot.bin`, the Games-row app's launcher (needs `PS5_PAYLOAD_SDK`) |
-| `make ffpkg` | `tools/make_ffpkg.py` → `dist/PPSA99500.ffpkg` (needs `makefs`) |
+| `make eboot` | `app/native-launcher/build.sh` → `app/dist/eboot.bin` + `sce_module/libc.prx`, the fallback native launcher |
+| `make tv-deps` / `make tv` | the TV app's pinned dependencies → `app/tv/.deps`; the app folder → `app/tv/dist/PPSA99500` (§19.6) |
+| `make tv-check` / `tv-test` / `tv-preview` / `tv-preview-live` | the TV app's lints, unit tests, fixture pictures and live preview (§19.6) |
+| `make ffpkg` | `tools/make_ffpkg.py` → `dist/PPSA99500.ffpkg` (needs `makefs`): the TV app with the ELF in `xeno/` when `app/tv/dist/PPSA99500` holds a built app folder, else the native launcher |
 | `make pkg` | optional: `tools/make_homebrew.py` → `dist/XENO-STORE/` (+ zip) for etaHEN / itemzflow launchers; not released |
-| `make all` | web catalog assets ps5 eboot ffpkg |
-| `make clean` | remove build outputs |
+| `make all` | web catalog assets ps5 eboot tv ffpkg; `tv` only where clang-18 and `make tv-deps` are present (`TV=1` forces it, `TV=0` skips it) |
+| `make clean` | remove build outputs (also `app/tv/build`, `app/tv/dist`; `distclean` also `app/tv/.deps`) |
 
 Compiler flags: `-std=gnu11 -Wall -Wextra -Werror -O2 -fstack-protector-strong -D_FILE_OFFSET_BITS=64 -DXENO_VERSION=\"$(VERSION)\"`.
 PS5 link set (proven to load): `-lSceSystemService -lSceUserService -lSceAppInstUtil -lSceNotification -lkernel_sys`.
@@ -165,8 +173,10 @@ There is one ELF: it opens the PS5 browser at start when the `general.openOnStar
 ### 3.2 Startup order
 log → data dir → settings load → catalog load (embedded, then cached if newer) → storage scan →
 queue load (jobs that were running become `paused` with message "Stopped when XENO STORE closed") →
-server bind → housekeeping thread → (`general.openOnStart`: open `http://127.0.0.1:9095/?tv=1`, unless the Games-row app just asked for it) → toast
-"XENO STORE ready · http://<ip>:9095" (ip from `getifaddrs`, first non-loopback IPv4).
+server bind → housekeeping thread → up to 2 s waiting for the TV app's first `/api/v1` request (§19.3) →
+(`general.openOnStart`: open `http://127.0.0.1:9095/?tv=1`, unless the Games-row app just asked for it or the TV app
+is polling) → toast "XENO STORE ready · http://<ip>:9095" (ip from `getifaddrs`, first non-loopback IPv4; skipped
+when the TV app is polling).
 
 ---
 
@@ -599,9 +609,14 @@ Every error names the problem and the fix in one line (no raw codes except in Di
 
 ## 12. Packaging & distribution
 - `xeno-store.elf`: the store (one ELF; opens the PS5 browser at start unless `general.openOnStart` is off).
-- `PPSA99500.ffpkg`: the Games-row app, a UFS2 image (`eboot.bin` launcher + `xeno-store.elf` + `sce_sys/`) that
-  ShadowMountPlus mounts from `/data/homebrew/`. The store can put it in place itself (Settings → Updates →
-  Install the XENO STORE app).
+- `PPSA99500.ffpkg`: the Games-row app, a UFS2 image that ShadowMountPlus mounts from `/data/homebrew/`: the native
+  TV app (`eboot.bin`, `sce_module/libc.prx`, `assets/`, `licenses/`, `sce_sys/`) with the store in
+  `xeno/xeno-store.elf` + `xeno/version.txt` (§19, FORMATS §10). The store can put it in place itself (Settings →
+  Updates → Install the XENO STORE app, or the TV app's Settings → Updates → TV app).
+- `XENO-STORE-<VERSION>-tv-sources.tar.gz`: the TV app's complete corresponding source (GPL-3.0): `git archive` of
+  the release commit plus every pinned upstream source archive, hash-checked (`tools/tv/make_source_bundle.py`).
+- `updates/tv-app.json`: the TV app feed the store's `/api/v1/tv-app` check reads (FORMATS §8), written by the
+  release job.
 - XENO STORE Desktop archives (Windows, macOS, Linux).
 - `updates/payloads.json` (Payload Manager repo format, one entry: `xeno-store.elf`):
 ```json
@@ -611,16 +626,20 @@ Every error names the problem and the fix in one line (no raw codes except in Di
  "minimumVersion":"1.0.0"}
 ```
 - GitHub Release tag `v<VERSION>` with: `PPSA99500.ffpkg`, `xeno-store.elf`, `XENO-STORE-Desktop-Windows.zip`,
-  `XENO-STORE-Desktop-Mac.zip`, `XENO-STORE-Desktop-Linux.tar.gz` and `SHA256SUMS`.
+  `XENO-STORE-Desktop-Mac.zip`, `XENO-STORE-Desktop-Linux.tar.gz`, `XENO-STORE-<VERSION>-tv-sources.tar.gz` and
+  `SHA256SUMS`.
 
 ## 13. CI
 - `build.yml`: on push (any branch) + `workflow_dispatch`:
   job `web-and-catalog` (Node 22 + Python 3.12: build web, build+validate catalog offline, upload artifacts) →
-  job `host-tests` (gcc + OpenSSL: `make test`) → job `ps5-elf` (LLVM 18 + SDK v0.40 + makefs →
-  `make ps5`, `make eboot ffpkg`, `tools/ufs2_check.py`, upload the ELF and the `.ffpkg`) and job `desktop`
-  (Go, every OS) → job `release` (only `refs/heads/main`): creates/updates release `v<VERSION>`, uploads
-  the assets of §12 (`SHA256SUMS` covers them all), and patches
-  `updates/payloads.json` url/version/sha256 (commit back with `[skip ci]`).
+  job `host-tests` (gcc + OpenSSL + Pillow 11.3.0 from pip: `make test`) and job `tv-app` (LLVM 18 + Mesa: `make tv-check tv-deps tv-test tv
+  tv-preview`, then the host build and `make tv-preview-live`; uploads the app folder `tv-app` and the pictures
+  `tv-preview` and `tv-preview-live`) → job `ps5-elf` (LLVM 18 + SDK v0.40 + makefs → `make ps5`, `make eboot`
+  (fallback), the `tv-app` folder restored into `app/tv/dist/PPSA99500`, `make ffpkg` (the TV app image),
+  `tools/ufs2_check.py`, upload the ELF and the `.ffpkg`) and job `desktop` (Go, every OS) → job `release` (only
+  `refs/heads/main`): builds the TV app's source bundle, creates/updates release `v<VERSION>`, uploads the assets of
+  §12 (`SHA256SUMS` covers them all), patches `updates/payloads.json` url/version/sha256, writes
+  `updates/tv-app.json` and commits both back with `[skip ci]`.
 - `catalog-sync.yml`: cron `17 */2 * * *` + dispatch; runs `build_catalog.py --online`, and commits
   `catalog/xeno-catalog.json`, `revision.json`, `report.json` and `catalog/snapshots/xeno-dlpsgame` if changed
   (`[catalog-sync]` commit message).
@@ -648,6 +667,8 @@ Every error names the problem and the fix in one line (no raw codes except in Di
 ## 16. Credits & license
 GPL-3.0-or-later (repo LICENSE). Catalog metadata from a public verified catalog feed, dlpsgame,
 Archive.org and prosperopatches/orbispatches artwork. XENO STORE does not host game files.
+The TV app (`app/tv`) is based on Orbit Store's TV app (saawant12/orbit-store-ps5) and BlackBearReloaded's
+ps5-homebrew-ui (GPL-3.0); `app/tv/NOTICE` lists every component, its licence and every file changed for XENO STORE.
 
 ---
 
@@ -1023,3 +1044,125 @@ only tokens; the depth system adapts (OLED removes glass blur in favour of flat 
 Screenshots at 1920×1080 of Discover, Browse, Game, Download sheet, Downloads, Library, Settings, Homebrew, Community Saves, and phone Discover/Game
 must read as one premium system; a reviewer compares them against other PS5 homebrew stores and must
 prefer XENO STORE on depth, clarity and consistency. Performance: Chromium trace of a rail scroll + focus walk shows no long frames > 32 ms.
+
+---
+
+## 19. Native TV app (`app/tv`, `PPSA99500`)
+
+The Games-row tile opens a native PS5 app instead of the browser: XENO STORE's own TV app, drawn on the GPU and
+driven by the controller. It is the TV app of Orbit Store 1.2.0 (saawant12/orbit-store-ps5, GPL-3.0-or-later) built
+on BlackBearReloaded's ps5-homebrew-ui kit, vendored in `app/tv` and ported to our backend, brand and paths.
+`app/tv/NOTICE` records the provenance, every licence and every file changed for XENO STORE; a changed upstream file
+keeps its header and carries one line under it,
+`// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.`, and a new file
+carries `Copyright (C) 2026 XENO STORE contributors` + `SPDX-License-Identifier: GPL-3.0-or-later`.
+
+### 19.1 Architecture
+
+```
+ PS5 Games row: PPSA99500 (TV app: eboot.bin + sce_module/libc.prx + assets/ + xeno/xeno-store.elf)
+        |  HTTP/1.1, one request per connection, Bearer token, 127.0.0.1:9095
+        v
+ XENO STORE backend (xeno-store.elf)
+   server.c gate -> api.c dispatcher -> core /api/* routes   (web UI, phones; unchanged)
+                                     -> tvapi route table    (/api/v1/*: src/tvapi*.c, API.md §13)
+        ^
+        |  raw ELF bytes when the backend is not running (connection refused), or on restart
+ elfldr :9021  <- TV app starter: saved /data/xeno-store/xeno-store.elf, else bundled /app0/xeno/xeno-store.elf
+```
+
+- **One backend.** The app holds no state of its own beyond its token: the catalogue, favourites, queue, drives,
+  settings and updates are the store's, so the TV app, the web UI and phones always agree. The backend speaks the
+  reference app's dialect under `/api/v1` (bare objects and arrays, `{"error":"<sentence>"}`) through a separate
+  route table, so nothing under `/api` changed for the web UI. Its threads start lazily on the first `/api/v1`
+  request.
+- **The app** (`app/tv/src/orbit/`, C++20; internal names keep the upstream `orbit` namespace so the diff stays
+  readable): a poll loop on `/system` (0.5–3 s), Discover (hero, "New on XENO STORE", latest releases, all games),
+  Browse with filters and search, the game page with its release options and drive choice, Downloads, Library
+  (drives, copy and move), Settings (Download sources, Storage, Pair a device, Game catalogue, Updates, More
+  settings) and the start, offline and connection-lost screens. Pictures come from `/api/v1/art` (API.md §13.6) and
+  are decoded in the app (libwebp, stb).
+- **Look:** XENO STORE's gold on deep blue, taken from the web UI's tokens (`ui::color` in `src/orbit/ui.hpp`,
+  checked by `tools/lint-colors.py`: no colour literal outside the token table and the brand), the circular XENO
+  badge with a rotating gold rim on the start screen, the "XENO STORE" wordmark and a BETA pill in the top bar,
+  Inter fonts and the kit's interface sounds.
+- **Languages:** the 11 catalogues in `app/tv/i18n/` (en, de, es, fr, hu, it, nl, pl, pt-BR, ru, tr), keyed by the
+  English text. Arabic, Japanese, Korean and Chinese fall back to English (the baked fonts cover Latin, Greek and
+  Cyrillic). Backend sentences that reach the screen are listed in `app/tv/tools/i18n-external-keys.txt` and must
+  match the backend byte for byte.
+- **Not in version 1:** Orbit Zero (the route answers 404), the in-app browser capture for Vikingfile (the game page
+  offers TorBox or "Open browser version" instead), mount/unmount/measure in the Library.
+
+### 19.2 The starter contract
+
+The app starts the store itself when nothing answers on `127.0.0.1:9095` (connection refused):
+
+| Copy | ELF | Version file |
+|:--|:--|:--|
+| saved (the newest update the store downloaded) | `/data/xeno-store/xeno-store.elf` | `/data/xeno-store/xeno-store.elf.version`, no newline |
+| bundled (inside the image) | `/app0/xeno/xeno-store.elf` | `/app0/xeno/version.txt`, `VERSION` + `\n` |
+
+- Only `src/update.c` writes the saved copy (`update_apply`: the ELF, then its `.version`). At start the store sets
+  aside a staged ELF that is older than itself or has no version, and a copy that stopped right after the hand-over,
+  so the saved copy is always "the newest working update" or absent.
+- The starter reads both versions (trimmed, plain `N.N.N`), takes the saved copy unless the bundled one is newer,
+  checks that the file is a readable x86-64 ELF of at most 64 MiB and streams it to the ELF loader on
+  `127.0.0.1:9021`. It then polls `/system` for up to 30 s. When a saved copy did not answer (or a restart with it
+  failed), the next attempt sends the bundled copy (`copy=bundled (saved copy did not answer)` in its log), and the
+  bundled store's own crash guard sets the bad update aside.
+- `make_ffpkg.py --app-dir` writes `xeno/version.txt` from `VERSION` and refuses to build unless the ELF carries
+  exactly one `XENO-STORE/<version>` marker equal to it; `tools/tv/check_param.py` keeps
+  `sce_sys/param.json` `contentVersion` in lock-step with `VERSION` (1.3.0 → `01.003.000`), and `make_ffpkg.py`
+  refuses an app folder whose own `sce_sys/param.json` is not `PPSA99500` at that `contentVersion` (a folder left
+  from another version) or whose `eboot.bin` is the unmodified Orbit Store import.
+- When the bundled copy is older than a staged update, the store it starts hands over to the update itself
+  (`update_handoff_newer`); the app simply sees the newer version come up.
+
+### 19.3 No browser over the TV app
+
+The ELF loader takes raw bytes only, so the app cannot pass `--no-browser`. Instead the store waits up to 2 s after
+binding its port for an `/api/v1` request (the app polls `/system` every 0.5 s while it waits); when one arrives,
+it opens neither the PS5 browser nor its "ready" and pairing notifications: the TV app is the screen, and it shows
+the pairing code itself (Settings → Pair a device). Without the app the start is unchanged (§3.2).
+
+### 19.4 Restart and updates
+
+- **Settings → Restart download service** and the hand-over after an update both send
+  `POST /api/v1/updates {"action":"stop","confirmed":true}`: the store pauses and saves the queue, answers 202,
+  drains its job workers (at most 10 s), saves again and exits. It **never relaunches itself** after this stop; the
+  app sees the port close and starts the next copy (§19.2), then waits for a new `instanceId`. Paused downloads
+  stay paused with "Paused for the XENO STORE restart" until resumed.
+- **Store updates:** the app's Settings → Updates checks and installs through `/api/v1/updates` (the same updater as
+  the web UI; the saved copy is what the starter prefers).
+- **TV app updates:** `/api/v1/tv-app` reads `updates/tv-app.json` (FORMATS §8), downloads `PPSA99500.ffpkg` from
+  the release, checks size, SHA-256 and the UFS2 magic, and renames it over `/data/homebrew/PPSA99500.ffpkg`; the
+  new app opens on the next launch. A copy placed by hand is replaced only after confirmation; an unpacked folder or
+  a foreign file at that path is never touched.
+
+### 19.5 Image layout
+
+`tools/make_ffpkg.py --app-dir app/tv/dist/PPSA99500` stages `eboot.bin`, `sce_module/libc.prx`, `assets/`,
+`licenses/` (NOTICE and the licence texts), `xeno/xeno-store.elf`, `xeno/version.txt` and `sce_sys/` (param.json
+merged with our ids and `localizedParameters`, our `icon0.png`) and builds the UFS2 image with the same makefs
+profile as before (FORMATS §10). There is no root `xeno-store.elf` in this image. `make ffpkg` picks this mode by
+itself when the app folder is built; without it the native launcher image is built as before.
+
+### 19.6 Build and verification
+
+| Target | What |
+|:--|:--|
+| `make tv-deps` | the pinned PS5 payload SDK v0.42 + zlib, PacBrew libwebp, the ps5-opengl SDK and GoogleTest, hash-checked into `app/tv/.deps` |
+| `make tv-check` | `tools/tv/check_param.py` (param.json against `VERSION`), `i18n-coverage.py --backend src` (missing or stale keys fail; backend sentences without a key warn), `lint-colors.py`, `rebrand-i18n.py --check` |
+| `make tv` | `tv-check`, then the app folder `app/tv/dist/PPSA99500` (built with `tools/clang18-prefixmap`, so `eboot.bin` does not depend on the checkout path) and the `libc.prx` hash check |
+| `make tv-test` | the app's GoogleTest unit tests with ASan and UBSan |
+| `make tv-preview` | every screen against the built-in fixture on Mesa llvmpipe → `app/tv/build/preview/pictures` |
+| `make tv-preview-live` | every screen against the real host backend in a temporary test world (`tools/tv/preview_live.py`: test catalogue, range server, art server, fake ELF loader, recording proxy) → `build/tv-preview/` (`index.html`, `report.json`, the PNGs, logs); six automatic checks: captures, TVSTATE errors, backend 5xx, loader sends, art, timing. `LANGS=all` adds the locale sweep. |
+
+The toolchain is clang-18/lld-18/llvm-18 with Ubuntu's libclang-rt-18-dev, ninja, wget, unzip; the host tests and
+previews add libwebp-dev, Mesa (libegl-dev, libgl-dev, libegl-mesa0, libgl1-mesa-dri) and python3-pil. The backend
+suites in `make test` draw their test pictures with Pillow 11.3 or newer (WebP and AVIF; Ubuntu 24.04's
+python3-pil 10.2 cannot write AVIF). `make all`
+includes `tv` only on a machine that has clang-18 and the fetched dependencies (§2). The backend side is covered by
+`tests/host/test_tvapi_*.py` in `make test`. What only a console can confirm (GL memory keys under our content id,
+the loader start without a browser, `/mnt/ext*` naming, art hosts over PS5 TLS, memory over a long session) is
+checked by hand before the native launcher is retired.

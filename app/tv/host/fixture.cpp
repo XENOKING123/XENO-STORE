@@ -1,5 +1,6 @@
 // Orbit Store TV app - A stand-in Orbit backend for PC previews.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "fixture.hpp"
 
@@ -275,9 +276,16 @@ std::string error_body(const char *message)
     return std::string("{\"error\":") + json::quote(message) + "}";
 }
 
+// XENO STORE has no provider capture: Vikingfile pages need the browser version.
+constexpr const char *kVikingfile =
+    "Vikingfile asks for a human check, so XENO STORE cannot fetch it by itself. Download it "
+    "with TorBox, or open this game in the browser version.";
+
 } // namespace
 
-Fixture::Fixture(FixtureMode mode) : mode_(mode)
+Fixture::Fixture(FixtureMode mode, Dialect dialect)
+    : mode_(mode), dialect_(dialect), running_(dialect == Dialect::xeno ? "1.2.1" : "0.6.0"),
+      saved_(running_), tv_installed_(newer_tv_app(false))
 {
     const auto add = [&](const char *game_id, int option, const char *storage, const char *status,
                          double fraction, double speed, const char *error)
@@ -420,8 +428,8 @@ std::string Fixture::library_json() const
         bool on_drive;
     };
     static const Entry kEntries[] = {
-        {"quiet-harbour", nullptr, nullptr, "USB Extended Storage", true, true, true},
-        {"tidewater", nullptr, nullptr, "USB Extended Storage", true, false, false},
+        {"quiet-harbour", nullptr, nullptr, "USB storage 1", true, true, true},
+        {"tidewater", nullptr, nullptr, "USB storage 1", true, false, false},
         {"glass-orchard", nullptr, nullptr, "Internal storage", false, false, true},
         {nullptr, "PPSA99050", "Homebrew UI Lab", "Internal storage", true, false, true},
     };
@@ -432,6 +440,7 @@ std::string Fixture::library_json() const
         std::string title = entry.title != nullptr ? entry.title : "";
         std::string file = "PPSA99050.ffpkg";
         std::string format = "FFPKG";
+        double bytes = 48.0e6;
         for (const FixtureGame &game : games())
         {
             if (entry.game != nullptr && std::strcmp(game.id, entry.game) == 0)
@@ -440,8 +449,15 @@ std::string Fixture::library_json() const
                 title = game.title;
                 file = filename(game, game.options.back());
                 format = game.options.back().format;
+                bytes = game.options.back().gigabytes * 1e9;
             }
         }
+        // XENO STORE mounts nothing and reports each source's size as it reads it.
+        const bool xeno = dialect_ == Dialect::xeno;
+        const std::string size =
+            !xeno ? std::string("\"sizeBytes\":null,\"sizeStatus\":\"unknown\"")
+            : entry.on_drive ? "\"sizeBytes\":" + number(bytes) + ",\"sizeStatus\":\"ready\""
+                             : std::string("\"sizeBytes\":null,\"sizeStatus\":\"unavailable\"");
         const std::string root = std::strcmp(entry.location, "Internal storage") == 0
                                      ? "/data/homebrew"
                                      : "/mnt/usb0/homebrew";
@@ -454,18 +470,26 @@ std::string Fixture::library_json() const
                    json::quote(std::string(64, title_id.empty() ? 'a' : title_id.back())) +
                    ",\"location\":" + json::quote(entry.location) +
                    ",\"installed\":" + (entry.installed ? "true" : "false") +
-                   ",\"mounted\":" + (entry.mounted ? "true" : "false") +
+                   ",\"mounted\":" + (entry.mounted && !xeno ? "true" : "false") +
                    ",\"onDrive\":" + (entry.on_drive ? "true" : "false") +
                    ",\"managed\":true,\"canManageSource\":true,\"installedSizeBytes\":null," +
-                   "\"sizeBytes\":null,\"sizeStatus\":\"unknown\"}";
+                   size + "}";
     }
-    return "{\"status\":\"ready\",\"message\":\"\",\"provider\":\"ShadowMount\","
-           "\"providerVersion\":\"1.7\",\"busy\":false,\"stale\":false,\"checkedAt\":1791100000,"
+    const char *provider =
+        dialect_ == Dialect::xeno
+            ? "\"provider\":\"XENO STORE\",\"providerVersion\":\"1.2.1\","
+            : "\"provider\":\"ShadowMount\",\"providerVersion\":\"1.7\",";
+    // XENO STORE lists, rescans, copies and moves; it does not mount or measure.
+    const char *capabilities =
+        dialect_ == Dialect::xeno
+            ? "\"rescan\",\"copy_game_source\",\"move_game_source\",\"storage_job_status\","
+              "\"storage_job_cancel\",\"storage_space\""
+            : "\"list_games\",\"rescan\",\"mount_game\",\"unmount_game\",\"copy_game_source\","
+              "\"move_game_source\",\"storage_job_status\",\"storage_job_cancel\"";
+    return std::string("{\"status\":\"ready\",\"message\":\"\",") + provider +
+           "\"busy\":false,\"stale\":false,\"checkedAt\":1791100000,"
            "\"updatedAt\":1791100000,\"refreshAfter\":30,\"games\":[" +
-           entries +
-           "],\"capabilities\":[\"list_games\",\"rescan\",\"mount_game\",\"unmount_game\","
-           "\"copy_game_source\",\"move_game_source\",\"storage_job_status\","
-           "\"storage_job_cancel\"],\"action\":" +
+           entries + "],\"capabilities\":[" + capabilities + "],\"action\":" +
            (library_action_.empty() ? std::string("null") : library_action_) +
            ",\"storageJob\":null,\"storageError\":\"\",\"storageBusy\":false}";
 }
@@ -490,10 +514,24 @@ std::string Fixture::catalogue_json() const
            ",\"checkAfter\":" + number(catalogue_after_) + ",\"nextCheck\":0,\"error\":\"\"}";
 }
 
+std::string Fixture::newer_service(bool newer) const
+{
+    if (dialect_ == Dialect::xeno)
+        return newer ? "1.2.2" : "1.2.1";
+    return newer ? "0.6.1" : "0.6.0";
+}
+
+std::string Fixture::newer_tv_app(bool newer) const
+{
+    if (dialect_ == Dialect::xeno)
+        return newer ? "1.2.2" : "1.2.1";
+    return newer ? "1.1.0" : "1.0.0";
+}
+
 std::string Fixture::service_json() const
 {
     const bool newer = mode_ == FixtureMode::updates;
-    const std::string latest = service_checked_ > 0.0 ? (newer ? "0.6.1" : "0.6.0") : "";
+    const std::string latest = service_checked_ > 0.0 ? newer_service(newer) : "";
     const bool available = !latest.empty() && latest != running_ && saved_ != latest;
     return "{\"available\":true,\"runningVersion\":" + json::quote(running_) +
            ",\"savedVersion\":" + json::quote(saved_) +
@@ -511,7 +549,7 @@ std::string Fixture::service_json() const
 std::string Fixture::tv_app_json() const
 {
     const std::string latest =
-        tv_checked_ > 0.0 ? (mode_ == FixtureMode::updates ? "1.1.0" : "1.0.0") : "";
+        tv_checked_ > 0.0 ? newer_tv_app(mode_ == FixtureMode::updates) : "";
     return "{\"available\":true,\"installed\":\"orbit\",\"installedVersion\":" +
            json::quote(tv_installed_) + ",\"latestVersion\":" + json::quote(latest) +
            ",\"checksum\":" + json::quote(latest.empty() ? "" : kChecksum) +
@@ -553,11 +591,13 @@ http::Response Fixture::send(const http::Request &request)
     if (get && path == "/api/v1/system")
     {
         response.body =
-            "{\"name\":\"Orbit Store\",\"version\":" + json::quote(running_) +
+            "{\"name\":\"XENO STORE\",\"version\":" + json::quote(running_) +
             ",\"platform\":\"fixture\",\"paired\":" + (authorised ? "true" : "false") +
             ",\"localSessionAvailable\":true,\"stateHealthy\":true,\"catalogueRevision\":7,"
             "\"preferredStorage\":" +
-            json::quote(preferred_) + ",\"httpPort\":34177}";
+            json::quote(preferred_) + ",\"deleteArchives\":" +
+            (delete_archives_ ? "true" : "false") +
+            ",\"concurrentDownloads\":" + std::to_string(concurrent_) + ",\"httpPort\":9095}";
         return response;
     }
     if (get && path == "/api/v1/sources")
@@ -622,13 +662,15 @@ http::Response Fixture::send(const http::Request &request)
     }
     if (get && path == "/api/v1/storage")
     {
+        // XENO STORE's drive ids and 1-based labels; projected free space keeps
+        // back the 240 MiB the backend reserves.
         response.body =
-            "[{\"id\":\"usb0\",\"label\":\"USB Extended Storage\",\"path\":\"/mnt/usb0/homebrew\","
+            "[{\"id\":\"usb0\",\"label\":\"USB storage 1\",\"path\":\"/mnt/usb0/homebrew\","
             "\"freeBytes\":1420000000000,\"totalBytes\":2000000000000,\"pendingBytes\":96700000000,"
-            "\"projectedFreeBytes\":1323300000000,\"external\":true},"
+            "\"projectedFreeBytes\":1323048341760,\"external\":true},"
             "{\"id\":\"internal\",\"label\":\"Internal storage\",\"path\":\"/data/homebrew\","
             "\"freeBytes\":41200000000,\"totalBytes\":825000000000,\"pendingBytes\":2200000000,"
-            "\"projectedFreeBytes\":39000000000,\"external\":false}]";
+            "\"projectedFreeBytes\":38748341760,\"external\":false}]";
         return response;
     }
     if (get && path == "/api/v1/downloads")
@@ -647,7 +689,7 @@ http::Response Fixture::send(const http::Request &request)
     json::Value input;
     if (!get)
         json::parse(request.body, &input);
-    if (path == "/api/v1/browser")
+    if (path == "/api/v1/browser" && dialect_ == Dialect::orbit)
     {
         if (!get && input.text("action") == "start")
         {
@@ -686,8 +728,53 @@ http::Response Fixture::send(const http::Request &request)
         response.body = "{\"available\":true,\"active\":" + std::string(browser_state_ == "waiting" ? "true" : "false") +
             ",\"id\":" + json::quote(browser_id_) + ",\"title\":" + json::quote(browser_title_) +
             ",\"state\":" + json::quote(browser_state_) + ",\"jobId\":\"\",\"message\":" +
-            json::quote(browser_state_ == "waiting" ? "On the Vikingfile page, complete any verification and select Download. Then return to Orbit Store and open Downloads. Orbit checks the file before adding it to your queue." :
+            json::quote(browser_state_ == "waiting" ? "On the Vikingfile page, complete any verification and select Download. Then return to XENO STORE and open Downloads. XENO STORE checks the file before adding it to your queue." :
                         browser_state_ == "cancelled" ? "Verification cancelled. No download was added." : "") + "}";
+        return response;
+    }
+    if (path == "/api/v1/browser")
+    {
+        // As XENO STORE answers: there is no provider capture, so the session
+        // is always idle and a start is refused with the reason.
+        if (!get)
+        {
+            const std::string action = input.text("action");
+            response.status = action == "start" || action == "cancel" ? 409 : 400;
+            response.body = error_body(action == "start"    ? kVikingfile
+                                       : action == "cancel" ? "This verification session is no longer active."
+                                                            : "Unknown browser action.");
+            return response;
+        }
+        response.body = std::string("{\"available\":false,\"active\":false,\"id\":\"\",\"state\":"
+                                    "\"idle\",\"title\":\"\",\"jobId\":\"\",\"message\":") +
+                        json::quote(kVikingfile) + "}";
+        return response;
+    }
+    if (!get && path == "/api/v1/settings/downloads")
+    {
+        // XENO STORE runs 1 to 4 downloads at once.
+        const json::Value &limit = input["concurrentDownloads"];
+        const double value = limit.as_number(0.0);
+        if (!limit.is_number() || value != std::floor(value) || value < 1.0 || value > 4.0)
+        {
+            response.status = 400;
+            response.body = error_body("Choose a whole number from 1 to 4.");
+            return response;
+        }
+        concurrent_ = static_cast<int>(value);
+        response.body = "{\"concurrentDownloads\":" + std::to_string(concurrent_) + "}";
+        return response;
+    }
+    if (!get && path == "/api/v1/settings/extraction")
+    {
+        if (!input["deleteArchives"].is_bool())
+        {
+            response.status = 400;
+            response.body = error_body("Expected deleteArchives.");
+            return response;
+        }
+        delete_archives_ = input.flag("deleteArchives");
+        response.body = std::string("{\"deleteArchives\":") + (delete_archives_ ? "true" : "false") + "}";
         return response;
     }
     if (!get && path == "/api/v1/sources")
@@ -726,7 +813,7 @@ http::Response Fixture::send(const http::Request &request)
         }
         else if (action == "install")
         {
-            saved_ = mode_ == FixtureMode::updates ? "0.6.1" : running_;
+            saved_ = mode_ == FixtureMode::updates ? newer_service(true) : running_;
             service_phase_ = "saved";
         }
         else if (action == "stop")
@@ -752,7 +839,7 @@ http::Response Fixture::send(const http::Request &request)
         }
         else if (action == "install")
         {
-            tv_installed_ = mode_ == FixtureMode::updates ? "1.1.0" : tv_installed_;
+            tv_installed_ = mode_ == FixtureMode::updates ? newer_tv_app(true) : tv_installed_;
             tv_phase_ = "installed";
         }
         if (!get)
@@ -782,24 +869,32 @@ http::Response Fixture::send(const http::Request &request)
     }
     if (path == "/api/v1/library/storage")
     {
-        const std::string usb(64, 'u');
-        const std::string internal(64, 'i');
+        // As XENO STORE answers: a drive is its mount root, a destination the
+        // root's homebrew folder; ids are sha256("drive\n" + root) and
+        // sha256("dest\n" + root + "/homebrew"), labels as the drive cards.
+        const std::string usb = "d4ee56d1fc126c65f1b3aa4a4204f3834353a56fcd3a1bdf24ac0c9e3e3e9b35";
+        const std::string internal = "ac8693c21e828063a2a2c899e2a4acd355b37eab840d30ac80efac48d33a5acb";
+        const std::string usb_dest = "d0ddf736c01cb916986858777f4016031796771c162c119572f5fc2515dcaafd";
+        const std::string internal_dest =
+            "b32372df49f13b26371d51ecfc5fc76917ec9348db1311beda6089ad81c7d9a2";
         response.body =
             "{\"drives\":[{\"id\":\"" + usb +
-            "\",\"path\":\"/mnt/usb0/homebrew\",\"label\":\"USB Extended Storage\","
-            "\"filesystem\":\"exfat\",\"readOnly\":false,\"totalBytes\":2000000000000,"
+            "\",\"path\":\"/mnt/usb0\",\"label\":\"USB storage 1\",\"mountPoint\":\"/mnt/usb0\","
+            "\"filesystem\":\"\",\"readOnly\":false,\"totalBytes\":2000000000000,"
             "\"freeBytes\":1420000000000,\"usedBytes\":580000000000},{\"id\":\"" +
             internal +
-            "\",\"path\":\"/data/homebrew\",\"label\":\"Internal storage\",\"filesystem\":"
-            "\"ufs\",\"readOnly\":false,\"totalBytes\":825000000000,\"freeBytes\":41200000000,"
-            "\"usedBytes\":783800000000}],\"destinations\":[{\"id\":\"" +
-            usb +
-            "\",\"path\":\"/mnt/usb0/homebrew\",\"label\":\"USB Extended Storage\","
-            "\"readOnly\":false,\"freeBytes\":1420000000000},{\"id\":\"" +
-            internal +
-            "\",\"path\":\"/data/homebrew\",\"label\":\"Internal storage\",\"readOnly\":false,"
-            "\"freeBytes\":41200000000}],\"busy\":false,\"stale\":false,\"updatedAt\":1791100000,"
-            "\"error\":\"\"}";
+            "\",\"path\":\"/data\",\"label\":\"Internal storage\",\"mountPoint\":\"/data\","
+            "\"filesystem\":\"\",\"readOnly\":false,\"totalBytes\":825000000000,"
+            "\"freeBytes\":41200000000,\"usedBytes\":783800000000}],\"destinations\":[{\"id\":\"" +
+            usb_dest +
+            "\",\"path\":\"/mnt/usb0/homebrew\",\"label\":\"USB storage 1\",\"mountPoint\":"
+            "\"/mnt/usb0\",\"filesystem\":\"\",\"readOnly\":false,\"totalBytes\":2000000000000,"
+            "\"freeBytes\":1420000000000,\"usedBytes\":580000000000},{\"id\":\"" +
+            internal_dest +
+            "\",\"path\":\"/data/homebrew\",\"label\":\"Internal storage\",\"mountPoint\":"
+            "\"/data\",\"filesystem\":\"\",\"readOnly\":false,\"totalBytes\":825000000000,"
+            "\"freeBytes\":41200000000,\"usedBytes\":783800000000}],\"busy\":false,\"stale\":false,"
+            "\"updatedAt\":1791100000,\"error\":\"\"}";
         return response;
     }
     if (!get && path == "/api/v1/library/actions")
@@ -902,7 +997,7 @@ http::Response Fixture::send(const http::Request &request)
         return response;
     }
     response.status = 404;
-    response.body = error_body("Unknown endpoint.");
+    response.body = error_body("This request is not available in this version of XENO STORE.");
     return response;
 }
 

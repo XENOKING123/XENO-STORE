@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 # Orbit Store TV app - Render the app on the PC (Mesa surfaceless EGL) to PNG pictures.
 # Adapted from ps5-homebrew-ui's tools/host-snapshots.sh (GPL-3.0-or-later).
+# Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 #
 # usage: tools/preview.sh [output dir] [scenario|all] [width height]
 #
 # Builds everything under src/ except the console platform layer, the
 # runtime shims and the console entry point, plus host/, and runs the
-# scripted scenarios in host/preview_main.cpp. Set ORBIT_BACKEND=<ipv4>:<port>
-# to use a running Orbit backend instead of the built-in fixture.
+# scripted scenarios in host/preview_main.cpp. Set XENO_BACKEND=<ipv4>[:<port>]
+# to use a running XENO STORE backend instead of the built-in fixture, and
+# XENO_SCENARIOS=a,b,c to choose scenarios (the other variables: preview_main.cpp).
 
 set -euo pipefail
 root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
@@ -42,8 +44,8 @@ for source in "${sources[@]}"; do
     objects+=("$object")
 done
 ninja_inputs=("${objects[@]}")
-ninja_edge LINK "$build/orbit_preview" "$cxx" "${objects[@]}" -lEGL -lGL -lwebp -lpthread -lm \
-    -o "$build/orbit_preview"
+ninja_edge LINK "$build/xeno_preview" "$cxx" "${objects[@]}" -lEGL -lGL -lwebp -lpthread -lm \
+    -o "$build/xeno_preview"
 if ! ninja_run >"$build/build.log" 2>&1; then
     grep -E 'error|FAILED' -A6 "$build/build.log" | head -120 >&2
     exit 1
@@ -53,4 +55,4 @@ grep -E 'warning' -A4 "$build/build.log" | head -40 >&2 || true
 output=${1:-"$root/build/preview/pictures"}
 mkdir -p "$output"
 EGL_PLATFORM=surfaceless LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
-    "$build/orbit_preview" "$root/assets" "$output" "${@:2}"
+    "$build/xeno_preview" "$root/assets" "$output" "${@:2}"

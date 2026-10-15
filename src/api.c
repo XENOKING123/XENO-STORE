@@ -145,6 +145,12 @@ static void h_diagnostics(api_ctx *c) {
   jw_kv_i64(&w, "uptime", (int64_t)up);
   jw_kv_str(&w, "report", rep);
   jw_obj_end(&w);
+  /* queue persistence (a failed queue.json write) and the job workers still running */
+  jw_key(&w, "queue"); jw_obj_begin(&w);
+  jw_kv_bool(&w, "stateHealthy", dl_state_healthy());
+  jw_kv_int(&w, "workersRunning", dl_workers_running());
+  jw_obj_end(&w);
+  if (tvapi_diag_json) { jw_key(&w, "tvapi"); jw_obj_begin(&w); tvapi_diag_json(&w); jw_obj_end(&w); }
   api_send(c, &w);
 }
 
@@ -237,6 +243,7 @@ static void h_catalog_refresh(api_ctx *c) {
   int updated = 0;
   int force = jv_get_bool(c->body, "force", 0) || http_query_int(c->req, "force", 0);
   int rc = catalog_refresh(force, &updated, err, sizeof err);
+  if (rc == CATALOG_REFRESH_BUSY) { api_error(c, 409, "refresh_busy", err); return; }
   if (rc != 0) { api_error(c, 502, "refresh_failed", err); return; }
   jw w;
   api_begin(&w);
@@ -657,6 +664,23 @@ static void h_session(api_ctx *c) {
   api_send(c, &w);
 }
 
+#ifdef XENO_HOST
+/* Host build only (tests): runs the TV app's stop step 1-2 on its own, i.e.
+ * pauses every queued and active job with the restart message and saves
+ * queue.json synchronously (dl_pause_all_for_stop). Nothing exits. */
+static void h_debug_pause_all(api_ctx *c) {
+  int n = dl_pause_all_for_stop("Paused for the XENO STORE restart");
+  if (n == DL_PAUSE_INSTALLING) { api_error(c, 409, "installing", "A package install is reading from XENO STORE"); return; }
+  if (n < 0) { api_error(c, 503, "save_failed", "The queue could not be saved; the jobs were left as they were"); return; }
+  jw w;
+  api_begin(&w);
+  jw_kv_int(&w, "paused", n);
+  jw_kv_int(&w, "workersRunning", dl_workers_running());
+  jw_kv_bool(&w, "stateHealthy", dl_state_healthy());
+  api_send(c, &w);
+}
+#endif
+
 /* ---- routing ------------------------------------------------------------ */
 
 static const api_route ROUTES[] = {
@@ -702,6 +726,9 @@ static const api_route ROUTES[] = {
   { "POST", "/api/pair/show", h_pair_show },
   { "POST", "/api/pair", h_pair_redeem },
   { "GET", "/api/session", h_session },
+#ifdef XENO_HOST
+  { "POST", "/api/debug/queue/pause-all", h_debug_pause_all },
+#endif
 };
 
 /* Extension route tables (registered by Phase 2 modules). */
@@ -716,6 +743,11 @@ int api_register_routes(const api_route *table, size_t n) {
 void api_ext_init(void) {
   if (ext_downloads_init) ext_downloads_init();
   if (ext_console_init) ext_console_init();
+  if (tvapi_init) tvapi_init();   /* the /api/v1 table (TV app); its services start on first use */
+}
+
+int api_is_v1_path(const char *path) {
+  return util_starts_with(path, "/api/v1/") || strcmp(path, "/api/v1") == 0;
 }
 
 /* Matches path against pattern segment by segment; fills captures. */
@@ -775,8 +807,13 @@ void api_handle(http_req *req) {
       }
     }
   }
+  /* Paths under /api/v1 are the TV app's dialect: the dispatcher's own refusals carry a
+   * sentence in "error" instead of a code (PORT-SPEC 1.3), because the app
+   * shows that field to the player. */
+  int v1 = api_is_v1_path(req->path);
   if (!hit) {
-    if (method_seen) http_send_error(req, 405, "method_not_allowed", "Method not allowed for this route");
+    if (v1) http_send_sentence(req, method_seen ? 405 : 404, API_V1_MSG_NOT_AVAILABLE);
+    else if (method_seen) http_send_error(req, 405, "method_not_allowed", "Method not allowed for this route");
     else http_send_error(req, 404, "not_found", "Unknown API route");
     return;
   }
@@ -789,8 +826,9 @@ void api_handle(http_req *req) {
       const char *bearer = util_istarts_with(req->authorization, "Bearer ") ? req->authorization + 7 : NULL;
       int authed = strcmp(s.pin, req->pin) == 0 || (bearer && pairing_token_valid(bearer));
       if (!authed) {
-        http_send_error(req, 401, "pin_required",
-                        "This XENO STORE requires the pairing PIN (X-XENO-PIN) or a paired device token (Authorization: Bearer)");
+        if (v1) http_send_sentence(req, 401, API_V1_MSG_PAIR_AGAIN);
+        else http_send_error(req, 401, "pin_required",
+                             "This XENO STORE requires the pairing PIN (X-XENO-PIN) or a paired device token (Authorization: Bearer)");
         return;
       }
     }
@@ -798,9 +836,16 @@ void api_handle(http_req *req) {
   if (req->body && req->body_len) {
     c.doc = json_parse(req->body, req->body_len, 100000, 32);
     if (c.doc) c.body = json_root(c.doc);
-    else if (strcmp(req->method, "GET") != 0) { http_send_error(req, 400, "bad_json", "Request body is not valid JSON"); return; }
+    else if (strcmp(req->method, "GET") != 0) {
+      if (v1) http_send_sentence(req, 400, API_V1_MSG_NOT_OBJECT);
+      else http_send_error(req, 400, "bad_json", "Request body is not valid JSON");
+      return;
+    }
   }
   hit->fn(&c);
   json_free(c.doc);
-  if (!req->responded) http_send_error(req, 500, "no_response", "Handler produced no response");
+  if (!req->responded) {
+    if (v1) http_send_sentence(req, 500, API_V1_MSG_FAILED);
+    else http_send_error(req, 500, "no_response", "Handler produced no response");
+  }
 }

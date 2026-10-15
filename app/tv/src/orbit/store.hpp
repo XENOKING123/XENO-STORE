@@ -1,5 +1,6 @@
 // Orbit Store TV app - The app's view of Orbit, kept in sync on a worker thread.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 //
 // One worker talks to the backend: it polls status, sources, the catalogue
 // (only when its revision changes), the queue and storage, and carries out the
@@ -50,12 +51,22 @@ enum class Restart : std::uint8_t
     done,     // Orbit answers again (restart_detail: its version)
     manual,   // Orbit stopped and the app can't start it: use a payload manager
     failed,   // Orbit didn't stop, or didn't come back after starting
+    // XENO STORE: the copy this app sent answers, but it is older than the one
+    // that ran before (a payload sender started a newer release); restart_detail
+    // says how to get that release back.
+    older,
 };
 
 struct Snapshot
 {
     Link link = Link::connecting;
     std::string link_error; // why the last poll failed
+    // XENO STORE: something answers on the port without this app's API: an
+    // older XENO STORE (outdated_version names it) or another program (empty).
+    // The link is then offline and the poll goes on, so the screen clears by
+    // itself once the store is updated.
+    bool outdated = false;
+    std::string outdated_version;
     double offline_since = 0.0;
     Starting starting = Starting::idle;
     std::string start_detail; // what the last start attempt did
@@ -98,6 +109,9 @@ struct Snapshot
     TvAppStatus tv_app;
     Restart restart = Restart::idle;
     std::string restart_detail;
+    // The version this app would start now (starter::Starter::next_version),
+    // read with the update statuses; empty when unknown.
+    std::string next_start_version;
 
     std::uint64_t serial = 0; // changes with any update
 
@@ -115,7 +129,6 @@ struct Snapshot
 enum class Setting : std::uint8_t
 {
     none,
-    zero,
     sources,
     storage,
     catalogue,
@@ -126,6 +139,7 @@ enum class Setting : std::uint8_t
     tv_install,
     archives,
     download_limit,
+    service_replace, // XENO STORE: stop an outdated store so this app's copy can start
 };
 
 struct SettingResult
@@ -227,11 +241,16 @@ class Store
     // While Settings is open the catalogue and update statuses are read on
     // every poll; otherwise about once a minute, for the update badge.
     void want_settings(bool wanted);
-    void set_zero(bool enabled) { send_setting(Setting::zero, {}, {}, enabled); }
     void set_download_limit(int limit) { send_setting(Setting::download_limit, std::to_string(limit)); }
     void set_delete_archives(bool enabled) { send_setting(Setting::archives, {}, {}, enabled); }
     // Reads the console session again (a fresh pairing code after a restart).
     void refresh_session();
+    // XENO STORE: stops the outdated store that holds the port (Snapshot::
+    // outdated), then starts this app's copy as a restart does.
+    void replace_outdated()
+    {
+        send_setting(Setting::service_replace);
+    }
     // The frame has shown a finished restart.
     void dismiss_restart()
     {
@@ -244,6 +263,13 @@ class Store
     void set_restart_grace(double seconds)
     {
         restart_grace_ = seconds;
+    }
+    // Tests: how long a copy sent to the loader may take to answer (30 s when
+    // starting, 15 s when restarting).
+    void set_answer_waits(double start, double restart)
+    {
+        start_wait_ = start;
+        restart_answer_ = restart;
     }
 
     // ---- worker steps (public for tests) ----
@@ -279,6 +305,7 @@ class Store
     void poll_settings();
     void post_restart(Restart restart, std::string detail);
     void continue_restart(bool unreachable);
+    void poll_outdated();
 
     void worker();
     void post_queue(std::vector<Job> jobs, std::vector<Drive> drives, bool have_drives);
@@ -318,7 +345,9 @@ class Store
     double next_session_ = 0.0;
     bool auto_start_used_ = false;
     bool start_waiting_ = false;
+    bool start_sent_saved_ = false; // the copy being waited for is the saved one
     double start_deadline_ = 0.0;
+    double start_wait_;     // kStartWait unless a test shortens it
     Starting start_state_ = Starting::idle;
     bool automatic_checks_sent_ = false;
     int settings_countdown_ = 0; // polls until the statuses are read again
@@ -326,11 +355,17 @@ class Store
     Link worker_link_ = Link::connecting;
     Restart restart_ = Restart::idle;
     double restart_grace_ = 4.0;
+    double restart_answer_; // kRestartAnswer unless a test shortens it
     double restart_since_ = 0.0;   // when the current restart step began
     double restart_send_at_ = 0.0; // when to send Orbit to the loader
     double restart_deadline_ = 0.0;
     int restart_attempts_ = 0;
     bool restart_sent_ = false;
+    bool restart_sent_saved_ = false;  // the last copy sent is the saved one
+    bool restart_expect_saved_ = false; // the stop reply promised a saved update
+    bool replacing_ = false;            // the restart replaces an outdated store
+    std::string restart_promised_version_; // the saved update the stop reply named
+    std::string restart_sent_version_;     // the copy last sent to the loader
     std::string observed_version_, observed_instance_;
     std::string restart_expected_version_, restart_previous_instance_;
 };

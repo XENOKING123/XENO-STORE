@@ -1,7 +1,9 @@
 // Orbit Store TV app - Drawing shared by the screens: covers, tiles, backdrops.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "orbit/screens.hpp"
+#include "orbit/i18n.hpp"
 
 #include <algorithm>
 
@@ -31,12 +33,12 @@ void draw_cover(Context &ctx, hui::gfx::DrawList &list, const Game &game, const 
     if (alpha < 1.0f)
     {
         list.push_opacity(opacity);
-        ui::cover_placeholder(list, ctx.type, r, game.title, radius);
+        ui::cover_placeholder(list, ctx.type, r, game.title, radius, ctx.loader_mark);
         list.pop_opacity();
     }
     if (art != nullptr)
         ui::image_cover(list, art->texture, art->width, art->height, r,
-                        ui::Color::rgb(0xffffff, alpha * opacity), radius);
+                        ui::color::white.with_alpha(alpha * opacity), radius);
 }
 
 void draw_tile(Context &ctx, hui::gfx::DrawList &list, const Game &game, const ui::Rect &r,
@@ -50,15 +52,15 @@ void draw_tile(Context &ctx, hui::gfx::DrawList &list, const Game &game, const u
     draw_cover(ctx, list, game, r, ui::kArtRadius, opacity);
     if (game.platform == "ps4") {
         const ui::Rect badge{r.x + 10, r.y + 10, 58, 29};
-        list.rounded_rect(badge, 7, ui::Color::rgb(0x141414, opacity * 0.9f));
+        list.rounded_rect(badge, 7, ui::color::ps4.with_alpha(opacity * 0.95f));
         ui::text(list, ctx.type.medium, "PS4", badge.cx(), badge.y + 20, 16,
-                 ui::color::text.with_alpha(opacity), ui::Align::center);
+                 ui::color::night0.with_alpha(opacity), ui::Align::center);
     }
     // The game the hero shows, while the focus is elsewhere.
     const float outline = current * (1.0f - focus) * opacity;
     if (outline > 0.01f)
         list.bordered_rect(r.inset(-2.0f), ui::kArtRadius + 2.0f, ui::Color{0, 0, 0, 0}, 2.0f,
-                           ui::Color::rgb(0xffffff, 0.75f * outline));
+                           ui::color::text.with_alpha(0.75f * outline));
     list.pop_transform();
 }
 
@@ -73,7 +75,10 @@ float draw_tile_caption(Context &ctx, hui::gfx::DrawList &list, const Game &game
                             27.0f, ink, 1);
     if (state != nullptr && state[0] != '\0')
     {
-        ui::text(list, type.medium, state, x, y + 2.0f, 15.0f, ui::Color::rgb(0xd0d0d0));
+        // A download in progress is told apart in the accent blue.
+        const bool downloading = std::string_view(state) == tr("Downloading");
+        ui::text(list, type.medium, state, x, y + 2.0f, 15.0f,
+                 downloading ? ui::color::accent : ui::color::text2);
         y += 22.0f;
     }
     if (date && !game.release_date.empty())
@@ -101,11 +106,11 @@ void draw_backdrop_art(Context &ctx, hui::gfx::DrawList &list, const Game &game,
     {
         const float alpha = art_alpha(ctx, *cover) * opacity * 0.75f;
         ui::image_cover(list, cover->ambient, 48, 48, screen.inset(-230.0f),
-                        ui::Color::rgb(0xffffff, alpha));
+                        ui::color::white.with_alpha(alpha));
     }
     if (wide)
         ui::image_cover(list, hero->texture, hero->width, hero->height, screen,
-                        ui::Color::rgb(0xffffff, hero_alpha * opacity), 0.0f, 0.72f, 0.3f);
+                        ui::color::white.with_alpha(hero_alpha * opacity), 0.0f, 0.72f, 0.3f);
 }
 
 void draw_veils(hui::gfx::DrawList &list, bool discover)
@@ -187,14 +192,14 @@ hui::ui::Theme keyboard_theme()
     }
     theme.page = ui::color::night1;
     theme.surface = ui::color::night2.with_alpha(0.82f);
-    theme.surface_high = ui::Color::rgb(0xffffff, 0.1f);
+    theme.surface_high = ui::color::white.with_alpha(0.1f);
     theme.text = ui::color::text;
     theme.text_muted = ui::color::text2;
     theme.primary = ui::color::action;
-    theme.on_primary = ui::color::night1;
-    theme.secondary = ui::Color::rgb(0xffffff, 0.1f);
+    theme.on_primary = ui::color::action_ink;
+    theme.secondary = ui::color::white.with_alpha(0.1f);
     theme.accent = ui::color::action;
-    theme.focus = ui::color::text;
+    theme.focus = ui::color::gold;
     theme.radius = 12.0f;
     theme.radius_card = ui::kPanelRadius;
     // Solid keys: glass keys would pick up the colours of the covers behind.

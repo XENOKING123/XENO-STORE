@@ -1,5 +1,6 @@
 // Orbit Store TV app - Downloads: the console's queue, with progress and actions.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 //
 // Views, labels and actions follow the browser storefront (src/Downloads.tsx):
 // Active / Finished / Failed / Cancelled; Pause, Resume, Retry download;
@@ -135,10 +136,6 @@ std::vector<const Job *> DownloadsScreen::visible() const
 
 std::vector<DownloadsScreen::RowAction> DownloadsScreen::actions_for(const Job &job) const
 {
-    if(job.delivery=="zero") {
-        if(job.status=="complete")return {{"Clear computer cache","clear-cache"}};
-        if(job.status=="cancelled")return {{"View in Orbit Zero","view-zero"}};
-    }
     if (job.status == "complete")
         return {{tr("Remove from history"), "remove"}};
     if (job.status == "cancelled")
@@ -372,10 +369,6 @@ Intent DownloadsScreen::update(const InputFrame &input, float dt, Feedback &feed
                     password_keyboard_.enter(); password_keyboard_.set_length(0);
                     feedback.play(hui::audio::Cue::modal_open);
                 }
-                else if (std::string_view(action.action) == "view-zero")
-                {
-                    intent.toast="This cancelled transfer is saved in Orbit Zero on your computer.";
-                }
                 else if (std::string_view(action.action) == "dialog")
                 {
                     dialog_open_ = true;
@@ -452,11 +445,11 @@ void DownloadsScreen::draw(Frame &frame, bool focused) const
         ui::focus_ring(list, pill, pill.h * 0.5f,
                        focused && on_views_ && current && !dialog_open_ ? 1.0f : 0.0f);
         if (current)
-            list.rounded_rect(pill, pill.h * 0.5f, ui::Color::rgb(0xf4f4f4));
+            list.rounded_rect(pill, pill.h * 0.5f, ui::color::focus_fill);
         else
-            list.bordered_rect(pill, pill.h * 0.5f, ui::Color::rgb(0xffffff, 0.05f), 1.0f,
-                               ui::Color::rgb(0xffffff, 0.14f));
-        const ui::Color ink = current ? ui::Color::rgb(0x080808) : ui::color::text;
+            list.bordered_rect(pill, pill.h * 0.5f, ui::color::white.with_alpha(0.05f), 1.0f,
+                               ui::color::white.with_alpha(0.14f));
+        const ui::Color ink = current ? ui::color::focus_ink : ui::color::text;
         ui::text(list, type.medium, label, pill.x + 18.0f, pill.cy() + 6.5f, 18.0f, ink);
         ui::text(list, type.medium, number, pill.x + 18.0f + label_width + 7.0f, pill.cy() + 6.5f,
                  18.0f, ink.with_alpha(0.65f));
@@ -507,7 +500,9 @@ void DownloadsScreen::draw(Frame &frame, bool focused) const
             continue;
         const bool is_focused = focused && !on_views_ && i == row_ && !dialog_open_;
         if (is_focused)
-            list.rounded_rect(row, 18.0f, ui::Color::rgb(0xffffff, 0.06f));
+            list.rounded_rect(row, 18.0f, ui::color::white.with_alpha(0.06f));
+        // Quiet text stays readable on the lit row.
+        const ui::Color quiet = is_focused ? ui::color::text2 : ui::color::text3;
 
         const Game *game = game_for(state, job);
         const Release *release = release_for(game, job);
@@ -516,7 +511,7 @@ void DownloadsScreen::draw(Frame &frame, bool focused) const
             draw_cover(ctx_, list, *game, cover, 12.0f);
         else
             ui::cover_placeholder(list, type, cover, job.title.empty() ? job.filename : job.title,
-                                  12.0f);
+                                  12.0f, ctx_.mark);
 
         // .queue-info: the name and status, where it comes from and goes,
         // the progress, the transfer, then the actions.
@@ -533,7 +528,7 @@ void DownloadsScreen::draw(Frame &frame, bool focused) const
                                      : job.status == "complete" ? ui::color::ok
                                      : job.status == "downloading" || job.status == "verifying" ||
                                                job.status == "extracting"
-                                         ? ui::Color::rgb(0xd0d0d0)
+                                         ? ui::color::accent
                                          : ui::color::text2;
         const float status_width = type.regular.measure(status, 16.0f);
         ui::text(list, type.regular, status, right_edge, row.y + kRowPad + 21.0f, 16.0f, status_ink,
@@ -553,17 +548,15 @@ void DownloadsScreen::draw(Frame &frame, bool focused) const
         meta += drive != nullptr ? i18n::place(drive->label) : job.storage_id;
         if (job.delivery == "torbox")
             meta += std::string(" \xC2\xB7 ") + tr("via TorBox");
-        if(job.delivery=="zero") meta += " / Orbit Zero";
         if (drive == nullptr && job.status != "complete")
             meta += std::string(" \xC2\xB7 ") + tr("Reconnect this drive");
         ui::text_fit(list, type.regular, meta, tx, row.y + kRowPad + 51.0f, 16.0f, info_width,
-                     ui::color::text3);
+                     quiet);
 
-        // While extracting, the bar shows the extraction; Orbit Zero sends the
-        // files inside an archive, which can total more than the download.
+        // While extracting, the bar shows the extraction.
         const bool extracting = job.status == "extracting";
         const double done = extracting ? job.extracted : job.received;
-        const double total = extracting ? job.extract_total : job.send_total > 0.0 ? job.send_total : job.total;
+        const double total = extracting ? job.extract_total : job.total;
         const float progress =
             total > 0.0 ? static_cast<float>(std::clamp(done / total, 0.0, 1.0)) : 0.0f;
         const ui::Rect bar{tx, row.y + kRowPad + 74.0f, info_width, 6.0f};
@@ -572,10 +565,10 @@ void DownloadsScreen::draw(Frame &frame, bool focused) const
                          : job.status == "complete" ? ui::color::ok
                                                     : ui::color::action);
         const std::string left = extracting ? std::string(tr("Extracting")) + " \xC2\xB7 " + i18n::percent(progress * 100.0)
-                                 : (job.delivery=="zero" ? std::string("To PS5 ") : std::string()) + format_bytes(job.received) + " / " + format_bytes(total) +
+                                 : format_bytes(job.received) + " / " + format_bytes(total) +
                                  " \xC2\xB7 " + i18n::percent(progress * 100.0);
         const float transfer_y = row.y + kRowPad + 104.0f;
-        ui::text(list, type.regular, left, tx, transfer_y, 16.0f, ui::color::text3);
+        ui::text(list, type.regular, left, tx, transfer_y, 16.0f, quiet);
         std::string right;
         if (!job.error.empty())
         {
@@ -584,11 +577,7 @@ void DownloadsScreen::draw(Frame &frame, bool focused) const
         }
         else
         {
-            if (job.delivery == "zero")
-            {
-                right="Internet "+format_bytes(job.download_speed)+"/s / To PS5 "+format_bytes(job.speed)+"/s";
-            }
-            else if (job.status == "retrying")
+            if (job.status == "retrying")
             {
                 const int seconds = static_cast<int>(std::max(0.0, std::ceil(job.retry_at - now)));
                 right = seconds > 0 ? tr("Retrying in {seconds} s",
@@ -611,14 +600,14 @@ void DownloadsScreen::draw(Frame &frame, bool focused) const
                 right = tr("{size} remaining",
                            {{"size", format_bytes(std::max(0.0, job.total - job.received))}});
             }
-            ui::text(list, type.regular, right, right_edge, transfer_y, 16.0f, ui::color::text3,
+            ui::text(list, type.regular, right, right_edge, transfer_y, 16.0f, quiet,
                      ui::Align::right);
         }
 
         if (!location.empty())
         {
             ui::text(list, type.regular, tr("Location"), tx, row.y + kRowPad + 135.0f,
-                     16.0f, ui::color::text3);
+                     16.0f, quiet);
             float path_y = row.y + kRowPad + 159.0f;
             for (const auto &line : location)
             {

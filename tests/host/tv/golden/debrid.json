@@ -1,0 +1,18 @@
+{
+ "provider": "torbox",
+ "available": true,
+ "connected": false,
+ "busy": false,
+ "hosts": [
+  {
+   "sourceId": "archive",
+   "available": false,
+   "maxFileSize": 0
+  },
+  {
+   "sourceId": "vikingfile",
+   "available": false,
+   "maxFileSize": 0
+  }
+ ]
+}

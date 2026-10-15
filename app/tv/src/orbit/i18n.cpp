@@ -1,5 +1,6 @@
 // Orbit Store TV app - The interface language.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "orbit/i18n.hpp"
 
@@ -164,6 +165,15 @@ std::string_view from_system(int system_language)
         return "tr";
     case 24:
         return "hu";
+    // XENO STORE: Japanese, Korean, Chinese (Traditional, Simplified) and Arabic
+    // stay in English. The baked Inter atlases hold the European set only and
+    // there is no right-to-left shaping, so their text could not be drawn.
+    case 0:  // Japanese
+    case 9:  // Korean
+    case 10: // Chinese (Traditional)
+    case 11: // Chinese (Simplified)
+    case 21: // Arabic
+        return "en";
     default:
         return "en";
     }

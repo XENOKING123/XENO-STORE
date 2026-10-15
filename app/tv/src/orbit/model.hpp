@@ -1,5 +1,6 @@
 // Orbit Store TV app - The Orbit API's data, and the storefront rules built on it.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 //
 // These mirror the backend's JSON (docs/api.md) and the web storefront's rules
 // (src/catalog.ts, src/browse.ts, src/collection.ts, src/Details.tsx), so the TV
@@ -32,9 +33,6 @@ struct System
     std::string preferred_storage;
     int concurrent_downloads = 1;
     bool delete_archives = true; // Remove a ZIP/7z/RAR download once its files are in place.
-    bool zero_enabled = false;
-    bool zero_configured = false;
-    std::string zero_address, zero_error, zero_preference;
 };
 
 struct SourceOption
@@ -159,10 +157,7 @@ struct Job
     double received = 0.0;
     double total = 0.0;
     double speed = 0.0;
-    double computer_received = 0.0;
-    double download_speed = 0.0;
     double extracted = 0.0, extract_total = 0.0; // while extracting
-    double send_total = 0.0; // Orbit Zero: bytes to send to the PS5, when not `total`
     double retry_at = 0.0; // Unix seconds
     int order = 0;
 };

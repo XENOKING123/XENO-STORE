@@ -17,6 +17,8 @@ void dlx_stats_record(const char *provider, int64_t bytes, double seconds, doubl
 void dlx_stats_json(jw *w);
 /* Flushes to disk when dirty (called from the housekeeping tick). */
 void dlx_stats_flush(int force);
+/* Shutdown, once the port is closed: stats.json is never written again. */
+void dlx_stats_freeze(void);
 int dlx_stats_reset(void);
 
 #endif

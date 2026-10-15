@@ -1,5 +1,6 @@
 // Orbit Store TV app - Storefront rules shared with the browser storefront.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "orbit/model.hpp"
 
@@ -551,6 +552,24 @@ TEST(Model, ParsesTolerantlyFromTheApi)
         json::parse(R"({"enabled":["archive",5],"acknowledged":true,"noticeVersion":1})", &value));
     const Sources sources = parse_sources(value);
     EXPECT_EQ(sources.enabled, (std::vector<std::string>{"archive"}));
+}
+
+TEST(Model, AnIdleBrowserReplyCarriesTheBackendsMessage)
+{
+    // XENO STORE's /browser: no provider capture, and a sentence saying why.
+    json::Value value;
+    ASSERT_TRUE(json::parse(
+        R"({"available":false,"active":false,"id":"","state":"idle","title":"","jobId":"",
+            "message":"Vikingfile asks for a human check, so XENO STORE cannot fetch it by itself."})",
+        &value));
+    const BrowserSession session = parse_browser_session(value);
+    EXPECT_FALSE(session.available);
+    EXPECT_FALSE(session.active);
+    EXPECT_EQ(session.state, "idle");
+    EXPECT_EQ(session.message,
+              "Vikingfile asks for a human check, so XENO STORE cannot fetch it by itself.");
+    ASSERT_TRUE(json::parse(R"({"available":false,"state":"idle"})", &value));
+    EXPECT_TRUE(parse_browser_session(value).message.empty());
 }
 
 TEST(Model, TheAppsVersionComesFromItsContentVersion)

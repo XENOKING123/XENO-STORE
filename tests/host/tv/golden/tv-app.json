@@ -1,0 +1,17 @@
+{
+ "available": true,
+ "installed": "none",
+ "installedVersion": "",
+ "latestVersion": "",
+ "checksum": "",
+ "size": 0,
+ "updateAvailable": false,
+ "phase": "idle",
+ "error": "",
+ "busy": false,
+ "received": 0,
+ "retryAt": 0,
+ "checkedAt": 0,
+ "checkAfter": 0,
+ "automaticCheckAfter": 0
+}

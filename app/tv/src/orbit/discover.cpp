@@ -1,5 +1,6 @@
 // Orbit Store TV app - Discover: featured art, latest releases and a paged game grid.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "orbit/screens.hpp"
 #include "orbit/i18n.hpp"
@@ -70,7 +71,7 @@ void DiscoverScreen::rebuild()
     catalog_serial_ = state.catalog_serial;
     rails_.clear();
     Rail added;
-    added.title = tr("New on Orbit");
+    added.title = tr("New on XENO STORE");
     added.games = newly_added_games(state.games);
     if (!added.games.empty())
         rails_.push_back(std::move(added));
@@ -399,6 +400,11 @@ void DiscoverScreen::draw(Frame &frame, bool focused) const
     // ---- the featured game, bottom-aligned on the first rail ----
     const Game *game = state.game(featured_);
     const float hero_alpha = std::clamp(1.0f - scroll / kRailPitch, 0.0f, 1.0f);
+    // XENO STORE: as the rails scroll over the featured art, a scrim keeps their
+    // titles legible on bright artwork; the hero itself still shows the art whole.
+    if (hero_alpha < 1.0f)
+        list.rounded_rect({0.0f, 0.0f, 1920.0f, 1080.0f}, 0.0f,
+                          ui::color::scrim.with_alpha(0.7f * (1.0f - hero_alpha)));
     if (game != nullptr && hero_alpha > 0.01f)
     {
         const float left = ui::kGutter;
@@ -461,8 +467,9 @@ void DiscoverScreen::draw(Frame &frame, bool focused) const
                     draw_tile(ctx_, list, tile_game, {x, y, kTile, kTile}, amount);
                     if (state.favourite(tile_game.id))
                     {
-                        list.circle(x + kTile - 25.0f, y + 25.0f, 15.0f, ui::Color::rgb(0x141414, 0.87f));
-                        list.star(x + kTile - 25.0f, y + 25.5f, 8.0f, ui::Color::rgb(0xffffff));
+                        list.circle(x + kTile - 25.0f, y + 25.0f, 15.0f,
+                                    ui::color::night0.with_alpha(0.87f));
+                        list.star(x + kTile - 25.0f, y + 25.5f, 8.0f, ui::color::gold);
                     }
                     draw_tile_caption(ctx_, list, tile_game,
                                       game_state(tile_game, state.jobs, state.library_games()).label,

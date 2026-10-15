@@ -1,5 +1,6 @@
 // Orbit Store TV app - A minimal HTTP/1.1 client for the local Orbit backend.
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 
 #include "orbit/http.hpp"
 
@@ -145,7 +146,7 @@ std::string format_request(const Request &request, std::string_view host, std::u
     out += host;
     out += ':';
     out += std::to_string(port);
-    out += "\r\nConnection: close\r\nAccept: */*\r\nUser-Agent: OrbitStoreTV\r\n";
+    out += "\r\nConnection: close\r\nAccept: */*\r\nUser-Agent: XenoStoreTV\r\n";
     if (!request.bearer.empty())
     {
         out += "Authorization: Bearer ";
