@@ -244,12 +244,12 @@ Full details, paths and sidecar formats: [`docs/FORMATS.md`](docs/FORMATS.md).
 
 <img src="docs/screenshots/saves-store.png" width="100%" alt="Save Data Store"/>
 
-A community library of PS5 saves — maxed starters, 100% platinums, trophy checkpoints, chapter picks — **re-signed for your account on this console** so they load like your own. Every save is checked before it touches your card:
+A community library of PS5 saves — the collection of the **XenoKing** site, each save credited to the player who shared it, plus the reviewed GitHub index: maxed starters, 100% platinums, trophy checkpoints, chapter picks — **re-signed for your account on this console** so they load like your own. Every save is checked before it touches your card:
 
 * **Compatibility first.** Each card shows whether the game is **installed**, whether its **region** matches and whether the **version** lines up; "Compatible with my games" filters the grid to saves you can actually use.
 * **Honest re-sign tiers.** The store reports the engine it will use, never fakes it: **Native** (the Sony save API, when kstuff-style patches are loaded), **Garlic** (Garlic Save Manager on `:8082`), or **Raw** (a same-console copy). The current tier is shown on the header pill.
-* **Safe installs.** Download is sha256-checked, the install **backs up your current save first**, and a save for the wrong title id is refused outright.
-* **Share yours in one flow.** *Upload my save* exports the chosen save, strips the account id, uploads it to a file host and opens a pre-filled submission — your save joins the library for everyone.
+* **Safe installs.** Downloads are sha256-checked whenever the listing carries a hash, the install **backs up your current save first**, and a save for the wrong title id is refused outright.
+* **Share yours in one flow.** *Upload my save* exports the chosen save, strips the account id, uploads it to the XenoKing site and adds it to the site's collection under your nickname — **live on the site and in every store at once** (a pre-filled GitHub submission is the fallback when the site is unreachable).
 
 The companion **Saves hub** (Library → Saves hub) backs up any profile to ZIP, restores it, transfers saves between profiles on the same console, and has a "Back up all saves now". Full walkthrough: [`docs/SAVES.md`](docs/SAVES.md).
 
@@ -316,7 +316,7 @@ Not while "Keep console awake" is on (default): the store ticks the power servic
 <details>
 <summary><b>Is the Save Data Store safe to use?</b></summary>
 <br/>
-It only lists saves marked <code>published</code>, checks the sha256 of every download, refuses saves for a different title ID, warns when the game version differs, and backs up your current save before installing. Re-signing uses the native save API when kstuff-style patches are loaded, Garlic Save Manager when it answers on <code>:8082</code>, or a same-console raw copy — the tier in use is shown, never faked.
+It lists the XenoKing site's community collection and the reviewed GitHub index (<code>published</code> entries only), checks the sha256 of every download that has one, refuses saves for a different title ID, warns when the game version differs, and backs up your current save before installing. Saves you share go into the XenoKing collection only after the console has checked they are a real decrypted export without your account ID or sealed keys. Re-signing uses the native save API when kstuff-style patches are loaded, Garlic Save Manager when it answers on <code>:8082</code>, or a same-console raw copy — the tier in use is shown, never faked.
 </details>
 
 <details>

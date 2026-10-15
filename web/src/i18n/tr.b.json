@@ -207,13 +207,15 @@
     "restoreGo": "Şimdi geri yükle",
     "restored": "{title} geri yüklendi",
     "preBackupMade": "geri yükleme öncesi bir yedek yapıldı",
-    "transferBetaText": "Yalnızca aynı konsol. Tüm başlık klasörü (imajlar + sce_sys) diğer profile kopyalanır; her iki profil de bu konsolda olduğundan mühürlü anahtar geçerli kalır.",
+    "transferBetaText": "Yalnızca aynı konsol. Her PS5 kaydı, Garlic Save Manager (gerektiğinde başlatılır) aracılığıyla diğer profil için yeniden imzalanır. O olmadan başlık klasörü olduğu gibi kopyalanır ve oyun kaydı diğer profilde reddedebilir.",
     "transferTo": "Hedef profil",
     "transferMove": "Kopyalamak yerine taşı",
     "transferMoveHint": "Başarılı bir kopyadan sonra kaydı kaynak profilden kaldırır",
     "transferPreBackup": "Hedef profilde bu başlık için zaten bir kayıt varsa önce yedeklenir.",
     "transferGo": "Aktar",
-    "transferred": "{title}, {name} profiline aktarıldı"
+    "transferred": "{title}, {name} profiline aktarıldı",
+    "transferResigned": "{name} için yeniden imzalandı",
+    "notResigned": "Yeniden imzalanmadan kopyalandı"
   },
   "settings2": {
     "group": {
@@ -268,8 +270,8 @@
     "addFeedText": "Bir saves.json dizininin URL'sini yapıştır. Varsayılan akışla birleştirilir ve yinelenenler ayıklanır.",
     "backend": "Topluluk veritabanı",
     "backendKind": "Arka uç",
-    "backendKind_github": "GitHub dizini",
-    "backendKind_githubHint": "Sıfır altyapı: yayınlanan saves.json artı GitHub sorun gönderimleri",
+    "backendKind_github": "Yayınlanan varsayılan",
+    "backendKind_githubHint": "Mağazanın yayınlanan arka ucunu izler: XenoKing kayıt koleksiyonu artı GitHub dizini",
     "backendKind_supabase": "Supabase",
     "backendKind_supabaseHint": "Depolama kovalı, sahibi tarafından dağıtılan bir veritabanı (herkese açık anon anahtar, RLS)",
     "backendKind_none": "Kapalı",
@@ -286,11 +288,13 @@
     "upload": "Paylaşım",
     "uploadHost": "Yükleme sunucusu",
     "uploadHostHint": "Dışa aktarılan kayıtların gönderilmeden önce nereye yükleneceği",
+    "uploadSite": "XenoKing sitesi",
+    "uploadSiteHint": "Doğrudan XenoKing koleksiyonuna, hemen yayında (site arka uç değilse pixeldrain)",
     "uploadCustomHint": "Kendi uç noktan (çok parçalı dosya → {url})",
     "uploadEndpoint": "Özel yükleme uç noktası",
     "uploadEndpointHint": "Çok parçalı «file» alanını POST eder, {url} yanıtını verir",
     "submitEndpoint": "Özel gönderim uç noktası",
-    "submitEndpointHint": "JSON meta veri POST eder; boş = telefonunda önceden doldurulmuş GitHub sorunu",
+    "submitEndpointHint": "Arka uç bir kayıt sitesi değilken: JSON meta veri POST eder; boş = telefonunda önceden doldurulmuş GitHub sorunu",
     "submitGithub": "GitHub sorunu",
     "mdns": "Yerel ad (mDNS)",
     "mdnsHint": "Telefonların mağazayı IP olmadan açabilmesi için bu Wi-Fi'de xeno.local ve xenostore.local adreslerine yanıt ver",
@@ -335,7 +339,8 @@
       "drive": "Varsayılan sürücü yazılabilir",
       "space": "Boş alan",
       "firmware": "Sürüm",
-      "payload-manager": "Payload Manager otomatik başlatma"
+      "payload-manager": "Payload Manager otomatik başlatma",
+      "garlic": "Kayıt yeniden imzalama (Garlic Save Manager)"
     },
     "explain": {
       "shadowmount": "ShadowMountPlus, homebrew/ konumundaki exFAT/FFPFSC imajlarını bağlar ve ana ekranda gösterir. XENO STORE bir imaj indirmesinden sonra ondan yeniden taramasını ister; onu asla değiştirmez.",
@@ -345,7 +350,8 @@
       "drive": "Varsayılan indirme sürücüsü yazılabilir olmalı: XENO STORE orada küçük bir test dosyası oluşturup siler.",
       "space": "Varsayılan sürücüde birkaç GB boş tut; kuyruk sığmayan dosyaları reddeder.",
       "firmware": "Konsol sürümünü gösterir. FPKG kurulumları sürümünün exploit zincirine bağlıdır.",
-      "payload-manager": "Payload Manager otomatik başlatma ile XENO STORE her açılışta yüklenir ve kendini XENOKING akışından günceller."
+      "payload-manager": "Payload Manager otomatik başlatma ile XENO STORE her açılışta yüklenir ve kendini XENOKING akışından günceller.",
+      "garlic": "Garlic Save Manager (earthonion tarafından) topluluk kayıtlarını hesabın için yeniden imzalar. İsteğe bağlı: bir kayıt gerektirdiğinde XENO STORE onu konsoldaki bir kopyadan veya yazarın GitHub sürümünden (SHA-256 denetlenir) başlatır ve asla ikinci bir kopya başlatmaz."
     },
     "pmText": "Telefonunda kodu tara ya da URL'yi aç, sonra Payload Manager'da (itsPLK) bir kaynak olarak ekle. XENO STORE ve güncellemeleri listesinde görünür.",
     "pmStep1": "Konsolda Payload Manager'ı aç ve Add source'u seç.",
@@ -458,6 +464,7 @@
     "emptyHint": "Yardımcı akışı boş ya da henüz alınmadı. Ayarlar'da katalogu yenile.",
     "installedLocal": "Konsolda",
     "notDownloaded": "İndirilmedi",
+    "unavailable": "İndirme yok",
     "shaChecked": "SHA-256 denetlendi",
     "launch": "Başlat",
     "install": "İndir",

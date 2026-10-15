@@ -66,7 +66,8 @@
     savesList: function (user) { return req('GET', '/api/saves' + qs({ user: user }), undefined, { timeout: 30000 }); },
     savesExport: function (body) { return req('POST', '/api/saves/export', body, { timeout: 120000 }); },
     savesUpload: function (body) { return req('POST', '/api/saves/upload', body, { timeout: 600000 }); },
-    savesSubmit: function (body) { return req('POST', '/api/saves/submit', body, { timeout: 60000 }); },
+    /* submit may upload a public copy first (the site refused a save that is only in its private bucket) */
+    savesSubmit: function (body) { return req('POST', '/api/saves/submit', body, { timeout: 600000 }); },
     savesInstalledVersion: function (titleId) { return req('GET', '/api/saves/installed-version' + qs({ titleId: titleId }), undefined, { timeout: 8000 }); },
     homebrew: function (refresh) { return req('GET', '/api/homebrew' + (refresh ? '?refresh=1' : ''), undefined, { timeout: refresh ? 60000 : 20000 }); },
     settingsPut: function (partial) { return req('PUT', '/api/settings', partial); },
@@ -273,7 +274,8 @@
           var allStart = qws.length > 0, allIn = qws.length > 0;
           for (var w = 0; w < qws.length; w++) {
             var qw = qws[w], st = false, inn = false;
-            for (var x = 0; x < g._words.length; x++) { if (g._words[x].indexOf(qw) === 0) { st = true; inn = true; break; } if (g._words[x].indexOf(qw) >= 0) inn = true; }
+            /* inside a word only from 4 chars: "wor" must not match "clockwork" (a typo then gets "Did you mean") */
+            for (var x = 0; x < g._words.length; x++) { if (g._words[x].indexOf(qw) === 0) { st = true; inn = true; break; } if (qw.length >= 4 && g._words[x].indexOf(qw) > 0) inn = true; }
             if (!st) allStart = false;
             if (!inn) allIn = false;
           }
@@ -299,24 +301,44 @@
     out.sort(function (a, b) { return b.score - a.score || (a.g._nt < b.g._nt ? -1 : 1); });
     return limit ? out.slice(0, limit) : out;
   };
-  /* didYouMean(q) → corrected query string or '' */
+  /* didYouMean(q) → corrected query string or ''. Each unknown word gets its closest title words (fewest edits, then
+     most frequent); the combination that a title actually contains wins ("god of wor" → "god of war", not the more
+     frequent "god of for"), else the closest one. */
   ca.didYouMean = function (q) {
     var qn = U.normTitle(q);
     if (!qn) return '';
     var idx = buildWords(), words = Object.keys(idx), changed = false;
-    var fixed = qn.split(' ').map(function (qw) {
-      if (qw.length < 3 || idx[qw]) return qw;
-      var max = qw.length <= 4 ? 1 : 2, best = '', bestD = max + 1, bestN = 0;
+    var opts = qn.split(' ').map(function (qw) {
+      if (qw.length < 3 || idx[qw]) return [qw];
+      var max = qw.length <= 4 ? 1 : 2, found = [];
       for (var i = 0; i < words.length; i++) {
         var w = words[i];
         if (Math.abs(w.length - qw.length) > max) continue;
         var d = osa(qw, w, max);
-        if (d < bestD || (d === bestD && idx[w] > bestN)) { bestD = d; best = w; bestN = idx[w]; }
+        if (d <= max) found.push({ w: w, d: d, n: idx[w] });
       }
-      if (best) { changed = true; return best; }
-      return qw;
-    }).join(' ');
-    return changed && fixed !== qn ? fixed : '';
+      if (!found.length) return [qw];
+      changed = true;
+      found.sort(function (a, b) { return a.d - b.d || b.n - a.n || (a.w < b.w ? -1 : 1); });
+      return found.slice(0, 4).map(function (x) { return x.w; });
+    });
+    if (!changed) return '';
+    var combos = [[]];
+    opts.forEach(function (o) {
+      var next = [];
+      combos.forEach(function (c) { o.forEach(function (w) { if (next.length < 32) next.push(c.concat(w)); }); });
+      combos = next;
+    });
+    var phrases = combos.map(function (c) { return c.join(' '); }).filter(function (p) { return p !== qn; });
+    if (!phrases.length) return '';
+    if (phrases.length > 1) {
+      var games = S.data.games;
+      for (var p = 0; p < phrases.length; p++) {
+        var needle = ' ' + phrases[p] + ' ';
+        for (var i = 0; i < games.length; i++) { var g = games[i]; if (ca.isGame(g) && g._nt && (' ' + g._nt + ' ').indexOf(needle) >= 0) return phrases[p]; }
+      }
+    }
+    return phrases[0];
   };
   ca.recentSearches = {
     get: function () { return U.store.get('recentSearches', []); },

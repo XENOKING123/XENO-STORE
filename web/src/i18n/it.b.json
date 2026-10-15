@@ -207,13 +207,15 @@
     "restoreGo": "Ripristina ora",
     "restored": "{title} ripristinato",
     "preBackupMade": "è stato creato un backup di pre-ripristino",
-    "transferBetaText": "Solo la stessa console. L'intera cartella del titolo (immagini + sce_sys) viene copiata sull'altro profilo; la chiave sigillata resta valida perché entrambi i profili vivono su questa console.",
+    "transferBetaText": "Solo la stessa console. Ogni salvataggio PS5 viene rifirmato per l'altro profilo tramite Garlic Save Manager (avviato quando serve). Senza di esso la cartella del titolo viene copiata così com'è e il gioco potrebbe rifiutare il salvataggio sull'altro profilo.",
     "transferTo": "Profilo di destinazione",
     "transferMove": "Sposta invece di copiare",
     "transferMoveHint": "Rimuove il salvataggio dal profilo di origine dopo una copia riuscita",
     "transferPreBackup": "Se il profilo di destinazione ha già un salvataggio di questo titolo, riceve prima un backup.",
     "transferGo": "Trasferisci",
-    "transferred": "{title} trasferito a {name}"
+    "transferred": "{title} trasferito a {name}",
+    "transferResigned": "rifirmato per {name}",
+    "notResigned": "Copiato senza rifirma"
   },
   "settings2": {
     "group": {
@@ -268,8 +270,8 @@
     "addFeedText": "Incolla l'URL di un indice saves.json. Viene unito al feed predefinito e deduplicato.",
     "backend": "Database della community",
     "backendKind": "Backend",
-    "backendKind_github": "Indice GitHub",
-    "backendKind_githubHint": "Zero infrastruttura: il saves.json pubblicato più gli invii tramite issue GitHub",
+    "backendKind_github": "Predefinito pubblicato",
+    "backendKind_githubHint": "Segue il backend pubblicato dello store: la raccolta di salvataggi di XenoKing più l'indice GitHub",
     "backendKind_supabase": "Supabase",
     "backendKind_supabaseHint": "Un database distribuito dal proprietario con un bucket di archiviazione (chiave anon pubblica, RLS)",
     "backendKind_none": "Spento",
@@ -286,11 +288,13 @@
     "upload": "Condivisione",
     "uploadHost": "Host di caricamento",
     "uploadHostHint": "Dove vengono caricati i salvataggi esportati prima di essere inviati",
+    "uploadSite": "Sito XenoKing",
+    "uploadSiteHint": "Direttamente nella raccolta di XenoKing, online subito (pixeldrain se il sito non è il backend)",
     "uploadCustomHint": "Il tuo endpoint (file multipart → {url})",
     "uploadEndpoint": "Endpoint di caricamento personalizzato",
     "uploadEndpointHint": "POST campo multipart \"file\", risponde {url}",
     "submitEndpoint": "Endpoint di invio personalizzato",
-    "submitEndpointHint": "POST metadati JSON; vuoto = issue GitHub precompilata sul telefono",
+    "submitEndpointHint": "Quando nessun sito di salvataggi è il backend: POST metadati JSON; vuoto = issue GitHub precompilata sul telefono",
     "submitGithub": "Issue GitHub",
     "mdns": "Nome locale (mDNS)",
     "mdnsHint": "Risponde a xeno.local e xenostore.local su questa Wi-Fi così i telefoni aprono lo store senza l'IP",
@@ -335,7 +339,8 @@
       "drive": "Unità predefinita scrivibile",
       "space": "Spazio libero",
       "firmware": "Firmware",
-      "payload-manager": "Avvio automatico di Payload Manager"
+      "payload-manager": "Avvio automatico di Payload Manager",
+      "garlic": "Rifirma dei salvataggi (Garlic Save Manager)"
     },
     "explain": {
       "shadowmount": "ShadowMountPlus monta immagini exFAT/FFPFSC da homebrew/ e le mostra sulla schermata home. XENO STORE gli chiede di riscansionare dopo il download di un'immagine; non lo sostituisce mai.",
@@ -345,7 +350,8 @@
       "drive": "L'unità di download predefinita deve essere scrivibile: XENO STORE vi crea e rimuove un piccolo file di prova.",
       "space": "Tieni qualche GB libero sull'unità predefinita; la coda rifiuta i file che non ci stanno.",
       "firmware": "Mostra il firmware della console. Le installazioni di FPKG dipendono dalla catena di exploit del tuo firmware.",
-      "payload-manager": "Con l'avvio automatico di Payload Manager, XENO STORE si carica a ogni avvio e si aggiorna dal feed XENOKING."
+      "payload-manager": "Con l'avvio automatico di Payload Manager, XENO STORE si carica a ogni avvio e si aggiorna dal feed XENOKING.",
+      "garlic": "Garlic Save Manager (di earthonion) rifirma i salvataggi della community per il tuo account. Facoltativo: XENO STORE lo avvia quando un salvataggio ne ha bisogno, da una copia sulla console o dalla release GitHub del suo autore (SHA-256 verificato), e non ne avvia mai una seconda copia."
     },
     "pmText": "Scansiona il codice col telefono o apri l'URL, poi aggiungilo come fonte in Payload Manager (itsPLK). XENO STORE e i suoi aggiornamenti compaiono nel suo elenco.",
     "pmStep1": "Apri Payload Manager sulla console e scegli Aggiungi fonte.",
@@ -458,6 +464,7 @@
     "emptyHint": "Il feed dei companion è vuoto o non ancora scaricato. Aggiorna il catalogo nelle Impostazioni.",
     "installedLocal": "Sulla console",
     "notDownloaded": "Non scaricato",
+    "unavailable": "Nessun download disponibile",
     "shaChecked": "SHA-256 controllato",
     "launch": "Avvia",
     "install": "Scarica",

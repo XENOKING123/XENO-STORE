@@ -212,8 +212,8 @@ PS5 titles only (PPSA). Entry points: the **Saves (n)** tab on a PS5 game page a
 
 ### Upload my save (one-click share)
 
-Library → Community Saves → **Upload my save**: pick profile → pick an installed PS5 title with saves → pick the save dir → the engine exports it (account ID stripped, no sealed keys ever included) → ZIP + `xeno-save.json` manifest → upload to **pixeldrain** (fallback **catbox**, ≤ 200 MB, or your own endpoint) → fill category, name, description, tags, nickname → **Submit**.
-With the default GitHub backend the console shows a QR + short link to a prefilled issue so you finish on your phone; the owner approves it and it appears for everyone. With a Supabase backend (Settings → Saves → Backend) the row is inserted directly.
+Library → Community Saves → **Upload my save**: pick profile → pick an installed PS5 title with saves → pick the save dir → the engine exports it (account ID stripped, no sealed keys ever included) → ZIP + `xeno-save.json` manifest → upload to **XenoKing** (the default: the owner's save site; or pixeldrain, catbox ≤ 200 MB, or your own endpoint) → fill category, name, description, tags, nickname → **Submit**.
+Uploaded to XenoKing, the save is added to the site's community collection, credited to your nickname, and is live on the site and in every store at once. Without the site backend (or when the site refuses it) the console shows a QR + short link to a prefilled GitHub issue so you finish on your phone; the owner approves it and it appears for everyone.
 Privacy: no account IDs, console IDs or usernames leave the console; the nickname is what you typed.
 
 ---

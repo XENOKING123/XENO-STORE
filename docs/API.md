@@ -235,6 +235,9 @@ Phase 2 keys: `general.{largeText,highContrast,safeMode,screensaver,screensaverM
 `saves.{backupRoot,autoBackup,indexUrls[],backend:{kind,url,anonKey,bucket,garlicFunction},uploadHost,uploadEndpoint,submitEndpoint,nickname}`,
 `browse.presets[{name,filters,sort}]`.
 ### `PUT /api/settings {"downloads":{"connections":16}}` → deep merge, ranges clamped, atomic save → `{"ok":true,"settings":{…}}`.
+A changed `saves.backend.url` must be `https://host[:port]` (a loopback `http://` mock on the host build only), else 400
+`invalid_settings` "saves.backend.url must be https://<project>.supabase.co"; a value stored by an older version is kept
+(it does not block other changes) but never used — see `backendError` under `GET /api/saves/store`.
 ### `GET /api/favorites` → `{"ok":true,"ids":[…]}` · `PUT /api/favorites {"ids":[…]}` · `POST /api/favorites/toggle {"id":"…"}` → `{"ok":true,"favorite":true}`.
 ### `GET /api/collections` → `{"ok":true,"collections":[{"id":"wishlist","name":"Wishlist","icon":"star","ids":[]}]}` · `PUT /api/collections {"collections":[…]}`.
 ### `GET /api/recent` → `{"ok":true,"ids":[…]}` · `POST /api/recent {"id":"…"}` (keeps 30).
@@ -256,15 +259,17 @@ The UI renders the QR and shows the `xeno.local` address from `/api/mdns`. `code
  {"id":"shadowmount","ok":false,"optional":false,"detail":"Nothing answers on 127.0.0.1:10101","fix":"Start ShadowMountPlus …","action":"launch","actionId":"shadowmount-plus"},
  {"id":"dpi","ok":true,"optional":false,"detail":"Package installer daemon answers on 127.0.0.1:9040","fix":""},
  {"id":"etahen","ok":false,"optional":true,"detail":"No etaHEN DPI on 127.0.0.1:12800","fix":"…"},
+ {"id":"garlic","ok":false,"optional":true,"detail":"Save re-signing (Garlic Save Manager) is not running on :8082 — …","fix":"…","action":"install","actionId":"garlic-save-manager"},
  {"id":"internet","ok":true,"optional":false,"detail":"raw.githubusercontent.com answered in 184 ms","fix":""},
  {"id":"drive","ok":true,"optional":false,"detail":"Internal (/data) is writable","fix":""},
  {"id":"space","ok":true,"optional":false,"detail":"384 GB free on Internal","fix":""},
  {"id":"firmware","ok":true,"optional":false,"detail":"Firmware 11.00 — FPKG installs work with kstuff / etaHEN","fix":""},
  {"id":"payload-manager","ok":false,"optional":true,"detail":"…","fix":"Add the source URL below …"}],
  "payloadsUrl":"https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/payloads.json","fw":"11.00",
- "summary":{"checked":true,"total":8,"failing":2,"at":1760313600}}
+ "summary":{"checked":true,"total":9,"failing":2,"at":1760313600}}
 ```
-`action` is `launch` or `install` with `actionId` = a companion id.
+`action` is `launch` or `install` with `actionId` = a companion id. The `garlic` check (optional) offers an action only while
+nothing listens on Garlic Save Manager's port; the web UI runs it through `POST /api/saves/garlic/start`.
 
 ### `POST /api/uninstall {"data":true,"homebrew":true,"payloadManager":true,"downloads":false}`
 → `{"ok":true,"removed":["/data/xeno-store","/data/homebrew/XENO-STORE"],"kept":["/data/homebrew"],"failed":[],"removedCount":2,"failedCount":0,"stopping":true}` then the server exits. At least one flag must be true.
@@ -275,10 +280,11 @@ The UI renders the QR and shows the `xeno.local` address from `/api/mdns`. `code
 ### `GET /api/payloads`
 ```json
 {"ok":true,"payloads":[{"id":"shadowmount-plus","name":"ShadowMountPlus","version":"1.03","kind":"shadowmount","url":"https://…","sha256":"…","notes":"…","homepage":"…","size":0,
-   "installed":true,"localPath":"/data/xeno-store/payloads/shadowmount-plus.elf","localSize":412000,"installedVersion":"1.03","installedAt":1760300000,"updateAvailable":false}],
+   "available":true,"installed":true,"localPath":"/data/xeno-store/payloads/shadowmount-plus.elf","localSize":412000,"installedVersion":"1.03","installedAt":1760300000,"updateAvailable":false}],
  "loaderPort":9021,"loaderAvailable":true,"feedFetchedAt":1760313600,"note":"Payloads are downloaded to the console (sha256 checked) and sent to the local ELF loader on :9021. XENO STORE never loads code in-process."}
 ```
-### `POST /api/payloads/{id}/install` → `{"ok":true,"job":{"id":"cx_…","type":"payload","title":"ShadowMountPlus v1.03","state":"running","done":0,"total":412000,"percent":0,…}}` (download + sha256; a placeholder hash fails with `download_failed`).
+An entry the feed marks `unavailable` (no upstream asset to pin) is listed with `"available":false` and its `"unavailableReason"`.
+### `POST /api/payloads/{id}/install` → `{"ok":true,"job":{"id":"cx_…","type":"payload","title":"ShadowMountPlus v1.03","state":"running","done":0,"total":412000,"percent":0,…}}` (download + sha256; a placeholder hash fails with `download_failed`; an `available:false` entry is refused with `unavailable` 422).
 ### `POST /api/payloads/{id}/launch` → `{"ok":true,"id":"…","bytes":412000,"port":9021,"sent":true}`. Errors: `not_installed` 404, `loader_unavailable` 503.
 
 ---
@@ -286,14 +292,15 @@ The UI renders the QR and shows the `xeno.local` address from `/api/mdns`. `code
 ## 9. Saves hub (`src/ext_console.c`, `src/cx_saves.c`, §17.17)
 
 ### `GET /api/saves/users` → `{"ok":true,"users":[{"id":268435456,"name":"XENO","foreground":true}]}`.
-### `GET /api/saves?user=268435456` → `{"ok":true,"user":268435456,"saves":[{"titleId":"PPSA04029","title":"Cyberpunk 2077","cover":"…","gameId":"…","path":"/user/home/10000000/savedata_prospero/PPSA04029","size":12400000,"mtime":…,"kind":"ps5","dirs":["SAVEDATA00"],"installed":true}],"count":1}`.
+### `GET /api/saves?user=268435456` → `{"ok":true,"user":268435456,"saves":[{"titleId":"PPSA04029","title":"Cyberpunk 2077","cover":"…","gameId":"…","path":"/user/home/10000000/savedata_prospero/PPSA04029","size":12400000,"mtime":…,"kind":"ps5","dirs":["SAVEDATA00"],"dirInfo":[{"name":"SAVEDATA00","size":12058624,"mtime":…}],"installed":true}],"count":1}`. `dirs` are the save folder names (strings); `dirInfo` has the same folders with the size and time of their save image (`sdimg_<name>`; 0 when unknown).
 ### `POST /api/saves/backup {"user":268435456,"titleId":"PPSA04029","kind":"ps5","wait":false}` → `{"ok":true,"job":{"id":"cx_…","type":"backup",…,"result":{"zipPath":"/data/xeno-store/saves/XENO/PPSA04029_ps5_20261013-1200.zip","files":12,"bytes":12400000}}}`. `{"user":…,"all":true}` starts one job per title → `{"ok":true,"jobs":[…],"started":n}`.
 ### `GET /api/saves/backups` → `{"ok":true,"backups":[{"zipPath":"…","titleId":"…","kind":"ps5","size":…,"createdAt":…,"root":"/data","user":"XENO"}]}`.
-### `POST /api/saves/restore {"user":…,"zipPath":"…","overwrite":true}` → `{"ok":true,"titleId":"…","files":12,"bytes":…,"preRestore":"…/PPSA04029_ps5_….pre-restore.zip","tier":"raw"}`.
-### `POST /api/saves/transfer {"fromUser":…,"toUser":…,"titleId":"…","kind":"ps5","move":false}` → `{"ok":true,"moved":false,"files":…,"bytes":…,"preBackup":"…","note":"Saves are sealed to this console …"}`.
+### `POST /api/saves/restore {"user":…,"zipPath":"…","overwrite":true}` → `{"ok":true,"titleId":"…","kind":"ps5","path":"…","files":12,"bytes":…,"preBackup":"…/PPSA04029_ps5_….pre-restore.zip","tier":"raw","style":"raw","note":"…"}`. `note` only when there is a caveat (e.g. a raw backup made on another profile, which is restored without re-signing). Errors: `exists` 409 (without `overwrite`), `title_running` 422 (the game is running or suspended), the import codes below.
+### `POST /api/saves/transfer {"fromUser":…,"toUser":…,"titleId":"…","kind":"ps5","move":false}` → `{"ok":true,"fromUser":…,"toUser":…,"titleId":"…","kind":"ps5","path":"…","bytes":…,"preBackup":"…","moved":false,"resigned":true,"tier":"garlic","saves":1,"note":"Re-signed for the destination profile by Garlic Save Manager (1 save)."}`.
+A PS5 save is re-signed for the destination profile through Garlic Save Manager (started on demand): each `sdimg_<dir>` of the source is exported decrypted for the source profile and imported for the destination, which re-signs it and registers it there; the destination's other saves of the title stay. When Garlic cannot run (or for PS4 saves, or under the host simulation) the title folder is copied as it is: `"resigned":false,"tier":"raw"` and `note` says why and that the game may refuse the save on the other profile. The destination is backed up first when `saves.autoBackup` is on. Errors: `title_running` 422 (nothing is copied while the game runs), `resign_failed` 422 (Garlic could not re-sign; saves already re-signed stay, `move` keeps the source), `not_found` 404, `io` 500.
 ### `GET /api/saves/jobs` → `{"ok":true,"jobs":[…]}` · `GET /api/saves/jobs/{id}` → `{"ok":true,"job":{…}}` · `POST /api/saves/jobs/{id}/cancel`.
 Console job object: `{"id","type":"backup|payload|save-install|save-download|export|upload","title","state":"queued|running|done|failed|cancelled","message","error","errorCode","done","total","percent","createdAt","startedAt","finishedAt","result":{…}}`.
-### `GET /api/saves/engine` → `{"ok":true,"tier":"native","detail":"libSceSaveData loaded; mount test ok","native":{"available":true},"garlic":{"available":false,"port":8082},"raw":{"available":true},"simulated":false}` (tier ∈ `native` | `garlic` | `raw`).
+### `GET /api/saves/engine` → `{"ok":true,"tier":"garlic","detail":"Garlic Save Manager is running on this console: …","native":{"available":false,"detail":"disabled: …"},"garlic":{"available":true,"running":true,"port":8082,…},"raw":{"available":true,"detail":"Same console and profile only"},"simulated":false}` (tier ∈ `native` | `garlic` | `raw`; `garlic` is the object of `GET /api/saves/garlic`; the native tier is disabled on the console and only simulated by the host build, where `simulated` is true).
 
 ---
 
@@ -301,20 +308,67 @@ Console job object: `{"id","type":"backup|payload|save-install|save-download|exp
 
 ### `GET /api/saves/store?titleId=PPSA04029&category=starter&q=&refresh=0`
 ```json
-{"ok":true,"backend":"github","engine":"native","cached":true,"updatedAt":1760313600,"count":1,
- "sources":[{"kind":"github","url":"https://raw.githubusercontent.com/…/saves.json","rows":40,"ok":true,"cached":true}],
+{"ok":true,"backend":"supabase","backendName":"XenoKing","siteUpload":true,"engine":"native","building":false,"updatedAt":1760313600,"count":1,
+ "sources":[{"kind":"github","url":"https://raw.githubusercontent.com/…/saves.json","rows":40,"ok":true,"cached":true},
+            {"kind":"supabase","name":"XenoKing","url":"https://cotniitpyocsfqzywscl.supabase.co","rows":57,"ok":true,"cached":true}],
  "saves":[{"id":"sv_1","titleId":"PPSA04029","gameId":"cyberpunk-2077-ps5","title":"Cyberpunk 2077","category":"starter","name":"Chapter 4 — all weapons","description":"…","author":"nick",
    "gameVersion":"01.004.000","region":"EUR","dirName":"SAVEDATA00","size":1234567,"sha256":"…","url":"https://pixeldrain.com/api/file/…","mirror":"","format":"xeno-save-zip","createdAt":"…","downloads":12,"status":"published","tags":["ng+"],"screenshot":"","source":"github","cover":"/api/saves/store/sv_1/cover","needsResign":true,
-   "installed":true,"installedVersion":"01.004.000","otherRegion":false,"installedTitleId":"PPSA04029","versionCompare":0,"compat":"ok","compatText":"Matches your 01.004.000"}]}
+   "installed":true,"installedVersion":"01.004.000","versionCompare":0,"compat":"match","compatText":"Matches your 01.004.000"}]}
 ```
-`compat` ∈ `ok` | `older` | `newer` | `not_installed` | `other_region`. Supabase rows add `storagePath` / `garlicId`.
-### `POST /api/saves/store/{id}/install {"user":…,"backupFirst":true,"wait":false}` → `{"ok":true,"job":{"type":"save-install",…}}` (download → sha256 → engine import).
+`compat` is a flat string: `match` (installed; `versionCompare` ≤ 0, i.e. the save was made on this version or an older one),
+`update_game` (the save is newer than the installed game, `versionCompare` 1), `unknown` (no version on the save or the
+console) or `not_installed` — then `otherRegion:true` + `installedTitleId` when another region of the same game is
+installed. `compatText` is the English sentence; the web UI maps these fields to its localized badges (`ok`, `newer`,
+`update`, `region`, `notInstalled`, `unknown`) in `47-saves.js` `normalize()`. `backend` is the active backend kind
+(`supabase` | `github` | `none`); `siteUpload:true` + `backendName` say the database backend (the XenoKing site) is on,
+so the share wizard offers and preselects the `site` upload host. `backendError` (only when set) says why Settings → Saves →
+Backend is not used (no URL or anon key, not `https://`, a bad key): the console then lists the GitHub index only — it
+never falls back to the published site for a backend the user chose. Database rows (`id` `sb:<uuid>`) take `name` from the
+first sentence of the site's `notes` (≤ ~80 characters, `"<game> save"` without notes), `description` = the notes,
+`author` = `shared_by`, `title` = `game`, `source` `garlic` (a `garlic:<id>` row) or `supabase` (a bucket object),
+`sourceName` (`"XenoKing"`), `storagePath` / `garlicId`, `coverPath` and `cover:"/api/saves/store/sb:<uuid>/cover"`
+when the row has a `cover_path`. The index is rebuilt on its own thread at most once an hour (or on `refresh=1`): the first request (and
+`refresh=1`) waits up to 15 s for it, later ones get the previous copy while it refreshes; `building:true` means a
+rebuild is still running (an empty list then means "ask again in a few seconds"). A copy built for another backend
+(published file or settings changed) is never served: the request waits for the rebuild like a first request.
+### `POST /api/saves/store/{id}/install {"user":…,"backupFirst":true,"wait":false}` → `{"ok":true,"job":{"type":"save-install",…}}` (Garlic check → download → sha256 → engine import). Without the native tier the job first runs `cx_garlic_ensure()` (starting Garlic Save Manager if needed) and fails before downloading with `errorCode:"garlic_unavailable"` and a user-facing `error` when Garlic cannot be reached. Other job error codes: `title_running` (checked before anything is downloaded), `download_failed`, `cancelled`, `io`, and the import codes (`engine_unavailable`, `title_mismatch`, `invalid_save`, `unsupported`, `import_failed`). A done job's `result` carries `tier`, `style`, `files`, `bytes`, `preBackup`, `accountId` and, when Garlic reported a caveat, `note`; the upload progress of each file shows in the job's `message`.
 ### `POST /api/saves/store/{id}/download {"user":…}` → `{"ok":true,"job":{"type":"save-download",…}}` (ZIP only, to `<root>/xeno-store/saves/community/`).
-### `GET /api/saves/store/{id}/cover` → `302` to the cover (signed Supabase URL or catalog art).
-### `POST /api/saves/export {"user":…,"titleId":"PPSA04029","dirName":"SAVEDATA00"}` → `{"ok":true,"zipPath":"…","size":…,"sha256":"…","tier":"native","accountIdStripped":true,"manifest":{…xeno-save.json…},"shareable":true}`.
-### `POST /api/saves/upload {"zipPath":"…","host":"pixeldrain"}` → `{"ok":true,"url":"https://pixeldrain.com/api/file/abc","sha256":"…","size":…,"host":"pixeldrain"}`.
-### `POST /api/saves/submit {"titleId":"…","name":"…","category":"starter","description":"…","tags":[…],"nickname":"…","url":"…","sha256":"…","size":…,"gameVersion":"…","region":"…"}` → `{"ok":true,"method":"github-issue","issueUrl":"https://github.com/XENOKING123/XENO-STORE/issues/new?template=save-submission.md&title=…&body=…","qr":"<svg…>","submission":{…},"note":"…"}` (or `method:"custom"` / `"supabase"`).
+Database rows (`sb:<uuid>`) download through `POST {url}/functions/v1/garlic-savedb {"action":"download","id":<garlic_id>}` (Garlic rows; a non-zip answer fails the job with the site's reason, e.g. "XenoKing could not fetch this save from Garlic: …") or a 5-minute signed URL of the bucket object. The XenoKing site has no download counter and none is called; a backend whose published config names one (`"downloadCounter":"increment_downloads"`), or a Settings backend recognised as the `backend/supabase` template, gets `POST {url}/rest/v1/rpc/<name> {"id":"<uuid>"}` after a verified download or install. GitHub index rows have no counter.
+### `GET /api/saves/store/{id}/cover` → `302` to the cover (a signed URL of the row's `cover_path`, reused for ~50 min, or catalog art); `404` without one.
+### `POST /api/saves/export {"user":…,"titleId":"PPSA04029","dirName":"SAVEDATA00"}` → `{"ok":true,"zipPath":"…","size":…,"sha256":"…","files":5,"format":"xeno-save-zip","tier":"native","accountIdStripped":true,"accountId":"removed","manifest":{…xeno-save.json…},"shareable":true,"titleId":"…","dirName":"…","gameVersion":"…","gameId":"…","title":"…","cover":"…","region":"…"}`.
+The decrypted export comes from the native tier, else from Garlic Save Manager (`tier:"garlic"`; started if needed, then
+repacked: sealed keys and raw images dropped, `ACCOUNT_ID` zeroed, manifest written). `accountId` is `removed` (zeroed in
+`sce_sys/param.sfo`) or `none` (no `param.sfo`). When no decrypted export is possible nothing is kept:
+`{"ok":true,"shareable":false,"zipPath":"","format":"","tier":"raw","accountIdStripped":false,"reason":"needs_garlic","detail":"…",…}`
+with `reason` ∈ `needs_garlic` | `account_id` (the id could not be removed) | `no_save`. Errors: `export_failed` 422.
+### `POST /api/saves/upload {"zipPath":"…","host":"site"}` → `{"ok":true,"url":"https://cotniitpyocsfqzywscl.supabase.co/storage/v1/object/ps5-saves/xeno/20261015-0123456789abcdef.zip","storagePath":"xeno/20261015-0123456789abcdef.zip","sha256":"…","size":…,"host":"site","name":"…"}`.
+`host` ∈ `site` | `pixeldrain` | `catbox` | `custom`; without it `settings.saves.uploadHost` (default `site`, which means
+pixeldrain when no database backend is on). `site` uploads into the backend's bucket as `xeno/<yyyymmdd>-<16 hex>.zip`
+(`Content-Type: application/zip`, `x-upsert: false`); the other hosts answer `{url, sha256, size, host}` without
+`storagePath`. Errors: `forbidden` 403 (not below `<drive>/xeno-store/saves/`), `not_shareable` 422 (raw image, sealed
+key, `xeno-backup.json`, a `sameConsoleOnly` / non-`xeno-save-zip` / `accountIdStripped:false` manifest, or a `param.sfo`
+that still carries an account id — checked before anything is uploaded), `site_unavailable` 422 (`host:"site"` without
+the database backend), `upload_failed` 422 (with the host's reason, e.g. "XenoKing refused the upload (HTTP 413: …)").
+### `POST /api/saves/submit {"titleId":"…","title":"…","name":"…","category":"starter","description":"…","tags":[…],"nickname":"…","url":"…","storagePath":"xeno/…zip","sha256":"…","size":…,"gameVersion":"…","region":"…"}`
+With the database backend and a `storagePath` from a `site` upload: one insert into `ps5_save_collection` with exactly
+`title_id, game` (the title, or the title id), `shared_by` (the nickname), `notes` (`"<name> — <description>"` within 300
+characters, tags as `#tag` words when they fit), `file_path` (= `storagePath`), `file_name` (`<TITLEID>_<Title_with_underscores>.zip`,
+ASCII) and `file_size`, then the index is rebuilt (≤ 15 s) so the save is listed at once →
+`{"ok":true,"method":"site","status":"published","backend":"XenoKing","backendName":"XenoKing","id":"<uuid>","storeId":"sb:<uuid>","storagePath":"…","submission":{…},"note":"Shared — the save is live on XenoKing and in the store."}`
+(no `issueUrl`). Without the backend, or when the site refuses the row or the zip was not uploaded there (the reason in
+`siteError`, also logged) → `settings.saves.submitEndpoint` when set (POST of the `submission` block; 2xx → `method:"custom"`),
+else `{"ok":true,"method":"github","status":"pending","issueUrl":"https://github.com/XENOKING123/XENO-STORE/issues/new?template=save-submission.md&labels=save-submission&title=…&body=…","qr":"…same URL…","submission":{…},"note":"…"}`.
+Neither ever carries a link into the site's private bucket (it opens with the anon key only): when `url` is the site's
+object, the export named by `zipPath` is uploaded again to a public host first (`settings.saves.uploadHost`, pixeldrain
+when that is `site`; same checks as `POST /api/saves/upload`) and the reply adds `publicUrl` + `publicHost`; without a
+`zipPath`, or when that upload fails → 422 `site_insert_failed` (the site's reason and the upload's; nothing handed off,
+the wizard's Submit retries). A template backend (`"moderated":true` in the published file, or recognised for a
+Settings backend by one `GET …?select=status&limit=1`) gets `status:"pending"`, `source:"xeno"` in the insert and answers
+`method:"site"`, `status:"pending"`. Submit loads the published `saves-backend.json` itself when this console never did
+(as `POST /api/saves/upload` does), so it works before any listing; the web client allows it 10 minutes.
 ### `GET /api/saves/installed-version?titleId=PPSA04029` → `{"ok":true,"titleId":"PPSA04029","installed":true,"version":"01.004.000","source":"appmeta"}`.
+### `GET /api/saves/garlic` → `{"ok":true,"garlic":{"available":true,"running":false,"busy":false,"port":8082,"canStart":true,"loaderAvailable":true,"version":"1.7","elfPath":"/data/…/garlic-savemgr.elf","source":"…","detail":"…"},"engine":"raw"}` (`cx_garlic_status_json()`; `available` = running or startable on demand; `version`, `elfPath`, `source` only when known). Registered by `cx_savestore_init()`.
+### `POST /api/saves/garlic/start {"wait":false}` → `{"ok":true,"job":{"type":"garlic-start","state":"running",…}}`: a console job that runs `cx_garlic_ensure(1)` (a Garlic ELF found on the console, or the pinned upstream release downloaded and sha256-checked, sent to the ELF loader on :9021, then polled up to 20 s). A second call while one runs returns the same job. Done → `result` holds the `garlic` status; failed → `errorCode:"garlic_unavailable"` with the reason in `error`. `wait:true` waits up to 60 s.
 
 ---
 

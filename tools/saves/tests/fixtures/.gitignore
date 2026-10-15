@@ -1,0 +1,2 @@
+# Written by make_fixtures.py (test_intake.py writes its own copies to a temp directory).
+*.zip

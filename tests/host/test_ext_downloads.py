@@ -533,7 +533,21 @@ class ExtDownloadTests(unittest.TestCase):
 
     # ------------------------------------------------------------ summary shape
     def test_11_queue_summary_phase2_shape(self):
+        # the pill names rest mode only while nothing downloads: let what earlier tests started settle first
+        # (on a loaded machine a job can still be running here), cancelling whatever is still busy after 30 s
+        busy = ("queued", "connecting", "downloading", "verifying", "extracting", "installing")
         st, q = self.srv.api("GET", "/api/queue")
+        for attempt in range(2):
+            deadline = time.time() + 30
+            while (q["summary"]["keepAwake"] or q["summary"]["speed"]) and time.time() < deadline:
+                time.sleep(0.2)
+                st, q = self.srv.api("GET", "/api/queue")
+            if not q["summary"]["keepAwake"] and not q["summary"]["speed"]:
+                break
+            if attempt == 0:
+                for j in q["jobs"]:
+                    if j["state"] in busy:
+                        self.srv.action(j["id"], "cancel", {"deleteFiles": True})
         s = q["summary"]
         for k in ("restMode", "schedule", "groups", "lifetime", "extracting", "copying"):
             self.assertIn(k, s)

@@ -54,7 +54,7 @@
   }
 
   /* ---------- readiness checklist ---------- */
-  var CHECK_ICON = { shadowmount: 'zap', dpi: 'box', etahen: 'box', internet: 'wifi', drive: 'hdd', space: 'hdd', firmware: 'shield', 'payload-manager': 'qr' };
+  var CHECK_ICON = { shadowmount: 'zap', dpi: 'box', etahen: 'box', garlic: 'shield', internet: 'wifi', drive: 'hdd', space: 'hdd', firmware: 'shield', 'payload-manager': 'qr' };
   function runCheck(force) {
     if (data.checkBusy) return;
     data.checkBusy = true;
@@ -84,7 +84,12 @@
       if (c.detail) main.appendChild(h('div.desc', { text: c.detail }));
       if (!c.ok && c.fix) main.appendChild(h('div.fixline', [ui.svg('info'), h('span', { text: c.fix })]));
       row.appendChild(main);
-      if (!c.ok && c.action === 'launch' && c.actionId) {
+      if (!c.ok && c.id === 'garlic' && c.action && XS.saves && XS.saves.startGarlic) {
+        /* the saves engine's own start: finds or downloads the ELF, never a second copy, waits until it answers */
+        var bg = h('button.btn.sm.primary', { nav: 'check-garlic-start', html: U.icon(c.action === 'launch' ? 'play' : 'download') + '<span>' + U.escapeHtml(c.action === 'launch' ? t('saves.garlic.start') : t('saves.garlic.install')) + '</span>' });
+        bg.addEventListener('click', function (e) { e.stopPropagation(); XS.saves.startGarlic(bg).then(function () { runCheck(true); }); });
+        row.appendChild(bg);
+      } else if (!c.ok && c.action === 'launch' && c.actionId) {
         var b = h('button.btn.sm.primary', { nav: 'check-' + c.id + '-launch', html: U.icon('play') + '<span>' + U.escapeHtml(c.id === 'shadowmount' ? t('setup.launchShadow') : t('companions.launch')) + '</span>' });
         b.addEventListener('click', function (e) { e.stopPropagation(); launchPayload({ id: c.actionId, name: c.id === 'shadowmount' ? 'ShadowMountPlus' : c.actionId }, b).then(function () { setTimeout(function () { runCheck(true); }, 2500); }); });
         row.appendChild(b);
@@ -154,9 +159,12 @@
       var row = h('div.lrow.payload-row' + (p.installed ? '.on' : ''), { nav: 'pl-' + p.id, data: { hints: 'select' } });
       row.appendChild(h('span.ic', { html: U.icon(kindIcon(p)) }));
       var main = h('div.main', [h('div.name', [p.name, p.version ? h('span.dim.small', { text: 'v' + p.version, style: { marginInlineStart: '8px', marginTop: 0 } }) : null])]);
+      var unavailable = p.available === false;
       if (p.notes) main.appendChild(h('div.desc', { text: p.notes }));
+      if (unavailable && p.unavailableReason) main.appendChild(h('div.desc', { text: p.unavailableReason }));
       var tags = h('div.tags');
       if (p.installed) tags.appendChild(h('span.chip.sm.good', { text: t('companions.installedLocal') + (p.installedVersion ? ' · v' + p.installedVersion : '') }));
+      else if (unavailable) tags.appendChild(h('span.chip.sm.warn', { text: t('companions.unavailable') }));
       else tags.appendChild(h('span.chip.sm', { text: t('companions.notDownloaded') }));
       if (p.updateAvailable) tags.appendChild(h('span.chip.sm.warn', { text: t('lib2.updateAvailable', { v: p.version }) }));
       if (p.size) tags.appendChild(h('span.chip.sm', { text: U.fmtBytes(p.size) }));
@@ -164,9 +172,12 @@
       if (p.kind) tags.appendChild(h('span.chip.sm', { text: p.kind }));
       main.appendChild(tags);
       row.appendChild(main);
-      var act = h('button.btn.sm' + (p.installed && !p.updateAvailable ? '' : '.primary'), { nav: 'pl-' + p.id + '-' + (p.installed && !p.updateAvailable ? 'launch' : 'install'), html: U.icon(p.installed && !p.updateAvailable ? 'play' : 'download') + '<span>' + U.escapeHtml(p.installed && !p.updateAvailable ? t('companions.launch') : (p.updateAvailable ? t('lib2.updateBtn') : t('companions.install'))) + '</span>' });
-      act.addEventListener('click', function (e) { e.stopPropagation(); payloadAction(p, act); });
-      row.appendChild(act);
+      if (!unavailable || p.installed) {
+        var launchOnly = p.installed && (!p.updateAvailable || unavailable);
+        var act = h('button.btn.sm' + (launchOnly ? '' : '.primary'), { nav: 'pl-' + p.id + '-' + (launchOnly ? 'launch' : 'install'), html: U.icon(launchOnly ? 'play' : 'download') + '<span>' + U.escapeHtml(launchOnly ? t('companions.launch') : (p.updateAvailable ? t('lib2.updateBtn') : t('companions.install'))) + '</span>' });
+        act.addEventListener('click', function (e) { e.stopPropagation(); payloadAction(p, act); });
+        row.appendChild(act);
+      }
       var more = h('button.btn.sm.icon-only', { nav: 'pl-' + p.id + '-more', html: U.icon('more'), 'aria-label': t('common.more') });
       more.addEventListener('click', function (e) { e.stopPropagation(); payloadMenu(more, p); });
       row.appendChild(more);
@@ -180,12 +191,12 @@
   function payloadMenu(anchor, p) {
     var items = [];
     if (p.installed) items.push({ label: t('companions.launch'), sub: t('companions.launchSub', { port: (data.payloads && data.payloads.loaderPort) || 9021 }), icon: 'play', onSelect: function () { launchPayload(p); } });
-    items.push({ label: p.installed ? t('companions.reinstall') : t('companions.install'), sub: p.url ? cb.hostOf(p.url) : '', icon: 'download', onSelect: function () { installPayload(p); } });
+    if (p.available !== false) items.push({ label: p.installed ? t('companions.reinstall') : t('companions.install'), sub: p.url ? cb.hostOf(p.url) : '', icon: 'download', onSelect: function () { installPayload(p); } });
     if (p.homepage) items.push({ label: t('game2.openInBrowser'), sub: cb.hostOf(p.homepage), icon: 'external', onSelect: function () { U.openExternal(p.homepage); } });
     if (p.localPath) items.push({ label: t('lib.copyPath'), icon: 'copy', onSelect: function () { U.copyText(p.localPath).then(function (ok) { ui.toast({ cls: ok ? 'good' : 'bad', title: ok ? t('toast.copied') : t('toast.copyFailed') }); }); } });
     ui.menu(anchor, items, { title: p.name });
   }
-  function payloadAction(p, btn) { if (p.installed && !p.updateAvailable) return launchPayload(p, btn); return installPayload(p, btn); }
+  function payloadAction(p, btn) { if (p.installed && (!p.updateAvailable || p.available === false)) return launchPayload(p, btn); return installPayload(p, btn); }
   function installPayload(p, btn) {
     if (btn) btn.classList.add('busy');
     return cb.api.payloadInstall(p.id).then(function (r) {

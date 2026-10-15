@@ -1,0 +1,51 @@
+name: site-check
+
+# One-shot live check of the Save Data Store's backend, the owner's XenoKing
+# site (updates/saves-backend.json): tools/saves/site_check.py lists the
+# community collection (at least 50 rows with the columns consoles rely on)
+# and downloads ONE small Garlic save (id 94, about 3 KB) through the site's
+# garlic-savedb function, checking it is a zip with sce_sys/param.sfo.
+# Read only — no upload, no insert.
+#
+# Deliberately NOT part of the regular build, so the owner's site is not hit
+# on every push: run it from the Actions tab (workflow_dispatch) or push to a
+# branch named site-check.
+
+on:
+  workflow_dispatch:
+    inputs:
+      garlic_id:
+        description: Garlic save to download (a small one)
+        required: false
+        default: "94"
+      min_rows:
+        description: Minimum number of rows expected
+        required: false
+        default: "50"
+  push:
+    branches: [site-check]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-check
+  cancel-in-progress: true
+
+jobs:
+  site:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check the XenoKing site (read only)
+        env:
+          GARLIC_ID: ${{ github.event.inputs.garlic_id || '94' }}
+          MIN_ROWS: ${{ github.event.inputs.min_rows || '50' }}
+        run: python3 -I tools/saves/site_check.py --backend updates/saves-backend.json --garlic-id "$GARLIC_ID" --min-rows "$MIN_ROWS"

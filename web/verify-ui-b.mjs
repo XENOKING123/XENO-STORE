@@ -8,9 +8,9 @@
  *      backup jobs, ZIP extraction, scheduled row + Start now, paused set + Retry), Library (disk analyzer + clean-up,
  *      Play now, uninstall with the token flow, copy-to-drive sheet, installed homebrew), Updates center (one-tap
  *      download+install), Saves hub (keyboard: Back up → progress → toast; restore; profile transfer), Settings
- *      (Setup via keyboard + run check + launch companion + ghost cleaner, Debrid connect, Accounts activate, Saves,
- *      Pair/mDNS, Uninstall sheet open/cancel + the final screen), command palette, shortcuts overlay, large text +
- *      high contrast, controller remap legend
+ *      (Setup via keyboard + run check + launch companion + start Garlic + unavailable companion + ghost cleaner,
+ *      Debrid connect, Accounts activate, Saves, Pair/mDNS, Uninstall sheet open/cancel + the final screen), command
+ *      palette, shortcuts overlay, large text + high contrast, controller remap legend
  *   3. at 390×844: Downloads and Settings
  *   4. fails on any console error / uncaught exception, any failed or ≥ 400 request, missing i18n keys
  *
@@ -264,6 +264,7 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await expect(async () => page.evaluate(() => /Beta/.test(document.querySelector('.sheet .sheet-head').textContent)), 'transfer sheet should carry the Beta label');
     await page.click('.sheet [data-nav-id="ts-go"]');
     await waitToast(page, 'transferred');
+    await waitToast(page, 're-signed for');                                       // re-signed through Garlic Save Manager
     /* back up all */
     await page.click('[data-nav-id="sh-backup-all"]');
     await confirmDialog(page);
@@ -293,6 +294,17 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await page.click('#scr-setup [data-nav-id="check-shadowmount-launch"]');
     await waitToast(page, 'sent to the loader');
     await page.waitForFunction(() => { const r = document.querySelector('#scr-setup [data-nav-id="check-shadowmount"]'); return r && r.classList.contains('ok'); }, null, { timeout: 12000 }).catch(() => fail('after launching ShadowMountPlus the re-check should pass'));
+    /* Garlic Save Manager: labelled check (not the raw id) with the saves engine's own start; a companion with no
+       upstream download is listed without a Download button */
+    await expect(async () => page.evaluate(() => { const r = document.querySelector('#scr-setup [data-nav-id="check-garlic"] .name'); return !!r && /Garlic Save Manager/.test(r.textContent) && !/^garlic/.test(r.textContent); }), 'the Garlic check should show its label, not the raw id');
+    await expect(async () => !(await page.$('#scr-setup [data-nav-id="pl-np-fake-signout-install"]')) && !!(await page.$('#scr-setup [data-nav-id="pl-np-fake-signout"] .chip.warn')), 'an unavailable companion must be marked and must not offer a download');
+    /* the profile transfer above started Garlic on demand: stop it in the mock, re-check, then start it from here */
+    await page.evaluate(() => fetch('/api/__mock/garlic', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'startable' }) }));
+    await page.evaluate(() => document.querySelector('[data-nav-id="setup-run"]').click());
+    await page.waitForSelector('#scr-setup [data-nav-id="check-garlic-start"]', { timeout: 10000 }).catch(() => fail('a stopped Garlic Save Manager should offer Start on its check'));
+    await page.click('#scr-setup [data-nav-id="check-garlic-start"]');
+    await waitToast(page, 'Garlic Save Manager is running', 15000);
+    await page.waitForFunction(() => { const r = document.querySelector('#scr-setup [data-nav-id="check-garlic"]'); return r && r.classList.contains('ok'); }, null, { timeout: 12000 }).catch(() => fail('after starting Garlic Save Manager the re-check should pass'));
     await page.click('#scr-setup [data-nav-id="pl-etahen-dpi-helper-install"]');
     await waitToast(page, 'ready', 20000);
     await page.evaluate(() => { const r = document.querySelector('#scr-setup .ghost-row'); if (r) r.scrollIntoView(); });

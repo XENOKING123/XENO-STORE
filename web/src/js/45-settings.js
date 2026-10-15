@@ -349,8 +349,8 @@
     /* upload */
     sec.appendChild(h('div.group-title', { text: t('settings2.upload') }));
     var up = h('div.list');
-    var host = sget('saves.uploadHost', 'pixeldrain') || 'pixeldrain';
-    var HOSTS = [['pixeldrain', 'pixeldrain', t('saves.hostPixeldrain')], ['catbox', 'catbox.moe', t('saves.hostCatbox')], ['custom', t('saves.hostCustom'), t('settings2.uploadCustomHint')]];
+    var host = sget('saves.uploadHost', 'site') || 'site';
+    var HOSTS = [['site', t('settings2.uploadSite'), t('settings2.uploadSiteHint')], ['pixeldrain', 'pixeldrain', t('saves.hostPixeldrain')], ['catbox', 'catbox.moe', t('saves.hostCatbox')], ['custom', t('saves.hostCustom'), t('settings2.uploadCustomHint')]];
     var hostLabel = function (id) { for (var i = 0; i < HOSTS.length; i++) if (HOSTS[i][0] === id) return HOSTS[i][1]; return id; };
     up.appendChild(ui.valueRow({ id: 'sv-host', icon: 'upload', label: t('settings2.uploadHost'), desc: t('settings2.uploadHostHint'), value: hostLabel(host), onClick: function (row) {
       ui.menu(row, HOSTS.map(function (x) { return { label: x[1], sub: x[2], checked: host === x[0], onSelect: function () { sset('saves.uploadHost', x[0], function () { rerenderGroup('saves'); }); } }; }), { title: t('settings2.uploadHost') });

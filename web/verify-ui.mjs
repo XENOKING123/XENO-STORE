@@ -251,7 +251,9 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     const c1 = await page.$eval('[data-gal-counter]', (e) => e.textContent);
     await page.keyboard.press('ArrowRight'); await sleep(450);
     const c2 = await page.$eval('[data-gal-counter]', (e) => e.textContent);
-    await expect(async () => c1 !== c2 && /^2 \/ \d+$/.test(c2), `ArrowRight should flip the gallery (${c1} → ${c2})`);
+    /* the gallery opens on the focused thumbnail (not necessarily the first): ArrowRight shows the next image */
+    const galNext = (c) => { const m = /^(\d+) \/ (\d+)$/.exec(c || ''); return m ? (Number(m[1]) % Number(m[2]) + 1) + ' / ' + m[2] : ''; };
+    await expect(async () => !!galNext(c1) && c2 === galNext(c1), `ArrowRight should flip the gallery (${c1} → ${c2})`);
     await page.keyboard.press('q'); await sleep(300);                                   // Q = L1 → previous
     await expect(async () => (await page.$eval('[data-gal-counter]', (e) => e.textContent)) === c1, 'L1 (q) should flip back');
     await page.keyboard.press('ArrowRight'); await sleep(500);
@@ -327,7 +329,7 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
 
     /* ================= game Saves tab + Install flow (keyboard) ================= */
     const store = await api('/api/saves/store');
-    const okSave = store.saves.find((s) => s.compat.status === 'ok');
+    const okSave = store.saves.find((s) => s.compat === 'match' && s.versionCompare === 0);   // the console's flat compat fields
     await expect(async () => !!okSave, 'mock has no compatible community save');
     await page.evaluate((id) => XS.router.go('game', { id }), okSave.gameId);
     await page.waitForSelector('#scr-game.active [data-nav-id="gp-tab-saves"]');
@@ -402,6 +404,8 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     await shot(page, 'tv-saves-upload-4-export.png');
     await page.click('[data-nav-id="wz-next"]');
     await page.waitForSelector('.sheet [data-nav-id="wz-host-0"]');
+    /* the console's backend is the XenoKing save site: it is the first host and picked by default */
+    await expect(async () => page.evaluate(() => { const b = document.querySelector('.sheet [data-nav-id="wz-host-0"]'); return !!b && b.classList.contains('on') && /XenoKing/.test(b.textContent); }), 'upload host should default to the XenoKing site');
     await page.click('[data-nav-id="wz-next"]');                                         // Upload
     await page.waitForSelector('.sheet .bar.striped', { timeout: 4000 }).catch(() => fail('upload progress bar missing'));
     await page.waitForFunction(() => /Uploaded/.test(document.querySelector('.sheet-body').textContent), null, { timeout: 15000 });
@@ -418,14 +422,47 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     await shot(page, 'tv-saves-upload-6-describe.png');
     await expect(async () => page.evaluate(() => !document.querySelector('.sheet [data-next]').hasAttribute('disabled')), 'Submit should enable once category, name and nickname are set');
     await page.click('[data-nav-id="wz-next"]');                                         // Submit
-    await page.waitForSelector('.sheet [data-nav-id="wz-open-issue"]', { timeout: 10000 });
-    await expect(async () => !!(await page.$('.sheet .qr svg')), 'submission QR missing');
+    await page.waitForSelector('.sheet [data-done]', { timeout: 10000 });
+    await expect(async () => page.evaluate(() => { const p = document.querySelector('.sheet [data-done]'); return p.getAttribute('data-done') === 'site' && /live on XenoKing and in the store/.test(p.textContent); }), 'a site share should say it is live on XenoKing and in the store');
+    await expect(async () => !(await page.$('.sheet .qr svg')) && !(await page.$('.sheet [data-nav-id="wz-open-issue"]')), 'a site share must not show the GitHub QR / issue hand-off');
     await sleep(300);
     await shot(page, 'tv-saves-upload-7-done.png');
     await expect(async () => (await api('/api/settings')).saves && (await api('/api/settings')).saves.nickname === 'xenoking', 'nickname should be remembered in settings.saves.nickname');
     await page.click('[data-nav-id="wz-done"]');
     await noLayer(page);
     note('upload wizard OK');
+    /* second pass: pixeldrain instead of the site → the GitHub hand-off (fallback note with the site's reason, QR, Open issue) */
+    await page.click('[data-nav-id="sv-upload"]');
+    await page.waitForSelector('.sheet [data-nav-id="wz-user-0"]', { timeout: 6000 });
+    await page.click('[data-nav-id="wz-next"]');
+    await page.waitForSelector('.sheet [data-nav-id="wz-title-0"]', { timeout: 8000 });
+    await page.click('[data-nav-id="wz-title-0"]');
+    await page.click('[data-nav-id="wz-next"]');
+    await page.waitForSelector('.sheet [data-nav-id="wz-dir-0"]');
+    await page.click('[data-nav-id="wz-next"]');                                         // Export
+    await page.waitForFunction(() => { const b = document.querySelector('.sheet [data-next]'); return b && !b.hasAttribute('disabled'); }, null, { timeout: 10000 });
+    await page.click('[data-nav-id="wz-next"]');
+    await page.waitForSelector('.sheet [data-nav-id="wz-host-1"]');
+    await page.click('[data-nav-id="wz-host-1"]');
+    await expect(async () => page.evaluate(() => { const b = document.querySelector('.sheet [data-nav-id="wz-host-1"]'); return b.classList.contains('on') && /pixeldrain/.test(b.textContent); }), 'pixeldrain should be selectable in the wizard');
+    await page.click('[data-nav-id="wz-next"]');                                         // Upload
+    await page.waitForFunction(() => /Uploaded/.test(document.querySelector('.sheet-body').textContent), null, { timeout: 15000 });
+    await expect(async () => page.evaluate(() => /pixeldrain\.com/.test(document.querySelector('.sheet-body').textContent)), 'the pixeldrain link should be shown after the upload');
+    await page.click('[data-nav-id="wz-next"]');
+    await page.waitForSelector('.sheet [data-nav-id="wz-cat-checkpoint"]');
+    await page.click('[data-nav-id="wz-cat-checkpoint"]');
+    await page.fill('[data-nav-id="wz-name"]', 'Before the last boss');
+    await page.fill('[data-nav-id="wz-nick"]', 'xenoking');
+    await page.click('[data-nav-id="wz-next"]');                                         // Submit
+    await page.waitForSelector('.sheet [data-done]', { timeout: 10000 });
+    await expect(async () => page.evaluate(() => document.querySelector('.sheet [data-done]').getAttribute('data-done') === 'github'), 'a share outside the site should end with the GitHub hand-off');
+    await expect(async () => page.evaluate(() => { const p = document.querySelector('.sheet [data-site-fallback]'); return !!p && /XenoKing did not take this save/.test(p.textContent) && /not uploaded to XenoKing/.test(p.textContent); }), 'the GitHub hand-off should say why the site did not take the save');
+    await expect(async () => !!(await page.$('.sheet .qr svg')) && !!(await page.$('.sheet [data-nav-id="wz-open-issue"]')) && !!(await page.$('.sheet [data-nav-id="wz-copy"]')), 'the GitHub hand-off needs its QR, Open issue and Copy buttons');
+    await sleep(300);
+    await shot(page, 'tv-saves-upload-8-github.png');
+    await page.click('[data-nav-id="wz-done"]');
+    await noLayer(page);
+    note('upload wizard GitHub hand-off OK');
 
     /* ================= Homebrew tab + app page + install ================= */
     await page.click('[data-nav-id="tab:homebrew"]');

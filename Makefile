@@ -5,7 +5,8 @@
 #                 CATALOG_FLAGS=--force rebuilds it from the snapshots anyway)
 #   make assets   tools/gen_assets.py            -> src/assets.h
 #   make host     host binary build/host/xeno-store (-DXENO_HOST=1, OpenSSL if found)
-#   make test     host build + tests/host/run.sh
+#   make test     host build + tests/host/run.sh + launcher-test + saves-test
+#   make saves-test  tools/saves/tests (save submission intake; the tests write their own fixtures)
 #   make ps5      xeno-store.elf (needs PS5_PAYLOAD_SDK)
 #   make eboot    app/native-launcher/build.sh    -> app/dist/eboot.bin + app/dist/sce_module/libc.prx
 #                 (the Games-row launcher as a native app; fetches its own pinned SDK v0.42)
@@ -60,7 +61,7 @@ HOST_BIN  := $(BUILD_DIR)/host/xeno-store
 PS5_LIBS := -Wl,--no-as-needed -lSceSystemService -lSceUserService -lSceIpmi -lSceAppInstUtil -lSceNotification -lkernel_sys
 ELF := xeno-store.elf
 
-.PHONY: all web catalog assets host test ps5 ps5-check pkg eboot eboot-raw launcher-test ffpkg desktop launcher clean distclean
+.PHONY: all web catalog assets host test saves-test ps5 ps5-check pkg eboot eboot-raw launcher-test ffpkg desktop launcher clean distclean
 
 all: web catalog assets ps5 eboot ffpkg
 
@@ -96,8 +97,12 @@ $(BUILD_DIR)/host/%.o: $(SRC_DIR)/%.c $(HEADERS) $(ASSETS)
 	@mkdir -p $(dir $@)
 	$(HOST_CC) $(HOST_CFLAGS) -c -o $@ $<
 
-test: host launcher-test
+test: host launcher-test saves-test
 	tests/host/run.sh
+
+# The save submission intake (tools/saves/intake.py, run by saves-intake.yml): stdlib only.
+saves-test:
+	$(PYTHON) -I -m unittest discover -s tools/saves/tests
 
 # The native launcher's logic, built for this machine and run against a fake store and a fake
 # ELF loader (the 30 s give-up case is left to the full run: app/native-launcher/tests/run-host-test.py).

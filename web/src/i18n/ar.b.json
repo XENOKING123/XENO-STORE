@@ -207,13 +207,15 @@
     "restoreGo": "استعادة الآن",
     "restored": "استُعيد {title}",
     "preBackupMade": "صُنعت نسخة احتياطية قبل الاستعادة",
-    "transferBetaText": "نفس الجهاز فقط. يُنسخ مجلّد العنوان كاملًا (الصور + sce_sys) إلى الملف الشخصي الآخر؛ ويبقى المفتاح المختوم صالحًا لأن كلا الملفين الشخصيين على هذا الجهاز.",
+    "transferBetaText": "نفس الجهاز فقط. يُعاد توقيع كل حفظ PS5 للملف الشخصي الآخر عبر Garlic Save Manager (يُشغَّل عند الحاجة). وبدونه يُنسخ مجلّد العنوان كما هو، وقد ترفض اللعبة الحفظ على الملف الشخصي الآخر.",
     "transferTo": "الملف الشخصي الوجهة",
     "transferMove": "نقل بدلًا من نسخ",
     "transferMoveHint": "يزيل الحفظية من الملف الشخصي المصدر بعد نسخ ناجح",
     "transferPreBackup": "إذا كان لدى الملف الشخصي الوجهة حفظية لهذا العنوان بالفعل، تُنسخ احتياطيًا أولًا.",
     "transferGo": "نقل",
-    "transferred": "نُقل {title} إلى {name}"
+    "transferred": "نُقل {title} إلى {name}",
+    "transferResigned": "أُعيد توقيعه لـ {name}",
+    "notResigned": "نُسخ دون إعادة توقيع"
   },
   "settings2": {
     "group": {
@@ -268,8 +270,8 @@
     "addFeedText": "الصق عنوان فهرس saves.json. يُدمج مع الموجز الافتراضي وتُزال التكرارات.",
     "backend": "قاعدة بيانات المجتمع",
     "backendKind": "الخلفية",
-    "backendKind_github": "فهرس GitHub",
-    "backendKind_githubHint": "بلا بنية تحتية: ملف saves.json المنشور مع إرسالات مشكلات GitHub",
+    "backendKind_github": "الافتراضي المنشور",
+    "backendKind_githubHint": "يتبع الخلفية المنشورة للمتجر: مجموعة حفظيات XenoKing مع فهرس GitHub",
     "backendKind_supabase": "Supabase",
     "backendKind_supabaseHint": "قاعدة بيانات ينشرها المالك مع حاوية تخزين (مفتاح anon عام، RLS)",
     "backendKind_none": "إيقاف",
@@ -286,11 +288,13 @@
     "upload": "المشاركة",
     "uploadHost": "مضيف الرفع",
     "uploadHostHint": "حيث تُرفع الحفظيات المُصدَّرة قبل إرسالها",
+    "uploadSite": "موقع XenoKing",
+    "uploadSiteHint": "مباشرةً إلى مجموعة XenoKing، متاحة فورًا (pixeldrain عندما لا يكون الموقع هو الخلفية)",
     "uploadCustomHint": "نقطة نهايتك الخاصة (ملف متعدّد الأجزاء ← {url})",
     "uploadEndpoint": "نقطة نهاية رفع مخصّصة",
     "uploadEndpointHint": "أرسِل POST للحقل متعدّد الأجزاء \"file\"، ويردّ بـ {url}",
     "submitEndpoint": "نقطة نهاية إرسال مخصّصة",
-    "submitEndpointHint": "أرسِل POST لبيانات JSON؛ فارغ = مشكلة GitHub مُعبّأة مسبقًا على هاتفك",
+    "submitEndpointHint": "عندما لا يكون موقع الحفظيات هو الخلفية: أرسِل POST لبيانات JSON؛ فارغ = مشكلة GitHub مُعبّأة مسبقًا على هاتفك",
     "submitGithub": "مشكلة GitHub",
     "mdns": "الاسم المحلي (mDNS)",
     "mdnsHint": "أجِب على xeno.local وxenostore.local على هذه الشبكة كي تفتح الهواتف المتجر دون عنوان IP",
@@ -335,7 +339,8 @@
       "drive": "القرص الافتراضي قابل للكتابة",
       "space": "المساحة الفارغة",
       "firmware": "الإصدار",
-      "payload-manager": "تشغيل Payload Manager تلقائيًا"
+      "payload-manager": "تشغيل Payload Manager تلقائيًا",
+      "garlic": "إعادة توقيع الحفظيات (Garlic Save Manager)"
     },
     "explain": {
       "shadowmount": "يركّب ShadowMountPlus صور exFAT/FFPFSC من homebrew/ ويعرضها على الشاشة الرئيسية. يطلب منه XENO STORE إعادة الفحص بعد تنزيل صورة؛ ولا يستبدله أبدًا.",
@@ -345,7 +350,8 @@
       "drive": "يجب أن يكون قرص التنزيل الافتراضي قابلًا للكتابة: ينشئ XENO STORE ملف اختبار صغيرًا هناك ويزيله.",
       "space": "أبقِ بضعة GB فارغة على القرص الافتراضي؛ ترفض قائمة الانتظار الملفات التي لا تتّسع.",
       "firmware": "يعرض إصدار الجهاز. يعتمد تثبيت FPKG على سلسلة ثغرات إصدارك.",
-      "payload-manager": "مع تشغيل Payload Manager تلقائيًا، يُحمَّل XENO STORE عند كل إقلاع ويحدّث نفسه من موجز XENOKING."
+      "payload-manager": "مع تشغيل Payload Manager تلقائيًا، يُحمَّل XENO STORE عند كل إقلاع ويحدّث نفسه من موجز XENOKING.",
+      "garlic": "يعيد Garlic Save Manager (من earthonion) توقيع الحفظيات المجتمعية لحسابك. اختياري: يشغّله XENO STORE عندما يحتاجه حفظ ما، من نسخة على الجهاز أو من إصدار المؤلف على GitHub (مع التحقق من SHA-256)، ولا يشغّل نسخة ثانية أبدًا."
     },
     "pmText": "امسح الرمز على هاتفك أو افتح العنوان، ثم أضفه كمصدر في Payload Manager ‏(itsPLK). يظهر XENO STORE وتحديثاته في قائمته.",
     "pmStep1": "افتح Payload Manager على الجهاز واختر ”إضافة مصدر“.",
@@ -458,6 +464,7 @@
     "emptyHint": "موجز المرافقات فارغ أو لم يُجلب بعد. حدّث الكتالوج في الإعدادات.",
     "installedLocal": "على الجهاز",
     "notDownloaded": "غير مُنزَّل",
+    "unavailable": "لا يتوفر تنزيل",
     "shaChecked": "مفحوص بـ SHA-256",
     "launch": "تشغيل",
     "install": "تنزيل",

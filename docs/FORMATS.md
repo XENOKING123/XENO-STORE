@@ -81,7 +81,8 @@ Console: `/data/xeno-store/` (host build: `./xeno-data/` or `--data DIR`).
 | `queue.json` | §5 below |
 | `stats.json` | lifetime download statistics (`/api/stats`) |
 | `catalog.json`, `catalog.meta.json` | refreshed catalog when its revision is newer than the embedded one, plus `{revision, fetchedAt, etag}` |
-| `feeds/featured.json`, `feeds/messages.json`, `feeds/companions.json`, `feeds/saves-backend.json` | cached owner feeds (refreshed every 6 h) |
+| `feeds/featured.json`, `feeds/messages.json`, `feeds/companions.json`, `feeds/saves-backend.json` | cached owner feeds (refreshed every 6 h; `saves-backend.json` also before a save listing when older than that) |
+| `feeds/saves-index-<hash>.json`, `feeds/saves-supabase-<hash>.json` | the save store's cached GitHub index(es) and database rows, one file per source URL (1 h) |
 | `enrich/<gameId>.json` | on-console Steam enrichment (30 days) |
 | `homebrew.json` | pkg-zone listing cache (7 days) |
 | `payloads/<id>.elf`, `payloads/installed.json` | companion payloads and `{<id>:{version, sha256, installedAt}}` |
@@ -122,7 +123,7 @@ Defaults (SPEC §9 + Phase 2):
             "companionsUrl":"https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/companions.json",
             "savesBackendUrl":"https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/saves-backend.json","lastCheck":0},
  "saves":{"backupRoot":"","autoBackup":true,"indexUrls":[],"backend":{"kind":"github","url":"","anonKey":"","bucket":"ps5-saves","garlicFunction":"garlic-savedb"},
-          "uploadHost":"pixeldrain","uploadEndpoint":"","submitEndpoint":"","nickname":""},
+          "uploadHost":"site","uploadEndpoint":"","submitEndpoint":"","nickname":""},
  "browse":{"presets":[{"name":"Small PS5 verified","filters":"{\"platform\":[\"PS5\"],\"verified\":true,\"size\":\"le20\"}","sort":"newest"}]},
  "notifications":{"toasts":true,"onComplete":true,"onFail":true,"onInstall":true},
  "updates":{"autoCheck":true,"feed":"https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/payloads.json","lastCheck":0},
@@ -191,20 +192,25 @@ Newest `ts` wins; each `id` is dismissible once per device; `texts` is a `{lang:
 
 ### `companions.json` — companion payload catalog
 ```json
-{"payloads":[{"id":"shadowmount-plus","name":"ShadowMountPlus","kind":"shadowmount","version":"1.03","filename":"ShadowMountPlus.elf",
-  "url":"https://github.com/…/ShadowMountPlus.elf","sha256":"<64 hex>","homepage":"https://…","notes":"…","size":0}]}
+{"payloads":[{"id":"shadowmount-plus","name":"ShadowMountPlus","kind":"shadowmount","version":"1.7-beta5fix1","filename":"shadowmountplus.elf",
+  "url":"https://github.com/drakmor/shadowMountPlus/releases/download/1.7-beta5fix1/shadowmountplus.elf","sha256":"<64 hex>","size":2498376,
+  "homepage":"https://github.com/drakmor/shadowMountPlus","license":"GPL-3.0","notes":"…"},
+ {"id":"np-fake-signout","name":"NP fake sign-out","kind":"np-signout","version":"","url":"","sha256":"",
+  "unavailable":true,"unavailableReason":"…","homepage":"https://github.com/earthonion/np-fake-signin","notes":"…"}]}
 ```
-`id` is `[a-z0-9-]` (derived from the name when absent), `url` must be `http(s)`, `sha256` is checked after download — a placeholder such as `FILLED-BY-OWNER` makes the install fail on purpose. `kind` drives the checklist actions (`shadowmount`, `dpi`, `kernel`, `np-signin`, `np-signout`, `dumper`, `saves`). Top-level `_notes` is ignored by the console.
+`id` is `[a-z0-9-]` (derived from the name when absent), `url` must be `http(s)` and is the author's own pinned release asset (XENO STORE never rehosts companion payloads; the console downloads them from the author's release), `sha256` is checked after download — a placeholder such as `FILLED-BY-OWNER` makes the install fail on purpose. `kind` drives the checklist actions (`shadowmount`, `dpi`, `kernel`, `np-signin`, `np-signout`, `dumper`, `saves`); the `saves` entry is the Garlic Save Manager release the console starts on demand. `unavailable:true` lists an entry with no upstream asset to pin (`url` may be empty): the console reports it with `"available":false` and `unavailableReason`, offers no download and refuses its install (`unavailable`). `license` is informational (omitted when the upstream repository states none). Top-level `_notes` is ignored by the console.
 
 ### `saves-backend.json` — Save Data Store backend
+The published file is the XenoKing site:
+```json
+{"kind":"supabase","name":"XenoKing","url":"https://cotniitpyocsfqzywscl.supabase.co","anonKey":"<the site's public anon key>",
+ "bucket":"ps5-saves","garlicFunction":"garlic-savedb"}
+```
+or, with no database at all,
 ```json
 {"kind":"github"}
 ```
-or
-```json
-{"kind":"supabase","url":"https://<ref>.supabase.co","anonKey":"<public anon key>","bucket":"ps5-saves","garlicFunction":"garlic-savedb"}
-```
-`github` (default) reads `updates/saves.json` and submits through a prefilled issue; `supabase` lists `public.ps5_save_collection`, downloads through signed URLs or the garlic function and uploads to the bucket. Settings → Saves → Backend overrides this file; `kind:"none"` disables the store. Extra keys (`_example`, `note`, `issueUrl`, …) are ignored by the console and exist for humans.
+`supabase` lists `public.ps5_save_collection` (only `GET …?select=*`; rows with a `status` other than `published` are skipped), downloads bucket rows through signed URLs and `garlic:<id>` rows through the garlic function, uploads shares into the bucket under `xeno/` and inserts one row per share with the table's base columns (`title_id, game, shared_by, notes, file_path, file_name, file_size`). `url` must be `https://` (a loopback `http://` mock is accepted by the host build only); the anon key is sent to that origin only and never across a redirect. Optional keys: `name` — the label consoles show ("On XenoKing", the upload host; the host name when absent); `moderated:true` — inserts also carry `status:"pending"`, `source:"xeno"` (template deployments whose RLS requires it; such shares wait for review); `downloadCounter:"<rpc>"` — the RPC called after a verified download (none by default); `garlicList:true` — also list rows live through the garlic function (off by default: a Garlic scrape per refresh). `github` reads `updates/saves.json` only and submits through a prefilled issue. The GitHub index is merged in either way. Consoles fetch this file with the catalog and, when their copy is missing or older than 6 h, before listing saves. Settings → Saves → Backend overrides it (`kind:"supabase"` + `url` + `anonKey`; `kind:"github"` follows this file; `kind:"none"` disables the store). An override that cannot be used (no URL or key, not `https://`) is never replaced by this file: the console lists the GitHub index only and reports `backendError`. A Settings backend has no flags; the console tells the template from the site with one read (`select=status`) and treats the template as `moderated` with `downloadCounter:"increment_downloads"`. Extra keys (`_example`, `note`, `issueUrl`, `indexUrl`, `submit`, `uploadHost`, …) are ignored by the console and exist for humans.
 
 ### `saves.json` — community saves index (owned by the saves backend)
 ```json
@@ -223,7 +229,7 @@ A save archive produced by *Upload my save* and accepted by *Install to my saves
 ```
 <zip root>/
   SAVEDATA00            decrypted save file(s) exactly as mounted
-  sce_sys/param.sfo     optional, ACCOUNT_ID zeroed
+  sce_sys/param.sfo     required, ACCOUNT_ID zeroed
   sce_sys/icon0.png     optional, used as the store card cover
   xeno-save.json        manifest (below)
 ```
@@ -231,7 +237,7 @@ A save archive produced by *Upload my save* and accepted by *Install to my saves
 {"titleId":"PPSA04029","dirName":"SAVEDATA00","gameVersion":"01.004.000","region":"EUR",
  "files":[{"path":"SAVEDATA00","size":1234567,"sha256":"…"}],"accountIdStripped":true,"sameConsoleOnly":false,"createdBy":"XENO STORE 1.0.0","createdAt":"…"}
 ```
-Sealed keys (`sce_sys/keystone`, `sealedkey`) are never included. Garlic Save Manager's decrypted ZIPs (plain files + `sce_sys/`, no manifest) install as-is: the title id comes from the index row, version and region from the row when present, else "unknown — check before installing". Backups made by the Saves hub use the same layout plus the original `sce_sys/` folder and restore only on the same console.
+Sealed keys (`sce_sys/keystone`, `sealedkey`) are never included. A single wrapper folder around the save is stripped on install (two for Garlic Save Manager's own export layout `<TITLEID>/sdimg_<dir>/…`); a zip without `sce_sys/param.sfo` at the save root is refused (`invalid_save`), as is a param.sfo of another title (`title_mismatch`). Garlic Save Manager's decrypted ZIPs (plain files + `sce_sys/`, no manifest) install as-is: the title id comes from the index row, version and region from the row when present, else "unknown — check before installing". Installing re-signs the save for the chosen profile through Garlic Save Manager (started on demand). Backups made by the Saves hub are raw (`sdimg_*` images + `sce_sys/` + `xeno-backup.json`) and restore only on the same console; they can never be shared.
 
 ---
 

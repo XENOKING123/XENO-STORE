@@ -761,6 +761,7 @@
         btn.classList.remove('busy'); ui.closeLayer(handle);
         XS.sound && XS.sound.done();
         ui.toast({ cls: 'good', title: t('lib2.restored', { title: title }), desc: (r.files ? t('saves.nFiles', { n: r.files }) + ' · ' : '') + (r.preBackup ? t('lib2.preBackupMade') : '') });
+        if (r.note) ui.toast({ cls: 'gold', icon: 'alert', title: t('lib2.notResigned'), desc: r.note, timeout: 10000 });   /* e.g. a raw backup of another profile */
         loadBackups(true); if (sh.user && st.user.id === sh.user.id) loadSaves();
       }, function (err) { btn.classList.remove('busy'); ui.errorToast(err, t('lib2.restore')); });
     }
@@ -797,7 +798,12 @@
       cb.api.savesTransfer(sh.user.id, st.to.id, s.titleId, s.kind || '', st.move).then(function (r) {
         btn.classList.remove('busy'); ui.closeLayer(handle);
         XS.sound && XS.sound.done();
-        ui.toast({ cls: 'good', title: t('lib2.transferred', { title: title, name: cb.userLabel(st.to) }), desc: (r.bytes ? U.fmtBytes(r.bytes) + ' · ' : '') + (r.preBackup ? t('lib2.preBackupMade') : '') });
+        var bits = [];
+        if (r.bytes) bits.push(U.fmtBytes(r.bytes));
+        if (r.resigned) bits.push(t('lib2.transferResigned', { name: cb.userLabel(st.to) }));
+        if (r.preBackup) bits.push(t('lib2.preBackupMade'));
+        ui.toast({ cls: 'good', title: t('lib2.transferred', { title: title, name: cb.userLabel(st.to) }), desc: bits.join(' · ') });
+        if (r.resigned === false) ui.toast({ cls: 'gold', icon: 'alert', title: t('lib2.notResigned'), desc: r.note || '', timeout: 10000 });
         loadBackups(true); if (st.move) loadSaves();
       }, function (err) { btn.classList.remove('busy'); ui.errorToast(err, t('lib2.transferProfile')); });
     }

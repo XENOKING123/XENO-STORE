@@ -207,13 +207,15 @@
     "restoreGo": "지금 복원",
     "restored": "{title} 복원됨",
     "preBackupMade": "복원 전 백업이 만들어졌습니다",
-    "transferBetaText": "같은 콘솔 전용. 전체 타이틀 폴더(이미지 + sce_sys)가 다른 프로필로 복사되며, 두 프로필 모두 이 콘솔에 있으므로 봉인된 키는 유효하게 유지됩니다.",
+    "transferBetaText": "같은 콘솔 전용. 각 PS5 세이브는 Garlic Save Manager(필요할 때 실행)를 통해 다른 프로필용으로 다시 서명됩니다. 그것이 없으면 타이틀 폴더가 그대로 복사되며, 다른 프로필에서 게임이 세이브를 거부할 수 있습니다.",
     "transferTo": "대상 프로필",
     "transferMove": "복사 대신 이동",
     "transferMoveHint": "복사에 성공한 후 원본 프로필에서 세이브를 제거합니다",
     "transferPreBackup": "대상 프로필에 이 타이틀의 세이브가 이미 있으면 먼저 백업됩니다.",
     "transferGo": "전송",
-    "transferred": "{title}이(가) {name}(으)로 전송됨"
+    "transferred": "{title}이(가) {name}(으)로 전송됨",
+    "transferResigned": "{name}용으로 다시 서명됨",
+    "notResigned": "다시 서명하지 않고 복사됨"
   },
   "settings2": {
     "group": {
@@ -268,8 +270,8 @@
     "addFeedText": "saves.json 색인의 URL을 붙여 넣으세요. 기본 피드와 병합되고 중복이 제거됩니다.",
     "backend": "커뮤니티 데이터베이스",
     "backendKind": "백엔드",
-    "backendKind_github": "GitHub 색인",
-    "backendKind_githubHint": "인프라 불필요: 게시된 saves.json과 GitHub 이슈 제출",
+    "backendKind_github": "게시된 기본값",
+    "backendKind_githubHint": "스토어의 게시된 백엔드를 따릅니다: XenoKing 세이브 컬렉션과 GitHub 색인",
     "backendKind_supabase": "Supabase",
     "backendKind_supabaseHint": "소유자가 배포한, 스토리지 버킷이 있는 데이터베이스(공개 anon 키, RLS)",
     "backendKind_none": "끔",
@@ -286,11 +288,13 @@
     "upload": "공유",
     "uploadHost": "업로드 호스트",
     "uploadHostHint": "내보낸 세이브가 제출되기 전에 업로드되는 곳",
+    "uploadSite": "XenoKing 사이트",
+    "uploadSiteHint": "XenoKing 컬렉션에 바로, 즉시 공개(사이트가 백엔드가 아니면 pixeldrain)",
     "uploadCustomHint": "자신의 엔드포인트(multipart 파일 → {url})",
     "uploadEndpoint": "사용자 지정 업로드 엔드포인트",
     "uploadEndpointHint": "multipart 필드 \"file\"을 POST하면 {url}로 응답합니다",
     "submitEndpoint": "사용자 지정 제출 엔드포인트",
-    "submitEndpointHint": "JSON 메타데이터를 POST; 비워 두면 = 휴대폰에서 미리 작성된 GitHub 이슈",
+    "submitEndpointHint": "세이브 사이트가 백엔드가 아닐 때: JSON 메타데이터를 POST; 비워 두면 = 휴대폰에서 미리 작성된 GitHub 이슈",
     "submitGithub": "GitHub 이슈",
     "mdns": "로컬 이름(mDNS)",
     "mdnsHint": "이 Wi-Fi에서 xeno.local과 xenostore.local에 응답하여 휴대폰이 IP 없이 스토어를 열 수 있게 합니다",
@@ -335,7 +339,8 @@
       "drive": "기본 드라이브 쓰기 가능",
       "space": "여유 공간",
       "firmware": "펌웨어",
-      "payload-manager": "Payload Manager 자동 시작"
+      "payload-manager": "Payload Manager 자동 시작",
+      "garlic": "세이브 재서명 (Garlic Save Manager)"
     },
     "explain": {
       "shadowmount": "ShadowMountPlus는 homebrew/의 exFAT/FFPFSC 이미지를 마운트하여 홈 화면에 표시합니다. XENO STORE는 이미지 다운로드 후 재검색을 요청할 뿐, 절대 이를 대체하지 않습니다.",
@@ -345,7 +350,8 @@
       "drive": "기본 다운로드 드라이브는 쓰기 가능해야 합니다: XENO STORE가 그곳에 작은 테스트 파일을 만들고 제거합니다.",
       "space": "기본 드라이브에 몇 GB의 여유를 유지하세요; 대기열은 들어가지 않는 파일을 거부합니다.",
       "firmware": "콘솔 펌웨어를 표시합니다. FPKG 설치는 펌웨어의 익스플로잇 체인에 따라 달라집니다.",
-      "payload-manager": "Payload Manager 자동 시작을 켜면 XENO STORE가 부팅할 때마다 로드되어 XENOKING 피드에서 자체 업데이트합니다."
+      "payload-manager": "Payload Manager 자동 시작을 켜면 XENO STORE가 부팅할 때마다 로드되어 XENOKING 피드에서 자체 업데이트합니다.",
+      "garlic": "Garlic Save Manager(earthonion 제작)는 커뮤니티 세이브를 당신 계정으로 다시 서명합니다. 선택 사항: 세이브에 필요할 때 XENO STORE가 콘솔에 있는 사본이나 작성자의 GitHub 릴리스(SHA-256 확인)에서 실행하며, 두 번째 사본은 절대 실행하지 않습니다."
     },
     "pmText": "휴대폰으로 코드를 스캔하거나 URL을 연 다음 Payload Manager(itsPLK)에 소스로 추가하세요. XENO STORE와 그 업데이트가 목록에 나타납니다.",
     "pmStep1": "콘솔에서 Payload Manager를 열고 소스 추가를 선택하세요.",
@@ -458,6 +464,7 @@
     "emptyHint": "컴패니언 피드가 비어 있거나 아직 가져오지 않았습니다. 설정에서 카탈로그를 새로 고치세요.",
     "installedLocal": "콘솔에 있음",
     "notDownloaded": "다운로드 안 됨",
+    "unavailable": "다운로드 불가",
     "shaChecked": "SHA-256 검증됨",
     "launch": "실행",
     "install": "다운로드",
