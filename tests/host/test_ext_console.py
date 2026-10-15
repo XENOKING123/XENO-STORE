@@ -908,6 +908,10 @@ class ConsoleTests(unittest.TestCase):
         self.assertFalse(dirs["OTHER-APP"]["isXenoStore"])
         self.assertIn("GHOST", dirs)
         self.assertFalse(dirs["GHOST"]["hasEboot"])
+        # deleting a folder only deletes the folder: an icon ShadowMountPlus
+        # already made stays (unless its auto_remove_missing_games is on)
+        self.assertNotIn("removes its icon", b["note"])
+        self.assertIn("Settings → Storage", b["note"])
         st, b = self.srv.api("POST", "/api/homebrew-dirs/delete", {"name": "GHOST"})
         self.assertEqual(st, 428)
         st, b = self.srv.api("POST", "/api/homebrew-dirs/delete", {"name": "NOT-LISTED", "confirm": "NOT-LISTED"})

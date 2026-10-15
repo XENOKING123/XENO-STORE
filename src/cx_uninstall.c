@@ -227,7 +227,7 @@ void cx_homebrew_dirs_json(jw *w) {
   }
   jw_arr_end(w);
   jw_kv_str(w, "root", base);
-  jw_kv_str(w, "note", "ShadowMountPlus registers every folder here as a home-screen icon; deleting a folder removes its icon on the next scan.");
+  jw_kv_str(w, "note", "ShadowMountPlus registers every folder here as a home-screen icon. Deleting a folder does not remove the icon ShadowMountPlus already made for it; delete that icon in the PS5's Settings → Storage (ShadowMountPlus only drops it by itself when auto_remove_missing_games is on).");
   pthread_mutex_unlock(&hb_mu);
 }
 

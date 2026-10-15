@@ -149,7 +149,7 @@ export function register({ route, state }) {
     { name: 'Old-Dump-Tool', title: 'Old Dump Tool', size: 640 * 1024, hasEboot: false, hasIcon: true, isXenoStore: false, mtime: now() - 86400 * 200 },
     { name: 'RetroArch', title: 'RetroArch', size: 96 * MB, hasEboot: true, hasIcon: true, isXenoStore: false, mtime: now() - 86400 * 12 }
   ];
-  route('GET', /^\/api\/homebrew-dirs$/, async () => { await sleep(300); return { ok: true, dirs: hbDirs.map((d) => ({ name: d.name, path: `/data/homebrew/${d.name}`, title: d.title, size: Math.round(d.size), hasEboot: d.hasEboot, hasIcon: d.hasIcon, isXenoStore: d.isXenoStore, mtime: d.mtime })), root: '/data/homebrew', note: 'ShadowMountPlus registers every folder here as a home-screen icon; deleting a folder removes its icon on the next scan.' }; });
+  route('GET', /^\/api\/homebrew-dirs$/, async () => { await sleep(300); return { ok: true, dirs: hbDirs.map((d) => ({ name: d.name, path: `/data/homebrew/${d.name}`, title: d.title, size: Math.round(d.size), hasEboot: d.hasEboot, hasIcon: d.hasIcon, isXenoStore: d.isXenoStore, mtime: d.mtime })), root: '/data/homebrew', note: 'ShadowMountPlus registers every folder here as a home-screen icon. Deleting a folder does not remove the icon ShadowMountPlus already made for it; delete that icon in the PS5's Settings → Storage (ShadowMountPlus only drops it by itself when auto_remove_missing_games is on).' }; });
   route('POST', /^\/api\/homebrew-dirs\/delete$/, async (q, body) => {
     const name = String(body.name || '');
     if (!name || name.indexOf('/') >= 0 || name[0] === '.') throw new ApiError(400, 'bad_request', 'invalid folder name');
