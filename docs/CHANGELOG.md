@@ -30,6 +30,9 @@ All notable changes to XENO STORE. The version lives in `VERSION`; releases are 
 - Update the store as usual (**Settings → Updates**), then **Settings → Updates → Install the XENO STORE app** puts the new app in your Games row. Copying the new `PPSA99500.ffpkg` to `/data/homebrew/` yourself works too. The app needs kstuff + ShadowMountPlus, and an ELF loader on port 9021 to start the store.
 - `PPSA99500.ffpkg` now carries the TV app with the store inside (`xeno/xeno-store.elf`). Each release also attaches `XENO-STORE-<version>-tv-sources.tar.gz`, the TV app's complete source with every pinned part it is built from, as its GPL-3.0 licence asks.
 
+### Fixes
+- **Password-locked archives**: about one wrong password in 128 gets past a ZIP archive's quick password check. When one of the community passwords did that, extraction stopped with *could not decrypt* before trying the right one. XENO STORE now moves on to the next password.
+
 ### Credits
 - The TV app is based on **Orbit Store's TV app** ([saawant12/orbit-store-ps5](https://github.com/saawant12/orbit-store-ps5)) and **BlackBearReloaded's ps5-homebrew-ui** (GPL-3.0), with parts from SvenGDK's SharpProspero, the ps5-opengl SDK, libwebp, the LLVM runtimes, stb and the Inter typeface. `app/tv/NOTICE` lists every component and its licence. Thank you!
 

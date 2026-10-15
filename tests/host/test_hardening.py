@@ -14,7 +14,8 @@ test_hardening.py — Phase 3 C hardening and download durability:
   * the start-up hand-off to a downloaded update: the hand-off marker, an update
     that never came up or crashed right away is set aside, stale ELFs are not
     "staged", the crash report survives the hand-off, a second copy stays quiet,
-  * classic ZipCrypto extraction with the community password list, a user
+  * classic ZipCrypto extraction with the community password list (a wrong
+    password that passes the check byte moves on to the next), a user
     override password, and a zip-slip refusal.
 
 Each test spins up its own host-binary instance on a temp data dir.
@@ -701,6 +702,22 @@ class ArchivePasswordTests(unittest.TestCase):
             out = os.path.join(srv.data_dir, "downloads", "homebrew", "PPSA07001 Community.ffpfsc")
             self.assertEqual(j["extract"]["dir"], out)
             self.assertTrue(os.path.exists(out))
+            self.assertEqual(harness.sha256_file(out), community_entry_sha())
+        finally:
+            srv.stop()
+
+    def test_password_list_survives_a_check_byte_clash(self):
+        """A wrong community password can pass ZipCrypto's one-byte check (about
+        1 time in 128) and then not inflate. The extractor tries the next
+        password instead of giving up: in secretclash.zip the first community
+        password does exactly that, and the right one is the last."""
+        srv = self._server("data-clash")
+        try:
+            job = srv.add(url=f"{self.rs.base}/ok/secretclash.zip", filename="secretclash.zip", format="ZIP")
+            j = srv.wait_job(job["id"], None, timeout=90, until=lambda x: x["extract"]["state"] in ("failed", "extracted"))
+            self.assertEqual(j["extract"]["state"], "extracted", j["extract"])
+            out = os.path.join(srv.data_dir, "downloads", "homebrew", "PPSA07004 Clash.ffpfsc")
+            self.assertEqual(j["extract"]["dir"], out)
             self.assertEqual(harness.sha256_file(out), community_entry_sha())
         finally:
             srv.stop()

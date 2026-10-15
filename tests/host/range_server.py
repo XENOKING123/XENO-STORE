@@ -42,11 +42,13 @@ import json
 import os
 import re
 import socket
+import struct
 import sys
 import threading
 import time
 import urllib.parse
 import zipfile
+import zlib
 from email.utils import formatdate
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -54,7 +56,7 @@ MiB = 1024 * 1024
 FILES = {"big.bin": 64 * MiB, "mid.bin": 32 * MiB, "small.bin": 8 * MiB, "tiny.pkg": 2 * MiB,
          "flipA.bin": 32 * MiB, "flipB.bin": 8 * MiB,
          "set-game.pkg": 2 * MiB, "set-update.pkg": 1 * MiB, "set-dlc.pkg": 3 * MiB // 2}   # flip*.bin are rewritten by the source_changed tests
-ZIPS = ("folder.zip", "single.zip", "secretcom.zip", "secretpw.zip", "slip.zip")
+ZIPS = ("folder.zip", "single.zip", "secretcom.zip", "secretpw.zip", "secretclash.zip", "slip.zip")
 # Classic ZipCrypto fixtures (built with the `zip` CLI): the community password
 # "SuperPSX" and a custom password not in the built-in list. The plaintext is a
 # fixed pattern so a test can recompute its SHA-256 without a side channel.
@@ -63,10 +65,86 @@ ENCRYPTED_ZIPS = {
     "secretpw.zip": ("PPSA07002 Custom.ffpfsc", "xeno-secret-42"),
 }
 ENCRYPTED_ENTRY_SIZE = MiB
+# A ZipCrypto archive whose encryption header is chosen so the FIRST community
+# password passes the one-byte check (a wrong password does that about 1 time
+# in 128) and then does not inflate (its first block type is the invalid 3).
+# The right password is the LAST one: the extractor must keep going down the
+# list. Built in Python, so it is the same archive on every run.
+CLASH_ZIP = ("secretclash.zip", "PPSA07004 Clash.ffpfsc", "hako", "DLPSGAME.COM")
 
 
 def encrypted_entry_bytes():
     return bytes((i * 37 + 11) & 0xFF for i in range(ENCRYPTED_ENTRY_SIZE))
+
+
+_CRC_TABLE = []
+for _n in range(256):
+    _c = _n
+    for _ in range(8):
+        _c = (_c >> 1) ^ 0xEDB88320 if _c & 1 else _c >> 1
+    _CRC_TABLE.append(_c)
+
+
+class ZipCryptoKeys:
+    """Traditional PKWARE encryption (APPNOTE 6.1), one byte at a time."""
+
+    def __init__(self, password):
+        self.k = [0x12345678, 0x23456789, 0x34567890]
+        for b in password.encode():
+            self.update(b)
+
+    def update(self, b):
+        k0, k1, k2 = self.k
+        k0 = _CRC_TABLE[(k0 ^ b) & 0xFF] ^ (k0 >> 8)
+        k1 = ((k1 + (k0 & 0xFF)) * 134775813 + 1) & 0xFFFFFFFF
+        k2 = _CRC_TABLE[(k2 ^ (k1 >> 24)) & 0xFF] ^ (k2 >> 8)
+        self.k = [k0, k1, k2]
+
+    def _stream(self):
+        t = (self.k[2] | 2) & 0xFFFF
+        return ((t * (t ^ 1)) >> 8) & 0xFF
+
+    def encrypt(self, data):
+        out = bytearray(len(data))
+        for i, p in enumerate(data):
+            out[i] = p ^ self._stream()
+            self.update(p)
+        return bytes(out)
+
+    def decrypt(self, data):
+        out = bytearray(len(data))
+        for i, c in enumerate(data):
+            out[i] = c ^ self._stream()
+            self.update(out[i])
+        return bytes(out)
+
+
+def clash_zip_bytes():
+    _, entry, right, wrong = CLASH_ZIP
+    plain = encrypted_entry_bytes()
+    crc = zlib.crc32(plain) & 0xFFFFFFFF
+    co = zlib.compressobj(9, zlib.DEFLATED, -15)
+    comp = co.compress(plain) + co.flush()
+    dos_time, dos_date = 0x6000, 0x5B4F            # 12:00:00, 2025-10-15
+    for n in range(1 << 20):
+        hdr = n.to_bytes(11, "little") + bytes([crc >> 24])
+        head = ZipCryptoKeys(right).encrypt(hdr + comp[:1])
+        seen = ZipCryptoKeys(wrong).decrypt(head)
+        if seen[11] == crc >> 24 and (seen[12] >> 1) & 3 == 3:
+            break
+    else:
+        raise RuntimeError("no clashing header found")
+    data = ZipCryptoKeys(right).encrypt(hdr + comp)
+    name = entry.encode()
+    local = struct.pack("<IHHHHHIIIHH", 0x04034B50, 20, 1, 8, dos_time, dos_date, crc, len(data), len(plain),
+                        len(name), 0) + name
+    central = struct.pack("<IHHHHHHIIIHHHHHII", 0x02014B50, 20, 20, 1, 8, dos_time, dos_date, crc, len(data),
+                          len(plain), len(name), 0, 0, 0, 0, 0, 0) + name
+    end = struct.pack("<IHHHHIIH", 0x06054B50, 0, 0, 1, 1, len(central), len(local) + len(data), 0)
+    blob = local + data + central + end
+    with zipfile.ZipFile(io.BytesIO(blob)) as zf:   # the archive is sound for the right password
+        assert zf.read(entry, pwd=right.encode()) == plain
+    return blob
 PKG_CONTENT_ID = b"UP0001-PPSA01234_00-XENOTESTPKG00000"   # 36 chars, title id at 7..15
 PKG_CONTENT_IDS = {"set-game.pkg": b"UP0001-PPSA02222_00-XENOSETGAME00000",
                    "set-update.pkg": b"UP0001-PPSA02222_00-XENOSETUPDATE000",
@@ -109,6 +187,8 @@ class State:
                 self.adopt(name)
             elif name in ENCRYPTED_ZIPS:
                 self.write_encrypted_zip(name)
+            elif name == CLASH_ZIP[0]:
+                self.write_blob(name, clash_zip_bytes())
             else:
                 self.write_zip(name)
 
@@ -178,6 +258,13 @@ class State:
             shutil.rmtree(tdir, ignore_errors=True)
         with open(out, "rb") as f:
             data = f.read()
+        with self.lock:
+            self.sha[name] = hashlib.sha256(data).hexdigest()
+            self.mtime[name] = time.time()
+
+    def write_blob(self, name, data):
+        with open(self.path(name), "wb") as f:
+            f.write(data)
         with self.lock:
             self.sha[name] = hashlib.sha256(data).hexdigest()
             self.mtime[name] = time.time()

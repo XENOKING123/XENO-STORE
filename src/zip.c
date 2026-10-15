@@ -218,7 +218,9 @@ static int64_t zc_data_offset(int zfd, uint64_t local_hdr_ofs, uint8_t *time_hi)
 }
 
 /* One full ZipCrypto pass with password `pw` into outfd. 0 ok (CRC matches),
- * 1 CRC mismatch (wrong password), -1 I/O or inflate error. */
+ * 1 wrong password (CRC mismatch, or the decrypted stream does not inflate:
+ * a wrong password passes the one-byte header check about 1 time in 128),
+ * -1 I/O error or an entry that cannot be read with any password. */
 #define ZC_INBUF (64u << 10)
 
 /* The 64 KiB input buffer lives on the heap: this runs on download threads. */
@@ -259,7 +261,8 @@ static int zc_extract_pass_buf(int zfd, int64_t doff, const mz_zip_archive_file_
     unsigned char *dict = malloc(TINFL_LZ_DICT_SIZE);
     if (!dict) return -1;
     size_t dict_ofs = 0, in_have = 0, in_ofs = 0;
-    int rc = -1;
+    uint64_t produced = 0;
+    int rc = -1;   /* -1 I/O, 1 the stream does not inflate (wrong password), 0 done */
     for (;;) {
       if (in_ofs == in_have && remaining > 0) {
         size_t want = remaining < (int64_t)ZC_INBUF ? (size_t)remaining : ZC_INBUF;
@@ -274,16 +277,18 @@ static int zc_extract_pass_buf(int zfd, int64_t doff, const mz_zip_archive_file_
       tinfl_status stt = tinfl_decompress(&inf, inbuf + in_ofs, &in_bytes, dict, dict + dict_ofs, &out_bytes, flags);
       in_ofs += in_bytes;
       if (out_bytes) {
+        produced += out_bytes;
+        if (produced > (uint64_t)s->m_uncomp_size) { rc = 1; break; }   /* more than the entry holds: wrong password */
         if (write_full(outfd, dict + dict_ofs, out_bytes) != 0) break;
         crc = (uint32_t)mz_crc32(crc, dict + dict_ofs, out_bytes);
         dict_ofs = (dict_ofs + out_bytes) & (TINFL_LZ_DICT_SIZE - 1);
       }
       if (stt == TINFL_STATUS_DONE) { rc = 0; break; }
-      if (stt < TINFL_STATUS_DONE) break;                 /* inflate failure */
-      if (stt == TINFL_STATUS_NEEDS_MORE_INPUT && remaining == 0 && in_ofs == in_have) break;  /* truncated */
+      if (stt < TINFL_STATUS_DONE) { rc = 1; break; }     /* does not inflate: wrong password */
+      if (stt == TINFL_STATUS_NEEDS_MORE_INPUT && remaining == 0 && in_ofs == in_have) { rc = 1; break; }  /* ends early */
     }
     free(dict);
-    if (rc != 0) return -1;
+    if (rc != 0) return rc;
   } else {
     return -1;   /* unsupported compression inside an encrypted entry */
   }
@@ -353,7 +358,7 @@ int zip_extract_to_dir_pw(const char *zip_path, const char *dest_dir, uint64_t m
       uint8_t time_hi = 0;
       int64_t doff = zc_data_offset(zfd, s.m_local_header_ofs, &time_hi);
       uint8_t crc_hi = (uint8_t)(s.m_crc32 >> 24);
-      int got = -2;   /* -2 no candidate password, -1 error, 0 ok, 1 crc fail */
+      int got = -2;   /* -2 no candidate password, -1 I/O error, 0 ok, 1 wrong password */
       for (int p = 0; p < npasswords && got != 0; p++) {
         if (!passwords[p] || !passwords[p][0]) continue;
         /* cheap check byte filter (matches CRC-high or time-high) */
@@ -363,8 +368,8 @@ int zip_extract_to_dir_pw(const char *zip_path, const char *dest_dir, uint64_t m
         uint8_t last = 0;
         for (int b = 0; b < 12; b++) last = zc_decode(&k, hdr[b]);
         if (last != crc_hi && last != time_hi) continue;
-        got = zc_extract_pass(zfd, doff, &s, passwords[p], fd);  /* 0 ok, 1 crc, -1 err */
-        if (got == -1) break;
+        got = zc_extract_pass(zfd, doff, &s, passwords[p], fd);  /* 0 ok, 1 wrong password, -1 I/O error */
+        if (got == -1) break;                                     /* a wrong password tries the next one */
       }
       close(fd);
       if (got == 0) { done += (uint64_t)s.m_uncomp_size; if (st) { st->extracted++; st->bytes = done; } if (progress && progress(user, done, total, s.m_filename)) { rc = 1; break; } continue; }
