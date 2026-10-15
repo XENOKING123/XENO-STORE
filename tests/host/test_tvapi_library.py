@@ -606,6 +606,25 @@ class TvLibrary(unittest.TestCase, LibraryMixin):
                                  timeout=40, what="the R2 row back on its drive")
         self.assertEqual(len([g for g in snap["games"] if g["path"] == on_r2]), 1)
 
+    def test_12b_walk_before_the_drive_scan_still_carries_rows(self):
+        """A refresh that walks the drives right after a drive went away, before the drive
+        scan has noticed, must not lose its games: they stay listed as unavailable."""
+        on_r2 = os.path.join(self.r2, "homebrew/PPSA01234.exfat")
+        self.wait_library(lambda s: self.row_at(s, on_r2) is not None and self.row_at(s, on_r2)["onDrive"],
+                          timeout=40, refresh=True, what="the R2 row on its drive")
+        time.sleep(5.5)                     # the next POST re-checks (POST re-check window: 5 s)
+        away = self.r2 + ".away"
+        os.rename(self.r2, away)
+        try:
+            self.library("POST")            # walks at once, before tv-storage's 2 s presence check
+            snap = self.wait_library(lambda s: self.row_at(s, on_r2) is not None and not self.row_at(s, on_r2)["onDrive"],
+                                     timeout=40, what="the R2 row carried with onDrive false")
+            self.assertEqual(self.row_at(snap, on_r2)["titleId"], "PPSA01234")
+        finally:
+            os.rename(away, self.r2)
+        self.wait_library(lambda s: self.row_at(s, on_r2) is not None and self.row_at(s, on_r2)["onDrive"],
+                          timeout=40, what="the R2 row back on its drive")
+
     # ---- 13: D15 step 1 -----------------------------------------------------------------------
     def test_13_title_id_from_the_download_job(self):
         """Two catalogue releases share one file name: the finished job's release decides."""

@@ -784,6 +784,21 @@ static void walk_failed(time_t wall) {
 }
 
 /* Builds the rows from one storage_library_json() walk (map-library 3.3, 3.4). */
+/* A root storage.c still lists can already be gone (a drive pulled, a folder
+ * renamed) when a walk runs before the next drive scan. It must count as gone
+ * then, or its games drop out of the Library instead of staying listed as
+ * unavailable (3.4), and are lost for good once the scan catches up. The same
+ * test as storage.c: a directory, and under /mnt a mounted one. */
+static int root_alive(const char *path) {
+  struct stat st;
+  if (stat(path, &st) != 0 || !S_ISDIR(st.st_mode)) return 0;
+#ifndef XENO_HOST
+  struct stat mnt;
+  if (util_starts_with(path, "/mnt/") && stat("/mnt", &mnt) == 0 && st.st_dev == mnt.st_dev) return 0;
+#endif
+  return 1;
+}
+
 static int build_rows(jv root, const dl_brief *jobs, int njobs, row_vec *out, int *skipped_out) {
   walk_scratch *ws = calloc(1, sizeof *ws);
   str_set paths = {0}, file_tids = {0}, installed = {0}, keys = {0}, roots = {0};
@@ -806,7 +821,10 @@ static int build_rows(jv root, const dl_brief *jobs, int njobs, row_vec *out, in
   }
   /* the roots the walk looked at: storage.c's roots plus every root that listed a file */
   int npeek = storage_peek_roots(peek, STORAGE_MAX_ROOTS);
-  for (int i = 0; i < npeek; i++) { strip_slashes(peek[i].path, peek_paths[i], sizeof peek_paths[i]); set_has(&roots, peek_paths[i], 1); }
+  for (int i = 0; i < npeek; i++) {
+    strip_slashes(peek[i].path, peek_paths[i], sizeof peek_paths[i]);
+    if (root_alive(peek_paths[i])) set_has(&roots, peek_paths[i], 1);
+  }
 
   /* 3.3: file rows */
   JV_FOREACH(f, files) {
