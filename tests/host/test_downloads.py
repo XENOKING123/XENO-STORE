@@ -218,8 +218,13 @@ class DownloadTests(unittest.TestCase):
         j = self.srv.wait_job(job["id"], "done", timeout=60)
         self.assertFalse(j["segmented"])
         self.assert_clean_final(j, self.sha["small.bin"])
+        # One data stream, never segments: the probe (a full 200 the downloader closes after
+        # the headers) and the sequential GET. The server counts the abandoned probe until it
+        # notices the close, which on a slow runner can overlap the GET by a moment, so up to
+        # two at once is the probe draining; a segmented download makes many more requests.
         stats = ctl(self.rs, "stats")
-        self.assertEqual(stats["maxConcurrent"].get("small.bin", 0), 1)
+        self.assertLessEqual(stats["requests"].get("/norange/small.bin", 0), 2, stats["requests"])
+        self.assertLessEqual(stats["maxConcurrent"].get("small.bin", 0), 2)
 
     def test_10_pkg_auto_install_simulation(self):
         job = self.srv.add(gameId="pkg-ps5", releaseId="r", autoInstall=True)
