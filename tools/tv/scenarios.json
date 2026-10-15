@@ -40,7 +40,7 @@
   "downloads-actions": {"captures": ["downloads-actions-active", "downloads-actions-paused", "downloads-actions-resumed", "downloads-actions-cancelled", "downloads-actions-delete", "downloads-actions-deleted"]},
   "queued": {"captures": ["game-queued"]},
   "download": {"captures": ["download-ready", "download-added"]},
-  "library": {"captures": ["library", "library-grid", "library-details", "library-copy", "library-storage", "library-installed", "library-unavailable"], "expect": {"marks": ["remove-drive"]}},
+  "library": {"captures": ["library", "library-grid", "library-details", "library-copy", "library-storage", "library-installed", "library-unavailable"], "maxSeconds": 150, "expect": {"marks": ["remove-drive"]}},
   "library-details": {"captures": ["library-details-panel", "library-details-copy"]},
   "library-copy": {"captures": ["library-copy-confirm", "library-copy-destinations", "library-copy-ready", "library-copy-progress", "library-copy-done"], "maxSeconds": 90},
   "library-storage": {"captures": ["library-storage-drives", "library-storage-drive"]},

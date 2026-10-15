@@ -791,12 +791,20 @@ std::vector<Scenario> scenarios()
           tap(Action::confirm), move(Direction::down), times(6, move(Direction::left, 0.2f)),
           move(Direction::right), tap(Action::confirm), pause(1.0f, "library-installed"),
           mark("remove-drive"),
-          run(0.3f, [](orbit::App &) { g_store->refresh_library(); }),
-          until(45.0f,
-                [] {
+          // The harness removes the drive after the mark, in its own time. Ask the
+          // Library to look again every 5 s while waiting, as a player pressing
+          // Refresh would, so a slow machine does not have to sit out the 30 s
+          // re-check (the first refresh can land before the drive has gone).
+          until(90.0f,
+                [last = std::make_shared<std::chrono::steady_clock::time_point>()] {
                     for (const orbit::LibraryGame &game : now().library_games())
                         if (!game.on_drive)
                             return true;
+                    const auto t = std::chrono::steady_clock::now();
+                    if (*last == std::chrono::steady_clock::time_point{} || t - *last >= std::chrono::seconds(5)) {
+                        *last = t;
+                        g_store->refresh_library();
+                    }
                     return false;
                 }),
           times(2, move(Direction::right)), tap(Action::confirm),
