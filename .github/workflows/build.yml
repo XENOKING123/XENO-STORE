@@ -394,7 +394,7 @@ jobs:
             printf -- '- **xeno-store.elf** — the store itself, for your ELF loader or Payload Manager.\n'
             printf -- '- **XENO-STORE-Desktop-Windows / Mac / Linux** — the PC app.\n'
             printf -- '- **SHA256SUMS** — checksums of every file; the store checks the same hashes when it updates itself or installs the app.\n'
-            printf '\nCatalog revision %s: %s games (%s).\n' "$REV" "$GAMES" "$SPLIT"'
+            printf '\nCatalog revision %s: %s games (%s).\n' "$REV" "$GAMES" "$SPLIT"
             printf '\n## Payload Manager\n'
             printf 'Add `https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/payloads.json` as a source and enable auto-start for **XENO STORE**.\n'
             printf '\n## Docs\n'
