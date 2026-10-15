@@ -492,14 +492,14 @@ static jdoc *load_json(const char *name) {
   return d;
 }
 
-static void save_settings_locked(void) {
+static int save_settings_locked(void) {
   jw w;
   jw_init(&w);
   write_settings(&w, &S, 0);
-  save_json("settings.json", &w);
+  return save_json("settings.json", &w);
 }
 
-static void save_favorites_locked(void) {
+static int save_favorites_locked(void) {
   jw w;
   jw_init(&w);
   jw_obj_begin(&w);
@@ -507,7 +507,7 @@ static void save_favorites_locked(void) {
   for (int i = 0; i < n_favorites; i++) jw_str(&w, favorites[i]);
   jw_arr_end(&w);
   jw_obj_end(&w);
-  save_json("favorites.json", &w);
+  return save_json("favorites.json", &w);
 }
 
 static void write_collections_locked(jw *w) {
@@ -655,14 +655,76 @@ int settings_open_on_start(void) {
   return v;
 }
 
-int settings_merge(jv obj, char *err, size_t errcap) {
-  if (jv_type(obj) != JV_OBJ) { xsnprintf(err, errcap, "settings must be an object"); return -1; }
+int settings_concurrent_jobs(void) {
   pthread_mutex_lock(&settings_mu);
-  settings_t tmp = S;
-  int rc = merge_into(&tmp, obj, err, errcap);
-  if (rc == 0) { S = tmp; save_settings_locked(); }
+  int v = S.concurrentJobs;
   pthread_mutex_unlock(&settings_mu);
+  return v < 1 ? 1 : v > 4 ? 4 : v;
+}
+
+void settings_default_root(char *out, size_t cap) {
+  pthread_mutex_lock(&settings_mu);
+  xstrlcpy(out, S.defaultRoot, cap);
+  pthread_mutex_unlock(&settings_mu);
+}
+
+int settings_delete_archives(void) {
+  pthread_mutex_lock(&settings_mu);
+  int v = S.deleteArchiveAfterExtract;
+  pthread_mutex_unlock(&settings_mu);
+  return v != 0;
+}
+
+int settings_updates_auto_check(void) {
+  pthread_mutex_lock(&settings_mu);
+  int v = S.updatesAutoCheck;
+  pthread_mutex_unlock(&settings_mu);
+  return v != 0;
+}
+
+int settings_sources_acknowledged(void) {
+  pthread_mutex_lock(&settings_mu);
+  int v = S.sourcesAcknowledged;
+  pthread_mutex_unlock(&settings_mu);
+  return v != 0;
+}
+
+/* Merges under the lock; *saved gets the settings.json write result. With
+ * rollback set, a failed write restores the previous settings, so a caller
+ * that answers "could not save" leaves nothing changed in memory either. */
+static int merge_locked_save(jv obj, char *err, size_t errcap, int *saved, int rollback) {
+  *saved = 0;
+  if (jv_type(obj) != JV_OBJ) { xsnprintf(err, errcap, "settings must be an object"); return -1; }
+  /* The ~30 KB working copies live on the heap: callers include small-stack threads. */
+  settings_t *tmp = malloc(sizeof *tmp);
+  settings_t *old = rollback ? malloc(sizeof *old) : NULL;
+  if (!tmp || (rollback && !old)) { free(tmp); free(old); xsnprintf(err, errcap, "out of memory"); return -1; }
+  pthread_mutex_lock(&settings_mu);
+  *tmp = S;
+  int rc = merge_into(tmp, obj, err, errcap);
+  if (rc == 0) {
+    if (old) *old = S;
+    S = *tmp;
+    *saved = save_settings_locked() == 0;
+    if (!*saved && old) S = *old;
+  }
+  pthread_mutex_unlock(&settings_mu);
+  free(tmp);
+  free(old);
   return rc;
+}
+
+int settings_merge(jv obj, char *err, size_t errcap) {
+  int saved;
+  return merge_locked_save(obj, err, errcap, &saved, 0);
+}
+
+int settings_merge_checked(jv obj, char *err, size_t errcap) {
+  int saved;
+  int rc = merge_locked_save(obj, err, errcap, &saved, 1);
+  if (rc != 0) return SETTINGS_ERR_INVALID;
+  if (!saved) { xsnprintf(err, errcap, "settings.json could not be written"); return SETTINGS_ERR_SAVE; }
+  return 0;
 }
 
 void settings_write_json(jw *w) {
@@ -731,6 +793,42 @@ int settings_favorite_toggle(const char *id) {
   save_favorites_locked();
   pthread_mutex_unlock(&settings_mu);
   return state;
+}
+
+int settings_favorite_set(const char *id, int on) {
+  if (!valid_id(id)) return SETTINGS_ERR_INVALID;
+  pthread_mutex_lock(&settings_mu);
+  int idx = -1;
+  for (int i = 0; i < n_favorites; i++) if (strcmp(favorites[i], id) == 0) { idx = i; break; }
+  int changed = 0;
+  if (on && idx < 0) {
+    if (n_favorites >= SET_MAX_FAVORITES) { pthread_mutex_unlock(&settings_mu); return SETTINGS_ERR_FULL; }
+    xstrlcpy(favorites[n_favorites++], id, SET_ID_LEN);
+    changed = 1;
+  } else if (!on && idx >= 0) {
+    memmove(favorites[idx], favorites[idx + 1], (size_t)(n_favorites - idx - 1) * SET_ID_LEN);
+    n_favorites--;
+    changed = 1;
+  }
+  int rc = changed ? (save_favorites_locked() == 0 ? 1 : SETTINGS_ERR_SAVE) : 0;
+  if (rc == SETTINGS_ERR_SAVE) {
+    /* Undo, so the reply ("could not save") matches the state. */
+    if (on) n_favorites--;
+    else {
+      memmove(favorites[idx + 1], favorites[idx], (size_t)(n_favorites - idx) * SET_ID_LEN);
+      xstrlcpy(favorites[idx], id, SET_ID_LEN);
+      n_favorites++;
+    }
+  }
+  pthread_mutex_unlock(&settings_mu);
+  return rc;
+}
+
+int settings_favorites_count(void) {
+  pthread_mutex_lock(&settings_mu);
+  int n = n_favorites;
+  pthread_mutex_unlock(&settings_mu);
+  return n;
 }
 
 int settings_is_favorite(const char *id) {
@@ -829,4 +927,29 @@ int settings_import_json(jv obj, char *err, size_t errcap) {
   if (jv_type(r) == JV_ARR) { load_recent_locked(r); save_recent_locked(); }
   pthread_mutex_unlock(&settings_mu);
   return 0;
+}
+
+/* catalog.lastCheck without the settings_t copy (GET /api/v1/catalog/updates
+ * "checkedAt" is read on the TV app's settings poll). */
+time_t settings_catalog_last_check(void) {
+  pthread_mutex_lock(&settings_mu);
+  time_t t = S.catalogLastCheck;
+  pthread_mutex_unlock(&settings_mu);
+  return t;
+}
+
+/* 1 when an API key is stored for the debrid service ("realdebrid",
+ * "alldebrid", "torbox", "premiumize"; case-insensitive), else 0. A
+ * single-field read for polled paths (no settings_t copy). */
+int settings_debrid_key_set(const char *service) {
+  if (!service) return 0;
+  pthread_mutex_lock(&settings_mu);
+  const char *k = util_strieq(service, "realdebrid") ? S.debrid.realdebrid.apiKey
+                  : util_strieq(service, "alldebrid") ? S.debrid.alldebrid.apiKey
+                  : util_strieq(service, "torbox")    ? S.debrid.torbox.apiKey
+                  : util_strieq(service, "premiumize") ? S.debrid.premiumize.apiKey
+                                                       : NULL;
+  int set = k && k[0];
+  pthread_mutex_unlock(&settings_mu);
+  return set;
 }

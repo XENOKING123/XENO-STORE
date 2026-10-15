@@ -51,12 +51,23 @@ int catalog_init(const char *data_dir);
 int64_t catalog_revision(void);
 int catalog_game_count(void);
 int catalog_release_count(void);
-/* Writes "revision","generatedAt","games","releases","source","updatedAt". */
+/* Writes "revision","generatedAt","games","releases","source","updatedAt","refreshing". */
 void catalog_status_json(jw *w);
 /* Writes the full /api/catalog/info body (without the ok flag). */
 void catalog_info_json(jw *w);
-/* Blocking refresh (≤ 60 s). updated=1 when a newer catalog was installed. */
+/* Blocking refresh: up to about 15 s for revision.json plus up to 120 s for
+ * the catalogue download, so never call it on an HTTP worker that must answer
+ * quickly. updated=1 when a newer catalog was installed. Returns 0, -1 with
+ * err filled, or CATALOG_REFRESH_BUSY (err filled) when another refresh
+ * (housekeeping, web UI or TV app) is already running: refreshes never
+ * overlap, so two of them cannot both write catalog.json. */
+#define CATALOG_REFRESH_BUSY (-2)
 int catalog_refresh(int force, int *updated, char *err, size_t errcap);
+/* 1 while a catalog_refresh() is running (any caller). Cheap: no lock. */
+int catalog_refreshing(void);
+/* Number of catalog_refresh() attempts that have finished since start (any
+ * result), so a caller can tell that a refresh it did not start has ended. */
+unsigned catalog_refresh_runs(void);
 catalog_blob *catalog_blob_acquire(void);
 void catalog_blob_release(catalog_blob *b);
 
@@ -78,6 +89,11 @@ void catalog_game_summary_json(jw *w, jv game);
 typedef void (*catalog_visit_fn)(jv game, void *user);
 int catalog_visit_game(const char *gameId, catalog_visit_fn fn, void *user);
 int catalog_visit_games(catalog_visit_fn fn, void *user);
+/* Runs fn(root, user) once under the catalog lock with the root object of the
+ * current catalogue ("sources", "genres", "defaults", "games", ...): 0, or -1
+ * when none is loaded. Same rules as above: no catalog_* or settings_* call
+ * inside fn, and the jv is only valid inside fn. */
+int catalog_visit_root(catalog_visit_fn fn, void *user);
 /* Called after every refresh attempt (updated or not) so feed caches can
  * follow the catalog cadence. Implemented by cx_feeds.c (weak: optional). */
 void catalog_on_refresh(int updated) __attribute__((weak));

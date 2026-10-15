@@ -1,0 +1,297 @@
+{
+ "_about": "Replies of the reference Orbit Store 1.2.0 TV app's own preview backend (app/host/fixture.cpp, GPL-3.0-or-later), captured over HTTP from its fixture server in the modes normal, setup, debrid and updates; the other modes keep only the replies that differ from normal. test_tvapi_infra.py feeds them to tvcontract: the \"app\" profile accepts every 2xx reply and every refusal passes assert_error_envelope.",
+ "modes": {
+  "normal": [
+   {
+    "method": "GET",
+    "path": "/api/v1/system",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "{\"name\":\"Orbit Store\",\"version\":\"0.6.0\",\"platform\":\"fixture\",\"paired\":true,\"localSessionAvailable\":true,\"stateHealthy\":true,\"catalogueRevision\":7,\"preferredStorage\":\"usb0\",\"httpPort\":34177}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/session",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "{\"token\":\"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\",\"pairCode\":\"482915\",\"address\":\"192.168.1.20\"}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/sources",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "{\"enabled\":[\"archive\"],\"acknowledged\":true,\"noticeVersion\":1,\"options\":[{\"id\":\"vikingfile\",\"label\":\"Vikingfile\",\"releaseCount\":2,\"downloadReady\":true},{\"id\":\"archive\",\"label\":\"Archive.org\",\"releaseCount\":15,\"downloadReady\":true}]}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/catalog",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "[{\"id\":\"tidewater-ffpfsc\",\"gameId\":\"tidewater\",\"titleId\":\"PPSA90001\",\"title\":\"Tidewater\",\"genre\":\"Adventure\",\"tagline\":\"Chart a drowned coast, one tide at a time.\",\"description\":\"Sail a flooded archipelago in a boat you rebuild from what the sea gives back. Every tide uncovers a new path and hides an old one.\",\"sizeBytes\":48200000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"FFPFSC\",\"version\":\"1.02\",\"filename\":\"PPSA90001-ffpfsc.ffpfsc\",\"artworkLayout\":\"wide\",\"publisher\":\"Tin Sparrow\",\"releaseDate\":\"2026-09-12\",\"consoleVerified\":false},{\"id\":\"tidewater-exfat\",\"gameId\":\"tidewater\",\"titleId\":\"PPSA90001\",\"title\":\"Tidewater\",\"genre\":\"Adventure\",\"tagline\":\"Chart a drowned coast, one tide at a time.\",\"description\":\"Sail a flooded archipelago in a boat you rebuild from what the sea gives back. Every tide uncovers a new path and hides an old one.\",\"sizeBytes\":46900000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"exFAT\",\"version\":null,\"filename\":\"PPSA90001-exfat.exfat\",\"artworkLayout\":\"wide\",\"publisher\":\"Tin Sparrow\",\"releaseDate\":\"2026-09-12\",\"consoleVerified\":false},{\"id\":\"neon-courier-ffpfsc\",\"gameId\":\"neon-courier\",\"titleId\":\"PPSA90002\",\"title\":\"Neon Courier\",\"genre\":\"Racing\",\"tagline\":\"Deliver anything, anywhere, before sunrise.\",\"description\":\"A night-time delivery racer through a city that rearranges its streets every hour.\",\"sizeBytes\":22400000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"FFPFSC\",\"version\":null,\"filename\":\"PPSA90002-ffpfsc.ffpfsc\",\"artworkLayout\":\"ambient\",\"publisher\":\"Night Shift Studio\",\"releaseDate\":\"2026-08-30\",\"consoleVerified\":false},{\"id\":\"ember-hollow-ffpfsc\",\"gameId\":\"ember-hollow\",\"titleId\":\"PPSA90003\",\"title\":\"Ember Hollow\",\"genre\":\"Role-playing\",\"tagline\":\"A village that remembers every fire.\",\"description\":\"Rebuild a mountain village after the long winter, and learn why the hearths keep the old stories alive.\",\"sizeBytes\":61700000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"FFPFSC\",\"version\":\"1.00\",\"filename\":\"PPSA90003-ffpfsc.ffpfsc\",\"artworkLayout\":\"wide\",\"publisher\":\"Lantern & Oak\",\"releaseDate\":\"2026-07-18\",\"consoleVerified\":false},{\"id\":\"ember-hollow-ffpfsc-105\",\"gameId\":\"ember-hollow\",\"titleId\":\"PPSA90003\",\"title\":\"Ember Hollow\",\"genre\":\"Role-playing\",\"tagline\":\"A village that remembers every fire.\",\"description\":\"Rebuild a mountain village after the long winter, and learn why the hearths keep the old stories alive.\",\"sizeBytes\":63000000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"FFPFSC\",\"version\":\"1.05\",\"filename\":\"PPSA90003-ffpfsc-105.ffpfsc\",\"artworkLayout\":\"wide\",\"publisher\":\"Lantern & Oak\",\"releaseDate\":\"2026-07-18\",\"consoleVerified\":false},{\"id\":\"ember-hollow-exfat\",\"gameId\":\"ember-hollow\",\"titleId\":\"PPSA90003\",\"title\":\"Ember Hollow\",\"genre\":\"Role-playing\",\"tagline\":\"A village that remembers every fire.\",\"description\":\"Rebuild a mountain village after the long winter, and learn why the hearths keep the old stories alive.\",\"sizeBytes\":62400000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"exFAT\",\"version\":\"1.05\",\"filename\":\"PPSA90003-exfat.exfat\",\"artworkLayout\":\"wide\",\"publisher\":\"Lantern & Oak\",\"releaseDate\":\"2026-07-18\",\"consoleVerified\":false},{\"id\":\"ember-hollow-exfat-eu\",\"gameId\":\"ember-hollow\",\"titleId\":\"PPSA90003\",\"title\":\"Ember Hollow\",\"genre\":\"Role-playing\",\"tagline\":\"A village that remembers every fire.\",\"description\":\"Rebuild a mountain village after the long winter, and learn why the hearths keep the old stories alive.\",\"sizeBytes\":62400000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"EUR\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"exFAT\",\"version\":\"1.05\",\"filename\":\"PPSA90003-exfat-eu.exfat\",\"artworkLayout\":\"wide\",\"publisher\":\"Lantern & Oak\",\"releaseDate\":\"2026-07-18\",\"consoleVerified\":false},{\"id\":\"glass-orchard-ffpfsc\",\"gameId\":\"glass-orchard\",\"titleId\":\"PPSA90004\",\"title\":\"Glass Orchard\",\"genre\":\"Puzzle\",\"tagline\":\"Grow light into shapes.\",\"description\":\"A calm puzzle garden where beams of light grow into branches you can bend and split.\",\"sizeBytes\":3400000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"FFPFSC\",\"version\":null,\"filename\":\"PPSA90004-ffpfsc.ffpfsc\",\"artworkLayout\":\"ambient\",\"publisher\":\"Small Hours\",\"releaseDate\":\"2026-06-02\",\"consoleVerified\":false},{\"id\":\"starfall-rally-ffpfsc\",\"gameId\":\"starfall-rally\",\"titleId\":\"PPSA90005\",\"title\":\"Starfall Rally\",\"genre\":\"Racing\",\"tagline\":\"Rally across a planet that is falling apart.\",\"description\":\"Point-to-point rallies on a moon that sheds its surface lap by lap.\",\"sizeBytes\":38900000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"FFPFSC\",\"version\":null,\"filename\":\"PPSA90005-ffpfsc.ffpfsc\",\"artworkLayout\":\"wide\",\"publisher\":\"Vector Nine\",\"releaseDate\":\"2026-05-21\",\"consoleVerified\":false},{\"id\":\"quiet-harbour-ffpfsc\",\"gameId\":\"quiet-harbour\",\"titleId\":\"PPSA90006\",\"title\":\"Quiet Harbour\",\"genre\":\"Simulation\",\"tagline\":\"Run a fishing town through four seasons.\",\"description\":\"Keep a small harbour town fed, busy and kind through storms and festivals.\",\"sizeBytes\":9800000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"FFPFSC\",\"version\":null,\"filename\":\"PPSA90006-ffpfsc.ffpfsc\",\"artworkLayout\":\"ambient\",\"publisher\":\"Gull Works\",\"releaseDate\":\"2026-04-11\",\"consoleVerified\":false},{\"id\":\"ironclad-skies-viking\",\"gameId\":\"ironclad-skies\",\"titleId\":\"PPSA90007\",\"title\":\"Ironclad Skies\",\"genre\":\"Action\",\"tagline\":\"Fight for the last cloud city.\",\"description\":\"Pilot a patched-up airship against an armada above a sea of cloud.\",\"sizeBytes\":70100000000,\"provider\":\"Vikingfile\",\"sourceId\":\"vikingfile\",\"browserAvailable\":true,\"directAvailable\":false,\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"exFAT\",\"version\":null,\"filename\":\"PPSA90007-viking.exfat\",\"artworkLayout\":\"wide\",\"publisher\":\"Copperline\",\"releaseDate\":\"2026-03-03\",\"consoleVerified\":false},{\"id\":\"ironclad-skies-ffpfsc\",\"gameId\":\"ironclad-skies\",\"titleId\":\"PPSA90007\",\"title\":\"Ironclad Skies\",\"genre\":\"Action\",\"tagline\":\"Fight for the last cloud city.\",\"description\":\"Pilot a patched-up airship against an armada above a sea of cloud.\",\"sizeBytes\":72500000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"FFPFSC\",\"version\":null,\"filename\":\"PPSA90007-ffpfsc.ffpfsc\",\"artworkLayout\":\"wide\",\"publisher\":\"Copperline\",\"releaseDate\":\"2026-03-03\",\"consoleVerified\":false},{\"id\":\"paper-lanterns-ffpfsc\",\"gameId\":\"paper-lanterns\",\"titleId\":\"PPSA90008\",\"title\":\"Paper Lanterns\",\"genre\":\"Family\",\"tagline\":\"Light the way home.\",\"description\":\"Fold, float and guide paper lanterns through a festival night.\",\"sizeBytes\":5200000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"FFPFSC\",\"version\":null,\"filename\":\"PPSA90008-ffpfsc.ffpfsc\",\"artworkLayout\":\"ambient\",\"publisher\":\"Fold Studio\",\"releaseDate\":\"2025-12-12\",\"consoleVerified\":false},{\"id\":\"frostline-ffpfsc\",\"gameId\":\"frostline\",\"titleId\":\"PPSA90009\",\"title\":\"Frostline\",\"genre\":\"Survival\",\"tagline\":\"Hold the line against the long cold.\",\"description\":\"Lead an expedition across an ice shelf as the weather turns.\",\"sizeBytes\":31000000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"FFPFSC\",\"version\":null,\"filename\":\"PPSA90009-ffpfsc.ffpfsc\",\"artworkLayout\":\"wide\",\"publisher\":\"North Room\",\"releaseDate\":\"2025-11-01\",\"consoleVerified\":false},{\"id\":\"echo-valley-ffpfsc\",\"gameId\":\"echo-valley\",\"titleId\":\"PPSA90010\",\"title\":\"Echo Valley\",\"genre\":\"Horror\",\"tagline\":\"Something answers when you call.\",\"description\":\"Explore a valley where every sound comes back changed.\",\"sizeBytes\":27400000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"FFPFSC\",\"version\":null,\"filename\":\"PPSA90010-ffpfsc.ffpfsc\",\"artworkLayout\":\"ambient\",\"publisher\":\"Hollow Tone\",\"releaseDate\":null,\"consoleVerified\":false},{\"id\":\"moonlit-atlas-ffpfsc\",\"gameId\":\"moonlit-atlas\",\"titleId\":\"PPSA90011\",\"title\":\"Moonlit Atlas\",\"genre\":\"Adventure\",\"tagline\":\"Map the dark side of a friendly moon.\",\"description\":\"Draw the map as you walk it, and share it with the travellers who come after you.\",\"sizeBytes\":18600000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"FFPFSC\",\"version\":null,\"filename\":\"PPSA90011-ffpfsc.ffpfsc\",\"artworkLayout\":\"ambient\",\"publisher\":\"Atlas Works\",\"releaseDate\":\"2025-08-08\",\"consoleVerified\":false},{\"id\":\"copper-circuit-ffpfsc\",\"gameId\":\"copper-circuit\",\"titleId\":\"PPSA90012\",\"title\":\"Copper Circuit\",\"genre\":\"Strategy\",\"tagline\":\"Build the city's first power grid.\",\"description\":\"Route copper, steam and clockwork through a growing city without blackouts.\",\"sizeBytes\":12100000000,\"provider\":\"Archive.org\",\"sourceId\":\"archive\",\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"FFPFSC\",\"version\":null,\"filename\":\"PPSA90012-ffpfsc.ffpfsc\",\"artworkLayout\":\"wide\",\"publisher\":\"Gearbox Garden\",\"releaseDate\":\"2025-06-20\",\"consoleVerified\":false},{\"id\":\"copper-circuit-ps4-pkg\",\"gameId\":\"copper-circuit-ps4\",\"titleId\":\"CUSA90012\",\"title\":\"Copper Circuit\",\"genre\":\"Strategy\",\"tagline\":\"Build the city's first power grid.\",\"description\":\"The PS4 edition of the power-grid puzzle game.\",\"sizeBytes\":10100000000,\"provider\":\"Vikingfile\",\"sourceId\":\"vikingfile\",\"browserAvailable\":true,\"directAvailable\":false,\"region\":\"USA\",\"addedAt\":\"2026-10-05T12:00:00Z\",\"format\":\"PKG\",\"version\":\"1.00\",\"filename\":\"CUSA90012-pkg.pkg\",\"artworkLayout\":\"ambient\",\"publisher\":\"Gearbox Garden\",\"releaseDate\":\"2018-06-20\",\"consoleVerified\":false}]"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/catalog/updates",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "{\"available\":true,\"busy\":false,\"cached\":true,\"revision\":7,\"gameCount\":12,\"checkedAt\":1792048105,\"updatedAt\":1792048105,\"checkAfter\":0,\"nextCheck\":0,\"error\":\"\"}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/favorites",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "[\"tidewater\"]"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/downloads",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "[{\"id\":\"job100\",\"releaseId\":\"tidewater-ffpfsc\",\"gameId\":\"tidewater\",\"titleId\":\"PPSA90001\",\"title\":\"Tidewater\",\"storageId\":\"usb0\",\"filename\":\"PPSA90001-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"downloading\",\"error\":\"\",\"verification\":\"\",\"received\":18412400000,\"total\":48200000000,\"speed\":24600000,\"retryAt\":0,\"order\":0},{\"id\":\"job101\",\"releaseId\":\"starfall-rally-ffpfsc\",\"gameId\":\"starfall-rally\",\"titleId\":\"PPSA90005\",\"title\":\"Starfall Rally\",\"storageId\":\"usb0\",\"filename\":\"PPSA90005-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"queued\",\"error\":\"\",\"verification\":\"\",\"received\":0,\"total\":38900000000,\"speed\":0,\"retryAt\":0,\"order\":1},{\"id\":\"job102\",\"releaseId\":\"glass-orchard-ffpfsc\",\"gameId\":\"glass-orchard\",\"titleId\":\"PPSA90004\",\"title\":\"Glass Orchard\",\"storageId\":\"internal\",\"filename\":\"PPSA90004-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"paused\",\"error\":\"\",\"verification\":\"\",\"received\":1190000000,\"total\":3400000000,\"speed\":0,\"retryAt\":0,\"order\":2},{\"id\":\"job103\",\"releaseId\":\"frostline-ffpfsc\",\"gameId\":\"frostline\",\"titleId\":\"PPSA90009\",\"title\":\"Frostline\",\"storageId\":\"usb0\",\"filename\":\"PPSA90009-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"error\",\"error\":\"The provider stopped responding. Retry later.\",\"verification\":\"\",\"received\":10230000000,\"total\":31000000000,\"speed\":0,\"retryAt\":0,\"order\":3},{\"id\":\"job104\",\"releaseId\":\"quiet-harbour-ffpfsc\",\"gameId\":\"quiet-harbour\",\"titleId\":\"PPSA90006\",\"title\":\"Quiet Harbour\",\"storageId\":\"usb0\",\"filename\":\"PPSA90006-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"/mnt/usb0/homebrew/PPSA90006-ffpfsc.ffpfsc\",\"status\":\"complete\",\"error\":\"\",\"verification\":\"sha256\",\"received\":9800000000,\"total\":9800000000,\"speed\":0,\"retryAt\":0,\"order\":4},{\"id\":\"job105\",\"releaseId\":\"paper-lanterns-ffpfsc\",\"gameId\":\"paper-lanterns\",\"titleId\":\"PPSA90008\",\"title\":\"Paper Lanterns\",\"storageId\":\"usb0\",\"filename\":\"PPSA90008-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"cancelled\",\"error\":\"\",\"verification\":\"\",\"received\":2080000000,\"total\":5200000000,\"speed\":0,\"retryAt\":0,\"order\":5}]"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/storage",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "[{\"id\":\"usb0\",\"label\":\"USB Extended Storage\",\"path\":\"/mnt/usb0/homebrew\",\"freeBytes\":1420000000000,\"totalBytes\":2000000000000,\"pendingBytes\":96700000000,\"projectedFreeBytes\":1323300000000,\"external\":true},{\"id\":\"internal\",\"label\":\"Internal storage\",\"path\":\"/data/homebrew\",\"freeBytes\":41200000000,\"totalBytes\":825000000000,\"pendingBytes\":2200000000,\"projectedFreeBytes\":39000000000,\"external\":false}]"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/debrid",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "{\"provider\":\"torbox\",\"available\":true,\"connected\":false,\"busy\":false,\"hosts\":[]}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/browser",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "{\"available\":true,\"active\":false,\"id\":\"\",\"title\":\"\",\"state\":\"idle\",\"jobId\":\"\",\"message\":\"\"}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/library",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "{\"status\":\"ready\",\"message\":\"\",\"provider\":\"ShadowMount\",\"providerVersion\":\"1.7\",\"busy\":false,\"stale\":false,\"checkedAt\":1791100000,\"updatedAt\":1791100000,\"refreshAfter\":30,\"games\":[{\"titleId\":\"PPSA90006\",\"title\":\"Quiet Harbour\",\"platform\":\"ps5\",\"format\":\"FFPFSC\",\"path\":\"/mnt/usb0/homebrew/PPSA90006-ffpfsc.ffpfsc\",\"runtimePath\":\"\",\"sourceKey\":\"6666666666666666666666666666666666666666666666666666666666666666\",\"location\":\"USB Extended Storage\",\"installed\":true,\"mounted\":true,\"onDrive\":true,\"managed\":true,\"canManageSource\":true,\"installedSizeBytes\":null,\"sizeBytes\":null,\"sizeStatus\":\"unknown\"},{\"titleId\":\"PPSA90001\",\"title\":\"Tidewater\",\"platform\":\"ps5\",\"format\":\"exFAT\",\"path\":\"/mnt/usb0/homebrew/PPSA90001-exfat.exfat\",\"runtimePath\":\"\",\"sourceKey\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"location\":\"USB Extended Storage\",\"installed\":true,\"mounted\":false,\"onDrive\":false,\"managed\":true,\"canManageSource\":true,\"installedSizeBytes\":null,\"sizeBytes\":null,\"sizeStatus\":\"unknown\"},{\"titleId\":\"PPSA90004\",\"title\":\"Glass Orchard\",\"platform\":\"ps5\",\"format\":\"FFPFSC\",\"path\":\"/data/homebrew/PPSA90004-ffpfsc.ffpfsc\",\"runtimePath\":\"\",\"sourceKey\":\"4444444444444444444444444444444444444444444444444444444444444444\",\"location\":\"Internal storage\",\"installed\":false,\"mounted\":false,\"onDrive\":true,\"managed\":true,\"canManageSource\":true,\"installedSizeBytes\":null,\"sizeBytes\":null,\"sizeStatus\":\"unknown\"},{\"titleId\":\"PPSA99050\",\"title\":\"Homebrew UI Lab\",\"platform\":\"ps5\",\"format\":\"FFPKG\",\"path\":\"/data/homebrew/PPSA99050.ffpkg\",\"runtimePath\":\"\",\"sourceKey\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"location\":\"Internal storage\",\"installed\":true,\"mounted\":false,\"onDrive\":true,\"managed\":true,\"canManageSource\":true,\"installedSizeBytes\":null,\"sizeBytes\":null,\"sizeStatus\":\"unknown\"}],\"capabilities\":[\"list_games\",\"rescan\",\"mount_game\",\"unmount_game\",\"copy_game_source\",\"move_game_source\",\"storage_job_status\",\"storage_job_cancel\"],\"action\":null,\"storageJob\":null,\"storageError\":\"\",\"storageBusy\":false}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/library/storage",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "{\"drives\":[{\"id\":\"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu\",\"path\":\"/mnt/usb0/homebrew\",\"label\":\"USB Extended Storage\",\"filesystem\":\"exfat\",\"readOnly\":false,\"totalBytes\":2000000000000,\"freeBytes\":1420000000000,\"usedBytes\":580000000000},{\"id\":\"iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\",\"path\":\"/data/homebrew\",\"label\":\"Internal storage\",\"filesystem\":\"ufs\",\"readOnly\":false,\"totalBytes\":825000000000,\"freeBytes\":41200000000,\"usedBytes\":783800000000}],\"destinations\":[{\"id\":\"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu\",\"path\":\"/mnt/usb0/homebrew\",\"label\":\"USB Extended Storage\",\"readOnly\":false,\"freeBytes\":1420000000000},{\"id\":\"iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\",\"path\":\"/data/homebrew\",\"label\":\"Internal storage\",\"readOnly\":false,\"freeBytes\":41200000000}],\"busy\":false,\"stale\":false,\"updatedAt\":1791100000,\"error\":\"\"}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/updates",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "{\"available\":true,\"runningVersion\":\"0.6.0\",\"savedVersion\":\"0.6.0\",\"latestVersion\":\"\",\"checksum\":\"\",\"updateAvailable\":false,\"automaticCheckAfter\":0,\"phase\":\"idle\",\"error\":\"\",\"busy\":false,\"restartRequired\":false,\"received\":0,\"retryAt\":0,\"checkedAt\":0,\"checkAfter\":0}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/tv-app",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "{\"available\":true,\"installed\":\"orbit\",\"installedVersion\":\"1.0.0\",\"latestVersion\":\"\",\"checksum\":\"\",\"size\":0,\"updateAvailable\":false,\"phase\":\"idle\",\"error\":\"\",\"busy\":false,\"received\":0,\"retryAt\":0,\"checkedAt\":0,\"checkAfter\":0,\"automaticCheckAfter\":0}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/zero/companion",
+    "status": 404,
+    "contentType": "application/json",
+    "body": "{\"error\":\"Unknown endpoint.\"}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/sources",
+    "status": 200,
+    "contentType": "application/json",
+    "request": "{\"enabled\":[\"archive\"],\"acknowledged\":true,\"noticeVersion\":1}",
+    "body": "{\"enabled\":[\"archive\"],\"acknowledged\":true,\"noticeVersion\":1,\"options\":[{\"id\":\"vikingfile\",\"label\":\"Vikingfile\",\"releaseCount\":2,\"downloadReady\":true},{\"id\":\"archive\",\"label\":\"Archive.org\",\"releaseCount\":15,\"downloadReady\":true}]}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/storage/preferred",
+    "status": 200,
+    "contentType": "application/json",
+    "request": "{\"storageId\":\"usb0\"}",
+    "body": "{\"preferredStorage\":\"usb0\"}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/settings/downloads",
+    "status": 404,
+    "contentType": "application/json",
+    "request": "{\"concurrentDownloads\":3}",
+    "body": "{\"error\":\"Unknown endpoint.\"}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/settings/extraction",
+    "status": 404,
+    "contentType": "application/json",
+    "request": "{\"deleteArchives\":false}",
+    "body": "{\"error\":\"Unknown endpoint.\"}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/catalog/updates",
+    "status": 202,
+    "contentType": "application/json",
+    "request": "{\"action\":\"refresh\"}",
+    "body": "{\"available\":true,\"busy\":false,\"cached\":true,\"revision\":7,\"gameCount\":12,\"checkedAt\":1792049605,\"updatedAt\":1792049605,\"checkAfter\":1792049665,\"nextCheck\":0,\"error\":\"\"}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/favorites",
+    "status": 200,
+    "contentType": "application/json",
+    "request": "{\"gameId\":\"tidewater\",\"favorite\":true}",
+    "body": "[\"tidewater\"]"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/downloads",
+    "status": 201,
+    "contentType": "application/json",
+    "request": "{\"releaseId\":\"tidewater-ffpfsc\",\"storageId\":\"usb0\"}",
+    "body": "{\"id\":\"job106\"}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/downloads/job100/pause",
+    "status": 200,
+    "contentType": "application/json",
+    "request": "{}",
+    "body": "[{\"id\":\"job100\",\"releaseId\":\"tidewater-ffpfsc\",\"gameId\":\"tidewater\",\"titleId\":\"PPSA90001\",\"title\":\"Tidewater\",\"storageId\":\"usb0\",\"filename\":\"PPSA90001-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"paused\",\"error\":\"\",\"verification\":\"\",\"received\":18412400000,\"total\":48200000000,\"speed\":0,\"retryAt\":0,\"order\":0},{\"id\":\"job101\",\"releaseId\":\"starfall-rally-ffpfsc\",\"gameId\":\"starfall-rally\",\"titleId\":\"PPSA90005\",\"title\":\"Starfall Rally\",\"storageId\":\"usb0\",\"filename\":\"PPSA90005-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"queued\",\"error\":\"\",\"verification\":\"\",\"received\":0,\"total\":38900000000,\"speed\":0,\"retryAt\":0,\"order\":1},{\"id\":\"job102\",\"releaseId\":\"glass-orchard-ffpfsc\",\"gameId\":\"glass-orchard\",\"titleId\":\"PPSA90004\",\"title\":\"Glass Orchard\",\"storageId\":\"internal\",\"filename\":\"PPSA90004-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"paused\",\"error\":\"\",\"verification\":\"\",\"received\":1190000000,\"total\":3400000000,\"speed\":0,\"retryAt\":0,\"order\":2},{\"id\":\"job103\",\"releaseId\":\"frostline-ffpfsc\",\"gameId\":\"frostline\",\"titleId\":\"PPSA90009\",\"title\":\"Frostline\",\"storageId\":\"usb0\",\"filename\":\"PPSA90009-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"error\",\"error\":\"The provider stopped responding. Retry later.\",\"verification\":\"\",\"received\":10230000000,\"total\":31000000000,\"speed\":0,\"retryAt\":0,\"order\":3},{\"id\":\"job104\",\"releaseId\":\"quiet-harbour-ffpfsc\",\"gameId\":\"quiet-harbour\",\"titleId\":\"PPSA90006\",\"title\":\"Quiet Harbour\",\"storageId\":\"usb0\",\"filename\":\"PPSA90006-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"/mnt/usb0/homebrew/PPSA90006-ffpfsc.ffpfsc\",\"status\":\"complete\",\"error\":\"\",\"verification\":\"sha256\",\"received\":9800000000,\"total\":9800000000,\"speed\":0,\"retryAt\":0,\"order\":4},{\"id\":\"job105\",\"releaseId\":\"paper-lanterns-ffpfsc\",\"gameId\":\"paper-lanterns\",\"titleId\":\"PPSA90008\",\"title\":\"Paper Lanterns\",\"storageId\":\"usb0\",\"filename\":\"PPSA90008-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"cancelled\",\"error\":\"\",\"verification\":\"\",\"received\":2080000000,\"total\":5200000000,\"speed\":0,\"retryAt\":0,\"order\":5},{\"id\":\"job106\",\"releaseId\":\"tidewater-ffpfsc\",\"gameId\":\"tidewater\",\"titleId\":\"PPSA90001\",\"title\":\"Tidewater\",\"storageId\":\"usb0\",\"filename\":\"PPSA90001-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"queued\",\"error\":\"\",\"verification\":\"\",\"received\":0,\"total\":48200000000,\"speed\":0,\"retryAt\":0,\"order\":6}]"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/library",
+    "status": 200,
+    "contentType": "application/json",
+    "request": "{}",
+    "body": "{\"status\":\"ready\",\"message\":\"\",\"provider\":\"ShadowMount\",\"providerVersion\":\"1.7\",\"busy\":false,\"stale\":false,\"checkedAt\":1791100000,\"updatedAt\":1791100000,\"refreshAfter\":30,\"games\":[{\"titleId\":\"PPSA90006\",\"title\":\"Quiet Harbour\",\"platform\":\"ps5\",\"format\":\"FFPFSC\",\"path\":\"/mnt/usb0/homebrew/PPSA90006-ffpfsc.ffpfsc\",\"runtimePath\":\"\",\"sourceKey\":\"6666666666666666666666666666666666666666666666666666666666666666\",\"location\":\"USB Extended Storage\",\"installed\":true,\"mounted\":true,\"onDrive\":true,\"managed\":true,\"canManageSource\":true,\"installedSizeBytes\":null,\"sizeBytes\":null,\"sizeStatus\":\"unknown\"},{\"titleId\":\"PPSA90001\",\"title\":\"Tidewater\",\"platform\":\"ps5\",\"format\":\"exFAT\",\"path\":\"/mnt/usb0/homebrew/PPSA90001-exfat.exfat\",\"runtimePath\":\"\",\"sourceKey\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"location\":\"USB Extended Storage\",\"installed\":true,\"mounted\":false,\"onDrive\":false,\"managed\":true,\"canManageSource\":true,\"installedSizeBytes\":null,\"sizeBytes\":null,\"sizeStatus\":\"unknown\"},{\"titleId\":\"PPSA90004\",\"title\":\"Glass Orchard\",\"platform\":\"ps5\",\"format\":\"FFPFSC\",\"path\":\"/data/homebrew/PPSA90004-ffpfsc.ffpfsc\",\"runtimePath\":\"\",\"sourceKey\":\"4444444444444444444444444444444444444444444444444444444444444444\",\"location\":\"Internal storage\",\"installed\":false,\"mounted\":false,\"onDrive\":true,\"managed\":true,\"canManageSource\":true,\"installedSizeBytes\":null,\"sizeBytes\":null,\"sizeStatus\":\"unknown\"},{\"titleId\":\"PPSA99050\",\"title\":\"Homebrew UI Lab\",\"platform\":\"ps5\",\"format\":\"FFPKG\",\"path\":\"/data/homebrew/PPSA99050.ffpkg\",\"runtimePath\":\"\",\"sourceKey\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"location\":\"Internal storage\",\"installed\":true,\"mounted\":false,\"onDrive\":true,\"managed\":true,\"canManageSource\":true,\"installedSizeBytes\":null,\"sizeBytes\":null,\"sizeStatus\":\"unknown\"}],\"capabilities\":[\"list_games\",\"rescan\",\"mount_game\",\"unmount_game\",\"copy_game_source\",\"move_game_source\",\"storage_job_status\",\"storage_job_cancel\"],\"action\":null,\"storageJob\":null,\"storageError\":\"\",\"storageBusy\":false}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/library/storage",
+    "status": 200,
+    "contentType": "application/json",
+    "request": "{}",
+    "body": "{\"drives\":[{\"id\":\"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu\",\"path\":\"/mnt/usb0/homebrew\",\"label\":\"USB Extended Storage\",\"filesystem\":\"exfat\",\"readOnly\":false,\"totalBytes\":2000000000000,\"freeBytes\":1420000000000,\"usedBytes\":580000000000},{\"id\":\"iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\",\"path\":\"/data/homebrew\",\"label\":\"Internal storage\",\"filesystem\":\"ufs\",\"readOnly\":false,\"totalBytes\":825000000000,\"freeBytes\":41200000000,\"usedBytes\":783800000000}],\"destinations\":[{\"id\":\"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu\",\"path\":\"/mnt/usb0/homebrew\",\"label\":\"USB Extended Storage\",\"readOnly\":false,\"freeBytes\":1420000000000},{\"id\":\"iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\",\"path\":\"/data/homebrew\",\"label\":\"Internal storage\",\"readOnly\":false,\"freeBytes\":41200000000}],\"busy\":false,\"stale\":false,\"updatedAt\":1791100000,\"error\":\"\"}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/library/actions",
+    "status": 400,
+    "contentType": "application/json",
+    "request": "{\"action\":\"scan\",\"confirmed\":true,\"requestId\":\"r-1\"}",
+    "body": "{\"error\":\"Expected a supported action and its current Library identifiers.\"}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/updates",
+    "status": 202,
+    "contentType": "application/json",
+    "request": "{\"action\":\"check\"}",
+    "body": "{\"available\":true,\"runningVersion\":\"0.6.0\",\"savedVersion\":\"0.6.0\",\"latestVersion\":\"0.6.0\",\"checksum\":\"5d41402abc4b2a76b9719d911017c592e2b5f6e1d0c4c1d36c0b1f3a6f0e9a21\",\"updateAvailable\":false,\"automaticCheckAfter\":0,\"phase\":\"checked\",\"error\":\"\",\"busy\":false,\"restartRequired\":false,\"received\":0,\"retryAt\":0,\"checkedAt\":1792049605,\"checkAfter\":0}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/tv-app",
+    "status": 202,
+    "contentType": "application/json",
+    "request": "{\"action\":\"check\"}",
+    "body": "{\"available\":true,\"installed\":\"orbit\",\"installedVersion\":\"1.0.0\",\"latestVersion\":\"1.0.0\",\"checksum\":\"5d41402abc4b2a76b9719d911017c592e2b5f6e1d0c4c1d36c0b1f3a6f0e9a21\",\"size\":71303168,\"updateAvailable\":false,\"phase\":\"checked\",\"error\":\"\",\"busy\":false,\"received\":0,\"retryAt\":0,\"checkedAt\":1792049605,\"checkAfter\":0,\"automaticCheckAfter\":0}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/browser",
+    "status": 409,
+    "contentType": "application/json",
+    "request": "{\"action\":\"cancel\",\"id\":\"nope\"}",
+    "body": "{\"error\":\"This verification session is no longer active.\"}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/art/tidewater/cover",
+    "status": 200,
+    "contentType": "image/png",
+    "bytes": 67088
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/no-such-route",
+    "status": 404,
+    "contentType": "application/json",
+    "body": "{\"error\":\"Unknown endpoint.\"}"
+   }
+  ],
+  "setup": [
+   {
+    "method": "GET",
+    "path": "/api/v1/sources",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "{\"enabled\":[],\"acknowledged\":false,\"noticeVersion\":1,\"options\":[{\"id\":\"vikingfile\",\"label\":\"Vikingfile\",\"releaseCount\":2,\"downloadReady\":true},{\"id\":\"archive\",\"label\":\"Archive.org\",\"releaseCount\":15,\"downloadReady\":true}]}"
+   },
+   {
+    "method": "GET",
+    "path": "/api/v1/catalog",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "[]"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/downloads",
+    "status": 404,
+    "contentType": "application/json",
+    "request": "{\"releaseId\":\"x\",\"storageId\":\"usb0\"}",
+    "body": "{\"error\":\"Unknown release.\"}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/downloads/job100/pause",
+    "status": 200,
+    "contentType": "application/json",
+    "request": "{}",
+    "body": "[{\"id\":\"job100\",\"releaseId\":\"tidewater-ffpfsc\",\"gameId\":\"tidewater\",\"titleId\":\"PPSA90001\",\"title\":\"Tidewater\",\"storageId\":\"usb0\",\"filename\":\"PPSA90001-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"paused\",\"error\":\"\",\"verification\":\"\",\"received\":18412400000,\"total\":48200000000,\"speed\":0,\"retryAt\":0,\"order\":0},{\"id\":\"job101\",\"releaseId\":\"starfall-rally-ffpfsc\",\"gameId\":\"starfall-rally\",\"titleId\":\"PPSA90005\",\"title\":\"Starfall Rally\",\"storageId\":\"usb0\",\"filename\":\"PPSA90005-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"queued\",\"error\":\"\",\"verification\":\"\",\"received\":0,\"total\":38900000000,\"speed\":0,\"retryAt\":0,\"order\":1},{\"id\":\"job102\",\"releaseId\":\"glass-orchard-ffpfsc\",\"gameId\":\"glass-orchard\",\"titleId\":\"PPSA90004\",\"title\":\"Glass Orchard\",\"storageId\":\"internal\",\"filename\":\"PPSA90004-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"paused\",\"error\":\"\",\"verification\":\"\",\"received\":1190000000,\"total\":3400000000,\"speed\":0,\"retryAt\":0,\"order\":2},{\"id\":\"job103\",\"releaseId\":\"frostline-ffpfsc\",\"gameId\":\"frostline\",\"titleId\":\"PPSA90009\",\"title\":\"Frostline\",\"storageId\":\"usb0\",\"filename\":\"PPSA90009-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"error\",\"error\":\"The provider stopped responding. Retry later.\",\"verification\":\"\",\"received\":10230000000,\"total\":31000000000,\"speed\":0,\"retryAt\":0,\"order\":3},{\"id\":\"job104\",\"releaseId\":\"quiet-harbour-ffpfsc\",\"gameId\":\"quiet-harbour\",\"titleId\":\"PPSA90006\",\"title\":\"Quiet Harbour\",\"storageId\":\"usb0\",\"filename\":\"PPSA90006-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"/mnt/usb0/homebrew/PPSA90006-ffpfsc.ffpfsc\",\"status\":\"complete\",\"error\":\"\",\"verification\":\"sha256\",\"received\":9800000000,\"total\":9800000000,\"speed\":0,\"retryAt\":0,\"order\":4},{\"id\":\"job105\",\"releaseId\":\"paper-lanterns-ffpfsc\",\"gameId\":\"paper-lanterns\",\"titleId\":\"PPSA90008\",\"title\":\"Paper Lanterns\",\"storageId\":\"usb0\",\"filename\":\"PPSA90008-ffpfsc.ffpfsc\",\"format\":\"FFPFSC\",\"delivery\":\"direct\",\"path\":\"\",\"status\":\"cancelled\",\"error\":\"\",\"verification\":\"\",\"received\":2080000000,\"total\":5200000000,\"speed\":0,\"retryAt\":0,\"order\":5}]"
+   }
+  ],
+  "debrid": [
+   {
+    "method": "GET",
+    "path": "/api/v1/debrid",
+    "status": 200,
+    "contentType": "application/json",
+    "body": "{\"provider\":\"torbox\",\"available\":true,\"connected\":true,\"busy\":false,\"hosts\":[{\"sourceId\":\"archive\",\"available\":true,\"maxFileSize\":107374182400}]}"
+   }
+  ],
+  "updates": [
+   {
+    "method": "POST",
+    "path": "/api/v1/updates",
+    "status": 202,
+    "contentType": "application/json",
+    "request": "{\"action\":\"check\"}",
+    "body": "{\"available\":true,\"runningVersion\":\"0.6.0\",\"savedVersion\":\"0.6.0\",\"latestVersion\":\"0.6.1\",\"checksum\":\"5d41402abc4b2a76b9719d911017c592e2b5f6e1d0c4c1d36c0b1f3a6f0e9a21\",\"updateAvailable\":true,\"automaticCheckAfter\":0,\"phase\":\"checked\",\"error\":\"\",\"busy\":false,\"restartRequired\":false,\"received\":0,\"retryAt\":0,\"checkedAt\":1792049605,\"checkAfter\":0}"
+   },
+   {
+    "method": "POST",
+    "path": "/api/v1/tv-app",
+    "status": 202,
+    "contentType": "application/json",
+    "request": "{\"action\":\"check\"}",
+    "body": "{\"available\":true,\"installed\":\"orbit\",\"installedVersion\":\"1.0.0\",\"latestVersion\":\"1.1.0\",\"checksum\":\"5d41402abc4b2a76b9719d911017c592e2b5f6e1d0c4c1d36c0b1f3a6f0e9a21\",\"size\":71303168,\"updateAvailable\":true,\"phase\":\"checked\",\"error\":\"\",\"busy\":false,\"received\":0,\"retryAt\":0,\"checkedAt\":1792049605,\"checkAfter\":0,\"automaticCheckAfter\":0}"
+   }
+  ]
+ }
+}

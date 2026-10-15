@@ -77,13 +77,30 @@ static void add_root(const char *path, const char *label, const char *kind) {
   n_roots++;
 }
 
+#ifndef XENO_HOST
+/* A console root under /mnt counts only when something is mounted there: an
+ * empty mount-point directory has the st_dev of /mnt itself (a phantom USB or
+ * M.2 drive otherwise; the reference backend uses the same test). */
+static int mnt_root_mounted(const char *path) {
+  struct stat st, mnt;
+  if (stat(path, &st) != 0 || !S_ISDIR(st.st_mode)) return 0;
+  if (stat("/mnt", &mnt) != 0) return 1;   /* cannot tell: keep the old behaviour */
+  return st.st_dev != mnt.st_dev;
+}
+
+static void add_mounted_root(const char *path, const char *label, const char *kind) {
+  if (!mnt_root_mounted(path)) return;
+  add_root(path, label, kind);
+}
+#endif
+
 static void mark_default_locked(void) {
-  settings_t s;
-  settings_get(&s);
+  char def[256];
+  settings_default_root(def, sizeof def);   /* cheap getter: no 30 KB settings copy under storage_mu */
   int found = -1;
   for (int i = 0; i < n_roots; i++) {
     roots[i].is_default = 0;
-    if (strcmp(roots[i].path, s.defaultRoot) == 0) found = i;
+    if (strcmp(roots[i].path, def) == 0) found = i;
   }
   if (found < 0 && n_roots) found = 0;
   if (found >= 0) roots[found].is_default = 1;
@@ -105,13 +122,13 @@ int storage_scan_roots(void) {
   }
 #else
   add_root("/data", "Internal", "internal");
-  add_root("/mnt/ext0", "M.2 SSD", "m2");
-  add_root("/mnt/ext1", "M.2 SSD 2", "m2");
+  add_mounted_root("/mnt/ext0", "M.2 SSD", "m2");
+  add_mounted_root("/mnt/ext1", "M.2 SSD 2", "m2");
   for (int i = 0; i < 8; i++) {
     char p[32], l[32];
     xsnprintf(p, sizeof p, "/mnt/usb%d", i);
     xsnprintf(l, sizeof l, "USB %d", i);
-    add_root(p, l, "usb");
+    add_mounted_root(p, l, "usb");
   }
 #endif
   mark_default_locked();
@@ -137,8 +154,19 @@ int storage_get_roots(storage_root *out, int max) {
   int n = n_roots < max ? n_roots : max;
   for (int i = 0; i < n; i++) {
     out[i] = roots[i];
-    storage_free_space(out[i].path, &out[i].free, &out[i].total);
+    if (storage_free_space(out[i].path, &out[i].free, &out[i].total) == 0) {
+      roots[i].free = out[i].free;     /* keep the cache fresh for storage_peek_roots() */
+      roots[i].total = out[i].total;
+    }
   }
+  pthread_mutex_unlock(&storage_mu);
+  return n;
+}
+
+int storage_peek_roots(storage_root *out, int max) {
+  pthread_mutex_lock(&storage_mu);
+  int n = n_roots < max ? n_roots : max;
+  for (int i = 0; i < n; i++) out[i] = roots[i];
   pthread_mutex_unlock(&storage_mu);
   return n;
 }
@@ -274,6 +302,8 @@ static void title_from_name(const char *name, char *out, size_t cap) {
   out[o] = 0;
   util_trim(out);
 }
+
+void storage_title_from_name(const char *name, char *out, size_t cap) { title_from_name(name, out, cap); }
 
 typedef struct scan_ctx {
   jw *w;

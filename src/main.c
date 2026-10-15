@@ -201,7 +201,6 @@ int main(int argc, char **argv) {
     return 1;
   }
   update_handoff_done();
-  pairing_announce();
   pthread_t hk;
   if (xthread_start(&hk, "housekeeping", housekeeping, NULL, 0, 0) != 0) { LOGE("cannot start housekeeping thread"); return 1; }
 
@@ -209,26 +208,46 @@ int main(int argc, char **argv) {
    * (/user/app/XENO00002). Idempotent, never fatal; a logged no-op on host. */
   launcher_icon_register();
 
+  /* The native TV app (PPSA99500) starts this copy through the ELF loader,
+   * which takes raw bytes only, so it cannot pass --no-browser. It polls
+   * GET /api/v1/system every 0.5 s while it waits, so it shows up within 2 s:
+   * then the PS5 browser and the toasts would only cover it (it shows the
+   * pairing code itself, under Pair a device). PORT-SPEC 1.8 E8. */
+  int tv_app = 0;
+  if (tvapi_client_seen) {
+    for (int i = 0; i < 20 && !g_cfg.stop_requested; i++) {
+      if ((tv_app = tvapi_client_seen()) != 0) break;
+      util_sleep_ms(100);
+    }
+  }
+  if (tv_app) LOGI("the TV app is polling: no browser and no start-up toasts");
+  else pairing_announce();
+
   char ip[48];
-  sys_local_ip(ip, sizeof ip);
+  sys_local_ip(ip, sizeof ip);   /* "127.0.0.1" stays when there is no LAN address */
   char url[96];
   xsnprintf(url, sizeof url, "http://%s:%d/", ip, g_cfg.port);
   /* Open the store on the TV (Settings → General → "Open when XENO STORE
-   * starts"); skipped when the Games-row app already asked for it. */
-  if (!g_cfg.no_browser && settings_open_on_start() && sys_browser_opened_ago_ms() > 15000) {
+   * starts"); skipped when the Games-row app already asked for it, and when
+   * the TV app started this copy. */
+  if (!tv_app && !g_cfg.no_browser && settings_open_on_start() && sys_browser_opened_ago_ms() > 15000) {
     char local[64];
     xsnprintf(local, sizeof local, "http://127.0.0.1:%d/?tv=1", g_cfg.port);
     sys_launch_browser(local);
   }
   if (crashed) sys_toast("XENO STORE restarted after a problem · details in Settings → Diagnostics");
-  sys_toast("XENO STORE ready · %s", url);
+  if (!tv_app) sys_toast("XENO STORE ready · %s", url);
   LOGI("ready: %s (fw %s)", url, sys_fw_version());
 
   while (!g_cfg.stop_requested) util_sleep_ms(250);
 
+  /* The port closes first (E9): a housekeeping catalogue refresh or update
+   * check in flight can take minutes, and the TV app's restart waits at most
+   * 30 s for the old copy to go away. The TV stop drained the downloads
+   * before it set stop_requested; dl_shutdown() stops whatever still runs. */
   LOGI("shutting down");
-  pthread_join(hk, NULL);
   server_stop();
+  pthread_join(hk, NULL);
   dl_shutdown();
   if (g_cfg.restart_requested) {
     char err[256];

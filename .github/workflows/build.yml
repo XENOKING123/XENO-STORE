@@ -11,17 +11,31 @@ name: xeno-store
 #   host-tests       gcc + OpenSSL: `make test` (host binary + tests/host/run.sh,
 #                    and the native launcher's host test).
 #   ps5-elf          LLVM 18 + ps5-payload-dev SDK v0.40: `make ps5` →
-#                    xeno-store.elf; `make eboot` → the Games-row launcher as a
-#                    native app (app/native-launcher, its own pinned SDK v0.42)
-#                    with sce_module/libc.prx; `make ffpkg` →
-#                    dist/PPSA99500.ffpkg (UFS2 via makefs, checked by
-#                    tools/ufs2_check.py).
+#                    xeno-store.elf; `make eboot` → the native launcher
+#                    (app/native-launcher, its own pinned SDK v0.42), still built
+#                    and checked as the fallback; the tv-app folder goes to
+#                    app/tv/dist/PPSA99500 and `make ffpkg` →
+#                    dist/PPSA99500.ffpkg: the TV app with xeno-store.elf in
+#                    xeno/ (UFS2 via makefs, checked by tools/ufs2_check.py and
+#                    tools/make_ffpkg.py --app-dir).
+#   tv-app           LLVM 18 + Mesa: the native TV app (app/tv, see
+#                    app/tv/NOTICE): `make tv-check` (param.json/VERSION,
+#                    i18n coverage, colour and rebrand lints), `make tv-deps`,
+#                    `make tv-test` (GoogleTest, ASan + UBSan), `make tv` (the
+#                    app folder), `make tv-preview` (every screen on llvmpipe
+#                    against the built-in fixture) and `make tv-preview-live`
+#                    (every screen against the host build of the store, six
+#                    checks, tools/tv/README.md); uploads tv-app (the app
+#                    folder ps5-elf packs), tv-preview and tv-preview-live
+#                    (index.html, report.json, the pictures and logs).
 #   desktop          Go: XENO STORE Desktop for Windows, macOS and Linux.
 #   release          main only: create/update the GitHub release
 #                    v<VERSION> with PPSA99500.ffpkg, xeno-store.elf, one
-#                    Desktop download per OS and SHA256SUMS; then patch
-#                    updates/payloads.json
-#                    (url/version/sha256) and commit it back with [skip ci].
+#                    Desktop download per OS, XENO-STORE-<VERSION>-tv-sources.tar.gz
+#                    (the TV app's corresponding source) and SHA256SUMS; then
+#                    patch updates/payloads.json (url/version/sha256), write
+#                    updates/tv-app.json (version/filename/url/sha256/size) and
+#                    commit both back with [skip ci].
 #
 # Every push to any branch runs every job except release,
 # so a pull request shows green before it is merged.
@@ -169,7 +183,7 @@ jobs:
           if-no-files-found: ignore
 
   ps5-elf:
-    needs: [host-tests]
+    needs: [host-tests, tv-app]
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -218,6 +232,12 @@ jobs:
           name: web-and-catalog
           path: .
 
+      - name: Restore the TV app folder (tv-app)
+        uses: actions/download-artifact@v4
+        with:
+          name: tv-app
+          path: app/tv/dist/PPSA99500
+
       - name: Cross-compile the store (xeno-store.elf)
         env:
           PS5_PAYLOAD_SDK: /opt/ps5-payload-sdk
@@ -233,17 +253,33 @@ jobs:
           PS5_PAYLOAD_SDK: /opt/ps5-payload-sdk
         run: |
           set -euo pipefail
-          # The launcher (a native app: eboot.bin + sce_module/libc.prx, built by
-          # app/native-launcher/build.sh with its own pinned SDK) + the ELF above
-          # in a UFS2 image (makefs) that ShadowMountPlus mounts from /data/homebrew/.
+          # The native launcher (eboot.bin + sce_module/libc.prx, built by
+          # app/native-launcher/build.sh with its own pinned SDK) stays the fallback build
+          # until the TV app is proven on a console, so it is still built and checked. The
+          # image holds the TV app: make ffpkg sees app/tv/dist/PPSA99500/eboot.bin (the
+          # tv-app artifact) and runs tools/make_ffpkg.py --app-dir, which stages it with the
+          # ELF above in xeno/ and checks the UFS2 image (makefs) that ShadowMountPlus mounts
+          # from /data/homebrew/.
           make eboot
           (cd app/native-launcher/runtime && sha256sum -c libc.prx.sha256)
           cmp app/dist/sce_module/libc.prx app/native-launcher/runtime/libc.prx
+          test -s app/tv/dist/PPSA99500/eboot.bin
+          # The unmodified Orbit Store import (M0) must never ship as PPSA99500: it talks to
+          # port 34177 and starts /app0/orbit/orbit_store.elf.
+          if echo '65807c313631ce997d2e70ecc85b48afbcafa20ed3e52e7d798e29cc4b067951  app/tv/dist/PPSA99500/eboot.bin' | sha256sum --check --status -; then
+            echo "::error::app/tv is still the unmodified Orbit Store import; port it before it is packaged"
+            exit 1
+          fi
           make ffpkg
           test -s dist/PPSA99500.ffpkg
           test -s build/apppkg/src/PPSA99500/sce_module/libc.prx
+          test -s build/apppkg/src/PPSA99500/xeno/xeno-store.elf
+          test -s build/apppkg/src/PPSA99500/assets/fonts/inter-regular.huifont
+          test ! -e build/apppkg/src/PPSA99500/xeno-store.elf
+          cmp build/apppkg/src/PPSA99500/eboot.bin app/tv/dist/PPSA99500/eboot.bin
+          cmp build/apppkg/src/PPSA99500/xeno/xeno-store.elf xeno-store.elf
           python3 tools/ufs2_check.py dist/PPSA99500.ffpkg
-          ls -la app/dist/eboot.bin app/dist/sce_module/libc.prx dist/PPSA99500.ffpkg
+          ls -la app/dist/eboot.bin app/dist/sce_module/libc.prx app/tv/dist/PPSA99500/eboot.bin dist/PPSA99500.ffpkg
 
       - name: Verify artifacts
         run: |
@@ -264,6 +300,122 @@ jobs:
             xeno-store.elf
             dist/PPSA99500.ffpkg
           if-no-files-found: error
+
+  tv-app:
+    # The native TV app in app/tv (Orbit Store 1.2.0's TV app, GPL-3.0-or-later; provenance
+    # in app/tv/NOTICE), built with its own pinned toolchain. ps5-elf packs its app folder
+    # (the tv-app artifact) into PPSA99500.ffpkg; the live preview runs it against the host
+    # build of the store.
+    needs: [web-and-catalog]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      # Ubuntu's python3 with python3-pil (the live preview draws its art and reads the
+      # pictures with PIL); no setup-python here, so make and the scripts all use it.
+      PYTHON: /usr/bin/python3
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the TV app toolchain (pinned LLVM 18, Mesa for the preview)
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang-18 lld-18 llvm-18 libclang-rt-18-dev \
+            ninja-build unzip wget python3-pil libegl-dev libgl-dev mesa-common-dev libegl1 libegl-mesa0 \
+            libgl1-mesa-dri libwebp-dev gcc libssl-dev pkg-config
+          echo "/usr/lib/llvm-18/bin" >> "$GITHUB_PATH"
+          # The x86-64 compiler builtins in the OpenGL link group: the build pins Ubuntu's
+          # libclang-rt-18-dev 1:18.1.3-1ubuntu1 (app/tv/Dockerfile).
+          echo '52f850cf79b9cda0b00b78aa2fed86bae6947e596cc7cafb52dba4fd88acb07d  /usr/lib/llvm-18/lib/clang/18/lib/linux/libclang_rt.builtins-x86_64.a' | sha256sum -c -
+          /usr/lib/llvm-18/bin/clang --version | head -n 1
+          "$PYTHON" -c 'import sys, PIL; print("python", sys.version.split()[0], "PIL", PIL.__version__)'
+          # LLVM 18's AddressSanitizer can die at start-up (AddressSanitizer:DEADLYSIGNAL) when
+          # the kernel uses more than 28 bits of mmap randomisation; do not depend on the image.
+          sudo sysctl -w vm.mmap_rnd_bits=28
+
+      - name: Lints (param.json against VERSION, i18n coverage, colours, rebrand)
+        run: make tv-check
+
+      - name: Cache the TV app's pinned dependencies
+        uses: actions/cache@v4
+        with:
+          path: app/tv/.deps
+          key: tv-deps-${{ hashFiles('app/tv/tools/setup-*.sh', 'app/tv/tools/prepare-opengl.sh', 'app/tv/tools/fetch-opengl-sdk.sh') }}
+
+      - name: Fetch the dependencies (SDK v0.42 + zlib, PacBrew libwebp, ps5-opengl, GoogleTest)
+        run: |
+          set -euo pipefail
+          make tv-deps
+          # The setup scripts keep the extracted trees and do not read these archives again.
+          rm -f app/tv/.deps/pacbrew/ps5-payload-dev-v0.40.2.tar.gz app/tv/.deps/native/ps5-payload-sdk.zip
+          du -sh app/tv/.deps
+
+      - name: Unit tests (GoogleTest, ASan + UBSan)
+        run: make tv-test
+
+      - name: Build the app folder (eboot.bin, sce_module/libc.prx, assets/, sce_sys/)
+        id: tv
+        run: |
+          set -euo pipefail
+          make tv
+          dir="app/tv/dist/$("$PYTHON" -c 'import json; print(json.load(open("app/tv/sce_sys/param.json", encoding="utf-8"))["titleId"])')"
+          test "$dir" = app/tv/dist/PPSA99500
+          echo "dir=$dir" >> "$GITHUB_OUTPUT"
+          # The unmodified Orbit Store import rebuilt this exact eboot.bin; the port must not.
+          if echo "65807c313631ce997d2e70ecc85b48afbcafa20ed3e52e7d798e29cc4b067951  $dir/eboot.bin" | sha256sum --check --status -; then
+            echo "::error::$dir/eboot.bin is the unmodified Orbit Store import"
+            exit 1
+          fi
+          ls -la "$dir" "$dir/sce_module"
+
+      - name: Preview every screen (Mesa llvmpipe, built-in fixture backend)
+        run: make tv-preview
+
+      - name: Restore web + catalog (for the host build of the store)
+        uses: actions/download-artifact@v4
+        with:
+          name: web-and-catalog
+          path: .
+
+      - name: Live preview against the host backend (tools/tv/preview_live.py)
+        run: |
+          set -euo pipefail
+          test -s web/dist/index.html
+          test -s catalog/xeno-catalog.json
+          # make host builds build/host/xeno-store; the preview binary from the step above is
+          # reused. The run fails on any of the six checks (tools/tv/README.md) and leaves
+          # build/tv-preview/report.json and index.html either way.
+          make tv-preview-live
+          "$PYTHON" -c 'import json; r = json.load(open("build/tv-preview/report.json", encoding="utf-8")); print("tv-preview-live: ok=%s, %d pictures" % (r.get("ok"), len(r.get("pictures", []))))'
+
+      - name: Contract probe (the app's own parsers against the backend)
+        run: |
+          set -euo pipefail
+          make tv-probe
+          XENO_TV_PROBE=app/tv/build/host/tv-contract-probe XENO_TESTS=test_tvapi_probe.py SKIP_BUILD=1 tests/host/run.sh
+
+      - name: Upload the app folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: tv-app
+          path: ${{ steps.tv.outputs.dir }}
+          if-no-files-found: error
+
+      - name: Upload the fixture preview pictures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tv-preview
+          path: app/tv/build/preview/pictures
+          if-no-files-found: ignore
+
+      - name: Upload the live preview (index.html, report.json, pictures, logs)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tv-preview-live
+          path: build/tv-preview
+          if-no-files-found: ignore
 
   desktop:
     # XENO STORE Desktop: one Go binary per OS (standard library only), cross-compiled here.
@@ -338,6 +490,26 @@ jobs:
         with:
           path: artifacts
 
+      - name: Cache the TV app's pinned upstream source archives
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/xeno-tv-sources
+          key: tv-sources-${{ hashFiles('tools/tv/make_source_bundle.py') }}
+          restore-keys: tv-sources-
+
+      - name: Build the TV app's corresponding source (XENO-STORE-<version>-tv-sources.tar.gz)
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # The TV app links GPL-3.0 components (app/tv/NOTICE), so every release carries its
+          # complete corresponding source: git archive of this commit plus every pinned
+          # upstream source archive, each checked against its SHA-256.
+          mkdir -p release
+          python3 tools/tv/make_source_bundle.py --cache "$HOME/.cache/xeno-tv-sources" --fetch \
+            --ref "$GITHUB_SHA" --version "$VERSION" --out "release/XENO-STORE-$VERSION-tv-sources.tar.gz"
+
       - name: Stage release assets + SHA256SUMS
         shell: bash
         run: |
@@ -386,13 +558,14 @@ jobs:
             printf '2. In the store, open **Settings → Updates → Install the XENO STORE app**. It puts the XENO STORE app in your Games row by itself.\n'
             printf '   (Or copy **PPSA99500.ffpkg** to `/data/homebrew/` yourself.) The app needs kstuff + ShadowMountPlus.\n\n'
             printf '**After that**\n\n'
-            printf -- '- Open XENO STORE from its tile under **Games**.\n'
-            printf -- '- Updates come from **Settings → Updates**; the app starts the new version by itself.\n\n'
+            printf -- '- Open XENO STORE from its tile under **Games**. It is the native TV app (controller, GPU-drawn, gold theme): when the store is not running yet, the app sends the copy it carries (or the newer one an update saved) to the ELF loader on port 9021 and opens once the store answers. No browser opens over it.\n'
+            printf -- '- Updates come from **Settings → Updates**, one card for the TV app and one for the store; the app starts the new version by itself.\n\n'
             printf '**PC or phone:** **XENO STORE Desktop** (Windows, macOS, Linux) finds your PS5 and opens the whole store on your PC; any browser can open `http://<ps5-ip>:9095` too. Both start with **Link to your PS5**: press *Show code on my PS5* and type the code from the PS5 notification.\n'
             printf '\n## Files\n'
-            printf -- '- **PPSA99500.ffpkg** — the XENO STORE app for the Games row.\n'
+            printf -- '- **PPSA99500.ffpkg** — the XENO STORE TV app for the Games row, with xeno-store.elf inside.\n'
             printf -- '- **xeno-store.elf** — the store itself, for your ELF loader or Payload Manager.\n'
             printf -- '- **XENO-STORE-Desktop-Windows / Mac / Linux** — the PC app.\n'
+            printf -- '- **XENO-STORE-%s-tv-sources.tar.gz** — the complete corresponding source of the TV app in PPSA99500.ffpkg (GPL-3.0): this release plus every pinned upstream source archive.\n' "$VERSION"
             printf -- '- **SHA256SUMS** — checksums of every file; the store checks the same hashes when it updates itself or installs the app.\n'
             printf '\nCatalog revision %s: %s games (%s).\n' "$REV" "$GAMES" "$SPLIT"
             printf '\n## Payload Manager\n'
@@ -425,7 +598,7 @@ jobs:
           gh release upload "$TAG" release/* --clobber
           echo "Uploaded $(find release -type f | wc -l) assets to $TAG"
 
-      - name: Patch updates/payloads.json (url, version, sha256)
+      - name: Patch updates/payloads.json (url, version, sha256) and write updates/tv-app.json
         env:
           TAG: ${{ steps.ver.outputs.tag }}
           VERSION: ${{ steps.ver.outputs.version }}
@@ -433,7 +606,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import json, os
+          import json, os, re
           tag, version = os.environ["TAG"], os.environ["VERSION"]
           sums = {}
           for line in open("release/SHA256SUMS", encoding="utf-8"):
@@ -455,20 +628,38 @@ jobs:
               json.dump(doc, fh, indent=2, ensure_ascii=False)
               fh.write("\n")
           print(open(path, encoding="utf-8").read())
+          # The TV app feed: the store's /api/v1/tv-app check reads it (before the GitHub API)
+          # and installs exactly this URL, size and SHA-256 (src/tvapi_update.c applies the
+          # same rules as below).
+          name = "PPSA99500.ffpkg"
+          size = os.path.getsize(os.path.join("release", name))
+          with open(os.path.join("release", name), "rb") as fh:
+              fh.seek(65536 + 1372)
+              magic = fh.read(4)
+          tv = {"version": version, "filename": name,
+                "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/%s/%s" % (tag, name),
+                "sha256": sums.get(name, ""), "size": size}
+          if (not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", version) or not re.fullmatch(r"[0-9a-f]{64}", tv["sha256"])
+                  or not 65536 + 1372 + 4 <= size <= 512 * 1024 * 1024 or magic != b"\x19\x01\x54\x19"):
+              raise SystemExit("updates/tv-app.json would not pass the store's checks: %r (UFS2 magic %s)" % (tv, magic.hex()))
+          with open("updates/tv-app.json", "w", encoding="utf-8") as fh:
+              json.dump(tv, fh, indent=2)
+              fh.write("\n")
+          print(open("updates/tv-app.json", encoding="utf-8").read())
           PY
 
-      - name: Commit payloads.json back
+      - name: Commit payloads.json and tv-app.json back
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "xeno-store-ci"
           git config user.email "xeno-store-ci@users.noreply.github.com"
-          if git diff --quiet -- updates/payloads.json; then
-            echo "payloads.json unchanged — nothing to commit"
+          git add updates/payloads.json updates/tv-app.json
+          if git diff --cached --quiet -- updates/payloads.json updates/tv-app.json; then
+            echo "payloads.json and tv-app.json unchanged — nothing to commit"
             exit 0
           fi
-          git add updates/payloads.json
-          git commit -m "xeno-store: publish ${{ steps.ver.outputs.tag }} hashes in payloads.json [skip ci]"
+          git commit -m "xeno-store: publish ${{ steps.ver.outputs.tag }} hashes in payloads.json and tv-app.json [skip ci]"
           # Another job (catalog sync) may have pushed in the meantime.
           for attempt in 1 2 3; do
             if git pull --rebase origin main && git push origin HEAD:main; then exit 0; fi

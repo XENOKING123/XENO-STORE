@@ -111,7 +111,7 @@ typedef struct dl_job {
   dl_turbo turbo;
   char scheduledFor[8];                /* "22:00" while the schedule window holds the job */
   int startNow;                        /* "Start now anyway" override */
-  char extractPassword[128];           /* catalog-supplied / user override ZIP password (SPEC §17.19) */
+  char extractPassword[129];           /* catalog-supplied / user override ZIP password (SPEC §17.19) */
   char srcPath[1024];                  /* copy jobs: source file */
   int move;                            /* copy jobs: unlink the source afterwards */
   dl_extract extract;
@@ -192,15 +192,61 @@ typedef struct dl_group_status {
   char pausedJobId[16];
 } dl_group_status;
 
+/* A lean copy of one job (about 6 KB) for readers that must not hold queue_mu
+ * while they look things up elsewhere (the TV app's /api/v1 layer). Strings
+ * are copied as the job holds them; `index` is the job's position in the
+ * queue array (queue order), `type` is "download" or "copy". */
+typedef struct dl_brief {
+  char id[16], type[12], kind[12];
+  char gameId[128], releaseId[128], titleId[16], title[256], format[16], filename[256], sourceId[32];
+  char root[256], path[1024], srcPath[1024];          /* srcPath: copy jobs only */
+  char phase[64], message[256], error[256], errorCode[32];
+  char via[16], viaService[16];
+  char extractState[12], extractDir[1024], extractMessage[160];
+  char installState[12], installMessage[256];
+  dl_state state;
+  int64_t total, written;
+  double speed;
+  time_t nextRetryAt, addedAt, finishedAt;
+  int verified, synthetic, running, cancel, removePending, restHit, move, priority, index;
+} dl_brief;
+
 int dl_init(const char *data_dir, int port);
 void dl_shutdown(void);
 /* Called by the housekeeping thread every ~500 ms. */
 void dl_housekeeping_tick(void);
-void dl_save_queue(void);
+/* Writes queue.json now. Returns 0, or -1 when the file could not be written
+ * (the queue stays dirty and the housekeeping tick retries every 5 s). */
+int dl_save_queue(void);
+/* 0 after a queue.json write failed, 1 again after the next one succeeded
+ * (GET /api/v1/system "stateHealthy"). */
+int dl_state_healthy(void);
+/* The TV app's stop, steps 1-2 (PORT-SPEC 1.5.5): under the queue lock, pauses
+ * every queued job (retry waits included) and every active one (connecting,
+ * downloading, verifying, extracting; copy jobs too) with `msg`, holds the
+ * scheduler so nothing new starts, then saves queue.json synchronously.
+ * Returns the number of jobs paused (>= 0) once the queue is saved, or -1 when
+ * it could not be saved: then every job is put back as it was (a job whose
+ * worker was already told to stop goes back to queued) and nothing is held. */
+int dl_pause_all_for_stop(const char *msg);
+/* Jobs whose worker thread still owns them (j->running), whatever their state:
+ * download, verify, extract, copy and install workers. The stop drain waits
+ * for 0 before the process exits. */
+int dl_workers_running(void);
+/* Copies every job into a malloc'd array in queue order (caller frees *out;
+ * *out is NULL when there are no jobs). Returns the count, or -1 on OOM.
+ * Never call it while holding a lock the caller also takes inside a dl_*
+ * callback; look the copies up (catalogue, settings) after it returns. */
+int dl_brief_list(dl_brief **out);
+/* One job by id: 0 and *out filled, or -1 when unknown. */
+int dl_brief_get(const char *id, dl_brief *out);
 
 /* Returns 0 and the new job id, or -1 with errcode/errmsg (SPEC §6.3 codes). */
 int dl_add(const dl_add_req *req, char *job_id, size_t idcap, char *errcode, size_t ccap, char *errmsg, size_t mcap);
-/* action ∈ pause resume cancel retry remove restart install verify move url */
+/* action ∈ pause resume cancel retry remove restart install verify move url
+ * startNow extract. cancel also accepts a failed job; cancel {deleteFiles:true}
+ * leaves written = 0 once the partial is gone; extract takes an optional
+ * {"password":"..."} that is tried first (validate it before the call). */
 int dl_action(const char *id, const char *action, jv body, char *errcode, size_t ccap, char *errmsg, size_t mcap);
 int dl_clear(jv states);
 /* Library install: synthetic job in state installing for a scanned .pkg. */

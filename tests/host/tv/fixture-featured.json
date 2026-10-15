@@ -1,0 +1,20 @@
+{
+ "hero": [
+  "fx-paper-moon-ps4",
+  "fx-aurora-drift-ps5",
+  "fx-hollow-crown-ps5"
+ ],
+ "rows": [
+  {
+   "title": {
+    "en": "Fixture picks"
+   },
+   "ids": [
+    "fx-tidewater-ps5",
+    "fx-neon-courier-ps5"
+   ]
+  }
+ ],
+ "homebrew": [],
+ "banner": null
+}

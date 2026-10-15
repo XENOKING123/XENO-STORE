@@ -21,8 +21,14 @@ typedef struct storage_root {
 } storage_root;
 
 void storage_init(void);
-int storage_scan_roots(void);                         /* re-discovers, returns count */
-int storage_get_roots(storage_root *out, int max);     /* snapshot */
+/* Re-discovers the roots (one writability probe per root), returns the count.
+ * Console roots under /mnt count only when a drive is mounted there
+ * (st_dev differs from /mnt's). */
+int storage_scan_roots(void);
+int storage_get_roots(storage_root *out, int max);     /* snapshot with a fresh statvfs per root */
+/* The roots and sizes of the last scan/get, with no filesystem access at all
+ * (no stat, no statvfs): for request paths that must not block on a drive. */
+int storage_peek_roots(storage_root *out, int max);
 int storage_find_root(const char *path, storage_root *out);  /* known root by exact path */
 int storage_root_present(const char *root);            /* stat() says directory */
 int storage_free_space(const char *path, int64_t *free_out, int64_t *total_out);
@@ -37,6 +43,10 @@ int storage_ensure_parent_dir(const char *path);
 /* Where installed titles live: /user/app on PS5, <data>/user/app on host. */
 const char *storage_user_app_dir(void);
 int storage_title_installed(const char *titleId);
+
+/* The display title the library scan derives from a file name: extension,
+ * PPSA/CUSA id and [..]/(..) tags dropped, _ - . turned into spaces. */
+void storage_title_from_name(const char *name, char *out, size_t cap);
 
 /* Library scan: writes "files", "installed", "scannedAt" keys. */
 typedef int (*storage_job_lookup_fn)(const char *path, char *job_id, size_t cap);

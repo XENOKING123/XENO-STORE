@@ -27,7 +27,7 @@ export TMPDIR="$TMPBASE"
 unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy
 
 # XENO_TESTS="test_api.py test_downloads.py" narrows the run.
-SUITES="${XENO_TESTS:-test_api.py test_downloads.py test_ext_downloads.py test_ext_console.py test_app_install.py test_hardening.py test_seg_stall.py}"
+SUITES="${XENO_TESTS:-test_api.py test_downloads.py test_ext_downloads.py test_ext_console.py test_app_install.py test_hardening.py test_tvapi_smoke.py test_seg_stall.py test_tvapi_infra.py test_tvapi_updates.py test_tvapi_art.py test_tvapi_catalog.py test_tvapi_downloads.py test_tvapi_library.py test_tvapi_probe.py}"
 
 status=0
 summary=()

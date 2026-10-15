@@ -97,11 +97,28 @@ typedef struct settings {
 
 void settings_init(const char *data_dir);
 void settings_get(settings_t *out);
-/* Cheap single-field read (no 30 KB settings_t copy). */
+/* Cheap single-field reads (no 30 KB settings_t copy): use these on polled
+ * paths (the TV app asks /api/v1/system every 0.5-3 s). */
 int settings_open_on_start(void);
+int settings_concurrent_jobs(void);                 /* downloads.concurrentJobs, clamped 1..4 */
+void settings_default_root(char *out, size_t cap);  /* downloads.defaultRoot (a path) */
+int settings_delete_archives(void);                 /* downloads.deleteArchiveAfterExtract, 0/1 */
+int settings_updates_auto_check(void);              /* updates.autoCheck, 0/1 */
+int settings_sources_acknowledged(void);            /* sources.acknowledged, 0/1 */
+
+/* Status codes of the *_checked / *_set functions below. */
+#define SETTINGS_ERR_INVALID (-1)   /* rejected, nothing changed (err filled where there is one) */
+#define SETTINGS_ERR_SAVE (-2)      /* applied in memory, but the file could not be written */
+#define SETTINGS_ERR_FULL (-3)      /* no room (favourites) */
+
 /* Partial merge of a JSON object (unknown keys ignored, ranges clamped), then
- * atomic save. Returns 0 or -1 with err filled. */
+ * atomic save. Returns 0 or -1 with err filled. A failed settings.json write
+ * is only logged (the change stays in memory). */
 int settings_merge(jv obj, char *err, size_t errcap);
+/* Same merge, but reports a failed write: 0, SETTINGS_ERR_INVALID (err says
+ * why) or SETTINGS_ERR_SAVE (applied in memory; the next successful save
+ * writes it). For the /api/v1 replies that need "Could not save ..." (503). */
+int settings_merge_checked(jv obj, char *err, size_t errcap);
 void settings_write_json(jw *w);
 int settings_source_enabled(const char *source_id);
 void settings_touch_catalog_check(void);
@@ -113,6 +130,12 @@ void settings_saves_root(const settings_t *s, char *out, size_t cap);
 void settings_favorites_json(jw *w);          /* {"ok":true,"ids":[...]} body part: writes "ids" key */
 int settings_favorites_set(jv ids);
 int settings_favorite_toggle(const char *id);  /* returns new state 0/1 */
+/* Sets one favourite on or off (idempotent, set semantics): 1 changed and
+ * saved, 0 already in that state (nothing written), SETTINGS_ERR_INVALID bad
+ * id, SETTINGS_ERR_FULL no room to add, SETTINGS_ERR_SAVE changed in memory
+ * but favorites.json could not be written. */
+int settings_favorite_set(const char *id, int on);
+int settings_favorites_count(void);
 int settings_is_favorite(const char *id);
 int settings_favorites_list(char (*out)[SET_ID_LEN], int max);
 
@@ -127,5 +150,11 @@ void settings_recent_add(const char *id);
 /* export / import */
 void settings_export_json(jw *w);             /* whole object incl. settings/favorites/collections/recent */
 int settings_import_json(jv obj, char *err, size_t errcap);
+
+/* catalog.lastCheck (the start of the last catalogue check), cheap. */
+time_t settings_catalog_last_check(void);
+
+/* 1 when an API key is stored for that debrid service (cheap, for polled paths). */
+int settings_debrid_key_set(const char *service);
 
 #endif

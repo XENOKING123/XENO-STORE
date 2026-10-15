@@ -48,6 +48,31 @@ void ext_downloads_init(void) __attribute__((weak));
 void ext_console_init(void) __attribute__((weak));
 void ext_downloads_tick(void) __attribute__((weak));
 void ext_console_tick(void) __attribute__((weak));
+
+/* ---- /api/v1: the TV app's compatibility dialect (src/tvapi*.c) ----------
+ * tvapi_init: called once by api_ext_init() before the server starts; makes
+ *   the per-process instance id, loads <data>/tvapi.json and registers the
+ *   single /api/v1 route table. Starts no thread (the TV services start on
+ *   the first /api/v1 request).
+ * tvapi_client_seen: 1 when a loopback caller (the TV app on the console)
+ *   asked GET /api/v1/system within the last 10 s, else 0. main.c reads it
+ *   before opening the PS5 browser.
+ * tvapi_diag_json: writes the TV layer's keys into GET /api/diagnostics
+ *   ("tvapi" object: started, threads, drives...). */
+void tvapi_init(void) __attribute__((weak));
+int tvapi_client_seen(void) __attribute__((weak));
+void tvapi_diag_json(jw *w) __attribute__((weak));
+
+/* Sentences of the /api/v1 error envelope ({"error":"<sentence>"}) that the
+ * dispatcher itself sends (PORT-SPEC 1.3). The TV app shows them as is and
+ * translates exact matches, so never reword one without its app i18n key. */
+#define API_V1_MSG_NOT_AVAILABLE "This request is not available in this version of XENO STORE."
+#define API_V1_MSG_PAIR_AGAIN "Pair this device again from Settings."
+#define API_V1_MSG_NOT_OBJECT "Expected a JSON object."
+#define API_V1_MSG_FAILED "XENO STORE could not complete this request."
+/* 1 when the request path is under /api/v1 (dispatcher errors use sentences). */
+int api_is_v1_path(const char *path);
+
 void api_ext_init(void);
 
 void api_init(void);

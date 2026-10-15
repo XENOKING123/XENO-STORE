@@ -2,6 +2,33 @@
 
 All notable changes to XENO STORE. The version lives in `VERSION`; releases are tagged `v<VERSION>`.
 
+## 1.3.0 — unreleased
+
+### The TV app
+- **XENO STORE is a real PS5 app now.** The XENO STORE tile under **Games** opens a native app made for the TV instead of the browser: drawn by the console's GPU at 1080p and driven entirely with the controller (D-pad, ✕, ◯, L1 / R1 for the tabs). It wears XENO STORE's gold-on-dark look, with the XENO badge spinning a gold ring while it starts.
+- **Everything you need on one screen:**
+  - **Discover**: the featured games up top, *New on XENO STORE*, the latest releases and every game, with real cover and hero art.
+  - **Browse**: the whole catalog with filters (PS5 / PS4, format, region, favourites) and a search keyboard.
+  - **Game pages**: the description, every release (game, backport, update, DLC) with its format, size, region and version, and the drive it goes to.
+  - **Downloads**: live progress, speed and retry countdowns; pause, resume, retry, cancel (keep or delete the partial file) and archive passwords.
+  - **Library**: the games on every drive, what is installed, free space per drive, and copying or moving a game image to another drive.
+  - **Settings**: download sources, the default drive (or *Choose automatically*), the pairing code for your phone, a catalog refresh, updates for the store and for the app, and *Restart download service*.
+- **It starts the store for you.** When the store isn't running, the app sends the copy it carries (or the newer update you downloaded) to your ELF loader on port 9021 and opens as soon as the store answers. No browser opens over it. If a downloaded update doesn't come up, the next try uses the copy inside the app.
+- **One store, everywhere.** The app uses the same store as your phone and PC: a download started on the TV shows up in the web UI and the other way round, and favourites, drives and settings are shared.
+- **The app updates itself**: **Settings → Updates → TV app** checks for a new version of the app and installs it; it opens the next time you start it. A copy you placed yourself is only replaced when you confirm.
+- **Vikingfile games**: the app says why it can't fetch them by itself and offers TorBox or *Open browser version*.
+- **Languages**: English, Deutsch, Español, Français, Magyar, Italiano, Nederlands, Polski, Português (Brasil), Русский and Türkçe. Arabic, Japanese, Korean and Chinese show English in the TV app for now; the web UI keeps all 14 languages.
+
+### Save Store
+- **The XenoKing community saves** are in the Save Data Store: ready-made saves shared by the XenoKing community, each one crediting the player who shared it, installable in one tap with a backup of your own save first.
+
+### Install and update
+- Update the store as usual (**Settings → Updates**), then **Settings → Updates → Install the XENO STORE app** puts the new app in your Games row. Copying the new `PPSA99500.ffpkg` to `/data/homebrew/` yourself works too. The app needs kstuff + ShadowMountPlus, and an ELF loader on port 9021 to start the store.
+- `PPSA99500.ffpkg` now carries the TV app with the store inside (`xeno/xeno-store.elf`). Each release also attaches `XENO-STORE-<version>-tv-sources.tar.gz`, the TV app's complete source with every pinned part it is built from, as its GPL-3.0 licence asks.
+
+### Credits
+- The TV app is based on **Orbit Store's TV app** ([saawant12/orbit-store-ps5](https://github.com/saawant12/orbit-store-ps5)) and **BlackBearReloaded's ps5-homebrew-ui** (GPL-3.0), with parts from SvenGDK's SharpProspero, the ps5-opengl SDK, libwebp, the LLVM runtimes, stb and the Inter typeface. `app/tv/NOTICE` lists every component and its licence. Thank you!
+
 ## 1.2.1 — 2026-10-14
 
 ### Fixes

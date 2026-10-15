@@ -82,7 +82,7 @@ static const char *const DLX_COMMUNITY_PW[] = {
 };
 
 int dlx_extract_run(dl_job *j, const settings_t *s) {
-  char archive[1024], root[256], label[32], filename[256], id[16], password[128];
+  char archive[1024], root[256], label[32], filename[256], id[16], password[129];
   dl_lock();
   xstrlcpy(archive, j->path, sizeof archive);
   xstrlcpy(root, j->root, sizeof root);

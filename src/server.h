@@ -49,6 +49,9 @@ void http_send(http_req *r, int status, const char *content_type, const void *bo
                const char *extra_headers);
 void http_send_json(http_req *r, int status, jw *w);           /* detaches + frees the writer */
 void http_send_error(http_req *r, int status, const char *code, const char *message);
+/* The /api/v1 (TV app) error envelope: {"error":"<sentence>"}. The app shows
+ * the sentence as is, so it must be a human sentence, never a code. */
+void http_send_sentence(http_req *r, int status, const char *sentence);
 const char *http_status_text(int status);
 
 /* Query helpers: URL-decoded value of key; returns 1 when present. */

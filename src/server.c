@@ -86,6 +86,8 @@ static int send_all(int fd, const void *buf, size_t n) {
 const char *http_status_text(int s) {
   switch (s) {
     case 200: return "OK";
+    case 201: return "Created";
+    case 202: return "Accepted";
     case 204: return "No Content";
     case 206: return "Partial Content";
     case 304: return "Not Modified";
@@ -96,11 +98,17 @@ const char *http_status_text(int s) {
     case 405: return "Method Not Allowed";
     case 409: return "Conflict";
     case 413: return "Payload Too Large";
+    case 414: return "URI Too Long";
+    case 415: return "Unsupported Media Type";
     case 416: return "Range Not Satisfiable";
     case 422: return "Unprocessable Entity";
+    case 428: return "Precondition Required";
+    case 429: return "Too Many Requests";
+    case 431: return "Request Header Fields Too Large";
     case 500: return "Internal Server Error";
     case 502: return "Bad Gateway";
     case 503: return "Service Unavailable";
+    case 507: return "Insufficient Storage";
     default: return "Unknown";
   }
 }
@@ -138,6 +146,15 @@ void http_send_error(http_req *r, int status, const char *code, const char *mess
   jw_kv_str(&w, "error", code);
   jw_kv_str(&w, "message", message);
   jw_kv_int(&w, "status", status);
+  jw_obj_end(&w);
+  http_send_json(r, status, &w);
+}
+
+void http_send_sentence(http_req *r, int status, const char *sentence) {
+  jw w;
+  jw_init(&w);
+  jw_obj_begin(&w);
+  jw_kv_str(&w, "error", sentence);
   jw_obj_end(&w);
   http_send_json(r, status, &w);
 }

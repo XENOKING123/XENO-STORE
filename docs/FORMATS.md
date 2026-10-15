@@ -6,7 +6,7 @@ practical version with examples.
 
 Contents: [Download formats](#1-download-formats) · [Destinations](#2-destination-layout) · [Partial files and sidecars](#3-partial-files-and-sidecars) ·
 [Data directory](#4-data-directory) · [Queue file](#5-queuejson) · [Settings](#6-settingsjson) · [Catalog](#7-catalog-schema) ·
-[Published feeds](#8-published-feeds-updates) · [Save archives](#9-xeno-save-zip) · [Homebrew folder](#10-homebrew-folder-xeno-storezip) · [Release assets](#11-release-assets)
+[Published feeds](#8-published-feeds-updates) · [Save archives](#9-xeno-save-zip) · [Games-row app](#10-games-row-app-ppsa99500ffpkg) · [Release assets](#11-release-assets)
 
 ---
 
@@ -88,6 +88,9 @@ Console: `/data/xeno-store/` (host build: `./xeno-data/` or `--data DIR`).
 | `icon.png` | the embedded icon written at start, used for notification icons |
 | `log.txt`, `log.1.txt` | file log, rotated at 2 MiB |
 | `xeno-store.elf`, `xeno-store.elf.new` | self-update staging |
+| `xeno-store.elf.version` | the saved update's version (`N.N.N`, no newline), written after the ELF; the TV app's starter reads it (§10) |
+| `tvapi.json` | `{"preferredAuto":true}`: "Choose automatically" for the TV app's default drive |
+| `tv-app.json` | the TV app install record `{"version","checksum","size","modified","inode"}`, written after the store installed `/data/homebrew/PPSA99500.ffpkg` (version `""` for the web UI's install); a file that no longer matches it is a copy placed by hand |
 
 ---
 
@@ -176,6 +179,25 @@ All fetched from `raw.githubusercontent.com` (allow-listed), cached under `/data
 ```
 The updater uses the entry whose `filename` is `xeno-store.elf`; `sha256` is lower-cased and must match the staged file. The release job replaces `version`, `url` and `sha256` for every entry (`FILLED-BY-CI` is the committed placeholder before the first release).
 
+### `tv-app.json` — the TV app feed
+
+Written by the release job next to `payloads.json` (never by hand):
+
+```json
+{"version":"1.3.0","filename":"PPSA99500.ffpkg",
+ "url":"https://github.com/XENOKING123/XENO-STORE/releases/download/v1.3.0/PPSA99500.ffpkg",
+ "sha256":"<64 lowercase hex>","size":46137344}
+```
+
+The store's TV app check (`POST /api/v1/tv-app {"action":"check"}`, API.md §13.9) reads it first and falls back to
+GitHub `releases/latest` plus its `SHA256SUMS` while it is missing. It is used only when `filename` is
+`PPSA99500.ffpkg`, `version` is plain `N.N.N` (a leading `v` is dropped), `url` is a release download URL of this
+repository ending in `/PPSA99500.ffpkg`, `sha256` is 64 lowercase hex characters (`checksum` is accepted as an alias)
+and `size` lies between 65536 + 1376 bytes and 512 MiB; anything else is "The TV app release information is
+invalid. Nothing was downloaded.". The release job applies the same rules, and checks the UFS2 magic, before it
+writes the file. The install downloads exactly this URL and refuses a body larger than `size`, a different SHA-256
+or a missing UFS2 magic `19 01 54 19` at offset 65536 + 1372.
+
 ### `messages.json` — announcement banner
 ```json
 {"messages":[{"id":"welcome-1.0.0","ts":1760313600,"url":"https://…","texts":{"en":"…","de":"…"}}]}
@@ -237,17 +259,47 @@ Sealed keys (`sce_sys/keystone`, `sealedkey`) are never included. Garlic Save Ma
 
 ## 10. Games-row app (`PPSA99500.ffpkg`)
 
-A UFS2 image that ShadowMountPlus mounts from `/data/homebrew/` and shows as **XENO STORE** under Games:
+A UFS2 image that ShadowMountPlus mounts from `/data/homebrew/` and shows as **XENO STORE** under Games. Since 1.3.0
+it holds the native TV app (SPEC §19) with the store inside, in `xeno/`:
 
 ```
 PPSA99500/
-  eboot.bin               the launcher (fake-signed SELF, app/eboot/eboot_main.c): opens the running store,
-                          or hands xeno-store.elf below to the ELF loader on :9021 first
-  xeno-store.elf          the store
+  eboot.bin               the TV app (fake-signed SELF, ET_SCE_DYNEXEC, so sce_module/ is required)
+  sce_module/libc.prx     the kit's clean-room libc module (SHA-256 e6ff45d1…, checked when staged)
+  assets/                 fonts/ (baked Inter), audio/ (interface sounds + index files), i18n/ (10 catalogues;
+                          English is the key), brand/xeno-badge.png
+  licenses/               app/tv/NOTICE and the licence texts of every linked component
+  xeno/xeno-store.elf     the store; the app sends it to the ELF loader on :9021 when nothing answers on :9095
+  xeno/version.txt        VERSION + "\n" (the starter's bundled version)
   sce_sys/icon0.png       512×512 XENO logo
-  sce_sys/param.json      {"applicationCategoryType":0,"contentBadgeType":1,"titleId":"PPSA99500","contentId":"IV0000-PPSA99500_00-XENOSTORE0000000","contentVersion":"01.002.001","gameIntent":{"permittedIntents":[{"intentType":"launchActivity"}]},"sdkVersion":"0x0000000000000000",…}
+  sce_sys/param.json      {"applicationCategoryType":0,"contentBadgeType":1,"titleId":"PPSA99500","conceptId":"99500","contentId":"IV0000-PPSA99500_00-XENOSTORE0000000","contentVersion":"01.003.000","localizedParameters":{"defaultLanguage":"en-US","en-US":{"titleName":"XENO STORE"},…},"amm":{…},"kernel":{…},"pubtools":{…},…}
 ```
-`tools/make_ffpkg.py` stages the folder (every entry mode `0777`) and builds the image with `makefs` (UFS2, 64 KiB blocks and fragments, `minfree=0`), sized to the files plus 8 MiB of slack. No `-S`: the console's UFS driver addresses blocks in 512-byte units, so `fs_fsbtodb` must be log2(fsize / 512) = 7; makefs with `-S 4096` writes 4 and the image cannot be read on the PS5. `tools/ufs2_check.py` reads the image back the way the console does (superblock search, `fs_fsbtodb` addressing), rejects a wrong `fs_fsbtodb`, a truncated file or a missing icon, and compares every file with the staged folder. contentVersion is `NN.NNN.NNN` (1.2.1 → `01.002.001`). Settings → Updates → *Install the XENO STORE app* puts it in place on the console; copying it to `/data/homebrew/` by hand works too.
+
+There is no root `xeno-store.elf` in this image (nothing reads `/app0/xeno-store.elf` any more). The starter's
+copies are `/app0/xeno/xeno-store.elf` + `/app0/xeno/version.txt` (bundled) and `/data/xeno-store/xeno-store.elf` +
+`/data/xeno-store/xeno-store.elf.version` (saved by the updater); the saved copy wins unless the bundled one is newer
+(SPEC §19.2).
+
+`tools/make_ffpkg.py --app-dir app/tv/dist/PPSA99500` stages the folder: the app folder from `make tv` (its
+`eboot.bin`, `sce_module/` and `assets/`), `app/tv/NOTICE` and `app/tv/licenses/`, the ELF from `--elf` (default
+`./xeno-store.elf`) and `version.txt` from `VERSION` (the build fails unless the ELF carries exactly one
+`XENO-STORE/<version>` marker equal to it), and `sce_sys/` from the app folder's `param.json` with `titleId`,
+`conceptId`, `contentId`, `contentVersion` and `localizedParameters` forced to ours (the GL memory keys `amm`,
+`kernel` and `pubtools` are kept; `pubtools.creationDate` comes from `$SOURCE_DATE_EPOCH` or the build time) and our
+`icon0.png`. `make ffpkg` uses this mode by itself when `app/tv/dist/PPSA99500/eboot.bin` exists
+(`FFPKG_APP_DIR=` forces the launcher image). Without `--app-dir` the image holds the native launcher
+(`eboot.bin` + `sce_module/libc.prx` from `make eboot`) and `xeno-store.elf` at its root, as in 1.2.1.
+
+Every entry is mode `0777`; the image is built with `makefs` (UFS2, 64 KiB blocks and fragments, `minfree=0`), sized
+to the files plus 8 MiB of slack. No `-S`: the console's UFS driver addresses blocks in 512-byte units, so
+`fs_fsbtodb` must be log2(fsize / 512) = 7; makefs with `-S 4096` writes 4 and the image cannot be read on the PS5.
+`tools/ufs2_check.py` reads the image back the way the console does (superblock search, `fs_fsbtodb` addressing),
+rejects a wrong `fs_fsbtodb`, a truncated file or a missing icon, and compares every file with the staged folder; in
+`--app-dir` mode the script also checks the UFS2 magic `19 01 54 19` at 65536 + 1372 (what the store's installer
+checks), reads `xeno/version.txt` back from the image and keeps the image at most 512 MiB. contentVersion is
+`NN.NNN.NNN` (1.3.0 → `01.003.000`), checked against `VERSION` by `tools/tv/check_param.py` (`make tv-check`).
+Settings → Updates → *Install the XENO STORE app* (web UI) and Settings → Updates → *TV app* (the app) put it in
+place on the console; copying it to `/data/homebrew/` by hand works too.
 
 `make pkg` (`tools/make_homebrew.py`) can still build a `dist/XENO-STORE/` folder (+ zip) for etaHEN / itemzflow homebrew launchers (`eboot.bin` = `xeno-store.elf`, title id `XENO00002`); it is not part of a release.
 
@@ -259,7 +311,8 @@ Tag `v<VERSION>`:
 
 | asset | what |
 |:--|:--|
-| `PPSA99500.ffpkg` | the Games-row app (§10) |
+| `PPSA99500.ffpkg` | the Games-row app: the TV app with the store inside (§10) |
 | `xeno-store.elf` | the store; Payload Manager and the in-app updater download this file |
 | `XENO-STORE-Desktop-Windows.zip`, `XENO-STORE-Desktop-Mac.zip` (universal: Apple silicon + Intel), `XENO-STORE-Desktop-Linux.tar.gz` | XENO STORE Desktop |
+| `XENO-STORE-<VERSION>-tv-sources.tar.gz` | the TV app's complete corresponding source (GPL-3.0): `git archive` of the release commit plus every pinned upstream source archive (SDK, ps5-opengl, libwebp, PacBrew, LLVM runtimes, zlib), each checked against its SHA-256 (`tools/tv/make_source_bundle.py`) |
 | `SHA256SUMS` | `sha256sum` lines for every file above; the in-app updater and app installer verify against it |
