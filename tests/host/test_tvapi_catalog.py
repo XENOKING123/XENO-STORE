@@ -620,10 +620,12 @@ class TvCatalogRealData(unittest.TestCase):
         body = tc.strict_json(r.body)                        # the app's parser rules on 2.36 MB
         r.check()                                            # transport + every item against the contract
         want = self.w.golden_catalog()
-        self.assertEqual(len(body), 4292)
-        self.assertEqual(len({o["gameId"] for o in body}), 2593)
-        self.assertEqual(len(r.body), 2364377)
-        self.assertEqual((self.stats["options"], self.stats["games"], self.stats["bytes"]), (4292, 2593, 2364377))
+        # Counts come from the catalogue the binary embeds (revision 10 had 4292 options, 2593 games,
+        # 2,364,377 bytes); every catalog sync changes them, the reference builder follows.
+        self.assertEqual(len(body), self.stats["options"])
+        self.assertEqual(len({o["gameId"] for o in body}), self.stats["games"])
+        self.assertEqual(len(r.body), self.stats["bytes"])
+        self.assertGreater(self.stats["games"], 2000, "tier A of the real catalogue should hold thousands of games")
         self.assertEqual(body, want)
         self.assertEqual(json.dumps(body, sort_keys=False), json.dumps(want, sort_keys=False))
         self.assertLess(cold, 1.0, f"first GET /catalog (with the index build) took {cold * 1000:.0f} ms")
@@ -643,12 +645,13 @@ class TvCatalogRealData(unittest.TestCase):
     def test_3_sources_updates_system(self):
         s = self.c.get("/api/v1/sources").check()
         self.assertEqual(s, self.w.golden_sources())
-        self.assertEqual({o["id"]: o["releaseCount"] for o in s["options"]}, {"archive": 3560, "vikingfile": 732})
+        self.assertEqual({o["id"]: o["releaseCount"] for o in s["options"]}, self.stats["optionsBySource"])
         self.assertEqual([o["downloadReady"] for o in s["options"]], [True, False])
         u = self.c.get("/api/v1/catalog/updates").check()
-        self.assertEqual((u["revision"], u["gameCount"], u["cached"]), (10, 2593, False))
+        rev = self.w.catalog["revision"]
+        self.assertEqual((u["revision"], u["gameCount"], u["cached"]), (rev, self.stats["games"], False))
         b = self.c.get("/api/v1/system").check()
-        self.assertEqual(b["catalogueRevision"], catalogue_revision(10, self.w.featured))
+        self.assertEqual(b["catalogueRevision"], catalogue_revision(rev, self.w.featured))
 
 
 # --------------------------------------------------------------------------- #

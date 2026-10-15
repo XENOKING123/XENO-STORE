@@ -548,7 +548,8 @@ class TvContractProbeRealCatalogue(ProbeAsserts, unittest.TestCase):
     def test_2_the_app_builds_the_golden_catalogue(self):
         c = self.by_call()["catalog"]
         self.assert_catalogue(c, self.golden, raw_bytes=self.stats["bytes"])
-        self.assertEqual((c["counts"]["releases"], c["counts"]["games"], c["bytes"]), (4292, 2593, 2364377))
+        self.assertEqual((c["counts"]["releases"], c["counts"]["games"], c["bytes"]),
+                         (self.stats["options"], self.stats["games"], self.stats["bytes"]))
         # inside the app's limits: the transfer under its 8 s timeout, the size under 16 MiB
         self.assertLess(c["ms"], 8000)
         sys.stderr.write(f"\n  real catalogue in the app's parser: {c['bytes']} bytes, transfer {c['ms']} ms, "
@@ -557,8 +558,10 @@ class TvContractProbeRealCatalogue(ProbeAsserts, unittest.TestCase):
     def test_3_status_and_sources(self):
         got = self.by_call()
         u = got["catalogue_status"]["values"]
-        self.assertEqual((u["revision"], u["gameCount"]), (10, 2593))
-        self.assertEqual(got["sources"]["values"]["releaseCounts"], ["archive=3560/ready", "vikingfile=732"])
+        self.assertEqual((u["revision"], u["gameCount"]), (self.w.catalog["revision"], self.stats["games"]))
+        by_src = self.stats["optionsBySource"]
+        self.assertEqual(got["sources"]["values"]["releaseCounts"],
+                         [f"archive={by_src['archive']}/ready", f"vikingfile={by_src['vikingfile']}"])
 
 
 if __name__ == "__main__":
