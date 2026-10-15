@@ -167,7 +167,7 @@ export function register({ route, state }) {
     /* same path rules as cx_uninstall(): home-screen app, the Payload Manager copy we recorded, recorded downloads +
        <root>/xeno-store/pkg|files on every drive (save backups are never deleted), and the data dir last */
     const removed = [], kept = [], failed = [];
-    (sel.homebrew ? removed : kept).push('/data/homebrew/XENO-STORE');
+    for (const p of ['/data/homebrew/XENO-STORE', '/data/homebrew/PPSA99500.ffpkg', '/user/app/PPSA99500', '/user/app/XENO00002']) (sel.homebrew ? removed : kept).push(p);
     if (sel.payloadManager) removed.push('/data/etaHEN/payloads/xeno-store.elf');
     if (sel.downloads) {
       for (const j of state.jobs) if (j.path && (j.state === 'done' || j.state === 'installed' || j.state === 'extracted' || j.written > 0)) removed.push(j.path + (j.written > 0 && j.state !== 'done' && j.state !== 'installed' && j.state !== 'extracted' ? '.xpart' : ''));
