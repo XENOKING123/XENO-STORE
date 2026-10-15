@@ -308,7 +308,7 @@ The store deletes exactly those paths and takes its two tiles off the home scree
 | Save install / export / transfer: *title_running* | The game is running or suspended (its save is mounted) | Close the game — not just suspend it — and try again. |
 | Save install: *invalid_save* | The ZIP is not a decrypted save (no `sce_sys/param.sfo` at its root), it holds a sealed raw image, or a raw backup has no `sdimg_<dir>` image at its top level | Community saves must be decrypted exports; a raw backup only restores on the console and profile it came from. Nothing was changed. |
 | Save transfer: *resign_unavailable* | Moving a PS5 save needs Garlic Save Manager to re-sign it for the other profile | Start Garlic Save Manager, or **copy** instead of move (the copy is not re-signed). |
-| Save restore / install / transfer: *busy* | Another restore, install or transfer of the same title (or another transfer) is still running | Wait for it to finish. |
+| Save backup / restore / install / transfer: *busy* | Another backup, restore, install or transfer of the same title (or another transfer) is still running; **Back up all** lists such saves as not backed up | Wait for it to finish. |
 | Accounts: *registry_unavailable* | Registry API missing on this firmware | Not supported on this firmware; nothing was changed. |
 | Phone cannot open `xeno.local` | Browser/OS without mDNS or an isolated Wi-Fi | Use the IP; disable "client isolation" on the router. |
 | Phone gets *pinRequired* | A pairing PIN is set | Enter the PIN once; the UI keeps it. |
