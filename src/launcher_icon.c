@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define LI_TITLE_ID   "XENO00002"
+#define LI_TITLE_ID   LAUNCHER_ICON_TITLE_ID
 #define LI_APP_PARENT "/user/app/"
 #define LI_APP_DIR    "/user/app/" LI_TITLE_ID
 #define LI_CONTENT_ID "IV0000-" LI_TITLE_ID "_00-XENOKINGSTORE001"

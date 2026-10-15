@@ -88,7 +88,7 @@ static const char *app_base(void) {
   return o[0] ? o : APP_BASE;
 }
 
-static void pkg_path(char *out, size_t cap) { xsnprintf(out, cap, "%s/%s", cx_data_homebrew_dir(), APP_FILE); }
+void app_install_pkg_path(char *out, size_t cap) { xsnprintf(out, cap, "%s/%s", cx_data_homebrew_dir(), APP_FILE); }
 
 static int host_allowed(const char *url) {
   char host[256];
@@ -114,7 +114,7 @@ int app_install_state(char *version, size_t cap) {
   xsnprintf(p, sizeof p, "%s/%s/eboot.bin", cx_data_homebrew_dir(), APP_TITLE_ID);
   if (lstat(p, &st) == 0) return APP_STATE_FOLDER;
   if (errno != ENOENT && errno != ENOTDIR) return APP_STATE_BLOCKED;
-  pkg_path(p, sizeof p);
+  app_install_pkg_path(p, sizeof p);
   if (lstat(p, &st) != 0) return errno == ENOENT ? APP_STATE_NONE : APP_STATE_BLOCKED;
   if (!S_ISREG(st.st_mode)) return APP_STATE_BLOCKED;
   int state = APP_STATE_MANUAL;
@@ -167,7 +167,7 @@ int app_install_release_url_ok(const char *url) {
 
 void app_install_status_json(jw *w) {
   char path[700], appdir[700], ver[32] = "", job[16] = "", last[16];
-  pkg_path(path, sizeof path);
+  app_install_pkg_path(path, sizeof path);
   xsnprintf(appdir, sizeof appdir, "%s/%s", storage_user_app_dir(), APP_TITLE_ID);
   int64_t size = util_file_size(path);
   int registered = util_dir_exists(appdir);
@@ -597,7 +597,7 @@ int app_install_start(char *job_id, size_t idcap, char *code, size_t ccap, char 
   xstrlcpy(a->base, base, sizeof a->base);
   size_t bl = strlen(a->base);
   while (bl > 0 && a->base[bl - 1] == '/') a->base[--bl] = 0;
-  pkg_path(a->dest, sizeof a->dest);
+  app_install_pkg_path(a->dest, sizeof a->dest);
   if (start_job(a, "XENO STORE app (Games row)", app_worker, job_id, idcap, code, ccap, err, errcap) != 0) return -1;
   LOGI("app install: job %s started (%s)", job_id, base);
   return 0;
@@ -624,7 +624,7 @@ int app_install_start_pinned(const char *url, const char *sha256, int64_t size, 
   xstrlcpy(a->url, url, sizeof a->url);
   xstrlcpy(a->sha256, sha256, sizeof a->sha256);
   xstrlcpy(a->version, version, sizeof a->version);
-  pkg_path(a->dest, sizeof a->dest);
+  app_install_pkg_path(a->dest, sizeof a->dest);
   char title[96];
   xsnprintf(title, sizeof title, "XENO STORE TV app %s", version);
   if (start_job(a, title, app_worker_pinned, job_id, idcap, code, ccap, err, errcap) != 0) return -1;

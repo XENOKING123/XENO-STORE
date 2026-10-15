@@ -33,6 +33,9 @@
 #define APP_MIN_BYTES (APP_UFS2_MAGIC_OFFSET + 4)
 #define APP_MAX_BYTES (512LL << 20)
 
+/* <homebrew>/PPSA99500.ffpkg: where both paths put the app. */
+void app_install_pkg_path(char *out, size_t cap);
+
 /* Writes installed, path, size, version, job (running job id or ""),
  * lastJob, titleId, file, registered into the open object. */
 void app_install_status_json(jw *w);

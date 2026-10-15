@@ -56,7 +56,7 @@ static int native_launch(const char *titleId, char *err, size_t errcap) {
   return 0;
 }
 
-static int native_uninstall(const char *titleId, char *err, size_t errcap) {
+int cx_library_app_uninstall(const char *titleId, char *err, size_t errcap) {
   aiu_init_fn init = (aiu_init_fn)dlsym(RTLD_DEFAULT, "sceAppInstUtilInitialize");
   aiu_uninstall_fn un = (aiu_uninstall_fn)dlsym(RTLD_DEFAULT, "sceAppInstUtilAppUnInstall");
   if (!un) { xsnprintf(err, errcap, "sceAppInstUtilAppUnInstall is not available on this firmware — delete the game from Settings → Storage"); return -1; }
@@ -82,7 +82,7 @@ static int native_launch(const char *titleId, char *err, size_t errcap) {
   return 0;
 }
 
-static int native_uninstall(const char *titleId, char *err, size_t errcap) {
+int cx_library_app_uninstall(const char *titleId, char *err, size_t errcap) {
   char p[700];
   xsnprintf(p, sizeof p, "%s/%s", storage_user_app_dir(), titleId);
   if (cx_rm_rf(p, 8) != 0) { xsnprintf(err, errcap, "cannot remove %s", p); return -1; }
@@ -136,7 +136,7 @@ int cx_library_uninstall(const char *titleId, const char *token, jw *w, char *co
     return 1;
   }
   pthread_mutex_unlock(&tok_mu);
-  if (native_uninstall(titleId, err, errcap) != 0) { xstrlcpy(code, "uninstall_failed", ccap); return -1; }
+  if (cx_library_app_uninstall(titleId, err, errcap) != 0) { xstrlcpy(code, "uninstall_failed", ccap); return -1; }
   jw_kv_str(w, "titleId", titleId);
   jw_kv_bool(w, "uninstalled", 1);
   jw_kv_bool(w, "simulated", cx_is_host());

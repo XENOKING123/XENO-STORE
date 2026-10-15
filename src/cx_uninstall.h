@@ -9,7 +9,10 @@
 #include <stddef.h>
 
 /* Performs the selected deletions (exact paths only) and writes "removed",
- * "kept", "failed". Returns 0; the caller stops the server afterwards. */
+ * "kept", "failed". homebrew covers <homebrew>/PPSA99500.ffpkg, the old
+ * <homebrew>/XENO-STORE folder and the PPSA99500 and XENO00002 home-screen
+ * titles (uninstalled, reported as <user/app>/<id>). Returns 0; the caller
+ * stops the server afterwards. */
 int cx_uninstall(int data, int homebrew, int payload_manager, int downloads, jw *w);
 /* Writes "dirs": [{name,path,size,hasEboot,hasIcon,isXenoStore,mtime}]. */
 void cx_homebrew_dirs_json(jw *w);
