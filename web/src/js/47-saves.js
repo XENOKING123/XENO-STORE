@@ -8,7 +8,7 @@
   var root = null;
   var CATS = ['starter', 'platinum', 'checkpoint', 'modded', 'chapter', 'other'];
   var SORTS = ['newest', 'popular', 'version'];
-  var cache = { all: null, allAt: 0, building: false, byGame: {}, engine: null, engineAt: 0, users: null, garlic: null, garlicAt: 0, site: null };
+  var cache = { all: null, allAt: 0, p: null, building: false, byGame: {}, engine: null, engineAt: 0, users: null, garlic: null, garlicAt: 0, site: null };
   var scr = { q: '', cat: '', sort: 'newest', compatOnly: false };
 
   /* ---------- data ---------- */
@@ -53,15 +53,20 @@
     if (/\b(chapter|act|mission|level)\b/.test(x)) return 'chapter';
     return 'other';
   }
-  function fetchAll(force) {
+  /* One request at a time; rebuild (the refresh button) has the console fetch saves-backend.json and every source
+     again (refresh=1) instead of serving its copy. */
+  function fetchAll(force, rebuild) {
     if (!force && cache.all && Date.now() - cache.allAt < 120000) return Promise.resolve(cache.all);
-    return ca.api.savesStore({}).then(function (r) {
+    if (cache.p) return cache.p;
+    cache.p = ca.api.savesStore(rebuild ? { refresh: 1 } : {}).then(function (r) {
+      cache.p = null;
       noteSite(r);
       cache.all = (r.saves || []).map(normalize);
       cache.building = !!r.building;
       cache.allAt = cache.building && !cache.all.length ? 0 : Date.now();   /* the console is still fetching the index: ask again soon */
       return cache.all;
-    });
+    }, function (err) { cache.p = null; throw err; });
+    return cache.p;
   }
   function fetchGame(g, force) {
     var key = g.id;
@@ -546,6 +551,19 @@
 
   /* ---------- Community Saves screen ---------- */
   var buildingRetries = 0;
+  /* Refresh: the console rebuilds its index at most once per 30 s, so a mashed button cannot hammer the save site;
+     a click in between reads the console's copy again, and none goes out while a request is on its way. */
+  var rebuiltAt = 0;
+  function refreshAll() {
+    if (cache.p) return;
+    var rebuild = Date.now() - rebuiltAt >= 30000;
+    if (rebuild) rebuiltAt = Date.now();
+    cache.all = null;
+    cache.byGame = {};
+    fetchAll(true, rebuild).then(null, function () { /* render() shows the error */ });
+    render();
+    ca.focusIn(root, 'sv-refresh');
+  }
   function render() {
     if (!root) return;
     U.clear(root);
@@ -573,7 +591,7 @@
     comp.addEventListener('click', function () { scr.compatOnly = !scr.compatOnly; render(); ca.focusIn(root, 'sv-compat'); });
     bar.appendChild(comp);
     var rf = h('button.iconbtn', { nav: 'sv-refresh', html: U.icon('refresh'), 'aria-label': t('common.refresh'), title: t('common.refresh') });
-    rf.addEventListener('click', function () { cache.all = null; cache.byGame = {}; render(); });
+    rf.addEventListener('click', refreshAll);
     bar.appendChild(rf);
     inner.appendChild(bar);
     inner.appendChild(catChips(scr.cat, function (c) { scr.cat = c; render(); ca.focusIn(root, 'cat-' + (c || 'all')); }));
