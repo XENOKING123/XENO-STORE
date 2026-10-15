@@ -1154,6 +1154,7 @@ class UninstallTests(unittest.TestCase):
         write(os.path.join(self.sim, "data", "homebrew", "XENO-STORE", "eboot.bin"), b"\x7fELF")   # the 1.0.0 folder layout
         write(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg"), b"u" * 4096)   # the Games-row app since 1.2.0
         write(os.path.join(self.sim, "data", "homebrew", "PPSA99500", "eboot.bin"), b"\x7fELF")   # the same app as a folder (copied by hand)
+        write(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg.part"), b"p" * 4096)   # left by an interrupted app install
         write(os.path.join(self.sim, "data", "homebrew", "OTHER-APP", "eboot.bin"), b"\x7fELF")
         # registered home-screen titles (host: <data>/user/app): the app's tile,
         # the XENO STORE Web shortcut and somebody else's game
@@ -1186,6 +1187,7 @@ class UninstallTests(unittest.TestCase):
         self.assertIn(os.path.join(self.sim, "data", "homebrew", "XENO-STORE"), removed)
         self.assertIn(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg"), removed)
         self.assertIn(os.path.join(self.sim, "data", "homebrew", "PPSA99500"), removed)   # else ShadowMountPlus registers it again
+        self.assertIn(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg.part"), removed)
         self.assertIn(os.path.join(self.user_app, "PPSA99500"), removed)   # its tile, unregistered
         self.assertIn(os.path.join(self.user_app, "XENO00002"), removed)   # the web shortcut
         self.assertIn(os.path.join(self.root, "xeno-store", "pkg"), removed)
@@ -1201,6 +1203,7 @@ class UninstallTests(unittest.TestCase):
         self.assertFalse(os.path.exists(os.path.join(self.sim, "data", "homebrew", "XENO-STORE")))
         self.assertFalse(os.path.exists(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg")))
         self.assertFalse(os.path.exists(os.path.join(self.sim, "data", "homebrew", "PPSA99500")))
+        self.assertFalse(os.path.exists(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg.part")))
         self.assertFalse(os.path.exists(os.path.join(self.user_app, "PPSA99500")))
         self.assertFalse(os.path.exists(os.path.join(self.user_app, "XENO00002")))
         self.assertTrue(os.path.exists(os.path.join(self.user_app, "PPSA01234", "sce_sys", "param.json")))
@@ -1228,6 +1231,7 @@ class UninstallTests(unittest.TestCase):
             self.assertIn(p, kept)
             self.assertNotIn(p, b["removed"])
             self.assertTrue(os.path.exists(p), p)
+        self.assertTrue(os.path.exists(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg.part")))
         deadline = time.time() + 10
         while time.time() < deadline and self.srv.proc.poll() is None:
             time.sleep(0.1)

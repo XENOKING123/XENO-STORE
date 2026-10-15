@@ -603,6 +603,16 @@ int app_install_start(char *job_id, size_t idcap, char *code, size_t ccap, char 
   return 0;
 }
 
+int app_install_cancel(int timeout_ms) {
+  char id[16] = "";
+  pthread_mutex_lock(&app_mu);
+  if (app_job[0] && cx_jobs_active(APP_JOB_TYPE) > 0) xstrlcpy(id, app_job, sizeof id);
+  pthread_mutex_unlock(&app_mu);
+  if (!id[0] || cx_job_cancel(id) != 0) return 0;
+  LOGI("app install: cancelling job %s", id);
+  return cx_job_wait(id, timeout_ms) == 0 ? -1 : 0;
+}
+
 int app_install_start_pinned(const char *url, const char *sha256, int64_t size, const char *version, int replace,
                              char *job_id, size_t idcap, char *code, size_t ccap, char *err, size_t errcap) {
   xstrlcpy(code, "bad_request", ccap);

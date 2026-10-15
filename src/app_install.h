@@ -44,6 +44,11 @@ void app_install_status_json(jw *w);
  * (in_progress | downloads_unavailable | forbidden | io | oom | busy) and err. */
 int app_install_start(char *job_id, size_t idcap, char *code, size_t ccap, char *err, size_t errcap);
 
+/* Cancels the running install job of either path, if any, and waits up to
+ * timeout_ms for it to end (a cancelled job removes its .part). 0 when no job
+ * runs any more, -1 when one still does. */
+int app_install_cancel(int timeout_ms);
+
 /* What is in /data/homebrew now (the /api/v1/tv-app "installed" value),
  * checked in this order: <hb>/PPSA99500/eboot.bin exists -> FOLDER (an lstat
  * error other than ENOENT/ENOTDIR -> BLOCKED); <hb>/PPSA99500.ffpkg missing ->

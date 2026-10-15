@@ -9,7 +9,8 @@ publishes PPSA99500.ffpkg + SHA256SUMS behind a "latest" redirect
 Covered: download + verify + swap-in (bytes, no .part, job done, status),
 a wrong published hash (job fails, no file, no .part, an older package stays
 untouched), a missing SHA256SUMS, a web page instead of the package, a second
-install while one runs (409), cancel (no .part), and the free-space check.
+install while one runs (409), cancel (no .part), uninstall during an install
+(the job is cancelled first) and the free-space check.
 Also: ShadowMountPlus without its HTTP API (before 1.7) — the install and the
 setup check rely on its process, and "launch" is offered only when it surely
 is not running.
@@ -267,6 +268,30 @@ class AppInstallTests(unittest.TestCase):
         self.assertEqual(st, 200, b)
         self.srv.api("POST", f"/api/saves/jobs/{b['job']['id']}/cancel", {})
         self.wait(b["job"]["id"])
+
+    def test_uninstall_cancels_a_running_install(self):
+        # "Home-screen app" while an install runs (web UI, or the TV app's
+        # update): the job is cancelled before the files go, so it cannot put
+        # the app back or leave its .part behind
+        self.start("slow")
+        jid = self.install()
+        deadline = time.time() + 10
+        while time.time() < deadline and not os.path.exists(self.pkg + ".part"):
+            time.sleep(0.05)
+        self.assertTrue(os.path.exists(self.pkg + ".part"))
+        st, b = self.srv.api("POST", "/api/uninstall", {"homebrew": True})
+        self.assertEqual(st, 200, b)
+        self.assertEqual(b["failed"], [])
+        self.assertFalse(os.path.exists(self.pkg))
+        self.assert_no_part()
+        deadline = time.time() + 10
+        while time.time() < deadline and self.srv.proc.poll() is None:
+            time.sleep(0.1)
+        self.assertIsNotNone(self.srv.proc.poll(), "server should stop after uninstall")
+        self.assertFalse(os.path.exists(self.pkg))
+        self.assert_no_part()
+        with open(self.srv.log_path, encoding="utf-8", errors="replace") as f:
+            self.assertIn(f"job {jid} (app-install) cancelled", f.read())
 
     def test_not_enough_space(self):
         self.start("ok", env={"XENO_FAKE_FREE": "1048576"})
