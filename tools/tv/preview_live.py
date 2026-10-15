@@ -948,7 +948,13 @@ def check_group(gr, table, results):
             if isinstance(secs, (int, float)) and secs > limit:
                 fail("timing", f"{tag}: took {secs:.1f} s (limit {limit} s)")
             for t in st.get("timeouts", []):
-                fail("timing", f"{tag}: a wait ran out ({t})")
+                # Name what the store was doing, so a wait that only runs out on
+                # another machine can be read from the CI log alone.
+                diag = [ln for ln in gr.store_log.splitlines()
+                        if re.search(r"tvlib|tv-storage|storage:|tvapi: thread|stall|deadlock", ln)][-25:]
+                extra = "".join("\n        | " + ln[:220] for ln in diag)
+                state = f" (libraryGames {st.get('libraryGames')}, libraryError {st.get('libraryError')!r})"
+                fail("timing", f"{tag}: a wait ran out ({t}){state}{extra}")
     # Group-wide: the sentinel on the store's own loader port saw nothing.
     got = [e for e in gr.sentinel_events if e.get("event") == "received"]
     if got:
