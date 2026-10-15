@@ -6,10 +6,10 @@
   "payloads": [
     {
       "name": "XENO STORE",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "filename": "xeno-store.elf",
-      "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/v1.2.0/xeno-store.elf",
-      "sha256": "0d26000c1dddcb93735ddab25119d1cf8d447f6187ae94dc31e2925c976724ee",
+      "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/v1.2.1/xeno-store.elf",
+      "sha256": "77f66d6f167d274304fb5fb5a507663b8247900468db52e9b98823075b0cff2f",
       "minFw": "",
       "notes": "The whole store in one ELF. It opens on the TV when it starts (Settings → General), serves http://<ps5-ip>:9095 (or http://xeno.local:9095) to your phone and PC, and keeps downloading with the browser closed. Recommended for Payload Manager auto-start."
     }
