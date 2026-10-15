@@ -37,7 +37,7 @@
 
 static int status_for(const char *code) {
   if (strcmp(code, "not_found") == 0 || strcmp(code, "not_installed") == 0) return 404;
-  if (strcmp(code, "exists") == 0) return 409;
+  if (strcmp(code, "exists") == 0 || strcmp(code, "already_running") == 0) return 409;
   if (strcmp(code, "forbidden") == 0) return 403;
   if (strcmp(code, "confirm_required") == 0) return 428;
   if (strcmp(code, "downloads_unavailable") == 0 || strcmp(code, "loader_unavailable") == 0 || strcmp(code, "engine_unavailable") == 0) return 503;

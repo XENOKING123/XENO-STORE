@@ -4,6 +4,7 @@
  * §9 defaults so the store always boots.
  */
 #include "settings.h"
+#include "cx_common.h"
 #include "log.h"
 #include "util.h"
 
@@ -87,7 +88,7 @@ static void settings_defaults(settings_t *s) {
   xstrlcpy(s->saves.backend.kind, "github", sizeof s->saves.backend.kind);
   xstrlcpy(s->saves.backend.bucket, "ps5-saves", sizeof s->saves.backend.bucket);
   xstrlcpy(s->saves.backend.garlicFunction, "garlic-savedb", sizeof s->saves.backend.garlicFunction);
-  xstrlcpy(s->saves.uploadHost, "pixeldrain", sizeof s->saves.uploadHost);
+  xstrlcpy(s->saves.uploadHost, "site", sizeof s->saves.uploadHost);   /* the save site when its backend is on, else pixeldrain */
 }
 
 void settings_saves_root(const settings_t *s, char *out, size_t cap) {
@@ -219,7 +220,7 @@ static int valid_hhmm(const char *s) {
 static const char *const PREFER_FORMATS[] = {"auto", "exFAT", "FFPFSC", "PKG"};
 static const char *const DEBRID_CHOICES[] = {"auto", "direct", "realdebrid", "alldebrid", "torbox", "premiumize"};
 static const char *const BACKEND_KINDS[] = {"supabase", "github", "none"};
-static const char *const UPLOAD_HOSTS[] = {"pixeldrain", "catbox", "custom"};
+static const char *const UPLOAD_HOSTS[] = {"site", "pixeldrain", "catbox", "custom"};
 
 /* Case-insensitive match against a choice list; rewrites the canonical
  * spelling. "" picks the first entry (the default). */
@@ -288,7 +289,7 @@ static int validate(settings_t *s, char *err, size_t errcap) {
     xsnprintf(err, errcap, "saves.backend.kind must be supabase|github|none"); return -1;
   }
   if (normalize_choice(s->saves.uploadHost, sizeof s->saves.uploadHost, UPLOAD_HOSTS, XS_ARRAY_LEN(UPLOAD_HOSTS)) != 0) {
-    xsnprintf(err, errcap, "saves.uploadHost must be pixeldrain|catbox|custom"); return -1;
+    xsnprintf(err, errcap, "saves.uploadHost must be site|pixeldrain|catbox|custom"); return -1;
   }
   const char *const urls[] = {s->featuredUrl, s->messagesUrl, s->companionsUrl, s->savesBackendUrl, s->catalogRevisionUrl,
                               s->saves.backend.url, s->saves.uploadEndpoint, s->saves.submitEndpoint};
@@ -655,11 +656,27 @@ int settings_open_on_start(void) {
   return v;
 }
 
+/* A database backend URL typed into Settings → Saves → Backend must be one the
+ * console will use (cx_savestore.c backend_url_ok): https://host[:port], or a
+ * loopback http:// mock on the host build. Checked when the URL changes only,
+ * so a stored older value never blocks saving other settings (the console
+ * then keeps the GitHub index only and says why — never the published site). */
+static int backend_url_change_ok(const settings_t *before, const settings_t *after, char *err, size_t errcap) {
+  const char *u = after->saves.backend.url;
+  if (!u[0] || strcmp(u, before->saves.backend.url) == 0) return 0;
+  xurl x;
+  if (util_url_parse(u, &x) == 0 && !x.has_userinfo && x.host[0] &&
+      (strcmp(x.scheme, "https") == 0 || (strcmp(x.scheme, "http") == 0 && cx_host_is_loopback(x.host)))) return 0;
+  xsnprintf(err, errcap, "saves.backend.url must be https://<project>.supabase.co");
+  return -1;
+}
+
 int settings_merge(jv obj, char *err, size_t errcap) {
   if (jv_type(obj) != JV_OBJ) { xsnprintf(err, errcap, "settings must be an object"); return -1; }
   pthread_mutex_lock(&settings_mu);
   settings_t tmp = S;
   int rc = merge_into(&tmp, obj, err, errcap);
+  if (rc == 0) rc = backend_url_change_ok(&S, &tmp, err, errcap);
   if (rc == 0) { S = tmp; save_settings_locked(); }
   pthread_mutex_unlock(&settings_mu);
   return rc;
@@ -813,7 +830,7 @@ int settings_import_json(jv obj, char *err, size_t errcap) {
   jv s = jv_get(obj, "settings");
   if (jv_ok(s)) {
     settings_t tmp = S;
-    if (merge_into(&tmp, s, err, errcap) != 0) { pthread_mutex_unlock(&settings_mu); return -1; }
+    if (merge_into(&tmp, s, err, errcap) != 0 || backend_url_change_ok(&S, &tmp, err, errcap) != 0) { pthread_mutex_unlock(&settings_mu); return -1; }
     S = tmp;
     save_settings_locked();
   }

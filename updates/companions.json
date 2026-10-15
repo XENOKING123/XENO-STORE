@@ -1,90 +1,100 @@
 {
   "name": "XENO STORE companions",
   "author": "XENOKING",
-  "updatedAt": "2026-10-13T00:00:00Z",
+  "updatedAt": "2026-10-15T00:00:00Z",
   "_notes": [
     "Owner-curated catalog of scene payloads that make XENO STORE one-click (SPEC §17.16). XENO STORE downloads the file to /data/xeno-store/payloads/<id>.elf, checks the sha256 and sends the bytes to the local ELF loader on 127.0.0.1:9021. It never loads code in-process.",
-    "Every sha256 below is FILLED-BY-OWNER: a payload whose hash is still a placeholder refuses to install (sha256 mismatch) until the owner replaces it with the hash of the exact file at 'url'. Fill it with: sha256sum <file>.",
-    "Entries under releases/download/companions/ are mirrored copies the owner uploads to the 'companions' release of this repo after verifying them on hardware, so a vanished upstream asset never breaks the console. 'homepage' always points at the original project.",
-    "'kind' is matched by the readiness checklist (shadowmount → Launch ShadowMountPlus now, dpi → package installer fallback, np-signin/np-signout → Accounts screen, dumper → Library 'Back up this game to a dump', saves → Garlic tier of the save engine)."
+    "Every 'url' is the payload author's own GitHub release asset, pinned to one release with its sha256 and size (verified 2026-10-15). XENO STORE never mirrors or rehosts these files; to move an entry to a newer release, replace url, version, size and sha256 together (sha256sum <file>).",
+    "An entry whose author publishes no downloadable asset is marked \"unavailable\": true with an 'unavailableReason': it stays listed for its credits and never installs.",
+    "'kind' is matched by the readiness checklist and the engine (shadowmount → Launch ShadowMountPlus now, dpi → package installer fallback, np-signin/np-signout → Accounts screen, dumper → Library 'Back up this game to a dump', saves → Garlic Save Manager, started on demand to re-sign community saves)."
   ],
   "payloads": [
     {
       "id": "shadowmount-plus",
       "name": "ShadowMountPlus",
       "kind": "shadowmount",
-      "version": "1.03",
-      "filename": "ShadowMountPlus.elf",
-      "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/companions/ShadowMountPlus.elf",
-      "sha256": "FILLED-BY-OWNER",
-      "homepage": "https://github.com/LightningMods",
-      "notes": "Mounts exFAT / FFPFSC / FFPKG dumps from <drive>/homebrew/ and shows them on the home screen. XENO STORE saves image dumps there and triggers its scan on 127.0.0.1:10101 after every download. Needed for image formats; PKG installs work without it."
+      "version": "1.7-beta5fix1",
+      "filename": "shadowmountplus.elf",
+      "url": "https://github.com/drakmor/shadowMountPlus/releases/download/1.7-beta5fix1/shadowmountplus.elf",
+      "sha256": "e85fd63b705498488f39c09c9aea6f9fa22e0df2e932865de49a8cedf25172d5",
+      "size": 2498376,
+      "homepage": "https://github.com/drakmor/shadowMountPlus",
+      "license": "GPL-3.0",
+      "notes": "By drakmor (GPL-3.0), the evolution of VoidWhisper's ShadowMount. Mounts exFAT / FFPKG / FFPFS(C) dumps from <drive>/homebrew/ and shows them on the home screen; XENO STORE asks it to rescan on 127.0.0.1:10101 (1.7 and newer) after every download. Needed for image formats; PKG installs work without it."
     },
     {
       "id": "ezremote-dpi",
       "name": "Package installer daemon (DPI)",
       "kind": "dpi",
-      "version": "1.0",
+      "version": "1.05",
       "filename": "ezremote-dpi.elf",
-      "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/companions/ezremote-dpi.elf",
-      "sha256": "FILLED-BY-OWNER",
-      "homepage": "https://github.com/XENOKING123/XENOKING/tree/main/payload/dpi",
-      "notes": "etaHEN-compatible direct package installer on 127.0.0.1:9040 (the same daemon XENO TOOL uses). XENO STORE installs PKGs natively first and falls back to this daemon when the native call is refused on your firmware."
+      "url": "https://github.com/cy33hc/ps5-ezremote-dpi/releases/download/1.05/ezremote-dpi.elf",
+      "sha256": "9d62053c13c051456f6542e3f4e25518b7540a21e7f68db064bbf27c99450f96",
+      "size": 99784,
+      "homepage": "https://github.com/cy33hc/ps5-ezremote-dpi",
+      "license": "GPL-3.0",
+      "notes": "ezRemote DPI by cy33hc (GPL-3.0), modelled on etaHEN's DPI: a background installer that takes http(s) package URLs on 127.0.0.1:9040 (XENO TOOL ships a plain-C port of it). XENO STORE installs PKGs natively first and falls back to this daemon when the native call is refused on your firmware."
     },
     {
       "id": "kstuff",
       "name": "kstuff",
       "kind": "kernel",
-      "version": "latest",
+      "version": "1.6.7",
       "filename": "kstuff.elf",
-      "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/companions/kstuff.elf",
-      "sha256": "FILLED-BY-OWNER",
-      "homepage": "https://github.com/sleirsgoevy/ps5-kstuff",
-      "notes": "Kernel patches that let fake packages (FPKG) run and let the save engine mount saves natively. Load it once per boot before installing or launching FPKG titles. Firmware support follows the upstream project — read its README for your firmware."
+      "url": "https://github.com/EchoStretch/kstuff/releases/download/v1.6.7/kstuff.elf",
+      "sha256": "f1c1f4b2b6395644af04cbe9828aba58586acf7aacb9e01113cac92ce16e3569",
+      "size": 1550152,
+      "homepage": "https://github.com/EchoStretch/kstuff",
+      "notes": "Kernel patches by sleirsgoevy (ps5-kstuff in sleirsgoevy/ps4jb-payloads), builds for newer firmware maintained by EchoStretch. They let fake packages (FPKG) run: load it once per boot before installing or launching FPKG titles. Firmware support follows the upstream project — read its README for your firmware."
     },
     {
       "id": "np-fake-signin",
       "name": "NP fake sign-in",
       "kind": "np-signin",
-      "version": "1.0",
-      "filename": "np-fake-signin.elf",
-      "url": "https://github.com/earthonion/np-fake-signin/releases/latest/download/np-fake-signin.elf",
-      "sha256": "FILLED-BY-OWNER",
+      "version": "1.1",
+      "filename": "np-fake-signin-ps5.elf",
+      "url": "https://github.com/earthonion/np-fake-signin/releases/download/1.1/np-fake-signin-ps5.elf",
+      "sha256": "6a38ee251b2252ae6752bf23f4f22d970d449731cfe69c1f513f18670efd5314",
+      "size": 119872,
       "homepage": "https://github.com/earthonion/np-fake-signin",
-      "notes": "Makes the console believe PSN is signed in so trophies and some online checks work offline. Activate the profile first (Settings → Accounts), then send this payload. Reverse it with NP fake sign-out."
+      "notes": "By earthonion (the project now lives at git.etawen.dev/earthonion/np-fake-signin; this is its GitHub release). Makes the console believe PSN is signed in for the foreground user so trophies and some online checks work offline. Activate the profile first (Settings → Accounts), then send this payload. Undo it in Settings → Users and Accounts → Other → Sign out. The repository has no licence file, so XENO STORE only downloads the author's release on your console."
     },
     {
       "id": "np-fake-signout",
       "name": "NP fake sign-out",
       "kind": "np-signout",
-      "version": "1.0",
-      "filename": "np-fake-signout.elf",
-      "url": "https://github.com/earthonion/np-fake-signin/releases/latest/download/np-fake-signout.elf",
-      "sha256": "FILLED-BY-OWNER",
+      "version": "",
+      "filename": "",
+      "url": "",
+      "sha256": "",
+      "unavailable": true,
+      "unavailableReason": "earthonion publishes no sign-out payload (np-fake-signin 1.1 ships only the sign-in ELF). Sign out from Settings → Users and Accounts → Other → Sign out instead.",
       "homepage": "https://github.com/earthonion/np-fake-signin",
-      "notes": "Reverts NP fake sign-in. Send it before signing in to the real PlayStation Network again."
+      "notes": "Reverting NP fake sign-in needs no payload: use Settings → Users and Accounts → Other → Sign out before signing in to the real PlayStation Network again."
     },
     {
       "id": "ps5-app-dumper",
-      "name": "App dumper",
+      "name": "PS5 App Dumper",
       "kind": "dumper",
-      "version": "latest",
-      "filename": "ps5-app-dumper.elf",
-      "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/companions/ps5-app-dumper.elf",
-      "sha256": "FILLED-BY-OWNER",
-      "homepage": "https://github.com/XENOKING123/XENO-STORE/blob/main/docs/GUIDE.md",
-      "notes": "Dumps an installed game to an image on a USB / M.2 drive so you can keep your own backup. Library → 'Back up this game to a dump' launches it and shows the steps. Dumping large games takes a long time; keep the console awake."
+      "version": "2.10",
+      "filename": "ps5-app-dumper_v2.10.elf",
+      "url": "https://github.com/EchoStretch/ps5-app-dumper/releases/download/v2.10/ps5-app-dumper_v2.10.elf",
+      "sha256": "c850f1df6f2787824d6ddeeed69ce4144e00569b32135973401c2985cfb0345b",
+      "size": 1410752,
+      "homepage": "https://github.com/EchoStretch/ps5-app-dumper",
+      "notes": "By EchoStretch, based on logic-68's pfsmnt-dumper. Dumps an installed game's files to a USB drive attached to the console (never over the network) and serves a web page (port 8081 by default) to pick the title, the drive and the settings. Library → 'Back up this game to a dump' launches it. Large games take a long time; keep the console awake."
     },
     {
       "id": "garlic-save-manager",
       "name": "Garlic Save Manager",
       "kind": "saves",
-      "version": "latest",
-      "filename": "garlic-save-manager.elf",
-      "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/companions/garlic-save-manager.elf",
-      "sha256": "FILLED-BY-OWNER",
-      "homepage": "https://garlicsaves.com",
-      "notes": "Save re-signing worker on 127.0.0.1:8082 (ELF Arsenal). When it answers, the Save Data Store imports community saves 'via Garlic' and the game page shows 'Open in Garlic'. Optional: the native tier (kstuff) and the same-console raw tier work without it."
+      "version": "1.7",
+      "filename": "garlic-savemgr.elf",
+      "url": "https://github.com/earthonion/garlic-savemgr/releases/download/v1.7/garlic-savemgr.elf",
+      "sha256": "124051ab3a762474720ae53187d2920bc96d6be1d69aa298e715667efc385a2f",
+      "size": 1497744,
+      "homepage": "https://github.com/earthonion/garlic-savemgr",
+      "notes": "Save decrypt / re-sign tool by earthonion on 127.0.0.1:8082. XENO STORE installs community saves through its import API (re-signed for your profile) and makes shareable decrypted exports with it; when it is not running, XENO STORE starts a copy found on the console or downloads this release. The repository has no licence file, so XENO STORE never rehosts it: it downloads this exact release from the author's GitHub on your console (sha256 checked)."
     }
   ]
 }

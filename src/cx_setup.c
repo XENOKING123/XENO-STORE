@@ -5,6 +5,7 @@
 #include "config.h"
 #include "cx_common.h"
 #include "cx_companions.h"
+#include "cx_garlic.h"
 #include "http_client.h"
 #include "install.h"
 #include "log.h"
@@ -78,6 +79,26 @@ static int run_checks(check *c, int max, int automatic) {
     k->warn = 1;
     xsnprintf(k->detail, sizeof k->detail, k->ok ? "etaHEN DPI is answering on :%d" : "etaHEN DPI is not answering on :%d", port);
     xstrlcpy(k->fix, "Optional: enable the DPI option in etaHEN's config so PKG installs have a second fallback.", sizeof k->fix);
+  }
+  /* Save re-signing (Garlic Save Manager): optional; community saves start
+   * it on demand, the action starts it now (a second copy is never sent
+   * while anything listens on its port) */
+  {
+    check *k = &c[n++];
+    memset(k, 0, sizeof *k);
+    xstrlcpy(k->id, "garlic", sizeof k->id);
+    int port = cx_garlic_port();
+    k->ok = cx_garlic_running();
+    k->warn = 1;
+    if (k->ok) xsnprintf(k->detail, sizeof k->detail, "Save re-signing (Garlic Save Manager) is running on :%d", port);
+    else if (cx_tcp_probe(port, 300)) xsnprintf(k->detail, sizeof k->detail, "Save re-signing: port %d is open but Garlic Save Manager does not answer (busy?)", port);
+    else xsnprintf(k->detail, sizeof k->detail, "Save re-signing (Garlic Save Manager) is not running on :%d — community saves start it when they need it", port);
+    xstrlcpy(k->fix, "Optional: start Garlic Save Manager (by earthonion) so community saves are re-signed for your profile. XENO STORE downloads its author's pinned release (sha256 checked) and only falls back to a copy on the console when that cannot be downloaded.", sizeof k->fix);
+    if (!k->ok && !cx_tcp_probe(port, 300)) {
+      char pid[48];
+      if (cx_companions_find_installed("garlic", pid, sizeof pid) == 0) { xstrlcpy(k->action, "launch", sizeof k->action); xstrlcpy(k->actionId, pid, sizeof k->actionId); }
+      else { xstrlcpy(k->action, "install", sizeof k->action); xstrlcpy(k->actionId, CX_GARLIC_COMPANION_ID, sizeof k->actionId); }
+    }
   }
   /* internet */
   {

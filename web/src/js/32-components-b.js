@@ -57,7 +57,7 @@
     savesBackupAll: function (user) { return req('POST', '/api/saves/backup', { user: user, all: true }, { timeout: 60000 }); },
     savesBackups: function () { return req('GET', '/api/saves/backups', undefined, { timeout: 30000 }); },
     savesRestore: function (user, zipPath, overwrite) { return req('POST', '/api/saves/restore', { user: user, zipPath: zipPath, overwrite: !!overwrite }, { timeout: 120000 }); },
-    savesTransfer: function (fromUser, toUser, titleId, kind, move) { return req('POST', '/api/saves/transfer', { fromUser: fromUser, toUser: toUser, titleId: titleId, kind: kind || '', move: !!move }, { timeout: 120000 }); },
+    savesTransfer: function (fromUser, toUser, titleId, kind, move) { return req('POST', '/api/saves/transfer', { fromUser: fromUser, toUser: toUser, titleId: titleId, kind: kind || '', move: !!move }, { timeout: 900000 }); },   /* synchronous: a Garlic cold start plus every save of the title */
     savesJobs: function () { return req('GET', '/api/saves/jobs', undefined, { timeout: 8000, quiet: true }); },
     savesJob: function (id) { return req('GET', '/api/saves/jobs/' + enc(id), undefined, { timeout: 8000, quiet: true }); },
     savesJobCancel: function (id) { return req('POST', '/api/saves/jobs/' + enc(id) + '/cancel'); },

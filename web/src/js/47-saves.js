@@ -1,13 +1,14 @@
 /* XENO STORE — 47-saves.js: PS5 Save Data Store UI (§17.22): the game page "Saves (n)" tab, the Community Saves
    screen (id "saves"), save detail sheet, Install / Download / Report flows and the Upload-my-save wizard.
-   Uses /api/saves/* exactly as SPEC §17.22.7; the re-sign engine tier is shown honestly (native / garlic / raw). */
+   Uses /api/saves/* exactly as SPEC §17.22.7; the re-sign engine tier is shown honestly (native / garlic / raw), with
+   Garlic Save Manager's state (GET /api/saves/garlic) and a Start / Install action when community saves need it. */
 (function () {
   'use strict';
   var XS = window.XS, U = XS.util, S = XS.state, ui = XS.ui, ca = XS.ca, h = U.h, t = XS.t;
   var root = null;
   var CATS = ['starter', 'platinum', 'checkpoint', 'modded', 'chapter', 'other'];
   var SORTS = ['newest', 'popular', 'version'];
-  var cache = { all: null, allAt: 0, byGame: {}, engine: null, engineAt: 0, users: null };
+  var cache = { all: null, allAt: 0, building: false, byGame: {}, engine: null, engineAt: 0, users: null, garlic: null, garlicAt: 0, site: null };
   var scr = { q: '', cat: '', sort: 'newest', compatOnly: false };
 
   /* ---------- data ---------- */
@@ -24,12 +25,24 @@
     s.downloads = Number(s.downloads) || 0;
     s.size = Number(s.size || s.file_size) || 0;
     s.tags = Array.isArray(s.tags) ? s.tags : [];
-    s.compat = s.compat && typeof s.compat === 'object' ? s.compat : { status: 'unknown' };
-    if (!s.compat.status) s.compat.status = 'unknown';
+    s.compat = compatOf(sv);
     var g = s.gameId ? S.game(s.gameId) : (s.titleId ? S.data.byTitleId[s.titleId] : null);
     s._game = g || null;
     if (!s.cover && !s.cover_path && g) s._coverFallback = g.cover;
     return s;
+  }
+  /* The console sends a flat compat string (match | update_game | not_installed | unknown) next to installedVersion,
+     versionCompare (save vs installed) and otherRegion / installedTitleId; the badges use {status, installedVersion}. */
+  function compatOf(sv) {
+    var c = sv.compat, o = {};
+    if (c && typeof c === 'object') { for (var k in c) o[k] = c[k]; if (!o.status) o.status = 'unknown'; return o; }
+    var flat = String(c || ''), st = 'unknown';
+    if (flat === 'match' || flat === 'ok') st = Number(sv.versionCompare) < 0 ? 'newer' : 'ok';
+    else if (flat === 'newer' || flat === 'older') st = 'newer';
+    else if (flat === 'update_game' || flat === 'update') st = 'update';
+    else if (flat === 'other_region' || flat === 'region') st = 'region';
+    else if (flat === 'not_installed' || flat === 'notInstalled') st = sv.otherRegion ? 'region' : 'notInstalled';
+    return { status: st, installedVersion: sv.installedVersion || '', installedTitleId: sv.installedTitleId || '' };
   }
   function inferCategory(text) {
     var x = String(text || '').toLowerCase();
@@ -42,7 +55,13 @@
   }
   function fetchAll(force) {
     if (!force && cache.all && Date.now() - cache.allAt < 120000) return Promise.resolve(cache.all);
-    return ca.api.savesStore({}).then(function (r) { cache.all = (r.saves || []).map(normalize); cache.allAt = Date.now(); return cache.all; });
+    return ca.api.savesStore({}).then(function (r) {
+      noteSite(r);
+      cache.all = (r.saves || []).map(normalize);
+      cache.building = !!r.building;
+      cache.allAt = cache.building && !cache.all.length ? 0 : Date.now();   /* the console is still fetching the index: ask again soon */
+      return cache.all;
+    });
   }
   function fetchGame(g, force) {
     var key = g.id;
@@ -50,10 +69,19 @@
     if (!force && c && Date.now() - c.at < 120000) return Promise.resolve(c.list);
     var tid = (g.titleIds || [])[0] || '';
     return ca.api.savesStore(tid ? { titleId: tid, gameId: g.id } : { gameId: g.id }).then(function (r) {
+      noteSite(r);
       var list = (r.saves || []).map(normalize);
-      cache.byGame[key] = { list: list, at: Date.now() };
+      var waiting = !!r.building && !list.length && !r.updatedAt;   /* no index copy on the console yet: ask again soon */
+      cache.byGame[key] = { list: list, at: waiting ? 0 : Date.now(), building: waiting };
       return list;
     });
+  }
+  /* GET /api/saves/store says whether the console's backend is the save site (the owner's XenoKing
+     collection): siteUpload + backendName. The share wizard then uploads there and the save is live at once. */
+  function noteSite(r) { if (r && typeof r.siteUpload === 'boolean') cache.site = { on: r.siteUpload, name: r.backendName || 'XenoKing' }; }
+  function siteInfo() {
+    if (cache.site) return Promise.resolve(cache.site);
+    return fetchAll().then(function () { return cache.site || { on: false, name: '' }; }, function () { return { on: false, name: '' }; });
   }
   function engine() {
     if (cache.engine && Date.now() - cache.engineAt < 300000) return Promise.resolve(cache.engine);
@@ -73,6 +101,65 @@
     return ca.api.savesUsers().then(function (r) { cache.users = r.users || []; return cache.users; });
   }
   function compatible(s) { return s.compat.status === 'ok' || s.compat.status === 'newer'; }
+
+  /* ---------- Garlic Save Manager (the re-signer community saves need without the native engine) ---------- */
+  function garlic(force) {
+    if (!force && cache.garlic && Date.now() - cache.garlicAt < 30000) return Promise.resolve(cache.garlic);
+    return ca.api.get('/api/saves/garlic', { timeout: 8000 }).then(function (r) { cache.garlic = r.garlic || null; cache.garlicAt = Date.now(); return cache.garlic; }, function () { return null; });
+  }
+  var garlicBusy = null;
+  /* POST /api/saves/garlic/start → a console job (find or download the ELF, send it to the loader, wait for it). */
+  function startGarlic(btn) {
+    if (garlicBusy) return garlicBusy;
+    if (btn) btn.classList.add('busy');
+    ui.toast({ cls: 'gold', title: t('saves.garlic.starting') });
+    garlicBusy = ca.api.post('/api/saves/garlic/start', {}, { timeout: 20000 }).then(function (r) {
+      var j = r.job || {};
+      if (j.state === 'done' || j.state === 'failed' || j.state === 'cancelled' || !j.id || !(XS.cb && XS.cb.watchJob)) return j;
+      return XS.cb.watchJob(j.id, null, { every: 1000, maxPolls: 150 });
+    }).then(function (j) {
+      cache.engine = null;
+      return garlic(true).then(function (gs) {
+        if (gs && gs.running) { XS.sound.done(); ui.toast({ cls: 'good', title: t('saves.garlic.started'), desc: gs.version ? 'v' + gs.version : '' }); }
+        else ui.toast({ cls: 'bad', title: t('saves.garlic.startFailed'), desc: (j && j.error) || (gs && gs.detail) || '', timeout: 9000 });
+        return gs;
+      });
+    }, function (err) { ui.errorToast(err, t('saves.garlic.start')); return null; }).then(function (gs) {
+      garlicBusy = null;
+      if (btn) btn.classList.remove('busy');
+      return gs;
+    });
+    return garlicBusy;
+  }
+  /* Status panel, shown when the native engine is not available (opts.always: whatever the tier). Fills in async. */
+  function garlicPanel(opts) {
+    opts = opts || {};
+    var box = h('div.sv-garlic');
+    Promise.all([engine(), garlic()]).then(function (a) {
+      var e = a[0], gs = a[1];
+      if (!gs || (!opts.always && e && e.tier === 'native')) return;
+      paintGarlic(box, gs, opts);
+    });
+    return box;
+  }
+  function paintGarlic(box, gs, opts) {
+    U.clear(box);
+    var pre = opts.nav || 'sv-garlic';
+    if (gs.running) {
+      box.appendChild(h('div.panel.note', { style: { marginTop: '12px' } }, [h('div.row', [ui.svg('check'), h('span', { text: gs.version ? t('saves.garlic.runningVersion', { v: gs.version }) : t('saves.garlic.running') })])]));
+      return;
+    }
+    var label = gs.elfPath ? t('saves.garlic.start') : t('saves.garlic.install');
+    var btn = h('button.btn.sm.primary', { nav: pre + '-start', html: U.icon(gs.elfPath ? 'play' : 'download') + '<span>' + U.escapeHtml(label) + '</span>' });
+    btn.addEventListener('click', function () {
+      startGarlic(btn).then(function (ns) { if (!ns) return; paintGarlic(box, ns, opts); if (ns.running && opts.onStarted) opts.onStarted(ns); });
+    });
+    var lines = [h('div.row', [ui.svg('alert'), h('b', { text: t('saves.garlic.neededShort') })]), h('p', { text: t('saves.garlic.needed') })];
+    lines.push(h('p.dim.small', { text: gs.available ? t('saves.garlic.canStart') : t('saves.garlic.cannotStart') + (gs.detail ? ' (' + gs.detail + ')' : '') }));
+    if (!gs.elfPath) lines.push(h('p.dim.small', { text: t('saves.garlic.credit') }));
+    lines.push(h('div', { style: { marginTop: '8px' } }, [btn]));
+    box.appendChild(h('div.panel.note.warn', { style: { marginTop: '12px' } }, lines));
+  }
 
   /* ---------- widgets ---------- */
   function compatBadge(s, long) {
@@ -274,6 +361,7 @@
     up.addEventListener('click', function () { uploadWizard({ titleId: (g.titleIds || [])[0] || '', gameId: g.id }); });
     head.appendChild(up);
     container.appendChild(head);
+    container.appendChild(garlicPanel({ nav: 'sv-garlic-game' }));
     var chipsHost = h('div'); container.appendChild(chipsHost);
     var listHost = h('div.sv-list', { data: { navRegion: '' } }); container.appendChild(listHost);
     listHost.appendChild(ca.busyRow(t('saves.loading')));
@@ -306,7 +394,21 @@
         others.forEach(function (s, i) { listHost.appendChild(rowCard(s, 100 + i)); });
       }
     }
-    fetchGame(g).then(function (list) { state.list = list; if (opts.onCount) opts.onCount(list.length); paintChips(); paintList(); }, function (err) { U.clear(listHost); listHost.appendChild(ui.emptyState(t('saves.loadFailed'), ui.errorText(err), [h('button.btn', { nav: 'sv-retry', text: t('common.retry'), on: { click: function () { renderGameTab(container, g, opts); } } })])); });
+    var tries = 0;
+    function load() {
+      fetchGame(g).then(function (list) {
+        var c = cache.byGame[g.id];
+        if (c && c.building && tries < 8) {
+          /* first start: the console is still fetching the community index */
+          tries++;
+          U.clear(listHost); listHost.appendChild(ca.busyRow(t('saves.building')));
+          setTimeout(function () { if (listHost.isConnected) load(); }, 4000);
+          return;
+        }
+        state.list = list; if (opts.onCount) opts.onCount(list.length); paintChips(); paintList();
+      }, function (err) { U.clear(listHost); listHost.appendChild(ui.emptyState(t('saves.loadFailed'), ui.errorText(err), [h('button.btn', { nav: 'sv-retry', text: t('common.retry'), on: { click: function () { renderGameTab(container, g, opts); } } })])); });
+    }
+    load();
   }
 
   /* ---------- Save detail sheet ---------- */
@@ -315,7 +417,7 @@
       title: s.name, sub: s.title + (s.titleId ? ' · ' + s.titleId : ''), key: 'save:' + s.id,
       body: function (body) {
         var hero = h('div.cover-hero'); hero.appendChild(coverEl(s));
-        hero.appendChild(h('div.grow', [h('div.chips', [catChip(s.category), s.region ? h('span.chip.sm', { text: s.region }) : null, s.gameVersion ? h('span.chip.sm', { text: 'v' + s.gameVersion }) : null, s.source === 'garlic' || s.garlic_id ? h('span.chip.sm.acc', { text: t('saves.fromGarlic') }) : null]), h('div.meta', { text: metaLine(s) })]));
+        hero.appendChild(h('div.grow', [h('div.chips', [catChip(s.category), s.region ? h('span.chip.sm', { text: s.region }) : null, s.gameVersion ? h('span.chip.sm', { text: 'v' + s.gameVersion }) : null, s.sourceName ? h('span.chip.sm.gold', { text: t('saves.fromSite', { name: s.sourceName }) }) : null, s.source === 'garlic' || s.garlic_id ? h('span.chip.sm.acc', { text: t('saves.fromGarlic') }) : null]), h('div.meta', { text: metaLine(s) })]));
         body.appendChild(hero);
         if (s.description) body.appendChild(h('p.sv-desc', { text: s.description }));
         if (s.tags.length) body.appendChild(h('div.chips', s.tags.map(function (x) { return h('span.chip.sm', { text: '#' + x }); })));
@@ -381,6 +483,7 @@
         var eng = h('div.panel', { style: { marginTop: '12px' } }, [h('div.row', [h('span', { 'data-engine': '' })])]);
         body.appendChild(eng);
         engine().then(function (e) { var ph = eng.querySelector('[data-engine]'); if (ph) { ph.parentNode.replaceChild(enginePill(e), ph); eng.appendChild(h('p.dim.small', { text: tierHint(e.tier) })); } });
+        body.appendChild(garlicPanel({ nav: 'sv-install-garlic' }));
         body.appendChild(h('p.dim.small', { text: t('saves.installSteps') }));
       },
       foot: [
@@ -396,31 +499,53 @@
       ca.api.savesInstall(s.id, { user: st.user.id, backupFirst: st.backupFirst }).then(function (r) {
         btn.classList.remove('busy');
         XS.actions.refreshQueue();
-        if (r.job && r.job.id) watch[r.job.id] = { save: s, kind: 'install' };
+        if (r.job && r.job.id) { watch[r.job.id] = { save: s, kind: 'install' }; watchConsole(r.job, s, 'install'); }
         ui.closeLayer(handle);
         ui.toast({ cls: 'gold', title: t('saves.installQueued'), desc: s.name, action: { label: t('game.viewDownloads'), onClick: function () { XS.router.go('downloads'); } } });
       }, function (err) { btn.classList.remove('busy'); ui.errorToast(err, t('saves.install')); });
     }
   }
   var watch = {};
+  function doneToast(kind, path, note) {
+    XS.sound.done();
+    ui.toast({ cls: 'good', title: kind === 'install' ? t('saves.installedToast') : t('saves.downloadedToast'), desc: (kind === 'install' ? t('saves.installedToastSub') : (path || '')) + (note ? ' — ' + note : ''), timeout: note ? 10000 : 7000 });
+  }
+  function failedToast(j, s, kind) {
+    var needs = j.errorCode === 'garlic_unavailable';
+    ui.toast({ cls: 'bad', title: needs ? t('saves.garlic.neededShort') : kind === 'install' ? t('saves.installFailed') : t('saves.downloadFailed'), desc: j.error || s.name, timeout: 10000,
+      action: needs ? { label: t('saves.garlic.start'), onClick: function () { startGarlic(); } } : undefined });
+  }
+  /* Save installs/downloads run as console jobs (/api/saves/jobs/{id}: a result object, no filename); the queue
+     watcher below covers hosts that report them as download-queue jobs instead. Whichever settles first reports. */
+  function watchConsole(job, s, kind) {
+    var id = job.id;
+    if (!(XS.cb && XS.cb.watchJob) || job.filename !== undefined || job.result === undefined) return;
+    XS.cb.watchJob(id, null, { every: 1500, maxPolls: 2400 }).then(function (j) {
+      if (!watch[id]) return;
+      delete watch[id];
+      if (j.state === 'done') doneToast(kind, j.result && j.result.zipPath, j.result && j.result.note);
+      else if (j.state === 'failed') failedToast(j, s, kind);
+    }, function () { /* not a console job */ });
+  }
   S.on('queue', function () {
     var ids = Object.keys(watch); if (!ids.length) return;
     S.data.queue.jobs.forEach(function (j) {
       var w = watch[j.id]; if (!w) return;
-      if (j.state === 'done' || j.state === 'installed') { delete watch[j.id]; XS.sound.done(); ui.toast({ cls: 'good', title: w.kind === 'install' ? t('saves.installedToast') : t('saves.downloadedToast'), desc: w.kind === 'install' ? t('saves.installedToastSub') : (j.path || ''), timeout: 7000 }); }
-      else if (j.state === 'failed' || j.state === 'cancelled') delete watch[j.id];
+      if (j.state === 'done' || j.state === 'installed') { delete watch[j.id]; doneToast(w.kind, j.path); }
+      else if (j.state === 'failed' || j.state === 'cancelled') { delete watch[j.id]; if (j.state === 'failed') failedToast(j, w.save, w.kind); }
     });
   });
   function downloadFile(s) {
     ca.api.savesDownload(s.id, {}).then(function (r) {
       XS.actions.refreshQueue();
-      if (r.job && r.job.id) watch[r.job.id] = { save: s, kind: 'download' };
+      if (r.job && r.job.id) { watch[r.job.id] = { save: s, kind: 'download' }; watchConsole(r.job, s, 'download'); }
       ui.toast({ cls: 'gold', title: t('saves.downloadQueued'), desc: r.job && r.job.path ? r.job.path : s.name, action: { label: t('game.viewDownloads'), onClick: function () { XS.router.go('downloads'); } } });
     }, function (err) { ui.errorToast(err, t('saves.downloadFile')); });
   }
   function report(s) { ca.linkDialog({ title: t('saves.report'), hint: t('saves.reportHint'), url: ca.issueUrl('save', { save: s }), display: t('game2.issueOnGithub'), openLabel: t('game2.openIssue') }); }
 
   /* ---------- Community Saves screen ---------- */
+  var buildingRetries = 0;
   function render() {
     if (!root) return;
     U.clear(root);
@@ -437,6 +562,7 @@
     up.addEventListener('click', function () { uploadWizard({}); });
     head.appendChild(up);
     inner.appendChild(head);
+    inner.appendChild(garlicPanel({ nav: 'sv-garlic' }));
     var bar = h('div.browse-bar', { data: { navRegion: '' } });
     var sb = ui.searchBox({ id: 'sv-search', placeholder: t('saves.searchPlaceholder'), value: scr.q, onInput: function (v) { scr.q = v; live(); } });
     bar.appendChild(sb);
@@ -475,6 +601,14 @@
     }
     function cmpDate(a, b) { return (b.createdAt || '') < (a.createdAt || '') ? -1 : (b.createdAt || '') > (a.createdAt || '') ? 1 : 0; }
     fetchAll().then(function () {
+      if (cache.building && !cache.all.length && buildingRetries < 8) {
+        /* first start: the console is still fetching the community index */
+        buildingRetries++;
+        U.clear(gridHost); gridHost.appendChild(ca.busyRow(t('saves.building')));
+        setTimeout(function () { if (root && root.isConnected && gridHost.isConnected) render(); }, 4000);
+        return;
+      }
+      buildingRetries = 0;
       if (!scr.q && !scr.cat && !scr.compatOnly) {
         var sp = spotlight(cache.all, { id: 'sv-spot' }); if (sp) newestHost.appendChild(sp);
         var nw = cache.all.slice().sort(cmpDate).slice(0, 12); var sec = rail(t('discover2.newSaves'), nw, { id: 'newest' }); if (sec) newestHost.appendChild(sec);
@@ -492,8 +626,12 @@
   function uploadWizard(prefill) {
     prefill = prefill || {};
     var sv = (S.data.settings && S.data.settings.saves) || {};
-    var st = { step: 0, user: null, users: [], titles: null, title: null, dir: null, exp: null, host: sv.uploadHost || 'pixeldrain', up: null, sub: null, eng: null,
+    var st = { step: 0, user: null, users: [], titles: null, title: null, dir: null, exp: null, host: '', hostPicked: false, site: cache.site, up: null, sub: null, eng: null,
       meta: { category: '', name: '', description: '', tags: '', nickname: sv.nickname || '' }, busy: false, q: '' };
+    /* default host: the save site whenever its backend is on, else the setting (pixeldrain when it says "site") */
+    function defaultHost() { if (st.site && st.site.on) return 'site'; var x = sv.uploadHost; return x && x !== 'site' ? x : 'pixeldrain'; }
+    st.host = defaultHost();
+    siteInfo().then(function (si) { st.site = si; if (!st.hostPicked) st.host = defaultHost(); if (STEPS[st.step] === 'upload' && !st.up && !st.busy) paint(); });
     var STEPS = ['profile', 'title', 'dir', 'export', 'upload', 'meta', 'done'];
     var hd = ui.sheet({ title: t('saves.wizTitle'), key: 'svwiz', cls: 'wide', body: function () { /* painted below */ } });
     engine().then(function (e) { st.eng = e; if (st.step === 3) paint(); });
@@ -567,27 +705,35 @@
         if (!x.version) ca.api.savesInstalledVersion(x.titleId).then(function (r) { if (r.version) { x.version = r.version; verChip.textContent = 'v' + r.version; } else verChip.textContent = t('saves.wizVersionUnknown'); if (r.region && !x.region) x.region = r.region; }, function () { verChip.textContent = t('saves.wizVersionUnknown'); });
         body.appendChild(h('h3', { text: t('saves.wizPickDir') }));
         var dl = h('div.list'); body.appendChild(dl);
-        var dirs = Array.isArray(x.dirs) && x.dirs.length ? x.dirs : [{ name: x.dirName || basename(x.path) || 'SAVEDATA00', size: x.size, mtime: x.mtime }];
-        dirs.forEach(function (d, i) { if (!st.dir && i === 0) st.dir = d; dl.appendChild(selectRow(dl, 'wz-dir-' + i, 'folder', d.name, [d.size ? U.fmtBytes(d.size) : '', d.mtime ? ca.fmtWhen(d.mtime) : '', d.title || ''].filter(Boolean).join(' · '), st.dir === d, function () { st.dir = d; setNextEnabled(true); })); });
+        /* the console lists folder names in "dirs" and their image size/time in "dirInfo" */
+        var dirs = (Array.isArray(x.dirInfo) && x.dirInfo.length ? x.dirInfo : Array.isArray(x.dirs) ? x.dirs : [])
+          .map(function (d) { return typeof d === 'string' ? { name: d } : d; }).filter(function (d) { return d && d.name; });
+        if (!dirs.length) dirs = [{ name: x.dirName || 'SAVEDATA00', size: x.size, mtime: x.mtime }];
+        dirs.forEach(function (d, i) {
+          if (st.dir && st.dir.name === d.name) st.dir = d;
+          if (!st.dir && i === 0) st.dir = d;
+          dl.appendChild(selectRow(dl, 'wz-dir-' + i, 'folder', d.name, [d.size ? U.fmtBytes(d.size) : '', d.mtime ? ca.fmtWhen(d.mtime) : '', d.title || ''].filter(Boolean).join(' · '), st.dir === d, function () { st.dir = d; setNextEnabled(true); }));
+        });
         body.appendChild(h('p.dim.small', { text: t('saves.wizDirHint') }));
         foot(function () { st.step = 1; paint(); }, t('saves.wizExport'), function () { st.step = 3; st.exp = null; paint(); }, !st.dir);
       } else if (s === 'export') {
         body.appendChild(h('h3', { text: t('saves.wizSteps.export') }));
         var ep = h('div.panel'); body.appendChild(ep);
         var eng = h('div.row', [st.eng ? enginePill(st.eng) : h('span.dim', { text: t('saves.loading') })]); body.appendChild(h('div.panel', { style: { marginTop: '12px' } }, [eng, h('p.dim.small', { text: st.eng ? t('saves.wizExportEngine', { tier: tierText(st.eng.tier) }) + ' ' + tierHint(st.eng.tier) : '' })]));
-        foot(function () { st.step = 2; paint(); }, t('common.next'), function () { if (st.exp) { st.step = 4; paint(); } }, !st.exp);
+        foot(function () { st.step = 2; paint(); }, t('common.next'), function () { if (shareable()) { st.step = 4; paint(); } }, !shareable());
         if (st.exp) paintExport(ep);
         else {
           ep.appendChild(h('div.row', [h('span.skel', { style: { width: '18px', height: '18px', borderRadius: '50%', flex: '0 0 auto' } }), h('span.dim', { text: t('saves.wizExporting', { dir: st.dir.name }) })]));
           ca.api.savesExport({ user: st.user ? st.user.id : '', titleId: st.title.titleId, dirName: st.dir.name }).then(function (r) {
-            st.exp = r; paintExport(ep); setNextEnabled(true);
+            st.exp = r; paintExport(ep); setNextEnabled(shareable());
             var m = r.manifest || {}; if (m.gameVersion && !st.title.version) st.title.version = m.gameVersion; if (m.region && !st.title.region) st.title.region = m.region;
-            ca.focusIn(hd.el, 'wz-next');
+            ca.focusIn(hd.el, shareable() ? 'wz-next' : 'wz-back');
           }, function (err) { U.clear(ep); ep.appendChild(h('div.row', [ui.svg('alert'), h('span.warn', { text: ui.errorText(err) })])); ep.appendChild(h('div', { style: { marginTop: '10px' } }, [h('button.btn.sm', { nav: 'wz-retry', text: t('common.retry'), on: { click: function () { st.exp = null; paint(); } } })])); });
         }
         function paintExport(box) {
           U.clear(box);
           var r = st.exp, m = r.manifest || {};
+          if (r.shareable === false) { paintNotShareable(box, r); return; }
           var kv = h('dl.kv');
           function add(k, v) { if (!v) return; kv.appendChild(h('dt', { text: k })); kv.appendChild(h('dd', { text: v })); }
           add(t('saves.wizZip'), r.zipPath || '');
@@ -596,16 +742,33 @@
           add(t('saves.sha256'), r.sha256 ? String(r.sha256).slice(0, 24) + '…' : '');
           add(t('saves.gameVersion'), m.gameVersion || st.title.version || '');
           add(t('saves.region'), m.region || st.title.region || '');
+          add(t('saves.engineTitle'), r.tier ? tierText(r.tier) : '');
           box.appendChild(h('div.row', [ui.svg('check'), h('b', { text: t('saves.wizExported') })]));
           box.appendChild(kv);
-          box.appendChild(h('div.chips', { style: { marginTop: '10px' } }, [h('span.chip.sm.good', { html: U.icon('check') + '<span>' + U.escapeHtml(t('saves.wizAccountStripped')) + '</span>' }), h('span.chip.sm.good', { html: U.icon('check') + '<span>' + U.escapeHtml(t('saves.wizNoSealedKeys')) + '</span>' })]));
+          /* only claim what the console reported: the account id was zeroed, or there was none to remove */
+          var chips = [];
+          var good = function (text) { return h('span.chip.sm.good', { html: U.icon('check') + '<span>' + U.escapeHtml(text) + '</span>' }); };
+          if (r.accountId === 'none') chips.push(good(t('saves.wizNoAccountId')));
+          else if (r.accountIdStripped === true || (r.accountIdStripped === undefined && m.accountIdStripped === true)) chips.push(good(t('saves.wizAccountStripped')));
+          chips.push(good(t('saves.wizNoSealedKeys')));
+          box.appendChild(h('div.chips', { style: { marginTop: '10px' } }, chips));
+        }
+        /* raw tier (no native engine, no Garlic) or an account id that could not be removed: stop here */
+        function paintNotShareable(box, r) {
+          box.appendChild(h('div.row', [ui.svg('alert'), h('b', { text: t('saves.wizNotShareable') })]));
+          var why = r.reason === 'account_id' ? t('saves.wizAccountIdKept') : r.reason === 'no_save' ? t('saves.wizNoSaveFolder') : t('saves.wizNeedsGarlic');
+          box.appendChild(h('p', { text: why }));
+          if (r.detail) box.appendChild(h('p.dim.small', { text: r.detail }));
+          if (r.reason !== 'account_id' && r.reason !== 'no_save') box.appendChild(garlicPanel({ always: true, nav: 'wz-garlic', onStarted: function () { st.exp = null; paint(); } }));
+          box.appendChild(h('div', { style: { marginTop: '10px' } }, [h('button.btn.sm', { nav: 'wz-retry', text: t('common.retry'), on: { click: function () { st.exp = null; paint(); } } })]));
         }
       } else if (s === 'upload') {
         body.appendChild(h('h3', { text: t('saves.wizHost') }));
         var hosts = [{ id: 'pixeldrain', label: 'pixeldrain', sub: t('saves.hostPixeldrain') }, { id: 'catbox', label: 'catbox', sub: t('saves.hostCatbox') }];
+        if (st.site && st.site.on) hosts.unshift({ id: 'site', label: st.site.name, sub: t('saves.hostSite', { name: st.site.name }) });
         if (sv.uploadEndpoint) hosts.push({ id: 'custom', label: t('saves.hostCustom'), sub: sv.uploadEndpoint });
-        if (!hosts.some(function (x) { return x.id === st.host; })) st.host = 'pixeldrain';
-        body.appendChild(ui.segControl({ id: 'wz-host', value: st.host, options: hosts.map(function (x) { return { value: x.id, label: x.label }; }), onChange: function (v) { st.host = v; } }));
+        if (!hosts.some(function (x) { return x.id === st.host; })) st.host = hosts[0].id;
+        body.appendChild(ui.segControl({ id: 'wz-host', value: st.host, options: hosts.map(function (x) { return { value: x.id, label: x.label }; }), onChange: function (v) { st.host = v; st.hostPicked = true; } }));
         body.appendChild(h('p.dim.small', { text: hosts.map(function (x) { return x.label + ': ' + x.sub; }).join(' · ') }));
         var up = h('div.panel', { style: { marginTop: '14px' } }); body.appendChild(up);
         if (st.up) paintUploaded(up);
@@ -615,7 +778,8 @@
           if (st.busy) return; st.busy = true;
           U.clear(up);
           var bar = h('div.bar.gold.striped', [h('i', { style: { width: '100%' } })]);
-          up.appendChild(h('div.row', [h('span.dim', { text: t('saves.wizUploading', { size: st.exp && st.exp.size ? U.fmtBytes(st.exp.size) : '', host: st.host }) })]));
+          var hostName = (hosts.filter(function (x) { return x.id === st.host; })[0] || { label: st.host }).label;
+          up.appendChild(h('div.row', [h('span.dim', { text: t('saves.wizUploading', { size: st.exp && st.exp.size ? U.fmtBytes(st.exp.size) : '', host: hostName }) })]));
           up.appendChild(h('div', { style: { marginTop: '10px' } }, [bar]));
           up.appendChild(h('p.dim.small', { text: t('saves.wizUploadNote') }));
           setNextEnabled(false);
@@ -653,13 +817,21 @@
         function submit() {
           if (!valid() || st.busy) return; st.busy = true;
           var nb = hd.foot.querySelector('[data-next]'); if (nb) nb.classList.add('busy');
-          var payload = { titleId: st.title.titleId, gameId: st.title.gameId || '', title: st.title.title || '', category: m.category, name: m.name.trim(), description: m.description.trim(), tags: m.tags.split(',').map(function (x) { return x.trim(); }).filter(Boolean).slice(0, 10), nickname: m.nickname.trim(), gameVersion: st.title.version || (st.exp && st.exp.manifest && st.exp.manifest.gameVersion) || '', region: st.title.region || '', dirName: st.dir.name, size: (st.up && st.up.size) || (st.exp && st.exp.size) || 0, sha256: (st.up && st.up.sha256) || (st.exp && st.exp.sha256) || '', url: st.up ? st.up.url : '', host: st.host, zipPath: st.exp ? st.exp.zipPath : '' };
+          var payload = { titleId: st.title.titleId, gameId: st.title.gameId || '', title: st.title.title || '', category: m.category, name: m.name.trim(), description: m.description.trim(), tags: m.tags.split(',').map(function (x) { return x.trim(); }).filter(Boolean).slice(0, 10), nickname: m.nickname.trim(), gameVersion: st.title.version || (st.exp && st.exp.manifest && st.exp.manifest.gameVersion) || '', region: st.title.region || '', dirName: st.dir.name, size: (st.up && st.up.size) || (st.exp && st.exp.size) || 0, sha256: (st.up && st.up.sha256) || (st.exp && st.exp.sha256) || '', url: st.up ? st.up.url : '', storagePath: st.up && st.up.storagePath ? st.up.storagePath : '', host: st.up && st.up.host ? st.up.host : st.host, zipPath: st.exp ? st.exp.zipPath : '' };
           ca.api.savesSubmit(payload).then(function (r) { st.busy = false; st.sub = r; if (m.nickname && m.nickname !== sv.nickname) ca.api.settingsPut({ saves: { nickname: m.nickname } }).then(function (rr) { if (rr.settings) S.set('settings', rr.settings); }, function () { /* ignore */ }); cache.all = null; cache.byGame = {}; st.step = 6; paint(); }, function (err) { st.busy = false; if (nb) nb.classList.remove('busy'); ui.errorToast(err, t('saves.wizSubmit')); });
         }
       } else if (s === 'done') {
         var r = st.sub || {};
-        body.appendChild(h('div.wiz-hero', [h('span.ic.okring', { html: U.icon('check').replace('<svg ', '<svg style="width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2.5" ') }), h('div', [h('h2', { text: t('saves.wizDoneTitle') }), h('p', { text: r.issueUrl ? t('saves.wizDoneIssue') : t('saves.wizDoneBackend', { status: r.status || 'pending' }) })])]));
-        if (r.issueUrl) {
+        /* method "site": one row inserted into the save site's collection, live there and in the store at once —
+           no GitHub hand-off. "github": the prefilled issue (also the fallback when the site refused, siteError). */
+        var onSite = r.method === 'site' || r.method === 'supabase';
+        /* a fallback reply names no site (its "backend" is the hand-off): the name then comes from the store listing */
+        var siteName = (onSite ? r.backendName || r.backend : '') || (st.site && st.site.name) || 'XenoKing';
+        var heroText = onSite ? (r.status === 'pending' ? t('saves.wizDoneBackend', { status: r.status }) : t('saves.wizDoneSite', { name: siteName })) : r.issueUrl ? t('saves.wizDoneIssue') : t('saves.wizDoneBackend', { status: r.status || 'pending' });
+        body.appendChild(h('div.wiz-hero', [h('span.ic.okring', { html: U.icon('check').replace('<svg ', '<svg style="width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2.5" ') }), h('div', [h('h2', { text: t('saves.wizDoneTitle') }), h('p', { 'data-done': onSite ? 'site' : r.issueUrl ? 'github' : 'backend', text: heroText })])]));
+        /* the site did not take it: the GitHub hand-off below carries a public copy (publicUrl) when the zip was only in the site's bucket */
+        if (!onSite && r.siteError && r.issueUrl) body.appendChild(h('div.panel.note.warn', { 'data-site-fallback': '' }, [h('div.row', [ui.svg('alert'), h('span', { text: t('saves.wizSiteFallback', { name: siteName }) })]), h('p.dim.small', { text: String(r.siteError) }), r.publicUrl ? h('p.dim.small.mono', { text: String(r.publicUrl) }) : null]));
+        if (!onSite && r.issueUrl) {
           body.appendChild(h('div', { style: { marginTop: '8px' } }, [ui.qr(r.issueUrl)]));
           body.appendChild(h('div.pair-url.small', { text: t('game2.issueOnGithub') }));
           var ob = h('button.btn.primary.lg', { nav: 'wz-open-issue', 'data-autofocus': '', html: U.icon('external') + '<span>' + U.escapeHtml(t('game2.openIssue')) + '</span>' }); ob.addEventListener('click', function () { U.openExternal(r.issueUrl); });
@@ -668,10 +840,11 @@
           body.appendChild(h('p.dim.small', { style: { textAlign: 'center', marginTop: '12px' }, text: t('saves.wizReviewNote') }));
         } else {
           var kv = h('dl.kv');
+          if (onSite) { kv.appendChild(h('dt', { text: t('saves.backend') })); kv.appendChild(h('dd', { text: siteName })); }
           if (r.id) { kv.appendChild(h('dt', { text: 'ID' })); kv.appendChild(h('dd.mono', { text: String(r.id) })); }
-          if (r.backend) { kv.appendChild(h('dt', { text: t('saves.backend') })); kv.appendChild(h('dd', { text: String(r.backend) })); }
+          if (!onSite && r.backend) { kv.appendChild(h('dt', { text: t('saves.backend') })); kv.appendChild(h('dd', { text: String(r.backend) })); }
           if (r.url) { kv.appendChild(h('dt', { text: 'URL' })); kv.appendChild(h('dd.mono', { text: String(r.url) })); }
-          body.appendChild(h('div.panel', [kv]));
+          if (kv.childNodes.length) body.appendChild(h('div.panel', [kv]));
         }
         U.clear(hd.foot);
         hd.foot.appendChild(h('span.spacer'));
@@ -679,7 +852,7 @@
       }
       requestAnimationFrame(function () { if (!hd.el.contains(document.activeElement)) XS.nav.focusFirst(hd.el); });
     }
-    function basename(p) { p = String(p || '').replace(/\/+$/, ''); return p.substring(p.lastIndexOf('/') + 1); }
+    function shareable() { return !!(st.exp && st.exp.shareable !== false && st.exp.zipPath); }
     paint();
     return hd;
   }
@@ -695,6 +868,6 @@
     newest: function (n) { return fetchAll().then(function (list) { return list.slice().sort(function (a, b) { return (b.createdAt || '') < (a.createdAt || '') ? -1 : 1; }).slice(0, n || 12); }); },
     spotlight: spotlight, all: function () { return fetchAll(); },
     rail: rail, card: card, renderGameTab: renderGameTab, openSave: openSave, install: installSheet, download: downloadFile, report: report, upload: uploadWizard,
-    engine: engine, categories: CATS, invalidate: function () { cache.all = null; cache.byGame = {}; }
+    engine: engine, garlic: garlic, startGarlic: startGarlic, garlicPanel: garlicPanel, categories: CATS, invalidate: function () { cache.all = null; cache.byGame = {}; }
   };
 })();

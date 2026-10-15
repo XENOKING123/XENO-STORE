@@ -84,7 +84,7 @@ typedef struct settings {
       char kind[12];                 /* supabase | github | none */
       char url[256], anonKey[SET_ANONKEY_LEN], bucket[64], garlicFunction[64];
     } backend;
-    char uploadHost[12];             /* pixeldrain | catbox | custom */
+    char uploadHost[12];             /* site (default) | pixeldrain | catbox | custom */
     char uploadEndpoint[512], submitEndpoint[512];
     char nickname[64];
   } saves;

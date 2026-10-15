@@ -8,6 +8,9 @@
  *   GET  /api/homebrew[?refresh=1]   (+ HOMEBREW catalog entries, covers through /api/image)
  *   GET  /api/saves/store · POST /api/saves/store/{id}/install|download · GET /api/saves/engine
  *   GET  /api/saves/users · GET /api/saves?user= · POST /api/saves/export|upload|submit · GET /api/saves/installed-version
+ *   The console's backend is the XenoKing save site (cx_savestore.c): the store list says siteUpload + backendName, the
+ *   share wizard uploads with host "site" (storagePath) and submit inserts the row (method "site", published at once);
+ *   --saves-site off mocks a console without it (GitHub issue hand-off).
  *   /api/status extras: featured (hero/rows/banner/homebrew), messages, savesEngine
  */
 import { randomBytes, createHash } from 'node:crypto';
@@ -16,6 +19,8 @@ export function register({ route, state }) {
   const { catalog, ApiError, sleep, now, hash32, GB, log } = state;
   const MB = 1e6;
   const tier = state.argValue('--saves-tier', 'native');
+  const siteOn = state.argValue('--saves-site', 'on') !== 'off';
+  const SITE = 'XenoKing', SITE_URL = 'https://cotniitpyocsfqzywscl.supabase.co';
   const iso = (secAgo) => new Date(Date.now() - secAgo * 1000).toISOString();
   const sha = (s) => createHash('sha256').update(String(s)).digest('hex');
   const semver = (a, b) => { const pa = String(a || '').split('.'), pb = String(b || '').split('.'); for (let i = 0; i < Math.max(pa.length, pb.length); i++) { const x = parseInt(pa[i] || '0', 10) || 0, y = parseInt(pb[i] || '0', 10) || 0; if (x !== y) return x < y ? -1 : 1; } return 0; };
@@ -190,6 +195,7 @@ export function register({ route, state }) {
           author: ['nova', 'kai_ps5', 'xeno_fan', 'sakura', 'bitwise', 'mariano', 'lina'][y % 7], gameVersion: versions[y % versions.length], region: otherRegion ? 'USA' : (iv ? iv.region : ['EUR', 'USA', 'JPN'][y % 3]), dirName: y % 3 ? 'SAVEDATA00' : `SAVEDATA0${y % 5}`,
           size: Math.round((0.4 + (y % 80) / 10) * MB), sha256: sha('save:' + y), url: `https://pixeldrain.com/api/file/${y.toString(36)}`, mirror: '', format: y % 5 === 0 ? 'garlic-zip' : 'xeno-save-zip', source: y % 5 === 0 ? 'garlic' : 'xeno',
           createdAt: iso((y % 60) * 86400 + (y % 3600)), downloads: y % 900, status: 'published', tags: [['ng+', 'max money'], ['platinum', 'trophies'], ['boss', 'checkpoint'], ['modded'], ['chapter'], ['speedrun']][(y >> 1) % 6], screenshot: '',
+          ...(siteOn && y % 3 === 0 ? { sourceName: SITE } : {}),
           cover: `https://xenoking.supabase.co/storage/v1/object/sign/ps5-saves/${tid}/${y.toString(36)}-cover.png?token=mock`
         });
         n++;
@@ -199,24 +205,27 @@ export function register({ route, state }) {
     return saves;
   }
   state.imageMap.push([/^https:\/\/xenoking\.supabase\.co\/storage\/v1\/object\/sign\/ps5-saves\/([^/]+)\/([^/?]+)-cover\.png/, (m) => { const s = buildSaves().find((x) => x.titleId === m[1] && x.url.endsWith('/' + m[2])); return state.mockArt(s ? s.gameId : m[1], 'icon', 'SAVE'); }]);
+  /* the console's shape (cx_savestore.c compat_json): a flat compat string (match | update_game | not_installed |
+     unknown) next to installed, installedVersion, versionCompare, compatText and otherRegion / installedTitleId */
   function compat(s) {
     const g = state.gamesById.get(s.gameId);
     const installed = state.installedTitles.find((it) => (g && g.titleIds.indexOf(it.titleId) >= 0) || it.titleId === s.titleId);
-    if (!installed) return { status: 'notInstalled', installedVersion: '' };
-    if (installed.titleId !== s.titleId) return { status: 'region', installedVersion: installedMap().get(installed.titleId).version, installedTitleId: installed.titleId };
+    if (!installed) return { installed: false, installedVersion: '', versionCompare: 0, compat: 'not_installed', compatText: 'Game not installed' };
+    if (installed.titleId !== s.titleId) return { installed: false, installedVersion: '', otherRegion: true, installedTitleId: installed.titleId, versionCompare: 0, compat: 'not_installed', compatText: `You have ${installed.titleId} installed — a save never loads on a different title ID` };
     const iv = installedMap().get(installed.titleId);
-    if (!s.gameVersion || !iv) return { status: 'unknown', installedVersion: iv ? iv.version : '' };
+    if (!s.gameVersion || !iv) return { installed: true, installedVersion: iv ? iv.version : '', versionCompare: 0, compat: 'unknown', compatText: 'Version unknown — check before installing' };
     const c = semver(s.gameVersion, iv.version);
-    return { status: c === 0 ? 'ok' : c > 0 ? 'update' : 'newer', installedVersion: iv.version };
+    return { installed: true, installedVersion: iv.version, versionCompare: c > 0 ? 1 : c < 0 ? -1 : 0, compat: c > 0 ? 'update_game' : 'match',
+      compatText: c > 0 ? `Made on ${s.gameVersion}, you have ${iv.version} — update the game first` : c === 0 ? `Matches your ${iv.version}` : `Made on ${s.gameVersion}, you have ${iv.version} (newer game loads older saves)` };
   }
-  const pubSave = (s) => ({ ...s, compat: compat(s) });
+  const pubSave = (s) => ({ ...s, ...compat(s) });
   route('GET', /^\/api\/saves\/store$/, async (q) => {
     await sleep(300);
     let list = buildSaves().filter((s) => s.status === 'published');
     if (q.titleId || q.gameId) { const g = q.gameId ? state.gamesById.get(q.gameId) : null; list = list.filter((s) => s.titleId === q.titleId || (g && s.gameId === g.id) || (q.gameId && s.gameId === q.gameId)); }
     if (q.category) list = list.filter((s) => s.category === q.category);
     if (q.q) { const needle = String(q.q).toLowerCase(); list = list.filter((s) => (s.title + ' ' + s.name + ' ' + s.titleId + ' ' + s.author).toLowerCase().indexOf(needle) >= 0); }
-    return { ok: true, backend: ['github', 'supabase'], saves: list.map(pubSave) };
+    return { ok: true, backend: siteOn ? 'supabase' : 'github', backendName: siteOn ? SITE : '', siteUpload: siteOn, saves: list.map(pubSave) };
   });
   route('GET', /^\/api\/saves\/engine$/, () => ({ ok: true, tier, detail: tier === 'native' ? 'libSceSaveData.sprx resolved (host simulation)' : tier === 'garlic' ? 'Garlic Save Manager answering on 127.0.0.1:8082' : 'SaveData API unavailable — raw copy, same console only' }));
   route('GET', /^\/api\/saves\/users$/, () => ({ ok: true, users: USERS }));
@@ -266,16 +275,21 @@ export function register({ route, state }) {
     const size = files.reduce((n, f) => n + f.size, 0);
     const zipPath = `/data/xeno-store/saves/export/${tid}_${dir}_${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '')}.zip`;
     log('info', `save export: ${tid}/${dir} → ${zipPath} (${files.length} files, ${size} bytes, engine ${tier})`);
-    return { ok: true, zipPath, size, sha256: sha(zipPath), engine: tier, manifest: { titleId: tid, dirName: dir, gameVersion: iv.version, region: iv.region, files, accountIdStripped: true, createdBy: `XENO STORE ${state.VERSION}`, title: it ? it.title : '' } };
+    /* cx_savestore_export: a decrypted export is shareable, with the account id removed (or none was set) */
+    return { ok: true, zipPath, size, sha256: sha(zipPath), files: files.length, format: 'xeno-save-zip', tier: tier === 'raw' ? 'garlic' : tier, engine: tier, accountIdStripped: true, accountId: 'removed', shareable: true,
+      titleId: tid, dirName: dir, gameVersion: iv.version, region: iv.region, manifest: { titleId: tid, dirName: dir, gameVersion: iv.version, region: iv.region, files, accountIdStripped: true, sameConsoleOnly: false, createdBy: `XENO STORE ${state.VERSION}`, title: it ? it.title : '' } };
   });
   route('POST', /^\/api\/saves\/upload$/, async (q, body) => {
     const zipPath = String(body.zipPath || ''); if (!zipPath.startsWith('/data/xeno-store/saves/')) throw new ApiError(400, 'bad_path', 'Only exported zips can be uploaded');
-    const host = ['pixeldrain', 'catbox', 'custom'].indexOf(body.host) >= 0 ? body.host : 'pixeldrain';
+    const host = ['site', 'pixeldrain', 'catbox', 'custom'].indexOf(body.host) >= 0 ? body.host : siteOn ? 'site' : 'pixeldrain';
+    if (host === 'site' && !siteOn) throw new ApiError(422, 'site_unavailable', 'the save site is not this console\'s backend (Settings → Saves → Backend)');
     await sleep(2000);
     const id = randomBytes(5).toString('hex');
-    const url = host === 'pixeldrain' ? `https://pixeldrain.com/api/file/${id}` : host === 'catbox' ? `https://files.catbox.moe/${id}.zip` : `${state.settings.saves && state.settings.saves.uploadEndpoint ? state.settings.saves.uploadEndpoint : 'https://example.invalid/files'}/${id}.zip`;
+    /* host "site": ps5-saves/xeno/<yyyymmdd>-<16 hex>.zip in the site's bucket (cx_savestore_upload) */
+    const storagePath = host === 'site' ? `xeno/${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${randomBytes(8).toString('hex')}.zip` : '';
+    const url = host === 'site' ? `${SITE_URL}/storage/v1/object/ps5-saves/${storagePath}` : host === 'pixeldrain' ? `https://pixeldrain.com/api/file/${id}` : host === 'catbox' ? `https://files.catbox.moe/${id}.zip` : `${state.settings.saves && state.settings.saves.uploadEndpoint ? state.settings.saves.uploadEndpoint : 'https://example.invalid/files'}/${id}.zip`;
     log('info', `save upload: ${zipPath} → ${url}`);
-    return { ok: true, url, host, sha256: sha(zipPath), size: 1200000 + (hash32(zipPath) % 9000000) };
+    return { ok: true, url, host, ...(storagePath ? { storagePath } : {}), sha256: sha(zipPath), size: 1200000 + (hash32(zipPath) % 9000000), name: zipPath.split('/').pop() };
   });
   route('POST', /^\/api\/saves\/submit$/, async (q, body) => {
     const tid = String(body.titleId || ''); if (!/^PPSA\d{5}$/.test(tid)) throw new ApiError(400, 'bad_title', 'PS5 title IDs only (PPSA)');
@@ -286,11 +300,17 @@ export function register({ route, state }) {
     await sleep(500);
     const x = hash32(JSON.stringify(body) + Date.now());
     const g = state.gamesById.get(body.gameId) || state.gamesById.get((state.installedTitles.find((it) => it.titleId === tid) || {}).gameId);
-    const record = { id: 'sv_' + x.toString(16).padStart(8, '0'), titleId: tid, gameId: g ? g.id : (body.gameId || ''), title: body.title || (g ? g.title : tid), category: body.category, name: String(body.name).trim().slice(0, 80), description: String(body.description || '').trim(), author: String(body.nickname).trim().slice(0, 32), gameVersion: body.gameVersion || '', region: body.region || '', dirName: body.dirName || 'SAVEDATA00', size: Number(body.size) || 0, sha256: body.sha256 || '', url: body.url || '', mirror: '', format: 'xeno-save-zip', source: 'xeno', createdAt: new Date().toISOString(), downloads: 0, status: 'pending', tags: Array.isArray(body.tags) ? body.tags.slice(0, 10) : [], screenshot: '', cover: '' };
+    const onSite = siteOn && /^xeno\/\d{8}-[0-9a-f]{16}\.zip$/.test(String(body.storagePath || ''));
+    const record = { id: onSite ? 'sb:' + randomBytes(16).toString('hex').replace(/^(.{8})(.{4})(.{4})(.{4})/, '$1-$2-$3-$4-') : 'sv_' + x.toString(16).padStart(8, '0'), titleId: tid, gameId: g ? g.id : (body.gameId || ''), title: body.title || (g ? g.title : tid), category: body.category, name: String(body.name).trim().slice(0, 80), description: String(body.description || '').trim(), author: String(body.nickname).trim().slice(0, 32), gameVersion: body.gameVersion || '', region: body.region || '', dirName: body.dirName || 'SAVEDATA00', size: Number(body.size) || 0, sha256: body.sha256 || '', url: body.url || '', mirror: '', format: 'xeno-save-zip', source: onSite ? 'supabase' : 'xeno', createdAt: new Date().toISOString(), downloads: 0, status: onSite ? 'published' : 'pending', tags: Array.isArray(body.tags) ? body.tags.slice(0, 10) : [], screenshot: '', cover: '', ...(onSite ? { sourceName: SITE, storagePath: body.storagePath } : {}) };
     buildSaves().push(record);
+    if (onSite) {
+      /* cx_savestore_submit, site path: one row of the site's columns, live at once, no GitHub hand-off */
+      log('info', `save shared: ${record.name} (${tid}) by ${record.author} → ${SITE} (${body.storagePath})`);
+      return { ok: true, method: 'site', status: 'published', backend: SITE, backendName: SITE, id: record.id.slice(3), storeId: record.id, storagePath: body.storagePath, note: `Shared — the save is live on ${SITE} and in the store.` };
+    }
     const json = JSON.stringify({ titleId: record.titleId, gameId: record.gameId, title: record.title, category: record.category, name: record.name, description: record.description, tags: record.tags, author: record.author, gameVersion: record.gameVersion, region: record.region, dirName: record.dirName, size: record.size, sha256: record.sha256, url: record.url }, null, 2);
     const issueUrl = `https://github.com/XENOKING123/XENO-STORE/issues/new?template=save-submission.md&title=${encodeURIComponent('[save] ' + record.title + ' — ' + record.name)}&body=${encodeURIComponent('```json\n' + json + '\n```')}`;
     log('info', `save submitted: ${record.name} (${tid}) by ${record.author} → GitHub issue`);
-    return { ok: true, backend: 'github', status: 'pending', id: record.id, issueUrl };
+    return { ok: true, method: 'github', backend: 'github', status: 'pending', id: record.id, issueUrl, qr: issueUrl, ...(siteOn ? { siteError: `the zip was not uploaded to ${SITE} (upload host "site"), so it cannot be added to its collection` } : {}) };
   });
 }

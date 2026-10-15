@@ -9,7 +9,8 @@ name: xeno-store
 #                    offline pipeline on a scratch copy, run the catalog unit
 #                    tests, upload both.
 #   host-tests       gcc + OpenSSL: `make test` (host binary + tests/host/run.sh,
-#                    and the native launcher's host test).
+#                    the native launcher's host test and the save intake tests
+#                    in tools/saves/tests via `make saves-test`).
 #   ps5-elf          LLVM 18 + ps5-payload-dev SDK v0.40: `make ps5` →
 #                    xeno-store.elf; `make eboot` → the Games-row launcher as a
 #                    native app (app/native-launcher, its own pinned SDK v0.42)
@@ -152,7 +153,7 @@ jobs:
           name: web-and-catalog
           path: .
 
-      - name: Host build + tests
+      - name: Host build + tests (includes the save intake tests)
         run: |
           set -euo pipefail
           test -s web/dist/index.html

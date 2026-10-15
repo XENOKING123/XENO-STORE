@@ -8,9 +8,9 @@
  *      backup jobs, ZIP extraction, scheduled row + Start now, paused set + Retry), Library (disk analyzer + clean-up,
  *      Play now, uninstall with the token flow, copy-to-drive sheet, installed homebrew), Updates center (one-tap
  *      download+install), Saves hub (keyboard: Back up → progress → toast; restore; profile transfer), Settings
- *      (Setup via keyboard + run check + launch companion + ghost cleaner, Debrid connect, Accounts activate, Saves,
- *      Pair/mDNS, Uninstall sheet open/cancel + the final screen), command palette, shortcuts overlay, large text +
- *      high contrast, controller remap legend
+ *      (Setup via keyboard + run check + launch companion + start Garlic + unavailable companion + ghost cleaner,
+ *      Debrid connect, Accounts activate, Saves, Pair/mDNS, Uninstall sheet open/cancel + the final screen), command
+ *      palette, shortcuts overlay, large text + high contrast, controller remap legend
  *   3. at 390×844: Downloads and Settings
  *   4. fails on any console error / uncaught exception, any failed or ≥ 400 request, missing i18n keys
  *
@@ -264,6 +264,7 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await expect(async () => page.evaluate(() => /Beta/.test(document.querySelector('.sheet .sheet-head').textContent)), 'transfer sheet should carry the Beta label');
     await page.click('.sheet [data-nav-id="ts-go"]');
     await waitToast(page, 'transferred');
+    await waitToast(page, 're-signed for');                                       // re-signed through Garlic Save Manager
     /* back up all */
     await page.click('[data-nav-id="sh-backup-all"]');
     await confirmDialog(page);
@@ -293,6 +294,37 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await page.click('#scr-setup [data-nav-id="check-shadowmount-launch"]');
     await waitToast(page, 'sent to the loader');
     await page.waitForFunction(() => { const r = document.querySelector('#scr-setup [data-nav-id="check-shadowmount"]'); return r && r.classList.contains('ok'); }, null, { timeout: 12000 }).catch(() => fail('after launching ShadowMountPlus the re-check should pass'));
+    /* Garlic Save Manager: labelled check (not the raw id) with the saves engine's own start; a companion with no
+       upstream download is listed without a Download button */
+    await expect(async () => page.evaluate(() => { const r = document.querySelector('#scr-setup [data-nav-id="check-garlic"] .name'); return !!r && /Garlic Save Manager/.test(r.textContent) && !/^garlic/.test(r.textContent); }), 'the Garlic check should show its label, not the raw id');
+    await expect(async () => !(await page.$('#scr-setup [data-nav-id="pl-np-fake-signout-install"]')) && !!(await page.$('#scr-setup [data-nav-id="pl-np-fake-signout"] .chip.warn')), 'an unavailable companion must be marked and must not offer a download');
+    /* the profile transfer above started Garlic on demand: stop it in the mock, re-check, then start it from here */
+    await page.evaluate(() => fetch('/api/__mock/garlic', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'startable' }) }));
+    await page.evaluate(() => document.querySelector('[data-nav-id="setup-run"]').click());
+    await page.waitForSelector('#scr-setup [data-nav-id="check-garlic-start"]', { timeout: 10000 }).catch(() => fail('a stopped Garlic Save Manager should offer Start on its check'));
+    await page.click('#scr-setup [data-nav-id="check-garlic-start"]');
+    await waitToast(page, 'Garlic Save Manager is running', 15000);
+    await page.waitForFunction(() => { const r = document.querySelector('#scr-setup [data-nav-id="check-garlic"]'); return r && r.classList.contains('ok'); }, null, { timeout: 12000 }).catch(() => fail('after starting Garlic Save Manager the re-check should pass'));
+    /* only the pinned release can provide Garlic: the saves panel offers Download-and-start with the author credit,
+       reports the version once the store started it, and none for a Garlic started outside the store */
+    await page.evaluate(() => fetch('/api/__mock/garlic', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'download' }) }));
+    const mountGarlicPanel = () => page.evaluate(() => XS.saves.garlic(true).then(() => {
+      let host = document.querySelector('#vt-garlic');
+      if (!host) { host = document.createElement('div'); host.id = 'vt-garlic'; document.querySelector('#scr-setup').appendChild(host); }
+      host.innerHTML = '';
+      host.appendChild(XS.saves.garlicPanel({ always: true, nav: 'vt-garlic' }));
+    }));
+    await mountGarlicPanel();
+    await page.waitForSelector('#vt-garlic [data-nav-id="vt-garlic-start"]', { timeout: 8000 }).catch(() => fail('a Garlic that can only be downloaded should offer its start button in the saves panel'));
+    await expect(async () => page.evaluate(() => document.querySelector('#vt-garlic [data-nav-id="vt-garlic-start"]').textContent.trim() === XS.t('saves.garlic.install')), 'download mode: the Garlic panel should offer "' + 'Download and start Garlic"');
+    await expect(async () => page.evaluate(() => { const ref = document.createElement('div'); ref.innerHTML = XS.util.icon('download'); const svg = document.querySelector('#vt-garlic [data-nav-id="vt-garlic-start"] svg'); return !!svg && svg.outerHTML === ref.firstElementChild.outerHTML; }), 'download mode: the Garlic start button should carry the download icon');
+    await expect(async () => page.evaluate(() => document.querySelector('#vt-garlic').textContent.indexOf(XS.t('saves.garlic.credit')) >= 0), 'download mode: the Garlic panel should credit the author and the sha256-checked download');
+    await page.click('#vt-garlic [data-nav-id="vt-garlic-start"]');
+    await page.waitForFunction(() => { const el = document.querySelector('#vt-garlic .sv-garlic'); return !!el && el.textContent.indexOf(XS.t('saves.garlic.runningVersion', { v: '1.7' })) >= 0; }, null, { timeout: 15000 }).catch(() => fail('after the store started the downloaded Garlic the panel should name its version (1.7)'));
+    await page.evaluate(() => fetch('/api/__mock/garlic', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'running' }) }));
+    await mountGarlicPanel();
+    await page.waitForFunction(() => { const el = document.querySelector('#vt-garlic .sv-garlic'); return !!el && el.textContent.trim() === XS.t('saves.garlic.running'); }, null, { timeout: 8000 }).catch(() => fail('a Garlic started outside the store should be shown as running with no version'));
+    await page.evaluate(() => document.querySelector('#vt-garlic').remove());
     await page.click('#scr-setup [data-nav-id="pl-etahen-dpi-helper-install"]');
     await waitToast(page, 'ready', 20000);
     await page.evaluate(() => { const r = document.querySelector('#scr-setup .ghost-row'); if (r) r.scrollIntoView(); });
@@ -328,6 +360,16 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await confirmDialog(page);
     await waitToast(page, 'activated');
     await page.waitForFunction(() => !!document.querySelector('#scr-settings [data-nav-id="acc-2-clear"]'), null, { timeout: 8000 }).catch(() => fail('activated slot should offer Clear'));
+    /* fake sign-in: the sign-in payload is offered, the sign-out entry (no upstream asset) is listed without a button */
+    await page.click('[data-nav-id="acc-fake"]');
+    await page.waitForSelector('.dialog [data-nav-id="fake-0"]', { timeout: 8000 }).catch(() => fail('the fake sign-in dialog should list the companion payloads'));
+    await expect(async () => page.evaluate(() => {
+      const rows = Array.from(document.querySelectorAll('.dialog .lrow'));
+      const signin = rows.find((r) => /sign-in/i.test(r.querySelector('.name').textContent)), signout = rows.find((r) => /sign-out/i.test(r.querySelector('.name').textContent));
+      return !!signin && !!signin.querySelector('button') && !!signout && !signout.querySelector('button') && /no sign-out payload/.test(signout.textContent) && /Sign out/.test(document.querySelector('.dialog p').textContent);
+    }), 'fake sign-in dialog: the sign-out entry must not offer a download, and the text should say how to sign out');
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('.dialog'), null, { timeout: 6000 }).catch(() => fail('the fake sign-in dialog should close'));
     await page.click('[data-nav-id="set-nav-saves"]');
     await page.waitForSelector('#scr-settings [data-nav-id="sv-root"]');
     await sleep(800);

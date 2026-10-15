@@ -1,16 +1,21 @@
 {
-  "kind": "github",
+  "kind": "supabase",
+  "name": "XenoKing",
+  "url": "https://cotniitpyocsfqzywscl.supabase.co",
+  "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvdG5paXRweW9jc2Zxenl3c2NsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwMDIyNjgsImV4cCI6MjA4NjU3ODI2OH0.oGHEMavpWkks_VJ8opTzjGusqVuJKd8ea3V4Ij34Av0",
+  "bucket": "ps5-saves",
+  "garlicFunction": "garlic-savedb",
   "indexUrl": "https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/saves.json",
-  "submit": "github-issue",
+  "submit": "site",
+  "uploadHost": "site",
   "issueUrl": "https://github.com/XENOKING123/XENO-STORE/issues/new?template=save-submission.md",
-  "uploadHost": "pixeldrain",
-  "note": "Zero-infrastructure default: consoles read the published updates/saves.json index and submit new saves through a prefilled GitHub issue (SPEC §17.22.5). Switch to the Supabase backend by replacing this object with the '_example' below (minus the leading underscore keys) or by filling Settings → Saves → Backend on the console; both backends can be active at once and the lists are merged.",
+  "note": "Live backend: the owner's XenoKing site. Consoles list every row of its public.ps5_save_collection (credited to shared_by) merged with the GitHub index above, download Garlic rows through the site's garlic-savedb function and bucket rows through signed URLs, and share by uploading the zip to ps5-saves/xeno/ and inserting one row of the site's own columns, so a share is live on the site and in every store at once (the GitHub issue stays the fallback when the site refuses). The anon key is the site's public key (row-level security: read + insert on the table, sign + upload in the bucket); consoles send it to this URL only and never update, delete or touch another table. No download counter (\"downloadCounter\") and no listing through the function (\"garlicList\") on this site. Settings → Saves → Backend on a console overrides this file; kind \"github\" there means \"follow this file\", \"none\" turns the store off.",
   "_example": {
-    "kind": "supabase",
-    "url": "https://YOUR-PROJECT-REF.supabase.co",
-    "anonKey": "YOUR-PUBLIC-ANON-KEY",
-    "bucket": "ps5-saves",
-    "garlicFunction": "garlic-savedb",
-    "_about": "The anon key is public by design (row-level security limits what it can do). Deploy the schema and the edge functions from backend/supabase/ first; the console lists rows from public.ps5_save_collection, downloads through signed URLs or the garlic-savedb function and uploads to the bucket."
+    "kind": "github",
+    "indexUrl": "https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/saves.json",
+    "submit": "github-issue",
+    "issueUrl": "https://github.com/XENOKING123/XENO-STORE/issues/new?template=save-submission.md",
+    "uploadHost": "pixeldrain",
+    "_about": "Zero-infrastructure fallback: replace the object above with this one (minus the leading-underscore keys) and consoles read only the published updates/saves.json index and submit through a prefilled GitHub issue (SPEC §17.22.5). For another Supabase project built from backend/supabase/, use backend/supabase/config/saves-backend.example.json (its \"moderated\": true makes console inserts wait as pending, \"downloadCounter\" names the increment_downloads RPC)."
   }
 }

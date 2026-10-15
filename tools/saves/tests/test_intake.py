@@ -1,11 +1,19 @@
-"""Save Data Store intake (SPEC §17.22.5): body parsing, validation, capped download, zip inspection, index updates."""
+"""Save Data Store intake (SPEC §17.22.5): body parsing, validation, capped download, zip inspection, index updates.
+
+The fixtures (zips, issue body, Actions event) are written into a temporary directory by
+fixtures/make_fixtures.py when this module loads, so a fresh checkout runs as-is:
+
+  python3 -I -m unittest discover -s tools/saves/tests -v      (or: make saves-test)
+"""
 from __future__ import annotations
 
+import atexit
 import hashlib
 import io
 import json
 import os
 import shutil
+import struct
 import sys
 import tempfile
 import threading
@@ -14,10 +22,15 @@ import zipfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-FIX = os.path.join(HERE, "fixtures")
 sys.path.insert(0, os.path.dirname(HERE))
+sys.path.insert(0, os.path.join(HERE, "fixtures"))
 
 import intake  # noqa: E402
+import make_fixtures  # noqa: E402
+
+FIX = tempfile.mkdtemp(prefix="xeno-intake-fixtures-")
+atexit.register(shutil.rmtree, FIX, True)
+make_fixtures.write_fixtures(FIX)
 
 
 def read(name: str, mode: str = "rb"):
@@ -305,6 +318,42 @@ class ZipTests(unittest.TestCase):
             z.writestr("xeno-save.json", "{not json")
         r = intake.inspect_zip(p)
         self.assertTrue(any("not valid JSON" in x for x in r["reasons"]))
+
+    def test_account_id(self):
+        base = [("data.bin", b"abc")]
+        r = intake.inspect_zip(self._zip(base + [("sce_sys/param.sfo", make_fixtures.make_sfo(0x1122334455667788))]))
+        self.assertFalse(r["ok"])
+        self.assertEqual(r["accountId"], "set")
+        self.assertTrue(any("account ID" in x for x in r["reasons"]))
+        r = intake.inspect_zip(self._zip(base + [("sce_sys/param.sfo", make_fixtures.make_sfo(0))]))
+        self.assertTrue(r["ok"], r["reasons"])
+        self.assertEqual(r["accountId"], "zeroed")
+        r = intake.inspect_zip(self._zip(base + [("sce_sys/param.sfo", b"\0" * 512)]))   # zeroed file (Garlic rebuilds it)
+        self.assertTrue(r["ok"], r["reasons"])
+        self.assertEqual(r["accountId"], "zeroed")
+        r = intake.inspect_zip(self._zip(base + [("sce_sys/param.sfo", b"x")]))
+        self.assertTrue(r["ok"], r["reasons"])
+        self.assertEqual(r["accountId"], "unreadable")
+        r = intake.inspect_zip(self._zip(base))
+        self.assertEqual(r["accountId"], "")
+
+    def test_sfo_parser(self):
+        sfo = make_fixtures.make_sfo(0xABCDEF)
+        self.assertEqual(struct.unpack("<Q", intake.sfo_account_id(sfo))[0], 0xABCDEF)
+        self.assertIsNone(intake.sfo_account_id(b"\0PSF" + b"\xff" * 30))       # offsets out of range
+        self.assertIsNone(intake.sfo_account_id(b"nope"))
+        no_key = sfo.replace(b"ACCOUNT_ID", b"ACCOUNT_XX")
+        self.assertEqual(intake.sfo_account_id(no_key), b"")
+        self.assertEqual(intake.account_id_state(no_key), "none")
+        # hex-string ACCOUNT_ID (fmt 0x0204) of zeros counts as zeroed
+        hexsfo = sfo.replace(struct.pack("<Q", 0xABCDEF), b"00000000")
+        self.assertEqual(intake.account_id_state(hexsfo), "zeroed")
+
+    def test_fixtures_have_zeroed_account_id(self):
+        r = intake.inspect_zip(os.path.join(FIX, "good-save.zip"), "PPSA04029")
+        self.assertEqual(r["accountId"], "zeroed")
+        r = intake.inspect_zip(os.path.join(FIX, "garlic-save.zip"), "PPSA04029")
+        self.assertEqual(r["accountId"], "zeroed")
 
     def test_not_a_zip(self):
         d = tempfile.mkdtemp()

@@ -233,7 +233,7 @@
       var dumper = list.filter(function (p) { return /dump/i.test((p.id || '') + ' ' + (p.name || '') + ' ' + (p.kind || '')); })[0];
       var body = [h('p', { text: t('lib2.dumpText', { title: title, id: it.titleId }) }), cb.note(t('lib2.dumpSteps'), '', 'info')];
       var buttons = [];
-      if (dumper && dumper.installed) buttons.push({ label: t('lib2.dumpLaunch', { name: dumper.name }), primary: true, onClick: function (hd) { cb.api.payloadLaunch(dumper.id).then(function () { ui.toast({ cls: 'gold', title: t('companions.sent', { name: dumper.name }) }); ui.closeLayer(hd); }, function (err) { ui.errorToast(err, dumper.name); }); } });
+      if (dumper && dumper.installed) buttons.push({ label: t('lib2.dumpLaunch', { name: dumper.name }), primary: true, onClick: function () { cb.api.payloadLaunch(dumper.id).then(function () { ui.toast({ cls: 'gold', title: t('companions.sent', { name: dumper.name }) }); /* the steps stay on screen: they are needed now */ }, function (err) { ui.errorToast(err, dumper.name); }); } });
       else buttons.push({ label: t('lib2.dumpGet'), primary: true, onClick: function (hd) { ui.closeLayer(hd); XS.router.go('setup', { section: 'payloads' }); } });
       buttons.push({ label: t('common.close'), autofocus: true });
       ui.dialog({ title: t('lib2.dumpGame'), body: body, buttons: buttons });
@@ -756,11 +756,14 @@
     });
     function go() {
       if (!st.user) { ui.toast({ cls: 'bad', title: t('saves.pickProfile') }); return; }
-      var btn = handle.foot.querySelector('[data-start]'); btn.classList.add('busy');
+      var btn = handle.foot.querySelector('[data-start]');
+      if (btn.classList.contains('busy')) return;   /* one restore at a time from this sheet */
+      btn.classList.add('busy');
       cb.api.savesRestore(st.user.id, b.path, st.overwrite).then(function (r) {
         btn.classList.remove('busy'); ui.closeLayer(handle);
         XS.sound && XS.sound.done();
         ui.toast({ cls: 'good', title: t('lib2.restored', { title: title }), desc: (r.files ? t('saves.nFiles', { n: r.files }) + ' · ' : '') + (r.preBackup ? t('lib2.preBackupMade') : '') });
+        if (r.note) ui.toast({ cls: 'gold', icon: 'alert', title: t('lib2.notResigned'), desc: r.note, timeout: 10000 });   /* e.g. a raw backup of another profile */
         loadBackups(true); if (sh.user && st.user.id === sh.user.id) loadSaves();
       }, function (err) { btn.classList.remove('busy'); ui.errorToast(err, t('lib2.restore')); });
     }
@@ -793,11 +796,18 @@
     });
     function go() {
       if (!st.to || !sh.user) return;
-      var btn = handle.foot.querySelector('[data-start]'); btn.classList.add('busy');
+      var btn = handle.foot.querySelector('[data-start]');
+      if (btn.classList.contains('busy')) return;   /* the console runs one transfer at a time */
+      btn.classList.add('busy');
       cb.api.savesTransfer(sh.user.id, st.to.id, s.titleId, s.kind || '', st.move).then(function (r) {
         btn.classList.remove('busy'); ui.closeLayer(handle);
         XS.sound && XS.sound.done();
-        ui.toast({ cls: 'good', title: t('lib2.transferred', { title: title, name: cb.userLabel(st.to) }), desc: (r.bytes ? U.fmtBytes(r.bytes) + ' · ' : '') + (r.preBackup ? t('lib2.preBackupMade') : '') });
+        var bits = [];
+        if (r.bytes) bits.push(U.fmtBytes(r.bytes));
+        if (r.resigned) bits.push(t('lib2.transferResigned', { name: cb.userLabel(st.to) }));
+        if (r.preBackup) bits.push(t('lib2.preBackupMade'));
+        ui.toast({ cls: 'good', title: t('lib2.transferred', { title: title, name: cb.userLabel(st.to) }), desc: bits.join(' · ') });
+        if (r.resigned === false) ui.toast({ cls: 'gold', icon: 'alert', title: t('lib2.notResigned'), desc: r.note || '', timeout: 10000 });
         loadBackups(true); if (st.move) loadSaves();
       }, function (err) { btn.classList.remove('busy'); ui.errorToast(err, t('lib2.transferProfile')); });
     }

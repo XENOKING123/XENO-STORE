@@ -32,6 +32,7 @@ import json
 import os
 import re
 import stat
+import struct
 import sys
 import tempfile
 import time
@@ -356,13 +357,56 @@ def sha256_file(path: str) -> tuple[int, str]:
 # ----------------------------------------------------------------------------
 # 3. zip inspection
 
+MAX_SFO = 1 << 20
+
+
+def sfo_account_id(data: bytes) -> bytes | None:
+    """ACCOUNT_ID value of a param.sfo (PSF): its bytes, b"" when the key is absent, None when the file is not a
+    readable PSF (an all-zero param.sfo is not one: the pinned Garlic Save Manager 1.7 refuses it on import with
+    "param.sfo is corrupted!", only builds after 1.7 rebuild it with force=1)."""
+    if len(data) < 20 or data[:4] != b"\0PSF":
+        return None
+    key_start, data_start, count = struct.unpack_from("<III", data, 8)
+    if count > 512 or key_start > len(data) or data_start > len(data):
+        return None
+    for i in range(count):
+        e = 20 + i * 16
+        if e + 16 > len(data):
+            return None
+        koff, _fmt, _length, maxlen, off = struct.unpack_from("<HHIII", data, e)
+        kpos = key_start + koff
+        if kpos >= len(data):
+            return None
+        end = data.find(b"\0", kpos)
+        if data[kpos:end if end >= 0 else len(data)] == b"ACCOUNT_ID":
+            if data_start + off + maxlen > len(data):
+                return None
+            return data[data_start + off:data_start + off + maxlen]
+    return b""
+
+
+def account_id_state(data: bytes) -> str:
+    """zeroed | none | set | unreadable for a param.sfo image."""
+    if not data.strip(b"\0"):
+        return "zeroed"
+    aid = sfo_account_id(data)
+    if aid is None:
+        return "unreadable"
+    if aid == b"":
+        return "none"
+    # binary 8-byte id (fmt 0x0004) or a hex string (fmt 0x0204): zero either way
+    return "zeroed" if not aid.strip(b"\0").strip(b"0") else "set"
+
+
 def inspect_zip(path: str, expected_title: str = "") -> dict:
     """Check that the zip is a shareable decrypted PS5 save.
 
     Returns {ok, layout: xeno|garlic|none, reasons, dataFiles, hasManifest,
-             hasParamSfo, hasIcon, dirName, gameVersion, region, manifest}.
+             hasParamSfo, accountId, hasIcon, dirName, gameVersion, region, manifest}.
+    accountId is the ACCOUNT_ID state of sce_sys/param.sfo (zeroed | none | set | unreadable, "" without one);
+    "set" is refused: a shared save must not carry the uploader's account id.
     """
-    res = {"ok": False, "layout": "none", "reasons": [], "dataFiles": 0, "hasManifest": False, "hasParamSfo": False,
+    res = {"ok": False, "layout": "none", "reasons": [], "dataFiles": 0, "hasManifest": False, "hasParamSfo": False, "accountId": "",
            "hasIcon": False, "dirName": "", "gameVersion": "", "region": "", "manifest": None, "entries": 0}
     reasons: list[str] = []
     try:
@@ -415,6 +459,16 @@ def inspect_zip(path: str, expected_title: str = "") -> dict:
                 continue
             if low == "sce_sys/param.sfo":
                 res["hasParamSfo"] = True
+                if info.file_size > MAX_SFO:
+                    reasons.append("sce_sys/param.sfo is too large")
+                    continue
+                try:
+                    res["accountId"] = account_id_state(zf.read(info))
+                except (zipfile.BadZipFile, RuntimeError, OSError, ValueError) as e:
+                    reasons.append("sce_sys/param.sfo cannot be read (%s)" % e)
+                    continue
+                if res["accountId"] == "set":
+                    reasons.append("sce_sys/param.sfo still carries an account ID (ACCOUNT_ID must be zeroed — export the save with XENO STORE)")
                 continue
             if low == "sce_sys/icon0.png":
                 res["hasIcon"] = True
@@ -666,6 +720,8 @@ def render_comment(result: dict) -> str:
             parts.append("layout %s" % checks["layout"])
         if checks.get("dataFiles") is not None:
             parts.append("%d save file(s)" % checks["dataFiles"])
+        if checks.get("accountId") in ("zeroed", "none"):
+            parts.append("no account ID")
         if parts:
             lines.append("")
             lines.append("Checks: " + " · ".join(parts) + ".")
@@ -763,6 +819,7 @@ def run(args) -> dict:
                 look = inspect_zip(path, sub["titleId"])
                 result["checks"]["layout"] = look["layout"]
                 result["checks"]["dataFiles"] = look["dataFiles"]
+                result["checks"]["accountId"] = look["accountId"]
                 result["checks"]["entries"] = look["entries"]
                 errors.extend(look["reasons"])
                 if look.get("manifest"):

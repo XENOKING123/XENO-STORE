@@ -349,8 +349,8 @@
     /* upload */
     sec.appendChild(h('div.group-title', { text: t('settings2.upload') }));
     var up = h('div.list');
-    var host = sget('saves.uploadHost', 'pixeldrain') || 'pixeldrain';
-    var HOSTS = [['pixeldrain', 'pixeldrain', t('saves.hostPixeldrain')], ['catbox', 'catbox.moe', t('saves.hostCatbox')], ['custom', t('saves.hostCustom'), t('settings2.uploadCustomHint')]];
+    var host = sget('saves.uploadHost', 'site') || 'site';
+    var HOSTS = [['site', t('settings2.uploadSite'), t('settings2.uploadSiteHint')], ['pixeldrain', 'pixeldrain', t('saves.hostPixeldrain')], ['catbox', 'catbox.moe', t('saves.hostCatbox')], ['custom', t('saves.hostCustom'), t('settings2.uploadCustomHint')]];
     var hostLabel = function (id) { for (var i = 0; i < HOSTS.length; i++) if (HOSTS[i][0] === id) return HOSTS[i][1]; return id; };
     up.appendChild(ui.valueRow({ id: 'sv-host', icon: 'upload', label: t('settings2.uploadHost'), desc: t('settings2.uploadHostHint'), value: hostLabel(host), onClick: function (row) {
       ui.menu(row, HOSTS.map(function (x) { return { label: x[1], sub: x[2], checked: host === x[0], onSelect: function () { sset('saves.uploadHost', x[0], function () { rerenderGroup('saves'); }); } }; }), { title: t('settings2.uploadHost') });
@@ -458,11 +458,14 @@
       if (!list.length) body.push(cb.note(t('accounts.fakeMissing'), 'warn'));
       var rows = h('div.list');
       list.forEach(function (p, i) {
-        var row = h('div.lrow', { nav: 'fake-' + i, data: { hints: 'select' } }, [h('span.ic', { html: U.icon('cloud') }), h('div.main', [h('div.name', { text: p.name + (p.version ? ' v' + p.version : '') }), h('div.desc', { text: p.installed ? t('companions.installedLocal') : t('companions.notDownloaded') })])]);
-        var b = h('button.btn.sm.primary', { nav: 'fake-' + i + '-go', text: p.installed ? t('companions.launch') : t('companions.install') });
-        b.addEventListener('click', function (e) { e.stopPropagation(); if (XS.setupScreen) XS.setupScreen.payloadAction(p, b); });
-        row.appendChild(b);
-        row.addEventListener('click', function (e) { if (e.target.closest('button')) return; if (XS.setupScreen) XS.setupScreen.payloadAction(p, b); });
+        var off = p.available === false && !p.installed;   /* no upstream asset (sign-out): listed, never offered */
+        var row = h('div.lrow', off ? { nav: 'fake-' + i } : { nav: 'fake-' + i, data: { hints: 'select' } }, [h('span.ic', { html: U.icon('cloud') }), h('div.main', [h('div.name', { text: p.name + (p.version ? ' v' + p.version : '') }), h('div.desc', { text: off ? (p.unavailableReason || t('companions.unavailable')) : (p.installed ? t('companions.installedLocal') : t('companions.notDownloaded')) })])]);
+        if (!off) {
+          var b = h('button.btn.sm.primary', { nav: 'fake-' + i + '-go', text: p.installed ? t('companions.launch') : t('companions.install') });
+          b.addEventListener('click', function (e) { e.stopPropagation(); if (XS.setupScreen) XS.setupScreen.payloadAction(p, b); });
+          row.appendChild(b);
+          row.addEventListener('click', function (e) { if (e.target.closest('button')) return; if (XS.setupScreen) XS.setupScreen.payloadAction(p, b); });
+        }
         rows.appendChild(row);
       });
       body.push(rows);

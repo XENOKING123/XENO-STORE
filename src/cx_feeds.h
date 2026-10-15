@@ -23,6 +23,11 @@ void cx_feed_json(int feed, jw *w);
 /* Parsed copy of a feed (caller frees with json_free); NULL when absent. */
 jdoc *cx_feed_doc(int feed);
 time_t cx_feed_fetched_at(int feed);
+/* Loads one feed when its copy is missing or older than max_age_s (blocking:
+ * the cached file when still fresh, else the network, else the old copy).
+ * Used by the save index so a console that never refreshed its feeds (or has
+ * catalog auto-refresh off) still follows the published saves-backend.json. */
+void cx_feed_ensure(int feed, int max_age_s);
 
 /* Generic cache: GET url into <data>/feeds/<name>.json when the cached copy
  * is older than max_age_s (or force). Returns the text (malloc'd) or NULL;

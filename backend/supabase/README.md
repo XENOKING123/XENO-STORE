@@ -16,7 +16,8 @@ backend/supabase/
 │   ├── 0001_ps5_save_cover.sql             cover_path
 │   ├── 0002_ps5_collection_garlic_source.sql garlic_id (unique)
 │   ├── 0003_garlic_sync_cron.sql           optional: every-6-hours Garlic sync (pg_cron + pg_net)
-│   └── 0004_xeno_save_store.sql            XENO columns, increment_downloads(id), indexes, bucket, moderation RLS
+│   ├── 0004_xeno_save_store.sql            XENO columns, increment_downloads(id), indexes, bucket, moderation RLS
+│   └── 0005_console_share_uploads.sql      bucket policy also takes console shares (xeno/<yyyymmdd>-<16 hex>.zip)
 ├── functions/
 │   ├── _shared/zipdir.ts                   zip central-directory reader (no full download)
 │   ├── garlic-savedb/index.ts              list / download / sync / debug against garlicsaves.com
@@ -72,17 +73,19 @@ supabase link --project-ref YOUR-PROJECT-REF
 ### 2. Run the migrations
 
 Either paste each file into the SQL editor (Dashboard → SQL) in order
-`0000 → 0001 → 0002 → 0004`, or run them with psql:
+`0000 → 0001 → 0002 → 0004 → 0005`, or run them with psql:
 
 ```sh
-for f in migrations/0000_*.sql migrations/0001_*.sql migrations/0002_*.sql migrations/0004_*.sql; do
+for f in migrations/0000_*.sql migrations/0001_*.sql migrations/0002_*.sql migrations/0004_*.sql migrations/0005_*.sql; do
   psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"
 done
 ```
 
 `0004` is idempotent and also creates the private `ps5-saves` bucket with a
 2 GiB object limit (if you created the bucket by hand already, it only updates
-the limit). Skip `0003` unless you want the Garlic mirror (step 5).
+the limit). `0005` (idempotent too) replaces 0004's bucket upload policy with
+one that also takes the console's share path `xeno/<yyyymmdd>-<16 hex>.zip`:
+without it every upload from a console is refused. Skip `0003` unless you want the Garlic mirror (step 5).
 
 ### 3. Set the secrets
 
@@ -144,22 +147,37 @@ curl -sS -X POST "https://YOUR-PROJECT-REF.supabase.co/functions/v1/garlic-saved
 
 Copy `config/saves-backend.example.json` over
 `updates/saves-backend.json` (fill `url` and `anonKey`) and commit:
-consoles fetch that file with the catalog. Or type the URL and anon key into
-**Settings → Saves → Backend** on one console. Both backends (this database and
-the GitHub `updates/saves.json` index) can be active at once; the console merges
-them and dedupes by sha256 / garlic id.
+consoles fetch that file with the catalog (and on their own before listing
+saves when their copy is missing or older than 6 h). Or type the URL and anon
+key into **Settings → Saves → Backend** on one console (the URL must be
+`https://`). Both backends (this database and the GitHub `updates/saves.json`
+index) are active at once; the console merges them and dedupes by sha256 /
+garlic id.
+
+The store's live default is the owner's XenoKing site (`updates/saves-backend.json`),
+whose table has the base columns only (no `status`, `category`, `tags`,
+`downloads`…) and no counter; a deployment of this template keeps
+`"moderated": true` and `"downloadCounter": "increment_downloads"` in its
+config so console inserts wait as `pending` and downloads are counted. Typed
+into Settings there are no such flags: the console asks once
+(`GET {url}/rest/v1/ps5_save_collection?select=status&limit=1` — 200 here,
+"column does not exist" on the site) and then behaves the same way.
 
 ## How consoles use it
 
 | step | request |
 |---|---|
-| list | `GET {url}/rest/v1/ps5_save_collection?select=*&order=created_at.desc&limit=2000` (+ `&title_id=eq.PPSA…`) with `apikey` + `Authorization: Bearer <anon>`; the console keeps `status = 'published'` rows only |
-| cover | `POST {url}/storage/v1/object/sign/ps5-saves/<cover_path>` → signed URL (1 h, cached) |
-| download (upload row) | signed URL for `file_path` |
+| list | `GET {url}/rest/v1/ps5_save_collection?select=*&order=created_at.desc&limit=2000` with `apikey` + `Authorization: Bearer <anon>`; rows with a `status` other than `published` are skipped |
+| cover | `POST {url}/storage/v1/object/sign/ps5-saves/<cover_path> {"expiresIn":3600}` → signed URL (cached ~50 min per cover) |
+| download (bucket row) | `POST {url}/storage/v1/object/sign/ps5-saves/<file_path> {"expiresIn":300}`, then a plain GET of the signed URL |
 | download (Garlic row) | `POST {url}/functions/v1/garlic-savedb {"action":"download","id":<garlic_id>}` → zip stream |
-| counter | `POST {url}/rest/v1/rpc/increment_downloads {"id":"<uuid>"}` |
-| upload | `POST {url}/storage/v1/object/ps5-saves/<PPSA>/<uuid>-<name>.zip` (`Content-Type: application/zip`), cover `…-cover.png` |
-| submit | `POST {url}/functions/v1/xeno-save-submit {…row…}` → `{ok,id,status}` — or a direct `POST /rest/v1/ps5_save_collection` with `status:"pending"`, `source:"xeno"` (RLS enforces exactly that) |
+| counter | only with `"downloadCounter"` in the config: `POST {url}/rest/v1/rpc/<name> {"id":"<uuid>"}` |
+| upload | `POST {url}/storage/v1/object/ps5-saves/xeno/<yyyymmdd>-<16 hex>.zip` (`Content-Type: application/zip`, `x-upsert: false`) |
+| kind (Settings backends only, once) | `GET {url}/rest/v1/ps5_save_collection?select=status&limit=1` |
+| submit | `POST {url}/rest/v1/ps5_save_collection` (`Prefer: return=representation`) with `title_id, game, shared_by, notes, file_path, file_name, file_size` (+ `status:"pending"`, `source:"xeno"` for this template — what 0004's RLS requires) |
+
+Requests that carry the anon key go to `{url}` only and never follow a
+redirect. Consoles never update or delete rows and touch no other table.
 
 ## Moderation
 

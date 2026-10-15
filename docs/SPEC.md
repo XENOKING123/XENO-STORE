@@ -833,7 +833,7 @@ enumerated with `sceUserServiceGetLoginUserIdList` / `sceUserServiceGetUserName`
 - **Transfer between profiles** (same console): `POST /api/saves/transfer {fromUser, toUser, titleId, move:bool}` → copies the whole title folder
   (images + sce_sys) to the destination user; a backup of any existing destination save is taken first. The UI labels this **Beta** and explains that
   saves are sealed to this console: same-console transfers work; saves from another console need re-signing.
-- **Re-signing / community saves**: when **Garlic Save Manager** (ELF Arsenal / garlicsaves.com worker) answers on `127.0.0.1:8082`, the game page's
+- **Re-signing / community saves**: when **Garlic Save Manager** (earthonion/garlic-savemgr) answers on `127.0.0.1:8082`, the game page's
   Saves tab shows "Open in Garlic" and "Import with re-sign" (hands the file path to Garlic's local API; if the API is absent, opens its UI). Without Garlic,
   community saves still download (zip) and can be restored as-is (works for saves made on the same console). Community feed: `updates/saves.json`
   `{"saves":[{"id","titleId","title","type":"100%"|"starter"|"mod"|"ng+","description","author","url","sha256","size","kind":"ps5"|"ps4","needsResign":true}]}`
@@ -942,9 +942,17 @@ game/title ID/author; "Compatible with my games" quick filter (installed titles)
 
 **17.22.7 API** — `GET /api/saves/store?titleId=&category=&q=` (index + compatibility fields merged), `POST /api/saves/store/{id}/install {user, backupFirst}`,
 `POST /api/saves/store/{id}/download`, `GET /api/saves/engine` → `{tier:"native"|"garlic"|"raw", detail}`, `POST /api/saves/export {user, titleId, dirName}` → zip path + manifest,
-`POST /api/saves/upload {zipPath, host}` → `{url, sha256, size}`, `POST /api/saves/submit {…metadata}` → `{issueUrl, qr}`, `GET /api/saves/installed-version?titleId=`.
+`POST /api/saves/upload {zipPath, host}` → `{url, sha256, size}` (+ `storagePath` for host `site`), `POST /api/saves/submit {…metadata}` → `{method:"site", id}` on the
+site backend, else `{issueUrl, qr}`, `GET /api/saves/installed-version?titleId=`.
 
 **17.22.8 Backends (the store talks to a real community database when one is configured)**
+- **Live (2026-10-15): the owner's XenoKing site** is the published backend (`updates/saves-backend.json`, `"name":"XenoKing"`). Its table has the base columns only
+  (no `status`/`category`/`tags`/… — PostgREST refuses unknown columns), RLS lets the anon key read + insert, sign + upload in `ps5-saves`; it has no counter RPC.
+  Consoles list every row, download Garlic rows through its `garlic-savedb` function and bucket rows through signed URLs, upload shares to `ps5-saves/xeno/` and
+  insert one row of the base columns, so a share is live on the site and in the store at once. No other writes. Details: docs/SAVES.md §9.1. The text below
+  describes the template deployment under `backend/supabase/` (opt-in flags `moderated`, `downloadCounter`, `garlicList` in the config; a template typed into
+  Settings is recognised by one `select=status` read; migration `0005` lets its bucket take the console's `xeno/` uploads). A share the site refuses never
+  reaches GitHub with a private-bucket link: the console re-uploads the export to a public host first.
 - **Supabase backend (preferred, owner-deployed)** — the schema the owner already has (`public.ps5_save_collection`: `id uuid, title_id PPSA#####, game, shared_by, notes,
   file_path, file_name, file_size, cover_path, garlic_id, created_at`; bucket `ps5-saves`; edge function `garlic-savedb` with actions list / download / sync / debug that
   mirrors garlicsaves.com's Save DB every 6 h). XENO STORE ships the deployable backend under `backend/supabase/`:

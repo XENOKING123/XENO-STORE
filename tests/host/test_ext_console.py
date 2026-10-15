@@ -418,7 +418,7 @@ class ConsoleTests(unittest.TestCase):
             self.assertIn("127.0.0.1", s["catalog"][k])   # set by setUpClass
         self.assertTrue(s["saves"]["autoBackup"])
         self.assertEqual(s["saves"]["backend"]["kind"], "none")
-        self.assertEqual(s["saves"]["uploadHost"], "pixeldrain")
+        self.assertEqual(s["saves"]["uploadHost"], "site")   # the save site when its backend is on, else pixeldrain
         self.assertEqual(s["browse"]["presets"], [])
         st, b = self.srv.api("PUT", "/api/settings", {
             "general": {"largeText": True, "highContrast": True, "screensaver": False, "screensaverMinutes": 99, "controllerSwapConfirm": True},
@@ -647,6 +647,10 @@ class ConsoleTests(unittest.TestCase):
         self.assertEqual(st, 200, b)
         self.assertEqual(b["preBackup"], "")
         self.assertFalse(b["moved"])
+        # the simulated engine has no Garlic Save Manager: a raw copy, and the answer says it was not re-signed
+        self.assertFalse(b["resigned"])
+        self.assertEqual(b["tier"], "raw")
+        self.assertIn("without re-signing", b["note"])
         with open(os.path.join(dst, "sdimg_SAVEDATA00"), "rb") as f:
             self.assertEqual(f.read(), self.original_image)
         self.assertTrue(os.path.exists(os.path.join(src, "sdimg_SAVEDATA00")))

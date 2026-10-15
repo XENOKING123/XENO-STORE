@@ -5,6 +5,7 @@
 #include "catalog.h"
 #include "cx_accounts.h"
 #include "cx_common.h"
+#include "cx_garlic.h"
 #include "cx_jobs.h"
 #include "cx_savemount.h"
 #include "log.h"
@@ -15,6 +16,7 @@
 
 #include <dirent.h>
 #include <errno.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -95,6 +97,23 @@ static void list_kind(jw *w, const char *home, const char *sub, const char *kind
     int n = cx_saves_dirnames(path, dn, 64);
     jw_key(w, "dirs"); jw_arr_begin(w);
     for (int i = 0; i < n; i++) jw_str(w, dn[i]);
+    jw_arr_end(w);
+    /* the same folders with the size and time of their save image */
+    jw_key(w, "dirInfo"); jw_arr_begin(w);
+    for (int i = 0; i < n; i++) {
+      char ip[1200];
+      struct stat is;
+      int found = 0;
+      xsnprintf(ip, sizeof ip, "%s/sdimg_%s", path, dn[i]);
+      if (stat(ip, &is) == 0 && S_ISREG(is.st_mode)) found = 1;
+      if (!found) { xsnprintf(ip, sizeof ip, "%s/%s", path, dn[i]); found = stat(ip, &is) == 0 && S_ISREG(is.st_mode); }
+      if (!found) { xsnprintf(ip, sizeof ip, "%s/sce_sys/%s", path, dn[i]); found = stat(ip, &is) == 0; if (found) is.st_size = 0; }
+      jw_obj_begin(w);
+      jw_kv_str(w, "name", dn[i]);
+      jw_kv_i64(w, "size", found ? (int64_t)is.st_size : 0);
+      jw_kv_i64(w, "mtime", found ? (int64_t)is.st_mtime : 0);
+      jw_obj_end(w);
+    }
     jw_arr_end(w);
     jw_kv_bool(w, "installed", storage_title_installed(e->d_name));
     jw_obj_end(w);
@@ -368,13 +387,65 @@ int cx_saves_restore(uint32_t uid, const char *zipPath, int overwrite, jw *w, ch
   jw_kv_str(w, "style", r.style);
   jw_kv_int(w, "files", r.files);
   jw_kv_i64(w, "bytes", r.bytes);
+  if (r.note[0]) jw_kv_str(w, "note", r.note);
   LOGI("saves: restored %s for user %x from %s", tid, (unsigned)uid, zipPath);
   return 0;
 }
 
 /* ---- transfer ----------------------------------------------------------- */
 
+/* A PS5 save carries its profile's account and user id, and only that
+ * profile's save database lists it: each save image of the title is decrypted
+ * by Garlic Save Manager for the source profile and imported again for the
+ * destination, which re-signs and registers it there. 0 ok; -1 with err
+ * (saves already re-signed stay on the destination). */
+static int transfer_resign(uint32_t from, uint32_t to, const char *titleId, const char *src, int *saves, int64_t *bytes, char *err, size_t errcap) {
+  char dn[64][32];
+  int n = cx_saves_dirnames(src, dn, 64);
+  *saves = 0;
+  *bytes = 0;
+  for (int i = 0; i < n; i++) {
+    char img[1100];
+    xsnprintf(img, sizeof img, "%s/sdimg_%s", src, dn[i]);
+    if (!util_file_exists(img)) continue;
+    char stage[1100], rnd[12], e2[256] = "";
+    util_rand_hex(rnd, 8);
+    xsnprintf(stage, sizeof stage, "%s/%s/transfer-%s-%s", cx_data_dir(), cx_is_host() ? "sim" : "stage", titleId, rnd);
+    cx_garlic_result gr;
+    memset(&gr, 0, sizeof gr);
+    int rc = cx_garlic_export_dec_dir(titleId, dn[i], from, stage, NULL, e2, sizeof e2);
+    if (rc == 0) rc = cx_garlic_import_dir_ex(stage, titleId, to, dn[i], cx_dir_size(stage, 16), NULL, &gr, e2, sizeof e2);
+    cx_rm_rf(stage, 16);
+    if (rc != 0) { xsnprintf(err, errcap, "%s/%s: %s", titleId, dn[i], e2); return -1; }
+    (*saves)++;
+    *bytes += gr.bytes;
+  }
+  if (!*saves) { xsnprintf(err, errcap, "the source profile has no save image of %s to re-sign", titleId); return -1; }
+  return 0;
+}
+
+static pthread_mutex_t xfer_mu = PTHREAD_MUTEX_INITIALIZER;
+
+static int transfer_claimed(uint32_t from, uint32_t to, const char *titleId, const char *kind, int move, jw *w, char *code, size_t ccap, char *err, size_t errcap);
+
+/* One transfer at a time (it runs on the request thread and holds Garlic for
+ * every save of the title), and never while a restore or install holds
+ * either profile's save folder of the title. */
 int cx_saves_transfer(uint32_t from, uint32_t to, const char *titleId, const char *kind, int move, jw *w, char *code, size_t ccap, char *err, size_t errcap) {
+  if (!from || !to || from == to || !cx_titleid_valid(titleId)) return transfer_claimed(from, to, titleId, kind, move, w, code, ccap, err, errcap);   /* refuses with the reason */
+  if (pthread_mutex_trylock(&xfer_mu) != 0) { xstrlcpy(code, "busy", ccap); xsnprintf(err, errcap, "another save transfer is still running — wait for it to finish"); return -1; }
+  int got_from = cx_savemount_claim(from, titleId) == 0;
+  int got_to = got_from && cx_savemount_claim(to, titleId) == 0;
+  int rc = -1;
+  if (got_to) rc = transfer_claimed(from, to, titleId, kind, move, w, code, ccap, err, errcap);
+  else { xstrlcpy(code, "busy", ccap); xsnprintf(err, errcap, "another restore, install or transfer of the %s save is still running — wait for it to finish", titleId); }
+  if (got_to) cx_savemount_release(to, titleId);
+  if (got_from) cx_savemount_release(from, titleId);
+  pthread_mutex_unlock(&xfer_mu);
+  return rc;
+}
+
+static int transfer_claimed(uint32_t from, uint32_t to, const char *titleId, const char *kind, int move, jw *w, char *code, size_t ccap, char *err, size_t errcap) {
   xstrlcpy(code, "bad_request", ccap);
   if (!from || !to || from == to) { xsnprintf(err, errcap, "fromUser and toUser must be two different profiles"); return -1; }
   if (cx_user_find(from, NULL) != 0 || cx_user_find(to, NULL) != 0) { xsnprintf(err, errcap, "unknown user"); return -1; }
@@ -385,29 +456,62 @@ int cx_saves_transfer(uint32_t from, uint32_t to, const char *titleId, const cha
     if (cx_save_title_dir(from, titleId, alt, src, sizeof src, k, sizeof k) != 0 || !util_dir_exists(src)) { xstrlcpy(code, "not_found", ccap); xsnprintf(err, errcap, "no save for %s on the source profile", titleId); return -1; }
   }
   if (cx_save_title_dir(to, titleId, k, dst, sizeof dst, NULL, 0) != 0) { xstrlcpy(code, "not_found", ccap); xsnprintf(err, errcap, "destination profile has no home directory"); return -1; }
+  /* a running (or suspended) game keeps its save mounted */
+  if (cx_title_running(titleId) == 1) {
+    xstrlcpy(code, "title_running", ccap);
+    xsnprintf(err, errcap, "%s is running: close the game (not just suspend it) before its save is copied to another profile", titleId);
+    return -1;
+  }
+  /* PS5 saves are re-signed for the destination through Garlic Save Manager
+   * (started on demand); otherwise the folder is copied as it is */
+  int resign = 0, no_garlic = 0;
+  char why[300] = "";
+  if (strcmp(k, "ps5") != 0) xstrlcpy(why, "Garlic Save Manager re-signs PS5 saves only", sizeof why);
+  else if (cx_savemount_tier() == CX_TIER_NATIVE) xstrlcpy(why, "the simulated save engine does not re-sign", sizeof why);
+  else if (!cx_garlic_ensure(1, why, sizeof why)) { no_garlic = 1; if (!why[0]) xstrlcpy(why, "Garlic Save Manager is not running", sizeof why); }
+  else resign = 1;
+  /* a PS5 save copied without re-signing may not load on the other profile: never remove the source's copy for it */
+  if (move && no_garlic) {
+    xstrlcpy(code, "resign_unavailable", ccap);
+    xsnprintf(err, errcap, "Nothing was changed: moving a PS5 save needs Garlic Save Manager to re-sign it for the other profile — copy it instead (%s)", why);
+    return -1;
+  }
   char pre[1024] = "";
   settings_t s;
   settings_get(&s);
-  if (util_dir_exists(dst) && cx_count_files(dst, 8) > 0) {
-    if (s.saves.autoBackup) {
-      char base[1024];
-      cx_saves_backup_dir(base, sizeof base);
-      cx_user u;
-      cx_user_find(to, &u);
-      char uname[64];
-      if (storage_sanitize_filename(u.name, uname, sizeof uname) != 0) xsnprintf(uname, sizeof uname, "user-%x", (unsigned)to);
-      char dir[1100], stamp[24];
-      xsnprintf(dir, sizeof dir, "%s/%s", base, uname);
-      util_mkdir_p(dir);
-      cx_stamp(stamp, sizeof stamp);
-      xsnprintf(pre, sizeof pre, "%s/%s_%s_%s.pre-restore.zip", dir, titleId, k, stamp);
-      zip_stats st;
-      if (zip_create_from_dir(pre, dst, NULL, NULL, &st) != 0) { xstrlcpy(code, "io", ccap); xsnprintf(err, errcap, "could not back up the destination save first (%s) — nothing was changed", st.error); return -1; }
-    }
-    cx_rm_rf(dst, 8);
+  int dst_used = util_dir_exists(dst) && cx_count_files(dst, 8) > 0;
+  if (dst_used && s.saves.autoBackup) {
+    char base[1024];
+    cx_saves_backup_dir(base, sizeof base);
+    cx_user u;
+    cx_user_find(to, &u);
+    char uname[64];
+    if (storage_sanitize_filename(u.name, uname, sizeof uname) != 0) xsnprintf(uname, sizeof uname, "user-%x", (unsigned)to);
+    char dir[1100], stamp[24];
+    xsnprintf(dir, sizeof dir, "%s/%s", base, uname);
+    util_mkdir_p(dir);
+    cx_stamp(stamp, sizeof stamp);
+    xsnprintf(pre, sizeof pre, "%s/%s_%s_%s.pre-restore.zip", dir, titleId, k, stamp);
+    zip_stats st;
+    if (zip_create_from_dir(pre, dst, NULL, NULL, &st) != 0) { xstrlcpy(code, "io", ccap); xsnprintf(err, errcap, "could not back up the destination save first (%s) — nothing was changed", st.error); return -1; }
   }
   int64_t bytes = 0;
-  if (cx_copy_tree(src, dst, 8, &bytes) != 0) { xstrlcpy(code, "io", ccap); xsnprintf(err, errcap, "copy failed: %s", strerror(errno)); return -1; }
+  int saves = 0;
+  char note[600];
+  if (resign) {
+    /* the destination's other saves of the title stay; each re-signed one replaces its namesake */
+    char e2[400] = "";
+    if (transfer_resign(from, to, titleId, src, &saves, &bytes, e2, sizeof e2) != 0) {
+      xstrlcpy(code, "resign_failed", ccap);
+      xsnprintf(err, errcap, "Garlic Save Manager could not re-sign the save for the other profile: %s%s%s", e2, pre[0] ? " — the destination's previous save is in " : "", pre);
+      return -1;
+    }
+    xsnprintf(note, sizeof note, "Re-signed for the destination profile by Garlic Save Manager (%d save%s).", saves, saves == 1 ? "" : "s");
+  } else {
+    if (dst_used) cx_rm_rf(dst, 8);
+    if (cx_copy_tree(src, dst, 8, &bytes) != 0) { xstrlcpy(code, "io", ccap); xsnprintf(err, errcap, "copy failed: %s", strerror(errno)); return -1; }
+    xsnprintf(note, sizeof note, "Copied without re-signing (%s): the save keeps the source profile's account, so the game may refuse it on the other profile.", why);
+  }
   int moved = 0;
   if (move) moved = cx_rm_rf(src, 8) == 0;
   jw_kv_i64(w, "fromUser", from);
@@ -418,7 +522,10 @@ int cx_saves_transfer(uint32_t from, uint32_t to, const char *titleId, const cha
   jw_kv_i64(w, "bytes", bytes);
   jw_kv_str(w, "preBackup", pre);
   jw_kv_bool(w, "moved", moved);
-  jw_kv_str(w, "note", "Saves are sealed to this console: same-console transfers work; saves from another console need re-signing.");
-  LOGI("saves: transferred %s %x -> %x (%s)", titleId, (unsigned)from, (unsigned)to, move ? "move" : "copy");
+  jw_kv_bool(w, "resigned", resign);
+  jw_kv_str(w, "tier", resign ? "garlic" : "raw");
+  if (resign) jw_kv_int(w, "saves", saves);
+  jw_kv_str(w, "note", note);
+  LOGI("saves: transferred %s %x -> %x (%s, %s)", titleId, (unsigned)from, (unsigned)to, move ? "move" : "copy", resign ? "re-signed through Garlic" : "raw copy");
   return 0;
 }

@@ -1,13 +1,16 @@
 /*
  * cx_savemount.h — save data engine (SPEC §17.22.3): three tiers chosen
  * automatically and reported honestly.
- *   native — PS5 SaveData API (libSceSaveData.sprx via dlopen/dlsym; needs
- *            kstuff-style save patches): mount → copy files → umount.
- *   garlic — Garlic Save Manager answering on 127.0.0.1:8082.
+ *   native — SaveData mount API. Disabled on the console (its PS5 prototypes
+ *            are unverified; see cx_savemount.c); the host build simulates it.
+ *   garlic — Garlic Save Manager answering GET /api/status on 127.0.0.1:8082
+ *            (cx_garlic.h): community saves are re-signed through its import
+ *            API, decrypted exports come from its export API. Started on
+ *            demand when a decrypted save is installed.
  *   raw    — same-console directory copy of /user/home/<uid>/savedata_prospero/<TID>/.
  * The host build simulates the native tier: a "mount" is a temp directory
  * mirrored to <title dir>/.sim/<dirName>/ on commit, so the whole import /
- * export flow runs in tests.
+ * export flow runs in tests (XENO_SIM_NATIVE=0 turns the simulation off).
  */
 #ifndef XENO_CX_SAVEMOUNT_H
 #define XENO_CX_SAVEMOUNT_H
@@ -16,6 +19,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+typedef struct cx_job cx_job;
+
 enum { CX_TIER_NATIVE = 0, CX_TIER_GARLIC = 1, CX_TIER_RAW = 2 };
 
 void cx_savemount_init(void);
@@ -23,6 +28,11 @@ int cx_savemount_tier(void);                   /* best available tier */
 const char *cx_tier_name(int tier);
 /* Writes "tier", "detail", "native", "garlic", "raw", "simulated". */
 void cx_savemount_engine_json(jw *w);
+
+/* 1 when a process of titleId runs (or is suspended) on the console, 0 when
+ * none does, -1 when the process list cannot be read. Saves of a running
+ * title are never replaced. Host build: XENO_HOST_RUNNING_TITLE lists ids. */
+int cx_title_running(const char *titleId);
 
 /* Save directory of a title for a user: /user/home/<uid>/savedata_prospero/<TID>
  * (PS5) or /savedata/<TID> (PS4). kind is "ps5"|"ps4"|"" (auto by title id). */
@@ -51,15 +61,35 @@ typedef struct cx_import_result {
   char preBackup[1024];
   char accountId[20];
   char style[12];          /* decrypted | raw */
+  char note[256];          /* user-facing caveat ("" when none) */
 } cx_import_result;
 
 /* Imports a save zip (xeno-save-zip, Garlic decrypted zip or an own raw
- * backup) for (uid, titleId). dirName may be "" when the zip's manifest or
- * the index row provides it. Takes a pre-backup of the current save into
- * backup_dir when backup_first. Returns 0, or -1 with code+err. */
+ * backup) for (uid, titleId). dirName may be "" when the zip's manifest, the
+ * index row, a "sdimg_<dir>" folder or the param.sfo provides it. A single
+ * top-level wrapper folder is stripped (two for Garlic's own export layout);
+ * a decrypted zip without sce_sys/param.sfo at the save root, or a raw one
+ * without a sdimg_<dir> image at its root, is refused (code invalid_save).
+ * Refuses while the title runs (title_running). Decrypted
+ * saves go through the native tier (host simulation) or Garlic Save Manager,
+ * started on demand (engine_unavailable when it cannot be). Takes a
+ * pre-backup of the current save into backup_dir when backup_first. Returns
+ * 0, or -1 with code+err. */
 int cx_savemount_import_zip(uint32_t uid, const char *titleId, const char *dirName, const char *zipPath,
                             int backup_first, const char *backup_dir, cx_import_result *out,
                             char *code, size_t ccap, char *err, size_t errcap);
+/* Same, reporting Garlic upload progress on job j (may be NULL). With
+ * allow_raw 0 (community installs) a raw zip (sdimg_* image or
+ * xeno-backup.json) is refused with invalid_save before anything changes.
+ * Refuses (code busy) while another operation holds the (uid, titleId) claim. */
+int cx_savemount_import_zip_job(uint32_t uid, const char *titleId, const char *dirName, const char *zipPath,
+                                int backup_first, const char *backup_dir, int allow_raw, cx_job *j, cx_import_result *out,
+                                char *code, size_t ccap, char *err, size_t errcap);
+
+/* One restore, install or transfer per (profile, title) at a time: 0 claimed,
+ * -1 when it is already held. Release what was claimed. */
+int cx_savemount_claim(uint32_t uid, const char *titleId);
+void cx_savemount_release(uint32_t uid, const char *titleId);
 
 typedef struct cx_export_result {
   char tier[8];
@@ -70,10 +100,13 @@ typedef struct cx_export_result {
   char format[20];         /* xeno-save-zip | xeno-raw-zip */
   int accountIdStripped;
   char manifest[2048];     /* JSON text */
+  char note[256];          /* why a decrypted export fell back to raw ("" when none) */
 } cx_export_result;
 
 /* Exports (uid, titleId, dirName) to dest_zip with a manifest; strips the
- * ACCOUNT_ID from sce_sys/param.sfo (decrypted exports only). */
+ * ACCOUNT_ID from sce_sys/param.sfo (decrypted exports only). Decrypted when
+ * the native tier (host simulation) or a running Garlic Save Manager can
+ * read the save, else a raw same-console copy (format xeno-raw-zip). */
 int cx_savemount_export(uint32_t uid, const char *titleId, const char *dirName, const char *dest_zip,
                         cx_export_result *out, char *err, size_t errcap);
 

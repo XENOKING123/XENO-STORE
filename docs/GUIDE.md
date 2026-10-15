@@ -18,7 +18,7 @@ Contents: [Requirements](#requirements) · [Install](#install) · [First run](#f
 |:--|:--|
 | Jailbroken PS5 | Any exploit chain that gives you an ELF loader on port **9021** (etaHEN, ps5-payload-dev `elfldr`, XENO TOOL Payloads). |
 | **ShadowMountPlus** (optional) | Mounts exFAT / FFPFSC / FFPKG dumps saved under `<drive>/homebrew/` and shows them on the home screen — the XENO STORE app (`PPSA99500.ffpkg`) included. XENO STORE talks to its API on `127.0.0.1:10101` after every image download and from the readiness checklist. Without it, image dumps are downloaded but not mounted. |
-| **kstuff** (optional) | Kernel patches that let fake packages (FPKG) and `.ffpkg` apps such as the XENO STORE app run, and let the save engine mount saves through the native API. Firmware support follows the kstuff project — read its README for your firmware. |
+| **kstuff** (optional) | Kernel patches that let fake packages (FPKG) and `.ffpkg` apps such as the XENO STORE app run. Firmware support follows the kstuff project — read its README for your firmware. |
 | **etaHEN** (optional) | Provides a DPI package installer on `127.0.0.1:12800` (used as the second install fallback) and fake-package support on supported firmware. |
 | Drive space | The file size + a 256 MB reserve on the chosen drive. PS5 games range from 5 GB to 150 GB. |
 | Network | The console must reach the hosts in `catalog/sources.json` and `raw.githubusercontent.com` for catalog sync. Phones must be on the same Wi-Fi as the console to pair. |
@@ -206,14 +206,14 @@ PS5 titles only (PPSA). Entry points: the **Saves (n)** tab on a PS5 game page a
 
 | Tier | When | What it does |
 |:--|:--|:--|
-| **Native mount** | `libSceSaveData` resolves and kstuff-style save patches are loaded | Creates/mounts the save for (your profile, title, dir), copies files in, writes your account ID into `param.sfo`, unmounts. Export does the reverse and strips the account ID. Any failure unmounts and deletes the partial save. |
-| **Garlic** | Garlic Save Manager answers on `127.0.0.1:8082` | Hands the ZIP to Garlic's import/export; shows *via Garlic* and *Open in Garlic*. |
-| **Raw copy** | otherwise | Copies into the save folder directly with an automatic pre-backup. Labelled **Same console only** — a save made on another console will not load this way. |
+| **Native mount** | Disabled on the console: the PS5 save-mount prototypes are not verified and the API is unavailable on 12.x (the host build keeps a simulation for the tests) | — |
+| **Garlic** | [Garlic Save Manager](https://github.com/earthonion/garlic-savemgr) (by earthonion) answers on `127.0.0.1:8082`. XENO STORE starts it when a save needs it: the pinned release downloaded from the author's own GitHub release and checked by SHA-256 (never bundled or rehosted), or — only when that cannot be downloaded — a copy already on the console's internal storage. A Garlic older than 1.6 (no import API) is reported, not used | Imports the decrypted files through Garlic's API (`create_pfs` → `upload_file` → `import_check` → `import_finish`), which re-signs the save for your account; shareable exports read exactly your profile's image through Garlic's mount route. Never while the game is running or suspended. Shown as *via Garlic*. |
+| **Raw copy** | otherwise | Copies into the save folder directly with an automatic pre-backup. Labelled **Same console only** — a save made on another console will not load this way. Community saves never install this way. |
 
 ### Upload my save (one-click share)
 
-Library → Community Saves → **Upload my save**: pick profile → pick an installed PS5 title with saves → pick the save dir → the engine exports it (account ID stripped, no sealed keys ever included) → ZIP + `xeno-save.json` manifest → upload to **pixeldrain** (fallback **catbox**, ≤ 200 MB, or your own endpoint) → fill category, name, description, tags, nickname → **Submit**.
-With the default GitHub backend the console shows a QR + short link to a prefilled issue so you finish on your phone; the owner approves it and it appears for everyone. With a Supabase backend (Settings → Saves → Backend) the row is inserted directly.
+Library → Community Saves → **Upload my save**: pick profile → pick an installed PS5 title with saves → pick the save dir → the engine exports it (account ID stripped, no sealed keys ever included) → ZIP + `xeno-save.json` manifest → upload to **XenoKing** (the default: the owner's save site; or pixeldrain, catbox ≤ 200 MB, or your own endpoint) → fill category, name, description, tags, nickname → **Submit**.
+Uploaded to XenoKing, the save is added to the site's community collection, credited to your nickname, and is live on the site and in every store at once. Without the site backend (or when the site refuses it) the console shows a QR + short link to a prefilled GitHub issue so you finish on your phone; the owner approves it and it appears for everyone.
 Privacy: no account IDs, console IDs or usernames leave the console; the nickname is what you typed.
 
 ---
@@ -229,7 +229,7 @@ Settings → **Accounts** **(console only)** lists the 16 profile slots with nam
 * Do it on a **secondary profile** if unsure; **Clear** undoes the activation for a slot (reboot again).
 * If the registry API is not available on your firmware the screen says *registry_unavailable* instead of guessing.
 
-**NP fake sign-in / sign-out** are not done in-process: the Accounts screen links to the companion payloads (`np-fake-signin.elf`, `np-fake-signout.elf` from earthonion), downloads them with a hash check and sends them to the ELF loader. Activate the profile first.
+**NP fake sign-in** is not done in-process: the Accounts screen links to the companion payload (`np-fake-signin-ps5.elf` from earthonion), downloads it with a hash check and sends it to the ELF loader. Activate the profile first. There is no sign-out payload: undo it in the console's Settings → Users and Accounts → Other → Sign out.
 
 ---
 
@@ -241,7 +241,7 @@ Apps, emulators and tools from **pkg-zone.com**. The console fetches the listing
 
 ## Companion payloads
 
-Settings → Setup → **Payloads** lists the owner-curated catalog from `updates/companions.json`: ShadowMountPlus, the package installer daemon, kstuff, NP fake sign-in / sign-out, the app dumper and Garlic Save Manager. **Install** downloads the ELF to `/data/xeno-store/payloads/<id>.elf`, checks its sha256 and **Launch** sends the bytes to the local ELF loader on `127.0.0.1:9021`. XENO STORE never loads code in-process. An entry whose hash is still a placeholder refuses to install until the owner publishes the real hash — that is deliberate.
+Settings → Setup → **Payloads** lists the owner-curated catalog from `updates/companions.json`: ShadowMountPlus, the package installer daemon, kstuff, NP fake sign-in, the app dumper and Garlic Save Manager. **Install** downloads the ELF to `/data/xeno-store/payloads/<id>.elf`, checks its sha256 and **Launch** sends the bytes to the local ELF loader on `127.0.0.1:9021`. XENO STORE never loads code in-process. Every entry is the author's own release, pinned by sha256 and never rehosted; an entry whose author publishes no downloadable asset (NP fake sign-out — sign out from the console's Settings → Users and Accounts → Other → Sign out instead) is listed as unavailable and never installs. **Launch** on Garlic Save Manager starts it the way the save engine does and never sends a second copy while one is running.
 
 **Ghost icon cleaner** (same screen) lists every `/data/homebrew/*` folder with size and whether it has an `eboot.bin` / icon and lets you delete leftovers after a double confirm. ShadowMountPlus re-registers whatever folder exists there, so deleting the folder is what removes the icon.
 
@@ -304,7 +304,11 @@ The store deletes exactly those paths (`POST /api/uninstall` returns the list), 
 | Debrid: *bad_key* | Key rejected by the service | Regenerate the key on the service's site; AllDebrid needs an API key, not the account password. |
 | Debrid: *unsupported_host* | The service does not cover that host | Pick *Direct* or another service in *Download using*. |
 | Save install: *title_mismatch* | ZIP is for another title ID | Only install saves for the same title ID; other regions are not compatible. |
-| Save install: *engine_unavailable* | No tier can import | Load kstuff (native), start Garlic, or use a save made on this console (raw). |
+| Save install: *engine_unavailable* / *garlic_unavailable* | Garlic Save Manager could not be started (the pinned release could not be downloaded and no copy is on the console), or the running one is older than 1.6 | Community Saves → **Start Garlic Save Manager**, or install it from Settings → Setup → Payloads (close an old Garlic first); a backup made on this console still restores (raw). |
+| Save install / export / transfer: *title_running* | The game is running or suspended (its save is mounted) | Close the game — not just suspend it — and try again. |
+| Save install: *invalid_save* | The ZIP is not a decrypted save (no `sce_sys/param.sfo` at its root), it holds a sealed raw image, or a raw backup has no `sdimg_<dir>` image at its top level | Community saves must be decrypted exports; a raw backup only restores on the console and profile it came from. Nothing was changed. |
+| Save transfer: *resign_unavailable* | Moving a PS5 save needs Garlic Save Manager to re-sign it for the other profile | Start Garlic Save Manager, or **copy** instead of move (the copy is not re-signed). |
+| Save restore / install / transfer: *busy* | Another restore, install or transfer of the same title (or another transfer) is still running | Wait for it to finish. |
 | Accounts: *registry_unavailable* | Registry API missing on this firmware | Not supported on this firmware; nothing was changed. |
 | Phone cannot open `xeno.local` | Browser/OS without mDNS or an isolated Wi-Fi | Use the IP; disable "client isolation" on the router. |
 | Phone gets *pinRequired* | A pairing PIN is set | Enter the PIN once; the UI keeps it. |

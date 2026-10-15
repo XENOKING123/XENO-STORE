@@ -8,6 +8,11 @@
  *   POST /api/uninstall
  *   POST /api/library/transfer|launch|uninstall · GET /api/library/usage · POST /api/library/usage/clean
  *   POST /api/saves/backup|restore|transfer · GET /api/saves/backups · GET /api/saves/jobs[/{id}] · POST …/cancel
+ *   GET  /api/saves/garlic · POST /api/saves/garlic/start   Garlic Save Manager state + start (a console job);
+ *        --garlic running|startable|download|none (default: running with --saves-tier garlic, else startable;
+ *        startable = the store's copy, download = only the pinned release); a version is reported for a copy
+ *        the store knows (its own, the download, or one it started), never for a Garlic started elsewhere;
+ *        POST /api/__mock/garlic {"mode":…} switches it at run time (verify scripts)
  *   GET  /api/accounts · POST /api/accounts/{slot}/activate|clear · POST /api/accounts/reboot
  *   GET  /api/mdns
  *   GET  /api/queue (summary.restMode/schedule/groups/lifetime as dl.c + a virtual scheduled job) · POST /api/queue/{id}/startNow
@@ -93,12 +98,14 @@ export function register({ route, state }) {
       { id: 'drive', ok: !!root && root.writable, optional: false, detail: root ? `${root.label} (${root.path}) is writable` : 'No default drive', fix: root && root.writable ? '' : 'Pick a writable default drive in Settings → Downloads.' },
       { id: 'space', ok: !!root && root.free > 20 * GB, optional: false, detail: root ? `${(root.free / GB).toFixed(0)} GB free on ${root.label}` : '', fix: root && root.free > 20 * GB ? '' : 'Free up space in Library → Disk analyzer or pick another drive.' },
       { id: 'firmware', ok: true, optional: false, detail: 'Firmware 13.60 — FPKG installs work with the etaHEN chain', fix: '' },
-      { id: 'payload-manager', ok: false, optional: true, detail: 'XENO STORE is not in Payload Manager\'s auto-start list', fix: 'Add the XENOKING source URL below in Payload Manager and enable auto-start so the store loads on every boot.' }
+      { id: 'payload-manager', ok: false, optional: true, detail: 'XENO STORE is not in Payload Manager\'s auto-start list', fix: 'Add the XENOKING source URL below in Payload Manager and enable auto-start so the store loads on every boot.' },
+      /* cx_setup.c: optional; launch/install only while nothing listens on :8082 */
+      { id: 'garlic', ok: garlicMock.mode === 'running', optional: true, detail: garlicMock.mode === 'running' ? 'Save re-signing (Garlic Save Manager) is running on :8082' : 'Save re-signing (Garlic Save Manager) is not running on :8082 — community saves start it when they need it', fix: garlicMock.mode === 'running' ? '' : 'Optional: start Garlic Save Manager (by earthonion) so community saves are re-signed for your profile. XENO STORE downloads its author\'s pinned release (sha256 checked) and only falls back to a copy on the console when that cannot be downloaded.', action: garlicMock.mode === 'running' ? '' : 'install', actionId: garlicMock.mode === 'running' ? '' : 'garlic-save-manager' }
     ];
     setup.checked = true; setup.at = now();
     log('info', `setup check: ${setup.checks.filter((c) => c.ok).length}/${setup.checks.length} ok`);
   }
-  const setupSummary = () => ({ checked: setup.checked, ok: setup.checks.filter((c) => c.ok).length, total: setup.checks.length || 8, failing: setup.checks.filter((c) => !c.ok).map((c) => c.id), at: setup.at });
+  const setupSummary = () => ({ checked: setup.checked, ok: setup.checks.filter((c) => c.ok).length, total: setup.checks.length || 9, failing: setup.checks.filter((c) => !c.ok).map((c) => c.id), at: setup.at });
   route('GET', /^\/api\/setup\/check$/, async () => { if (!setup.checked) { await sleep(500); runChecks(); } return { ok: true, checks: setup.checks, payloadsUrl: PAYLOADS_URL, fw: '13.60', summary: setupSummary() }; });
   route('POST', /^\/api\/setup\/check$/, async () => { await sleep(900); runChecks(); return { ok: true, checks: setup.checks, payloadsUrl: PAYLOADS_URL, fw: '13.60', summary: setupSummary() }; });
 
@@ -108,15 +115,16 @@ export function register({ route, state }) {
     { id: 'etahen-dpi-helper', name: 'etaHEN DPI helper', version: '2.1', kind: 'dpi', url: 'https://github.com/XENOKING123/XENO-STORE/releases/download/companions/dpi-helper-2.1.elf', sha256: 'b2'.repeat(32), notes: 'Package installer daemon on :9040 for firmwares where AppInstUtil refuses direct installs.', homepage: '', size: 96 * 1024, installed: false, installedVersion: '' },
     { id: 'kstuff', name: 'kstuff', version: '1.2.0', kind: 'kernel', url: 'https://github.com/XENOKING123/XENO-STORE/releases/download/companions/kstuff-1.2.0.elf', sha256: 'c3'.repeat(32), notes: 'Kernel patches for FPKG and save mounting; load it once per boot.', homepage: '', size: 1.1 * MB, installed: true, installedVersion: '1.2.0' },
     { id: 'np-fake-signin', name: 'NP fake sign-in', version: '1.0', kind: 'np-signin', url: 'https://github.com/earthonion/np-fake-signin/releases/download/v1.0/np-fake-signin.elf', sha256: 'd4'.repeat(32), notes: 'Pretends PSN is signed in so trophies pop offline. Activate the profile first.', homepage: 'https://github.com/earthonion/np-fake-signin', size: 48 * 1024, installed: false, installedVersion: '' },
-    { id: 'np-fake-signout', name: 'NP fake sign-out', version: '1.0', kind: 'np-signout', url: 'https://github.com/earthonion/np-fake-signin/releases/download/v1.0/np-fake-signout.elf', sha256: 'e5'.repeat(32), notes: 'Reverts the fake sign-in.', homepage: 'https://github.com/earthonion/np-fake-signin', size: 44 * 1024, installed: false, installedVersion: '' },
+    { id: 'np-fake-signout', name: 'NP fake sign-out', version: '', kind: 'np-signout', url: '', sha256: '', notes: 'Reverting NP fake sign-in needs no payload: sign out of the profile in the console settings.', homepage: 'https://github.com/earthonion/np-fake-signin', size: 0, installed: false, installedVersion: '', unavailable: true, unavailableReason: 'earthonion publishes no sign-out payload (np-fake-signin 1.1 ships only the sign-in ELF).' },
     { id: 'ps5-app-dumper', name: 'App dumper', version: '1.1', kind: 'dumper', url: 'https://github.com/XENOKING123/XENO-STORE/releases/download/companions/app-dumper-1.1.elf', sha256: 'f6'.repeat(32), notes: 'Dumps an installed game to an image on a USB drive (exFAT).', homepage: '', size: 220 * 1024, installed: true, installedVersion: '1.1' },
-    { id: 'garlic-save-manager', name: 'Garlic Save Manager', version: '0.9.4', kind: 'saves', url: 'https://github.com/XENOKING123/XENO-STORE/releases/download/companions/garlic-0.9.4.elf', sha256: '07'.repeat(32), notes: 'Save re-signing worker on :8082 (ELF Arsenal / garlicsaves.com).', homepage: 'https://garlicsaves.com', size: 2.4 * MB, installed: false, installedVersion: '' }
+    { id: 'garlic-save-manager', name: 'Garlic Save Manager', version: '1.7', kind: 'saves', url: 'https://github.com/earthonion/garlic-savemgr/releases/download/v1.7/garlic-savemgr.elf', sha256: '124051ab3a762474720ae53187d2920bc96d6be1d69aa298e715667efc385a2f', notes: 'Save decrypt / re-sign tool by earthonion on 127.0.0.1:8082, downloaded from its author\'s release.', homepage: 'https://github.com/earthonion/garlic-savemgr', size: 1497744, installed: false, installedVersion: '' }
   ];
   const loaderAvailable = () => !args.includes('--no-loader');
-  const pubPayload = (p) => ({ id: p.id, name: p.name, version: p.version, url: p.url, sha256: p.sha256, notes: p.notes, kind: p.kind, homepage: p.homepage, size: Math.round(p.size), installed: p.installed, localPath: p.installed ? `/data/xeno-store/payloads/${p.id}.elf` : '', localSize: p.installed ? Math.round(p.size) : 0, installedVersion: p.installed ? p.installedVersion : '', updateAvailable: p.installed && !!p.installedVersion && p.installedVersion !== p.version });
+  const pubPayload = (p) => ({ id: p.id, name: p.name, version: p.version, url: p.url, sha256: p.sha256, notes: p.notes, kind: p.kind, homepage: p.homepage, size: Math.round(p.size), installed: p.installed, localPath: p.installed ? `/data/xeno-store/payloads/${p.id}.elf` : '', localSize: p.installed ? Math.round(p.size) : 0, installedVersion: p.installed ? p.installedVersion : '', updateAvailable: p.installed && !!p.installedVersion && p.installedVersion !== p.version, available: !p.unavailable, ...(p.unavailable ? { unavailableReason: p.unavailableReason } : {}) });
   route('GET', /^\/api\/payloads$/, () => ({ ok: true, payloads: payloads.map(pubPayload), loaderPort: 9021, loaderAvailable: loaderAvailable(), feedFetchedAt: now() - 7200, note: 'Payloads are downloaded to the console (sha256 checked) and sent to the local ELF loader on :9021. XENO STORE never loads code in-process.' }));
   route('POST', /^\/api\/payloads\/([^/]+)\/install$/, (q, body, m) => {
     const p = payloads.find((x) => x.id === m[1]); if (!p) throw new ApiError(404, 'not_found', 'Unknown payload');
+    if (p.unavailable) throw new ApiError(422, 'unavailable', `${p.name} is not available for download: ${p.unavailableReason}`);
     const job = cxStart('payload', `${p.name} v${p.version}`, Math.round(p.size), Math.max(60 * 1024, p.size / 2.2), () => { p.installed = true; p.installedVersion = p.version; }, { id: p.id, localPath: `/data/xeno-store/payloads/${p.id}.elf`, sha256: p.sha256, size: Math.round(p.size), verified: true });
     log('info', `payload download queued: ${p.id}`);
     return { ok: true, job: pubCx(job) };
@@ -124,6 +132,8 @@ export function register({ route, state }) {
   route('POST', /^\/api\/payloads\/([^/]+)\/launch$/, async (q, body, m) => {
     const p = payloads.find((x) => x.id === m[1]); if (!p) throw new ApiError(404, 'not_found', 'Unknown payload');
     if (!p.installed) throw new ApiError(409, 'not_installed', `${p.name} is not on the console yet — download it first`);
+    /* cx_companions_launch: never a second Garlic (a starting copy unmounts /data/mount_sd before it finds its port taken) */
+    if (p.kind === 'saves' && garlicMock.mode === 'running') throw new ApiError(409, 'already_running', 'Garlic Save Manager is already running (port 8082)');
     if (!loaderAvailable()) throw new ApiError(503, 'loader_unavailable', 'No ELF loader answers on 127.0.0.1:9021 — start etaHEN or another loader first');
     await sleep(350);
     log('info', `payload sent to :9021: ${p.id} (${Math.round(p.size)} bytes)`);
@@ -305,11 +315,48 @@ export function register({ route, state }) {
     await sleep(800);
     const hadDest = hash32(tid + to.id) % 2 === 0;
     const pre = hadDest ? addBackup(to, tid, 'ps5', Math.max(100000, s.size - 40000), 0, true) : null;
-    log('info', `transfer ${tid}: ${from.name} → ${to.name}${body.move ? ' (move)' : ''}`);
-    return { ok: true, fromUser: from.id, toUser: to.id, titleId: tid, kind: 'ps5', path: `/user/home/${to.id.toString(16)}/savedata_prospero/${tid}`, bytes: s.size, preBackup: pre ? pre.path : '', moved: !!body.move, note: 'Saves are sealed to this console: same-console transfers work; saves from another console need re-signing.' };
+    /* cx_saves_transfer: PS5 saves are re-signed through Garlic Save Manager (started on demand), else copied raw */
+    const resigned = garlicMock.mode !== 'none';
+    if (resigned && garlicMock.mode !== 'running') { garlicMock.startedFrom = garlicMock.mode === 'download' ? 'download' : 'store'; garlicMock.mode = 'running'; }
+    log('info', `transfer ${tid}: ${from.name} → ${to.name}${body.move ? ' (move)' : ''}${resigned ? ' (re-signed)' : ' (raw copy)'}`);
+    return { ok: true, fromUser: from.id, toUser: to.id, titleId: tid, kind: 'ps5', path: `/user/home/${to.id.toString(16)}/savedata_prospero/${tid}`, bytes: s.size, preBackup: pre ? pre.path : '', moved: !!body.move,
+      resigned, tier: resigned ? 'garlic' : 'raw', ...(resigned ? { saves: 1 } : {}),
+      note: resigned ? 'Re-signed for the destination profile by Garlic Save Manager (1 save).' : 'Copied without re-signing (Garlic Save Manager is not running on this console (port 8082)): the save keeps the source profile\'s account, so the game may refuse it on the other profile.' };
   });
   /* fallbacks when part A's mock is not loaded (first registered route wins, so these are inert otherwise) */
   route('GET', /^\/api\/saves\/users$/, () => ({ ok: true, users: USERS }));
+
+  /* ============================== Garlic Save Manager (cx_garlic: status + start) ============================== */
+  const savesTier = state.argValue('--saves-tier', 'native');
+  /* startedFrom: how the store itself started the running copy ('' = started outside the store: version unknown) */
+  const garlicMock = { mode: state.argValue('--garlic', savesTier === 'garlic' ? 'running' : 'startable'), startedFrom: '' };
+  const garlicPub = () => {
+    const mode = garlicMock.mode, run = mode === 'running', can = mode === 'startable' || mode === 'download';
+    const known = run && !!garlicMock.startedFrom, elf = '/data/xeno-store/payloads/garlic-save-manager.elf';
+    return {
+      available: run || can, running: run, busy: false, port: 8082, canStart: can, loaderAvailable: run || can,
+      ...(known || can ? { version: '1.7' } : {}),
+      ...(mode === 'startable' ? { elfPath: elf, source: 'store' } : known ? { elfPath: elf, source: garlicMock.startedFrom } : mode === 'download' ? { source: 'download' } : {}),
+      detail: run ? 'Garlic Save Manager is running on port 8082.' : mode === 'startable' ? 'Not running; it starts on demand from ' + elf + '.'
+        : can ? 'Not running; it is downloaded from its author\'s GitHub release (sha256 checked) and started on demand.' : 'Not running, and the ELF loader is not answering on port 9021 to start it.'
+    };
+  };
+  route('GET', /^\/api\/saves\/garlic$/, () => ({ ok: true, garlic: garlicPub(), engine: savesTier }));
+  /* mock control for the verify scripts: POST /api/__mock/garlic {"mode":"running"|"startable"|"download"|"none"};
+     "running" set here is a Garlic started outside the store */
+  route('POST', /^\/api\/__mock\/garlic$/, (q, body) => { if (['running', 'startable', 'download', 'none'].indexOf(body && body.mode) >= 0) { garlicMock.mode = body.mode; garlicMock.startedFrom = ''; } return { ok: true, mode: garlicMock.mode }; });
+  route('POST', /^\/api\/saves\/garlic\/start$/, () => {
+    const active = cxJobs.find((j) => j.type === 'garlic-start' && (j.state === 'queued' || j.state === 'running'));
+    if (active) return { ok: true, job: pubCx(active) };
+    const size = 1497744;
+    const job = cxStart('garlic-start', 'Garlic Save Manager', size, size / 2, (j) => {
+      if (garlicMock.mode === 'none') { j.state = 'failed'; j.errorCode = 'garlic_unavailable'; j.error = 'Garlic Save Manager is not on this console and the ELF loader on :9021 is not answering'; return; }
+      if (garlicMock.mode !== 'running') garlicMock.startedFrom = garlicMock.mode === 'download' ? 'download' : 'store';
+      garlicMock.mode = 'running'; j.message = 'Garlic Save Manager is running'; j.result = { garlic: garlicPub() };
+      log('info', 'garlic: started (mock)');
+    });
+    return { ok: true, job: pubCx(job) };
+  });
   route('GET', /^\/api\/saves$/, async (q) => { const user = userOf(q.user) || USERS[0]; await sleep(300); return { ok: true, user: { id: user.id, name: user.name }, saves: savesOf(user), count: savesOf(user).length }; });
 
   /* ============================== accounts (§17.18) ============================== */
@@ -481,7 +528,7 @@ export function register({ route, state }) {
     Object.assign(st.downloads, { preferFormat: 'auto', turboStart: true, autoInstallSets: true, installOrder: 'game,backport,update,dlc', restModeAutoResume: true, extractZip: true, deleteArchiveAfterExtract: true, scheduleStart: st.downloads.scheduleStart || '', scheduleEnd: st.downloads.scheduleEnd || '' });
     st.debrid = st.debrid || { realdebrid: { apiKey: 'rd-mock-key-7f3a9c2e' }, alldebrid: { apiKey: '' }, torbox: { apiKey: '' }, premiumize: { apiKey: '' }, preferred: 'auto' };
     st.catalog.featuredUrl = st.catalog.featuredUrl || ''; st.catalog.messagesUrl = st.catalog.messagesUrl || ''; st.catalog.companionsUrl = st.catalog.companionsUrl || ''; st.catalog.savesBackendUrl = st.catalog.savesBackendUrl || '';
-    st.saves = st.saves || { backupRoot: '', autoBackup: true, indexUrls: ['https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/saves.json'], backend: { kind: 'github', url: '', anonKey: '', bucket: 'ps5-saves', garlicFunction: 'garlic-savedb' }, uploadHost: 'pixeldrain', uploadEndpoint: '', submitEndpoint: '', nickname: '' };
+    st.saves = st.saves || { backupRoot: '', autoBackup: true, indexUrls: ['https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/saves.json'], backend: { kind: 'github', url: '', anonKey: '', bucket: 'ps5-saves', garlicFunction: 'garlic-savedb' }, uploadHost: 'site', uploadEndpoint: '', submitEndpoint: '', nickname: '' };
     st.browse = st.browse || { presets: [] };
   }
   function seedJobs() {

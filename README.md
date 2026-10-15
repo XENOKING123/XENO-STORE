@@ -80,7 +80,7 @@
 | 💾 | **Save Data Store** | Community saves for PS5 titles with a **compatibility check** (installed? same region? same version?), one-tap install with automatic pre-backup, and **one-click share** of your own save. |
 | 🗄️ | **Saves hub** | Back up any profile's saves to ZIP, restore them, transfer between profiles on the same console, "Back up all saves now". |
 | 🏠 | **Homebrew tab** | Apps, emulators and tools listed from pkg-zone with one-tap install and "Update available" badges. |
-| 👤 | **Accounts** | Offline account activation (registry slot method), plus NP fake sign-in / sign-out companions for offline trophies. |
+| 👤 | **Accounts** | Offline account activation (registry slot method), plus the NP fake sign-in companion (sign out from the console's settings) for offline trophies. |
 | 🧰 | **Companions** | ShadowMountPlus, package installer daemon, kstuff, app dumper, Garlic — downloaded with a hash check and sent to the local ELF loader. **Readiness checklist** tells you what is still missing. |
 | 🕹️ | **Couch-grade UI** | DualSense spatial navigation, PS glyph legend, 7 themes, 14 languages, large-text and high-contrast modes, cover-wall screensaver, command palette on desktop, phone layout with bottom tabs. |
 | 🌐 | **xeno.local** | Built-in mDNS answers `http://xeno.local:9095` on your Wi-Fi, so phones and laptops find the console without typing an IP. |
@@ -244,12 +244,12 @@ Full details, paths and sidecar formats: [`docs/FORMATS.md`](docs/FORMATS.md).
 
 <img src="docs/screenshots/saves-store.png" width="100%" alt="Save Data Store"/>
 
-A community library of PS5 saves — maxed starters, 100% platinums, trophy checkpoints, chapter picks — **re-signed for your account on this console** so they load like your own. Every save is checked before it touches your card:
+A community library of PS5 saves — the collection of the **XenoKing** site, each save credited to the player who shared it, plus the reviewed GitHub index: maxed starters, 100% platinums, trophy checkpoints, chapter picks — **re-signed for your account on this console** so they load like your own. Every save is checked before it touches your card:
 
 * **Compatibility first.** Each card shows whether the game is **installed**, whether its **region** matches and whether the **version** lines up; "Compatible with my games" filters the grid to saves you can actually use.
-* **Honest re-sign tiers.** The store reports the engine it will use, never fakes it: **Native** (the Sony save API, when kstuff-style patches are loaded), **Garlic** (Garlic Save Manager on `:8082`), or **Raw** (a same-console copy). The current tier is shown on the header pill.
-* **Safe installs.** Download is sha256-checked, the install **backs up your current save first**, and a save for the wrong title id is refused outright.
-* **Share yours in one flow.** *Upload my save* exports the chosen save, strips the account id, uploads it to a file host and opens a pre-filled submission — your save joins the library for everyone.
+* **Honest re-sign tiers.** The store reports the engine it will use, never fakes it: **Garlic** ([Garlic Save Manager](https://github.com/earthonion/garlic-savemgr) on `:8082`, started on demand from the author's sha256-pinned release — or, offline, a copy on the console — never rehosted) re-signs community saves for your profile, and **Raw** (a same-console copy) restores your own backups. The native save-API tier is disabled on the console. The current tier is shown on the header pill.
+* **Safe installs.** Downloads are sha256-checked whenever the listing carries a hash, the install **backs up your current save first**, and a save for the wrong title id is refused outright.
+* **Share yours in one flow.** *Upload my save* exports the chosen save, strips the account id, uploads it to the XenoKing site and adds it to the site's collection under your nickname — **live on the site and in every store at once** (a pre-filled GitHub submission is the fallback when the site is unreachable).
 
 The companion **Saves hub** (Library → Saves hub) backs up any profile to ZIP, restores it, transfers saves between profiles on the same console, and has a "Back up all saves now". Full walkthrough: [`docs/SAVES.md`](docs/SAVES.md).
 
@@ -316,7 +316,7 @@ Not while "Keep console awake" is on (default): the store ticks the power servic
 <details>
 <summary><b>Is the Save Data Store safe to use?</b></summary>
 <br/>
-It only lists saves marked <code>published</code>, checks the sha256 of every download, refuses saves for a different title ID, warns when the game version differs, and backs up your current save before installing. Re-signing uses the native save API when kstuff-style patches are loaded, Garlic Save Manager when it answers on <code>:8082</code>, or a same-console raw copy — the tier in use is shown, never faked.
+It lists the XenoKing site's community collection and the reviewed GitHub index (<code>published</code> entries only), checks the sha256 of every download that has one, refuses saves for a different title ID, warns when the game version differs, and backs up your current save before installing. Saves you share go into the XenoKing collection only after the console has checked they are a real decrypted export without your account ID or sealed keys. Re-signing goes through Garlic Save Manager on <code>:8082</code> (started on demand), or a same-console raw copy for your own backups — the tier in use is shown, never faked.
 </details>
 
 <details>
@@ -415,9 +415,10 @@ UI development without a console: `node web/dev-server.mjs --port 9095` serves t
 | **[Archive.org](https://archive.org)** | Hosting with Range support, metadata, sizes and hashes |
 | **[dlpsgame](https://dlpsgame.com)** and the other game sites in `catalog/sources.json` | Listings, mirrors and versions |
 | **[prosperopatches](https://prosperopatches.com) / [orbispatches](https://orbispatches.com)** | Cover and hero artwork CDN |
-| **[Garlic Save Manager](https://garlicsaves.com)** (ELF Arsenal) | Save re-signing worker and the decrypted-save ZIP layout the Save Data Store stays compatible with |
+| **[Garlic Save Manager](https://github.com/earthonion/garlic-savemgr)** — earthonion | The save re-signing worker the store starts on demand (the author's own release, sha256-pinned, never rehosted) and the decrypted-save ZIP layout the Save Data Store stays compatible with |
+| **[Garlic Save DB](https://garlicsaves.com)** | Community saves the XenoKing site mirrors |
 | **[offact](https://github.com/ps5-payload-dev)** | The offline account activation method vendored in this repo |
-| **[earthonion / np-fake-signin](https://github.com/earthonion/np-fake-signin)** | NP fake sign-in / sign-out companions |
+| **[earthonion / np-fake-signin](https://github.com/earthonion/np-fake-signin)** | NP fake sign-in companion (sign out from the console's settings) |
 | **[miniz](https://github.com/richgel999/miniz)** | The single-file ZIP engine used for extraction and save backups |
 | **[ps5upload](https://github.com/phantomptr/ps5upload)** (phantomptr, GPL-3.0) | The `fpkg_build` engine `tools/make_ffpkg.py` can use for a local `.pkg` build of the app |
 | **[ShadowMountPlus](https://github.com/drakmor/shadowMountPlus)** | Mounts the `.ffpkg` app; its documented UFS2 profile is what `make ffpkg` writes |

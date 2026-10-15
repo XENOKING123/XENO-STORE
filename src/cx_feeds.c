@@ -20,6 +20,7 @@
 #define FEED_FIRST_DELAY_S 20
 
 static pthread_mutex_t feeds_mu = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t fetch_mu = PTHREAD_MUTEX_INITIALIZER;   /* one fetch + cache write per feed at a time */
 static struct {
   const char *name;
   char *text;
@@ -101,6 +102,7 @@ static void load_one(int feed, int force) {
   size_t len = 0;
   int from_cache = 0;
   time_t at = 0;
+  pthread_mutex_lock(&fetch_mu);
   char *txt = cx_cached_fetch(feeds[feed].name, feed_url(&s, feed), FEED_MAX_AGE_S, force, FEED_MAX_BYTES, &len, &from_cache, &at);
   pthread_mutex_lock(&feeds_mu);
   free(feeds[feed].text);
@@ -108,6 +110,17 @@ static void load_one(int feed, int force) {
   feeds[feed].len = txt ? len : 0;
   feeds[feed].fetchedAt = txt ? at : 0;
   pthread_mutex_unlock(&feeds_mu);
+  pthread_mutex_unlock(&fetch_mu);
+}
+
+void cx_feed_ensure(int feed, int max_age_s) {
+  if (feed < 0 || feed >= CX_FEED_COUNT) return;
+  pthread_mutex_lock(&feeds_mu);
+  time_t at = feeds[feed].text ? feeds[feed].fetchedAt : 0;
+  pthread_mutex_unlock(&feeds_mu);
+  if (at > 0 && util_now() - at < max_age_s) return;
+  /* a shorter age than the feed's own 6 h means "fetch now" (user refresh) */
+  load_one(feed, max_age_s < FEED_MAX_AGE_S);
 }
 
 void cx_feeds_init(void) {
