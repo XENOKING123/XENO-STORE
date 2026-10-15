@@ -3,7 +3,12 @@
  * (updates/featured.json, messages.json, companions.json, saves-backend.json)
  * plus a generic "cached fetch" used by the homebrew listing and the save
  * index. Feeds are refreshed with the catalog (catalog_on_refresh) and
- * cached under <data>/feeds/ so they survive offline starts.
+ * cached under <data>/feeds/ so they survive offline starts. Copies cached
+ * by another build (<data>/feeds/.build names the build they belong to) are
+ * due whatever their age: on the first refresh after start while catalog
+ * auto-refresh is on (retried every 10 minutes until it succeeds), and in
+ * cx_feed_ensure in any case. The marker is written once this build has
+ * fetched every one of them.
  */
 #ifndef XENO_CX_FEEDS_H
 #define XENO_CX_FEEDS_H
@@ -23,8 +28,9 @@ void cx_feed_json(int feed, jw *w);
 /* Parsed copy of a feed (caller frees with json_free); NULL when absent. */
 jdoc *cx_feed_doc(int feed);
 time_t cx_feed_fetched_at(int feed);
-/* Loads one feed when its copy is missing or older than max_age_s (blocking:
- * the cached file when still fresh, else the network, else the old copy).
+/* Loads one feed when its copy is missing, older than max_age_s or cached by
+ * another build (blocking: the cached file when still fresh, else the
+ * network, else the old copy).
  * Used by the save index so a console that never refreshed its feeds (or has
  * catalog auto-refresh off) still follows the published saves-backend.json. */
 void cx_feed_ensure(int feed, int max_age_s);

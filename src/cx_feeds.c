@@ -18,6 +18,7 @@
 #define FEED_MAX_AGE_S (6 * 3600)
 #define FEED_MAX_BYTES (2u << 20)
 #define FEED_FIRST_DELAY_S 20
+#define FEED_RETRY_S 600       /* copies of another build still to fetch: the next automatic try */
 
 static pthread_mutex_t feeds_mu = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t fetch_mu = PTHREAD_MUTEX_INITIALIZER;   /* one fetch + cache write per feed at a time */
@@ -26,9 +27,11 @@ static struct {
   char *text;
   size_t len;
   time_t fetchedAt;
-} feeds[CX_FEED_COUNT] = { {"featured", NULL, 0, 0}, {"messages", NULL, 0, 0}, {"companions", NULL, 0, 0}, {"saves-backend", NULL, 0, 0} };
+  int otherBuild;          /* cached by another build: due whatever its age */
+} feeds[CX_FEED_COUNT] = { {"featured", NULL, 0, 0, 0}, {"messages", NULL, 0, 0, 0}, {"companions", NULL, 0, 0, 0}, {"saves-backend", NULL, 0, 0, 0} };
 static time_t boot_at, last_auto;
 static volatile int refreshing;
+static int build_marked;   /* <data>/feeds/.build names this build (guarded by fetch_mu) */
 
 static const char *const FEED_HOSTS[] = {"raw.githubusercontent.com", "github.com", "githubusercontent.com", "api.github.com"};
 
@@ -39,6 +42,7 @@ int cx_feed_host_allowed(const char *url) {
 }
 
 static void cache_path(const char *name, char *out, size_t cap) { xsnprintf(out, cap, "%s/feeds/%s.json", cx_data_dir(), name); }
+static void build_path(char *out, size_t cap) { xsnprintf(out, cap, "%s/feeds/.build", cx_data_dir()); }
 
 char *cx_cached_fetch(const char *name, const char *url, int max_age_s, int force, size_t max_bytes,
                       size_t *len, int *from_cache, time_t *fetched_at) {
@@ -109,22 +113,57 @@ static void load_one(int feed, int force) {
   feeds[feed].text = txt;
   feeds[feed].len = txt ? len : 0;
   feeds[feed].fetchedAt = txt ? at : 0;
+  if (txt && !from_cache) feeds[feed].otherBuild = 0;
+  int left = 0;
+  for (int i = 0; i < CX_FEED_COUNT; i++) left += feeds[i].otherBuild;
   pthread_mutex_unlock(&feeds_mu);
+  /* no copy of another build is left: from now on they are this build's */
+  if (txt && !from_cache && !left && !build_marked) {
+    char p[700];
+    build_path(p, sizeof p);
+    if (util_write_file_atomic(p, XENO_VERSION "\n", strlen(XENO_VERSION "\n")) == 0) build_marked = 1;
+    else LOGW("feeds: cannot write %s", p);
+  }
   pthread_mutex_unlock(&fetch_mu);
+}
+
+static int other_build(int feed) {
+  pthread_mutex_lock(&feeds_mu);
+  int o = feeds[feed].otherBuild;
+  pthread_mutex_unlock(&feeds_mu);
+  return o;
+}
+
+static int other_build_left(void) {
+  int n = 0;
+  for (int i = 0; i < CX_FEED_COUNT; i++) n += other_build(i);
+  return n > 0;
 }
 
 void cx_feed_ensure(int feed, int max_age_s) {
   if (feed < 0 || feed >= CX_FEED_COUNT) return;
   pthread_mutex_lock(&feeds_mu);
   time_t at = feeds[feed].text ? feeds[feed].fetchedAt : 0;
+  int other = feeds[feed].otherBuild;
   pthread_mutex_unlock(&feeds_mu);
-  if (at > 0 && util_now() - at < max_age_s) return;
+  /* a copy cached by another build is due whatever its age */
+  if (!other && at > 0 && util_now() - at < max_age_s) return;
   /* a shorter age than the feed's own 6 h means "fetch now" (user refresh) */
-  load_one(feed, max_age_s < FEED_MAX_AGE_S);
+  load_one(feed, other || max_age_s < FEED_MAX_AGE_S);
 }
 
 void cx_feeds_init(void) {
   boot_at = util_now();
+  /* Copies cached by another build are fetched again on the first refresh,
+   * whatever their age: an update from 1.2.1 kept its saves-backend.json
+   * (GitHub only) and placeholder companion hashes for up to 6 h. The
+   * marker names the build the copies belong to (none before 1.3.1). */
+  char mark[700];
+  build_path(mark, sizeof mark);
+  char *bv = util_read_file(mark, NULL, 64);
+  if (bv) util_trim(bv);
+  build_marked = bv && strcmp(bv, XENO_VERSION) == 0;
+  int other = 0;
   /* Offline start: load the cached copies without touching the network. */
   for (int i = 0; i < CX_FEED_COUNT; i++) {
     char path[700];
@@ -135,14 +174,23 @@ void cx_feeds_init(void) {
     feeds[i].text = txt;
     feeds[i].len = txt ? len : 0;
     feeds[i].fetchedAt = txt ? util_file_mtime(path) : 0;
+    feeds[i].otherBuild = txt && !build_marked;
+    other += feeds[i].otherBuild;
     pthread_mutex_unlock(&feeds_mu);
   }
+  if (other) LOGI("feeds: %d cached feed(s) from %s, due whatever their age (this is %s)", other, bv && *bv ? bv : "an earlier build", XENO_VERSION);
+  free(bv);
 }
 
 void cx_feeds_refresh(int force) {
   if (refreshing) return;
   refreshing = 1;
-  for (int i = 0; i < CX_FEED_COUNT; i++) load_one(i, force);
+  settings_t s;
+  settings_get(&s);
+  /* a copy of another build is due at once while the catalog refreshes on
+   * its own; with auto-refresh off it keeps the 6 h rule here and is
+   * fetched where it is needed (cx_feed_ensure) */
+  for (int i = 0; i < CX_FEED_COUNT; i++) load_one(i, force || (s.catalogAutoRefresh && other_build(i)));
   refreshing = 0;
 }
 
@@ -160,7 +208,8 @@ static void *refresh_thread(void *arg) {
 void cx_feeds_tick(void) {
   time_t now = util_now();
   if (!xhttp_available() || g_cfg.safe_mode || now - boot_at < FEED_FIRST_DELAY_S) return;
-  if (last_auto && now - last_auto < FEED_MAX_AGE_S) return;
+  /* copies of another build left (offline): tried again soon, not in 6 h */
+  if (last_auto && now - last_auto < (other_build_left() ? FEED_RETRY_S : FEED_MAX_AGE_S)) return;
   settings_t s;
   settings_get(&s);
   if (!s.catalogAutoRefresh) { last_auto = now; return; }

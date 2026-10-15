@@ -12,6 +12,8 @@
 #   test_saves_site.py     the Save Data Store against the XenoKing site's Supabase
 #                          stand-in (listing, Garlic + bucket downloads, share =
 #                          upload + insert, GitHub fallback, no other writes)
+#   test_feeds.py          the owner's feeds across an update: copies of another
+#                          build fetched again once, offline start, auto-refresh off
 #   test_app_install.py    the store installs its own Games-row app (PPSA99500.ffpkg)
 #   test_hardening.py      request gate, pairing, durability, USB window, update hand-off, zips
 #   test_seg_stall.py      segment threads never outlive their job (~80 s by design)
@@ -32,7 +34,7 @@ export TMPDIR="$TMPBASE"
 unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy
 
 # XENO_TESTS="test_api.py test_downloads.py" narrows the run.
-SUITES="${XENO_TESTS:-test_api.py test_downloads.py test_ext_downloads.py test_ext_console.py test_saves_garlic.py test_saves_site.py test_app_install.py test_hardening.py test_tvapi_smoke.py test_seg_stall.py test_tvapi_infra.py test_tvapi_updates.py test_tvapi_art.py test_tvapi_catalog.py test_tvapi_downloads.py test_tvapi_library.py test_tvapi_probe.py}"
+SUITES="${XENO_TESTS:-test_api.py test_downloads.py test_ext_downloads.py test_ext_console.py test_saves_garlic.py test_saves_site.py test_feeds.py test_app_install.py test_hardening.py test_tvapi_smoke.py test_seg_stall.py test_tvapi_infra.py test_tvapi_updates.py test_tvapi_art.py test_tvapi_catalog.py test_tvapi_downloads.py test_tvapi_library.py test_tvapi_probe.py}"
 
 status=0
 summary=()
