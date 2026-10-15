@@ -14,8 +14,9 @@ saves-backend) cached under <data>/feeds/ when the store is updated:
     alone; once the host answers again the next refresh fetches them;
   * with catalog auto-refresh off, a catalog refresh keeps the 6-hour rule
     for featured and messages, while the Save Store still gets the published
-    saves-backend.json and the payload list and a payload install get the
-    published companions.json (no placeholder hashes left to refuse).
+    saves-backend.json and the payload list, a payload install and the Garlic
+    start get the published companions.json (no placeholder hashes left to
+    refuse).
 
 Everything is loopback: the feed URLs come from settings.json, the default
 GitHub save index from XENO_SAVES_INDEX_BASE and the save site is
@@ -34,6 +35,7 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import harness  # noqa: E402
+from garlic_mock import FakeLoader, GarlicMock  # noqa: E402
 from supabase_mock import SupabaseMock  # noqa: E402
 
 ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsInJlZiI6Im1vY2sifQ.bW9jay1hbm9uLWtleS1mb3ItdGVzdHM"
@@ -116,6 +118,7 @@ class Feeds(threading.Thread):
 
 class Base(unittest.TestCase):
     auto_refresh = True
+    extra_env = {}
 
     @classmethod
     def setUpClass(cls):
@@ -137,6 +140,7 @@ class Base(unittest.TestCase):
                        "updates": {"autoCheck": False}}, f)
         env = {"XENO_SAVES_INDEX_BASE": b, "XENO_PORT_GARLIC": "1", "XENO_PORT_LOADER": "1", "XENO_PORT_DPI": "1",
                "XENO_PORT_ETAHEN": "1", "XENO_PORT_SHADOWMOUNT": "1"}
+        env.update(cls.extra_env)
         cls.srv = harness.XenoServer(cls.data, env=env).start()
         cls.started = time.time()
         st, b = cls.srv.api("GET", "/api/status")
@@ -173,6 +177,25 @@ class Base(unittest.TestCase):
     def catalog_refresh(self):
         # the catalogue itself is not served: the refresh fails, the feeds still follow it
         self.srv.api("POST", "/api/catalog/refresh", {})
+
+    def publish_garlic(self):
+        """The published companions.json names a Garlic the feeds host serves; returns its bytes."""
+        elf = b"\x7fELF" + b"GARLIC-FROM-THE-PUBLISHED-LIST" + bytes(range(256))
+        self.feeds.files["/garlic.elf"] = elf
+        self.feeds.docs["companions"] = {"payloads": [{"id": "garlic-save-manager", "name": "Garlic Save Manager", "kind": "saves",
+                                                       "version": "1.7", "url": self.feeds.base + "/garlic.elf",
+                                                       "sha256": hashlib.sha256(elf).hexdigest()}]}
+        return elf
+
+    def job_of(self, body):
+        jid = body["job"]["id"]
+        deadline = time.time() + 60
+        while time.time() < deadline:
+            st, j = self.srv.api("GET", "/api/saves/jobs/%s" % jid)
+            if j["job"]["state"] in ("done", "failed", "cancelled"):
+                break
+            time.sleep(0.1)
+        return j["job"]
 
 
 class UpgradeTests(Base):
@@ -261,24 +284,42 @@ class AutoRefreshOffInstallTests(Base):
     auto_refresh = False
 
     def test_1_install_fetches_the_published_companions_first(self):
-        elf = b"\x7fELF" + b"GARLIC-FROM-THE-PUBLISHED-LIST" + bytes(range(256))
-        self.feeds.files["/garlic.elf"] = elf
-        self.feeds.docs["companions"] = {"payloads": [{"id": "garlic-save-manager", "name": "Garlic Save Manager", "kind": "saves",
-                                                       "version": "1.7", "url": self.feeds.base + "/garlic.elf",
-                                                       "sha256": hashlib.sha256(elf).hexdigest()}]}
+        elf = self.publish_garlic()
         st, b = self.srv.api("POST", "/api/payloads/garlic-save-manager/install", {})
         self.assertEqual(st, 200, b)
-        jid = b["job"]["id"]
-        deadline = time.time() + 30
-        while time.time() < deadline:
-            st, j = self.srv.api("GET", "/api/saves/jobs/%s" % jid)
-            if j["job"]["state"] in ("done", "failed"):
-                break
-            time.sleep(0.1)
-        self.assertEqual(j["job"]["state"], "done", j)
-        self.assertTrue(j["job"]["result"]["verified"], j)
+        j = self.job_of(b)
+        self.assertEqual(j["state"], "done", j)
+        self.assertTrue(j["result"]["verified"], j)
         with open(os.path.join(self.data, "payloads", "garlic-save-manager.elf"), "rb") as f:
             self.assertEqual(f.read(), elf)
+        self.assertEqual(self.feeds.hits("companions"), 1)
+        self.assertEqual(self.feeds.hits("featured"), 0)
+
+
+class AutoRefreshOffGarlicTests(Base):
+    auto_refresh = False
+
+    @classmethod
+    def setUpClass(cls):
+        cls.garlic = GarlicMock(harness.free_port())
+        cls.loader = FakeLoader(harness.free_port(), on_payload=lambda data: cls.garlic.running() or cls.garlic.start())
+        cls.extra_env = {"XENO_PORT_GARLIC": str(cls.garlic.port), "XENO_PORT_LOADER": str(cls.loader.port)}
+        super().setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        cls.garlic.stop()
+        cls.loader.close()
+        shutil.rmtree(cls.garlic.tmp, ignore_errors=True)
+
+    def test_1_garlic_starts_from_the_published_companions(self):
+        elf = self.publish_garlic()
+        st, b = self.srv.api("POST", "/api/saves/garlic/start", {"wait": True})
+        self.assertEqual(st, 200, b)
+        j = self.job_of(b)
+        self.assertEqual(j["state"], "done", j)
+        self.assertEqual(self.loader.received, [elf])
         self.assertEqual(self.feeds.hits("companions"), 1)
         self.assertEqual(self.feeds.hits("featured"), 0)
 

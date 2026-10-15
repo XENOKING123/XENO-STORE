@@ -8,8 +8,8 @@
  * due whatever their age: on the first refresh after start while catalog
  * auto-refresh is on (retried every 10 minutes until it succeeds), and in
  * cx_feed_ensure in any case (saves-backend.json for the Save Store,
- * companions.json for the payload list and install). The marker is written
- * once this build has fetched every one of them.
+ * companions.json for the payload list, a payload install and the Garlic
+ * start). The marker is written once this build has fetched every one of them.
  */
 #ifndef XENO_CX_FEEDS_H
 #define XENO_CX_FEEDS_H
@@ -34,7 +34,7 @@ time_t cx_feed_fetched_at(int feed);
  * network, else the old copy).
  * Used by the save index so a console that never refreshed its feeds (or has
  * catalog auto-refresh off) still follows the published saves-backend.json,
- * and by a payload install for companions.json. */
+ * and by a payload install and the Garlic start for companions.json. */
 void cx_feed_ensure(int feed, int max_age_s);
 /* cx_feed_ensure(feed, 6 h) on a thread of its own (one per feed at a time),
  * waited for up to wait_ms: for a listing that must not hold its request for

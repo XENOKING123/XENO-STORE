@@ -333,6 +333,7 @@ static int file_is_elf(const char *path) {
 int cx_companions_fetch(const char *kind, const char *fb_id, const char *fb_url, const char *fb_sha256, const char *fb_version,
                         cx_companion_file *out, char *err, size_t errcap) {
   memset(out, 0, sizeof *out);
+  cx_feed_ensure(CX_FEED_COMPANIONS, 6 * 3600);   /* the published list, as an install reads it */
   comp *all = calloc(COMP_MAX, sizeof *all);
   comp *c = calloc(1, sizeof *c);
   if (!all || !c) { free(all); free(c); xsnprintf(err, errcap, "out of memory"); return -1; }

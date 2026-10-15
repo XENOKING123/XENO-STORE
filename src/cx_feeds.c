@@ -215,7 +215,8 @@ void cx_feeds_refresh(int force) {
   /* a copy of another build is due at once while the catalog refreshes on
    * its own; with auto-refresh off it keeps the 6 h rule here and is
    * fetched where it is needed (cx_feed_ensure: the Save Store's
-   * saves-backend.json, the payload list's and install's companions.json) */
+   * saves-backend.json; companions.json for the payload list, a payload
+   * install and the Garlic start) */
   for (int i = 0; i < CX_FEED_COUNT; i++) load_one(i, force || (s.catalogAutoRefresh && other_build(i)));
   refreshing = 0;
 }
