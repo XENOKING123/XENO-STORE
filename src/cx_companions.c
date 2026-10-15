@@ -10,6 +10,7 @@
 #include "log.h"
 #include "util.h"
 
+#include <ctype.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,12 +28,19 @@ typedef struct comp {
   char reason[320];
   int64_t size;
   int unavailable;         /* no upstream asset to pin: listed, never installed */
+  int placeholder;         /* unavailable because its sha256 is no digest ("FILLED-BY-OWNER") */
 } comp;
 
 static int loader_port(void) { return cx_local_port("LOADER", LOADER_PORT_DEFAULT); }
 
 static void payload_path(const char *id, char *out, size_t cap) { xsnprintf(out, cap, "%s/payloads/%s.elf", cx_data_dir(), id); }
 static void installed_path(char *out, size_t cap) { xsnprintf(out, cap, "%s/payloads/installed.json", cx_data_dir()); }
+
+static int is_hex64(const char *s) {
+  if (strlen(s) != 64) return 0;
+  for (int i = 0; i < 64; i++) if (!isxdigit((unsigned char)s[i])) return 0;
+  return 1;
+}
 
 static int load_feed(comp *out, int max) {
   jdoc *d = cx_feed_doc(CX_FEED_COMPANIONS);
@@ -63,8 +71,13 @@ static int load_feed(comp *out, int max) {
     }
     int unavailable = jv_get_bool(it, "unavailable", 0) || !jv_get_bool(it, "available", 1);
     if (!cx_id_valid(id, 47) || !*name || (!unavailable && !util_istarts_with(url, "http"))) continue;
-    c->unavailable = unavailable;
-    xstrlcpy(c->reason, jv_get_str(it, "unavailableReason", ""), sizeof c->reason);
+    /* a sha256 that is no digest (feeds before 1.3 said "FILLED-BY-OWNER")
+     * could only fail the download after it: not available instead */
+    const char *sha = jv_get_str(it, "sha256", "");
+    c->placeholder = !unavailable && *sha && !is_hex64(sha);
+    c->unavailable = unavailable || c->placeholder;
+    if (c->placeholder) xstrlcpy(c->reason, "the companions list has a placeholder instead of its sha256, so the download cannot be verified (refresh the catalog for the current list)", sizeof c->reason);
+    else xstrlcpy(c->reason, jv_get_str(it, "unavailableReason", ""), sizeof c->reason);
     xstrlcpy(c->id, id, sizeof c->id);
     xstrlcpy(c->name, name, sizeof c->name);
     xstrlcpy(c->version, jv_get_str(it, "version", ""), sizeof c->version);
@@ -284,6 +297,8 @@ int cx_companions_by_kind(const char *kind, char *id, size_t idcap, char *versio
   int rc = -1;
   for (int i = 0; i < n; i++) {
     if (strcmp(all[i].kind, kind) != 0) continue;
+    /* a placeholder entry counts as none: the caller's own pin stands (cx_companions_fetch) */
+    if (all[i].placeholder) break;
     if (id) xstrlcpy(id, all[i].id, idcap);
     if (version) xstrlcpy(version, all[i].version, vcap);
     if (unavailable) *unavailable = all[i].unavailable;
@@ -312,6 +327,14 @@ int cx_companions_fetch(const char *kind, const char *fb_id, const char *fb_url,
   int n = load_feed(all, COMP_MAX), found = 0;
   for (int i = 0; i < n && !found; i++) if (strcmp(all[i].kind, kind) == 0) { *c = all[i]; found = 1; }
   free(all);
+  /* the feed moves a valid pin to another release only with a real digest:
+   * an entry whose sha256 is a placeholder (or missing) gives way to it, an
+   * entry its owner marked unavailable does not */
+  int pin_ok = fb_id && cx_id_valid(fb_id, 47) && fb_url && util_istarts_with(fb_url, "http") && fb_sha256 && is_hex64(fb_sha256);
+  if (found && pin_ok && (c->placeholder || (!c->unavailable && !c->sha256[0]))) {
+    LOGW("companions: the %s entry of the companions list has no usable sha256, using the pinned %s", kind, fb_version ? fb_version : fb_id);
+    found = 0;
+  }
   if (found && c->unavailable) {
     xsnprintf(err, errcap, "%s is not available for download: %s", c->name, c->reason[0] ? c->reason : "its author publishes no release asset");
     free(c);

@@ -4,7 +4,8 @@
  * <data>/payloads/<id>.elf and launch by sending the raw bytes to the local
  * ELF loader on 127.0.0.1:9021. Every entry points at its author's own
  * release asset; an entry with "unavailable": true (no upstream asset to
- * pin) is listed with its reason and refuses to install.
+ * pin) is listed with its reason and refuses to install, and so is an entry
+ * whose sha256 is a placeholder instead of a digest ("FILLED-BY-OWNER").
  */
 #ifndef XENO_CX_COMPANIONS_H
 #define XENO_CX_COMPANIONS_H
@@ -38,13 +39,15 @@ typedef struct cx_companion_file {
 } cx_companion_file;
 
 /* Makes sure the payload of feed `kind` (fallback: the given id/url/sha256/
- * version when the feed has no such entry) is on the console as
+ * version when the feed has no such entry, or one whose sha256 is a
+ * placeholder or missing while the fallback is a full pin) is on the console as
  * <data>/payloads/<id>.elf: an existing copy whose sha256 matches the pinned
  * one is reused, otherwise it is downloaded (GitHub hosts only, sha256 and
  * ELF magic checked) and recorded as installed. Synchronous. 0 or -1 + err. */
 int cx_companions_fetch(const char *kind, const char *fb_id, const char *fb_url, const char *fb_sha256, const char *fb_version,
                         cx_companion_file *out, char *err, size_t errcap);
-/* Feed entry of `kind` (id/version/url) for display; -1 when absent. */
+/* Feed entry of `kind` (id/version/url) for display; -1 when absent (an entry
+ * whose sha256 is a placeholder counts as absent: the caller's pin stands). */
 int cx_companions_by_kind(const char *kind, char *id, size_t idcap, char *version, size_t vcap, int *unavailable);
 
 #endif

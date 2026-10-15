@@ -34,7 +34,11 @@ garlic-savemgr src/main.c route by route, single recv() per request included):
     only when the release cannot be downloaded; never a second copy while one
     answers (start or payload Launch); a foreign program on the port is not
     mistaken for Garlic; a running title blocks its save install, transfer
-    and export.
+    and export;
+  * a companions list whose sha256 is a placeholder ("FILLED-BY-OWNER", as
+    1.2.1 cached it): the payload is listed as not available and refuses to
+    install, and Garlic is never downloaded against it (the host build pins
+    no release URL, so a copy on the console is started instead).
 
 The native tier simulation is off (XENO_SIM_NATIVE=0) and every port is a test
 port (XENO_PORT_GARLIC / XENO_PORT_LOADER), so nothing touches /data or the
@@ -144,11 +148,13 @@ EXPECTED_UPLOADS = {"game.dat": len(GAME_DAT), "data/sub/file.bin": len(BIN_DAT)
 
 class Files(http.server.BaseHTTPRequestHandler):
     routes = {}
+    log = []
 
     def log_message(self, *a):
         pass
 
     def _send(self, head):
+        self.log.append(self.path.split("?", 1)[0])
         r = self.routes.get(self.path.split("?", 1)[0])
         if r is None:
             r = (404, "application/json", b'{"error":"not found"}')
@@ -172,7 +178,8 @@ class Files(http.server.BaseHTTPRequestHandler):
 class FilesServer:
     def __init__(self):
         self.routes = {}
-        handler = type("FilesH", (Files,), {"routes": self.routes})
+        self.log = []
+        handler = type("FilesH", (Files,), {"routes": self.routes, "log": self.log})
         self.srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
         self.srv.daemon_threads = True
         self.port = self.srv.server_address[1]
@@ -210,12 +217,7 @@ class Base(unittest.TestCase):
         cls.files = FilesServer()
         cls.companion_elf = b"\x7fELF" + b"GARLIC-FROM-RELEASE" + bytes(range(256)) * 32
         cls.files.add("/garlic.elf", cls.companion_elf)
-        cls.files.add("/companions.json", json.dumps({"payloads": [
-            {"id": "garlic-save-manager", "name": "Garlic Save Manager", "kind": "saves", "version": "1.7",
-             "url": cls.files.base + "/garlic.elf", "sha256": hashlib.sha256(cls.companion_elf).hexdigest()},
-            {"id": "np-fake-signout", "name": "NP fake sign-out", "kind": "np-signout", "url": "", "unavailable": True,
-             "unavailableReason": "no upstream asset"},
-        ]}), "application/json")
+        cls.files.add("/companions.json", json.dumps({"payloads": cls.companions()}), "application/json")
         rows = []
         for sid, title, dirname, entries in cls.zips():
             z = make_zip(entries)
@@ -248,6 +250,13 @@ class Base(unittest.TestCase):
     @classmethod
     def on_payload(cls, data):
         pass
+
+    @classmethod
+    def companions(cls):
+        return [{"id": "garlic-save-manager", "name": "Garlic Save Manager", "kind": "saves", "version": "1.7",
+                 "url": cls.files.base + "/garlic.elf", "sha256": hashlib.sha256(cls.companion_elf).hexdigest()},
+                {"id": "np-fake-signout", "name": "NP fake sign-out", "kind": "np-signout", "url": "", "unavailable": True,
+                 "unavailableReason": "no upstream asset"}]
 
     @classmethod
     def zips(cls):
@@ -895,6 +904,68 @@ class GarlicStartTests(Base):
         with open(img, "rb") as f:
             self.assertEqual(f.read(), b"PLAYER-IMAGE")                 # the source keeps its loadable save
         self.assertFalse(os.path.exists(os.path.join(self.home(GUEST), "savedata_prospero", TITLE)))
+
+
+# ---------------------------------------------------------------------------
+# a companions list with placeholder hashes (what a 1.2.1 console cached)
+# ---------------------------------------------------------------------------
+
+class PlaceholderCompanionTests(Base):
+    garlic_running_at_start = False
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.files.add("/garlic-placeholder.elf", cls.companion_elf)          # served; only its hash is unknown
+        cls.files.add("/shadowmount.elf", b"\x7fELF" + b"SHADOWMOUNT" + bytes(range(256)))
+        cls.console_elf = b"\x7fELF" + b"GARLIC-ON-THE-CONSOLE" + bytes(range(256)) * 32
+        cls.console_path = os.path.join(cls.sim, "data", "homebrew", "Garlic SaveMgr", "Garlic-SaveMgr.ELF")
+
+    @classmethod
+    def companions(cls):
+        return [{"id": "garlic-save-manager", "name": "Garlic Save Manager", "kind": "saves", "version": "1.0",
+                 "url": cls.files.base + "/garlic-placeholder.elf", "sha256": "FILLED-BY-OWNER"},
+                {"id": "shadowmount-plus", "name": "ShadowMountPlus", "kind": "shadowmount", "version": "1.0",
+                 "url": cls.files.base + "/shadowmount.elf", "sha256": "FILLED-BY-OWNER"}]
+
+    @classmethod
+    def on_payload(cls, data):
+        if data[:4] == b"\x7fELF" and not cls.garlic.running():
+            cls.garlic.start()
+
+    def start_garlic(self):
+        st, b = self.srv.api("POST", "/api/saves/garlic/start", {"wait": True})
+        self.assertEqual(st, 200, b)
+        return self.job_of(b)
+
+    def test_01_payload_is_not_available(self):
+        st, b = self.srv.api("GET", "/api/payloads")
+        self.assertEqual(st, 200, b)
+        sm = {p["id"]: p for p in b["payloads"]}["shadowmount-plus"]
+        self.assertFalse(sm["available"], sm)
+        self.assertIn("placeholder", sm["unavailableReason"])
+        st, b = self.srv.api("POST", "/api/payloads/shadowmount-plus/install", {})
+        self.assertEqual(st, 422, b)
+        self.assertEqual(b.get("error"), "unavailable", b)
+        self.assertIn("placeholder", b.get("message", ""))
+        self.assertNotIn("/shadowmount.elf", self.files.log)
+
+    def test_02_garlic_is_never_downloaded_against_a_placeholder(self):
+        # the host build pins no release URL, so the placeholder entry leaves nothing to download
+        st, b = self.srv.api("GET", "/api/saves/garlic")
+        self.assertEqual(st, 200, b)
+        self.assertNotEqual(b["garlic"].get("source"), "download", b)
+        self.assertFalse(b["garlic"]["canStart"], b)
+        j = self.start_garlic()
+        self.assertEqual(j["state"], "failed", j)
+        self.assertIn("not available for download", j["error"])
+        self.assertNotIn("sha256 mismatch", j["error"])
+        # a copy on the console is started instead
+        write(self.console_path, self.console_elf)
+        j = self.start_garlic()
+        self.assertEqual(j["state"], "done", j)
+        self.assertEqual(self.loader.received, [self.console_elf])
+        self.assertNotIn("/garlic-placeholder.elf", self.files.log)
 
 
 if __name__ == "__main__":
