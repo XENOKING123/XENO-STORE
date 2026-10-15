@@ -70,5 +70,47 @@
   },
   "discover4": {
     "topPs5": "Top PS5 games"
+  },
+  "diag2": {
+    "crashTitle": "Last problem",
+    "crashLastRun": "XENO STORE stopped unexpectedly last time and restarted on its own. If it happens again, copy this report and send it in.",
+    "crashOlder": "An earlier session stopped with this problem.",
+    "none": "No problems recorded.",
+    "stack": "Thread stack",
+    "safeMode": "Safe start: automatic background checks are paused for this session."
+  },
+  "gameapp": {
+    "title": "XENO STORE app",
+    "sub": "The app tile under Games. The store downloads it into /data/homebrew and ShadowMountPlus adds the tile — no FTP needed.",
+    "group": "Games-row app",
+    "installed": "Installed",
+    "notInstalled": "Not installed",
+    "installing": "Installing…",
+    "install": "Install the app",
+    "reinstall": "Reinstall / update",
+    "cancel": "Cancel",
+    "cancelled": "Install cancelled",
+    "version": "Version {v}",
+    "already": "The app is already being installed",
+    "checking": "Checking the latest release…",
+    "verifying": "Verifying the download…",
+    "registering": "Adding the tile…",
+    "jobTitle": "XENO STORE app",
+    "doneTitle": "XENO STORE app installed",
+    "doneDesc": "The XENO STORE tile appears under Games within about a minute (ShadowMountPlus rescans on its own). If it doesn't, restart the console with your jailbreak and ShadowMountPlus loaded.",
+    "failedTitle": "Could not install the app",
+    "hintTitle": "Put XENO STORE on your Games row",
+    "hintText": "Install the app once and open the store from its own tile — no FTP, no browser address.",
+    "notNow": "Not now",
+    "openOnStart": "Open XENO STORE when it starts",
+    "openOnStartHint": "Opens the store on the TV each time it starts. Turn it off if you auto-start the store at boot.",
+    "err": {
+      "sha256_mismatch": "The download didn't match its checksum — nothing was installed. Try again.",
+      "sha256_unavailable": "The release has no checksum yet — try again in a few minutes.",
+      "no_space": "Not enough free space on the internal drive.",
+      "not_package": "The download is not an app image.",
+      "too_large": "The download is larger than expected — nothing was installed.",
+      "download_failed": "The download failed. Check the console's internet connection and try again."
+    }
   }
 }

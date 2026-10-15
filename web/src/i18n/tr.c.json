@@ -70,5 +70,47 @@
   },
   "discover4": {
     "topPs5": "En iyi PS5 oyunları"
+  },
+  "diag2": {
+    "crashTitle": "Son sorun",
+    "crashLastRun": "XENO STORE geçen sefer beklenmedik şekilde durdu ve kendiliğinden yeniden başladı. Tekrar olursa bu raporu kopyalayıp gönder.",
+    "crashOlder": "Önceki bir oturum bu sorunla durdu.",
+    "none": "Kayıtlı sorun yok.",
+    "stack": "İş parçacığı yığını",
+    "safeMode": "Güvenli başlatma: otomatik arka plan kontrolleri bu oturumda duraklatıldı."
+  },
+  "gameapp": {
+    "title": "XENO STORE uygulaması",
+    "sub": "Oyunlar satırındaki uygulama kutucuğu. Mağaza onu /data/homebrew'a indirir ve ShadowMountPlus kutucuğu ekler — FTP gerekmez.",
+    "group": "Oyunlar satırı uygulaması",
+    "installed": "Yüklü",
+    "notInstalled": "Yüklü değil",
+    "installing": "Yükleniyor…",
+    "install": "Uygulamayı yükle",
+    "reinstall": "Yeniden yükle / güncelle",
+    "cancel": "İptal",
+    "cancelled": "Yükleme iptal edildi",
+    "version": "Sürüm {v}",
+    "already": "Uygulama zaten yükleniyor",
+    "checking": "En son sürüm denetleniyor…",
+    "verifying": "İndirme doğrulanıyor…",
+    "registering": "Kutucuk ekleniyor…",
+    "jobTitle": "XENO STORE uygulaması",
+    "doneTitle": "XENO STORE uygulaması yüklendi",
+    "doneDesc": "XENO STORE kutucuğu yaklaşık bir dakika içinde Oyunlar'da görünür (ShadowMountPlus kendiliğinden yeniden tarar). Görünmezse jailbreak ve ShadowMountPlus yüklüyken konsolu yeniden başlat.",
+    "failedTitle": "Uygulama yüklenemedi",
+    "hintTitle": "XENO STORE'u Oyunlar satırına ekle",
+    "hintText": "Uygulamayı bir kez yükle ve mağazayı kendi kutucuğundan aç — FTP yok, tarayıcı adresi yok.",
+    "notNow": "Şimdi değil",
+    "openOnStart": "XENO STORE başladığında aç",
+    "openOnStartHint": "Mağaza her başladığında onu TV'de açar. Mağazayı açılışta otomatik başlatıyorsan kapat.",
+    "err": {
+      "sha256_mismatch": "İndirilen dosya sağlama toplamıyla eşleşmiyor — hiçbir şey yüklenmedi. Tekrar dene.",
+      "sha256_unavailable": "Bu sürümün henüz sağlama toplamı yok — birkaç dakika sonra tekrar dene.",
+      "no_space": "Dahili sürücüde yeterli boş alan yok.",
+      "not_package": "İndirilen dosya bir uygulama kalıbı değil.",
+      "too_large": "İndirilen dosya beklenenden büyük — hiçbir şey yüklenmedi.",
+      "download_failed": "İndirme başarısız oldu. Konsolun internet bağlantısını denetle ve tekrar dene."
+    }
   }
 }

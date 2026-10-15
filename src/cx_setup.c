@@ -2,14 +2,17 @@
  * cx_setup.c — see cx_setup.h.
  */
 #include "cx_setup.h"
+#include "config.h"
 #include "cx_common.h"
 #include "cx_companions.h"
 #include "http_client.h"
+#include "install.h"
 #include "log.h"
 #include "settings.h"
 #include "storage.h"
 #include "sys.h"
 #include "util.h"
+#include "xthread.h"
 
 #include <pthread.h>
 #include <stdio.h>
@@ -28,20 +31,28 @@ static volatile int running;
 
 typedef struct check { char id[24]; int ok; int warn; char detail[200]; char fix[260]; char action[24]; char actionId[48]; } check;
 
-static int run_checks(check *c, int max) {
+static int run_checks(check *c, int max, int automatic) {
   int n = 0;
   settings_t s;
   settings_get(&s);
-  /* ShadowMountPlus */
+  /* ShadowMountPlus: only 1.7 and newer answer on an API port, so its
+   * process decides; "launch" is offered only when it surely is not running
+   * (a second copy would stop the first and take over) */
   {
     check *k = &c[n++];
     memset(k, 0, sizeof *k);
     xstrlcpy(k->id, "shadowmount", sizeof k->id);
     int port = cx_local_port("SHADOWMOUNT", 10101);
-    k->ok = cx_tcp_probe(port, 400);
-    xsnprintf(k->detail, sizeof k->detail, k->ok ? "ShadowMountPlus API is answering on :%d" : "ShadowMountPlus API is not answering on :%d", port);
+    int api = cx_tcp_probe(port, 400);
+    int proc = install_shadowmount_running();
+    k->ok = api || proc == 1;
+    k->warn = !k->ok && proc < 0;   /* cannot tell: not a failure */
+    if (proc == 1) xsnprintf(k->detail, sizeof k->detail, api ? "ShadowMountPlus is running (API on :%d)" : "ShadowMountPlus is running (no API on :%d before 1.7; it rescans on its own)", port);
+    else if (api) xsnprintf(k->detail, sizeof k->detail, "ShadowMountPlus API is answering on :%d", port);
+    else if (proc == 0) xstrlcpy(k->detail, "ShadowMountPlus is not running", sizeof k->detail);
+    else xsnprintf(k->detail, sizeof k->detail, "Cannot tell whether ShadowMountPlus is running (process list unavailable, no API on :%d)", port);
     xstrlcpy(k->fix, "Load ShadowMountPlus (etaHEN or your payload loader) so downloaded exFAT/FFPFSC dumps appear on the home screen.", sizeof k->fix);
-    if (!k->ok) {
+    if (!k->ok && proc == 0) {
       char pid[48];
       if (cx_companions_find_installed("shadowmount", pid, sizeof pid) == 0) { xstrlcpy(k->action, "launch", sizeof k->action); xstrlcpy(k->actionId, pid, sizeof k->actionId); }
     }
@@ -74,7 +85,13 @@ static int run_checks(check *c, int max) {
     memset(k, 0, sizeof *k);
     xstrlcpy(k->id, "internet", sizeof k->id);
     if (!xhttp_available()) { k->ok = 0; xstrlcpy(k->detail, "Network libraries did not load — downloads unavailable on this firmware", sizeof k->detail); }
+    else if (automatic && g_cfg.safe_mode) {
+      k->ok = 1;
+      k->warn = 1;
+      xstrlcpy(k->detail, "Not checked automatically: the store restarted after a problem (Settings → Diagnostics). Run the checks again to test it.", sizeof k->detail);
+    }
     else {
+      xthread_note("setup check: internet");
       cx_http o = {0};
       o.method = "HEAD";
       o.timeout_ms = 6000;
@@ -163,7 +180,7 @@ static void remember(const check *c, int n) {
 
 void cx_setup_check_json(jw *w) {
   check c[12];
-  int n = run_checks(c, 12);
+  int n = run_checks(c, 12, 0);
   remember(c, n);
   jw_key(w, "checks");
   jw_arr_begin(w);
@@ -194,7 +211,7 @@ void cx_setup_summary_json(jw *w) {
 static void *bg(void *arg) {
   (void)arg;
   check c[12];
-  int n = run_checks(c, 12);
+  int n = run_checks(c, 12, 1);
   remember(c, n);
   running = 0;
   return NULL;
@@ -209,10 +226,5 @@ void cx_setup_tick(void) {
   if (last_run && now - last_run < SETUP_PERIOD_S) return;
   last_run = now;
   running = 1;
-  pthread_t th;
-  pthread_attr_t at;
-  pthread_attr_init(&at);
-  pthread_attr_setdetachstate(&at, PTHREAD_CREATE_DETACHED);
-  if (pthread_create(&th, &at, bg, NULL) != 0) running = 0;
-  pthread_attr_destroy(&at);
+  if (xthread_start(NULL, "setup-check", bg, NULL, 0, 1) != 0) running = 0;
 }

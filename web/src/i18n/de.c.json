@@ -70,5 +70,47 @@
   },
   "discover4": {
     "topPs5": "Top-PS5-Spiele"
+  },
+  "diag2": {
+    "crashTitle": "Letztes Problem",
+    "crashLastRun": "XENO STORE wurde beim letzten Mal unerwartet beendet und von selbst neu gestartet. Falls es wieder passiert, kopiere diesen Bericht und schick ihn ein.",
+    "crashOlder": "Eine frühere Sitzung wurde mit diesem Problem beendet.",
+    "none": "Keine Probleme aufgezeichnet.",
+    "stack": "Thread-Stack",
+    "safeMode": "Sicherer Start: automatische Hintergrundprüfungen sind in dieser Sitzung pausiert."
+  },
+  "gameapp": {
+    "title": "XENO STORE-App",
+    "sub": "Die App-Kachel unter Spiele. Der Store lädt sie nach /data/homebrew herunter und ShadowMountPlus fügt die Kachel hinzu – ganz ohne FTP.",
+    "group": "App in der Spiele-Leiste",
+    "installed": "Installiert",
+    "notInstalled": "Nicht installiert",
+    "installing": "Wird installiert…",
+    "install": "App installieren",
+    "reinstall": "Neu installieren / aktualisieren",
+    "cancel": "Abbrechen",
+    "cancelled": "Installation abgebrochen",
+    "version": "Version {v}",
+    "already": "Die App wird bereits installiert",
+    "checking": "Neueste Version wird geprüft…",
+    "verifying": "Download wird geprüft…",
+    "registering": "Kachel wird hinzugefügt…",
+    "jobTitle": "XENO STORE-App",
+    "doneTitle": "XENO STORE-App installiert",
+    "doneDesc": "Die XENO STORE-Kachel erscheint in etwa einer Minute unter Spiele (ShadowMountPlus sucht von selbst neu). Falls nicht, starte die Konsole mit geladenem Jailbreak und ShadowMountPlus neu.",
+    "failedTitle": "App konnte nicht installiert werden",
+    "hintTitle": "XENO STORE in die Spiele-Leiste holen",
+    "hintText": "Installiere die App einmal und öffne den Store über seine eigene Kachel – ohne FTP, ohne Browser-Adresse.",
+    "notNow": "Nicht jetzt",
+    "openOnStart": "XENO STORE beim Start öffnen",
+    "openOnStartHint": "Öffnet den Store bei jedem Start auf dem Fernseher. Schalte es aus, wenn der Store beim Booten automatisch startet.",
+    "err": {
+      "sha256_mismatch": "Der Download stimmt nicht mit seiner Prüfsumme überein – es wurde nichts installiert. Versuch es erneut.",
+      "sha256_unavailable": "Die Version hat noch keine Prüfsumme – versuch es in ein paar Minuten erneut.",
+      "no_space": "Nicht genug freier Speicher auf dem internen Laufwerk.",
+      "not_package": "Der Download ist kein App-Image.",
+      "too_large": "Der Download ist größer als erwartet – es wurde nichts installiert.",
+      "download_failed": "Der Download ist fehlgeschlagen. Prüfe die Internetverbindung der Konsole und versuch es erneut."
+    }
   }
 }

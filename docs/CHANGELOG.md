@@ -2,6 +2,24 @@
 
 All notable changes to XENO STORE. The version lives in `VERSION`; releases are tagged `v<VERSION>`.
 
+## 1.2.1 — 2026-10-14
+
+### Fixes
+- **The app now installs.** The 1.2.0 `PPSA99500.ffpkg` could never be read by the PS5: the image was built with a 4096-byte sector setting that made the console look for every file in the wrong place, so ShadowMountPlus could not open it (however it was copied). The image is now built the way the console reads it, the app's `param.json` uses the PS5 layout (category 0, content version `01.002.001`), and the build checks the image the same way the console does before it is released. Delete the old `PPSA99500.ffpkg` from `/data/homebrew/` and restart the console (ShadowMountPlus stops retrying a file after three failed tries) before installing the new one.
+- **The app's launcher is now a real PS5 app.** The Games-row tile's `eboot.bin` is built like a known-working PS5 app (a native, dynamically linked executable with its `sce_module/libc.prx`) instead of a bare payload-style binary, using the open-source ps5-native-app-boilerplate toolchain (credited in `app/native-launcher/NOTICE`). It never starts a second store when one is already running, and closes itself once the store is open.
+- **Downloads on PS5 are sturdier**: a paused or removed download no longer leaves a connection thread behind that could crash the store; a connection stuck in the console's network library is cancelled within about a tenth of a second; the console's network memory is sized for every download the settings allow, and downloads queue fairly for it instead of failing.
+- **Updates can't lock you out**: if a downloaded update doesn't come up after the hand-over, the next start sets it aside and runs the built-in version; an update that stopped right after starting is set aside too, and an old leftover download is no longer offered as an update.
+- **ShadowMountPlus is detected properly** (the check no longer depends on an API that older versions don't have), and redirects are followed by the store itself so the real download host is always checked.
+- **The store no longer stops a few seconds after "ready" on PS5** (seen on firmware 12.40). Every thread in the store now starts with a proper stack instead of the console's small default, which the setup check and busy requests could run past.
+- **Crash reports and safe start**: if the store ever stops by itself, it writes a short report. The next start says so in a notification, shows the report in **Settings → Diagnostics** (what was running, the network step, stack use) and starts safe: the automatic catalog, update and feed checks stay off for that session, and everything you start yourself still works.
+
+### Apps
+- **One ELF**: `xeno-store.elf` is the only payload now (`xeno-store-browser.elf` is gone). It opens the store on the TV when it starts; turn that off with **Settings → General → Open XENO STORE when it starts**.
+- **The store installs its own app**: **Settings → Updates → Install the XENO STORE app** puts the XENO STORE app in your Games row. Copying `PPSA99500.ffpkg` to `/data/homebrew/` yourself still works.
+- **Smaller app**: the `.ffpkg` keeps only 8 MiB of spare room, so `PPSA99500.ffpkg` is about 17 MiB instead of 81 MiB.
+- **The app picks up updates**: an update downloaded in **Settings → Updates** is the version the app starts from then on.
+- A much simpler release: `PPSA99500.ffpkg` (the app), `xeno-store.elf` (the store), one XENO STORE Desktop download per OS (Windows, Mac — universal for Apple silicon and Intel — and Linux) and one `SHA256SUMS`. The second browser ELF, `XENO-STORE.pkg`, the homebrew zip, the per-file `.sha256` files, `BUILD-INFO.json` and the catalog copy are gone.
+
 ## 1.2.0 — 2026-10-14
 
 ### Apps

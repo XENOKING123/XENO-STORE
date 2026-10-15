@@ -105,7 +105,7 @@ static void parse_content_disposition(xhttp_resp *r, const char *v) {
 }
 
 void xhttp_resp_header(xhttp_resp *r, const char *name, size_t nlen, const char *value, size_t vlen) {
-  char n[64], v[1100];
+  char n[64], v[sizeof r->location];   /* Location is the longest value kept */
   if (nlen >= sizeof n) return;
   memcpy(n, name, nlen);
   n[nlen] = 0;

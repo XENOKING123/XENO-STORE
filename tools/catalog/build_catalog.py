@@ -7,7 +7,8 @@
     build_catalog.py --validate           validate catalog/xeno-catalog.json and exit non-zero on errors
     options: --limit N (debug: cap games per source), --out PATH, --sources a,b, --quiet,
              --enrich-budget N (seconds for the online Steam / PS Store passes, §17.1),
-             --no-seeds (skip the §17.9 offline enrichment)
+             --no-seeds (skip the §17.9 offline enrichment),
+             --force (--offline: replace a richer online-synced catalog, see offline_overwrite_guard)
 
 Writes catalog/xeno-catalog.json (compact, deterministic), catalog/revision.json
 (revision bumps only when content changed) and catalog/report.json (per-source
@@ -236,6 +237,34 @@ def print_summary(runs: list[SourceRun], report: dict, out_path: Path, size: int
         f"({'changed' if report['changed'] else 'unchanged'}), {fmt_size(size)}, {report['nodes']} JSON nodes -> {out_path}")
 
 
+def offline_overwrite_guard(out_path: Path, report_path: Path, new_games: int) -> str:
+    """Why an --offline build must leave ``out_path`` alone ("" = go ahead and write it).
+
+    catalog-sync.yml commits the --online catalog, which holds every live source; the
+    snapshots hold only part of it. When report.json says the current file came from an
+    online build and that file has more games than this offline result, writing would
+    silently shrink the catalog the console downloads and every release embeds. Only a
+    readable, valid file whose revision matches the report is protected, so a broken or
+    hand-edited file is still rebuilt.
+    """
+    try:
+        rep = load_json(report_path)
+        cur = load_json(out_path)
+    except (OSError, ValueError):
+        return ""
+    if not isinstance(rep, dict) or not isinstance(cur, dict) or rep.get("mode") != "online":
+        return ""
+    games = cur.get("games")
+    if not isinstance(games, list) or rep.get("revision") != cur.get("revision"):
+        return ""          # the report describes some other file
+    if len(games) <= new_games or validate_catalog(cur):
+        return ""
+    return (f"offline build NOT written: {out_path} is the online sync's catalog (revision {cur.get('revision')}, "
+            f"{len(games)} games, generated {rep.get('generatedAt') or 'at an unknown time'}) and this --offline "
+            f"build has only {new_games} games. Kept it, its revision.json and report.json unchanged; "
+            f"pass --force to replace it anyway.")
+
+
 def build(args: argparse.Namespace, log) -> int:
     mode = "online" if args.online else "offline"
     out_path = Path(args.out).resolve() if args.out else DEFAULT_OUT
@@ -313,6 +342,11 @@ def build(args: argparse.Namespace, log) -> int:
     if nodes > MAX_NODES:
         log(f"TOO LARGE: {nodes} JSON nodes exceeds the {MAX_NODES} budget the console parser is sized for")
         return 2
+    if mode == "offline" and not args.force:
+        reason = offline_overwrite_guard(out_path, report_path, len(doc["games"]))
+        if reason:
+            log(reason)
+            return 0
     size = write_json_atomic(out_path, wire, compact=True)
     verified = sum(1 for g in doc["games"] for r in g["releases"] if r["verifiedAt"])
     write_json_atomic(revision_path, {
@@ -420,6 +454,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--enrich-budget", type=float, default=240.0, metavar="SECONDS",
                     help="online only: seconds for the Steam + PS Store enrichment passes (0 = cache only)")
     ap.add_argument("--no-seeds", action="store_true", help="skip the offline seeds enrichment (titles-seed.zip, covers.json)")
+    ap.add_argument("--force", action="store_true",
+                    help="--offline only: write even when report.json says the current catalog is a richer online build")
     args = ap.parse_args(argv)
 
     messages: list[str] = []

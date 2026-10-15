@@ -23,9 +23,18 @@ def fixture_json(name: str) -> Any:
     return json.loads(fixture(name))
 
 
+class Resp:
+    """A canned body plus response headers (``X-WP-Total`` …) for a ``FakeHttp`` route."""
+
+    def __init__(self, body: Any, headers: dict[str, Any] | None = None):
+        self.body = body
+        self.headers = {str(k).lower(): str(v) for k, v in (headers or {}).items()}
+
+
 class FakeHttp:
-    """``netutil.Http`` stand-in: ``routes`` maps a URL regex to a body (str/bytes/dict/list), a callable
-    ``(url) -> body`` or an int HTTP status (raised as HttpError). Unknown URLs are 404."""
+    """``netutil.Http`` stand-in: ``routes`` maps a URL regex to a body (str/bytes/dict/list), a ``Resp``
+    (body + headers), a callable ``(url) -> body`` or an int HTTP status (raised as HttpError). Unknown URLs
+    are 404."""
 
     def __init__(self, routes: list[tuple[str, Any]] | None = None, *, default_status: int = 404):
         self.routes = [(re.compile(rx), body) for rx, body in (routes or [])]
@@ -53,13 +62,26 @@ class FakeHttp:
         self.failures += 1
         raise HttpError(url, self.default_status, f"HTTP {self.default_status}")
 
-    def get(self, url: str, **kw: Any) -> bytes:
-        body = self._resolve(url)
+    @staticmethod
+    def _encode(body: Any) -> bytes:
         if isinstance(body, bytes):
             return body
         if isinstance(body, (dict, list)):
             return json.dumps(body).encode("utf-8")
         return str(body).encode("utf-8")
+
+    def get_with_headers(self, url: str, **kw: Any) -> tuple[bytes, dict[str, str]]:
+        body = self._resolve(url)
+        if isinstance(body, Resp):
+            return self._encode(body.body), dict(body.headers)
+        return self._encode(body), {}
+
+    def get(self, url: str, **kw: Any) -> bytes:
+        return self.get_with_headers(url, **kw)[0]
+
+    def json_with_headers(self, url: str, **kw: Any) -> tuple[Any, dict[str, str]]:
+        raw, headers = self.get_with_headers(url, **kw)
+        return json.loads(raw.decode("utf-8", "replace")), headers
 
     def text(self, url: str, **kw: Any) -> str:
         return self.get(url, **kw).decode("utf-8", "replace")

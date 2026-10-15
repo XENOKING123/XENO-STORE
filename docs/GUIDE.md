@@ -1,6 +1,6 @@
 # XENO STORE — User guide
 
-Everything you need to install, use and troubleshoot XENO STORE 1.0 on a PS5.
+Everything you need to install, use and troubleshoot XENO STORE on a PS5.
 Features that only work on real hardware are marked **(console only)**; the host build that
 runs on a PC exists for tests and simulates them.
 
@@ -17,9 +17,9 @@ Contents: [Requirements](#requirements) · [Install](#install) · [First run](#f
 | Need | Notes |
 |:--|:--|
 | Jailbroken PS5 | Any exploit chain that gives you an ELF loader on port **9021** (etaHEN, ps5-payload-dev `elfldr`, XENO TOOL Payloads). |
-| **ShadowMountPlus** (optional) | Mounts exFAT / FFPFSC / FFPKG dumps saved under `<drive>/homebrew/` and shows them on the home screen. XENO STORE talks to its API on `127.0.0.1:10101` after every image download and from the readiness checklist. Without it, image dumps are downloaded but not mounted. |
-| **kstuff** (optional) | Kernel patches that let fake packages (FPKG) run and let the save engine mount saves through the native API. Firmware support follows the kstuff project — read its README for your firmware. |
-| **etaHEN** (optional) | Provides a DPI package installer on `127.0.0.1:12800` (used as the second install fallback), its own homebrew launcher (reads `XENO-STORE.zip`), and fake-package support on supported firmware. |
+| **ShadowMountPlus** (optional) | Mounts exFAT / FFPFSC / FFPKG dumps saved under `<drive>/homebrew/` and shows them on the home screen — the XENO STORE app (`PPSA99500.ffpkg`) included. XENO STORE talks to its API on `127.0.0.1:10101` after every image download and from the readiness checklist. Without it, image dumps are downloaded but not mounted. |
+| **kstuff** (optional) | Kernel patches that let fake packages (FPKG) and `.ffpkg` apps such as the XENO STORE app run, and let the save engine mount saves through the native API. Firmware support follows the kstuff project — read its README for your firmware. |
+| **etaHEN** (optional) | Provides a DPI package installer on `127.0.0.1:12800` (used as the second install fallback) and fake-package support on supported firmware. |
 | Drive space | The file size + a 256 MB reserve on the chosen drive. PS5 games range from 5 GB to 150 GB. |
 | Network | The console must reach the hosts in `catalog/sources.json` and `raw.githubusercontent.com` for catalog sync. Phones must be on the same Wi-Fi as the console to pair. |
 
@@ -27,35 +27,34 @@ Contents: [Requirements](#requirements) · [Install](#install) · [First run](#f
 
 ## Install
 
-### A. Send the ELF (any loader on port 9021)
+Every release has three things: `xeno-store.elf` (the store), `PPSA99500.ffpkg` (the XENO STORE app for the Games row) and XENO STORE Desktop for your PC. `SHA256SUMS` lists the checksum of every file.
 
-1. Download `xeno-store-browser.elf` (opens the PS5 browser for you) or `xeno-store.elf` (server only) from the **v1.0.0** release.
-2. Send it: **XENO TOOL → Payloads → Send file**, `nc -q0 <ps5-ip> 9021 < xeno-store-browser.elf`, or etaHEN's payload menu.
-3. A toast says **XENO STORE ready · http://192.168.x.x:9095**. The browser variant opens that page by itself; otherwise open it in the PS5 browser, or on your phone.
+### A. First time: send the ELF
+
+1. Send `xeno-store.elf` to your ELF loader / Payload Manager (port **9021**): **XENO TOOL → Payloads → Send file**, `nc -q0 <ps5-ip> 9021 < xeno-store.elf`, or etaHEN's payload menu.
+2. A toast says **XENO STORE ready · http://192.168.x.x:9095** and the store opens on the TV. (Settings → General → *Open XENO STORE when it starts* turns that off; then open the address in the PS5 browser or on your phone.)
+3. Open **Settings → Updates → Install the XENO STORE app**. It puts the app in place by itself, and **XENO STORE** appears under **Games**.
+   Rather do it by hand? Copy `PPSA99500.ffpkg` to `/data/homebrew/` (XENO TOOL → Files, FTP or USB) and ShadowMountPlus mounts it.
 4. If the toast says **XENO STORE already running on :9095**, a copy is already up — just open the address.
 
-### B. Home-screen app (etaHEN / itemzflow)
+The app needs kstuff + ShadowMountPlus, like every `.ffpkg` app.
 
-1. Download `XENO-STORE.zip`.
-2. Extract it so the folder is exactly `/data/homebrew/XENO-STORE/` containing `eboot.bin`, `homebrew.json` and `sce_sys/` (XENO TOOL → Files, FTP, or etaHEN's file manager). Every entry in the zip carries mode `0777`, so it runs no matter which tool extracts it.
-3. Launch **XENO STORE** from your homebrew launcher. It starts the server and opens the browser.
+### B. After that: the XENO STORE tile
 
-### C. Games-row app (`.pkg`)
+Open **XENO STORE** from its tile under **Games**. The app's launcher (`eboot.bin`) checks `:9095`, starts the store inside the app through the ELF loader when it is not running yet, then opens it full screen. Updates come from **Settings → Updates** ([Updating](#updating)); the app starts the newest downloaded version by itself.
 
-`XENO-STORE.pkg` installs XENO STORE as a full application in the PS5 **Games home row** (title id `PPSA99500`), rather than the homebrew launcher — the closest thing to a stock-store tile.
+The app is a UFS2 image (title id `PPSA99500`, 512×512 XENO icon) built by `tools/make_ffpkg.py` with the layout ShadowMountPlus documents and checked file by file by `tools/ufs2_check.py`.
 
-1. Download `XENO-STORE.pkg` from the release, or build it yourself with `make ffpkg` (see Build from source).
-2. Install it with your package installer — from a USB drive, or by sending it to the DPI daemon (`:9040`) / etaHEN DPI (`:12800`).
-3. Launch **XENO STORE** from the Games row. Its app-launcher `eboot.bin` probes `:9095`, starts the store through the ELF loader if it is not already up, then opens the PS5 browser to it.
-
-The package is a debug `.pkg` staged by `tools/make_ffpkg.py` around the proven `fpkg_build` engine (titleId `PPSA99500`, 512×512 XENO icon) and verified before it is written. It needs the same FPKG-capable firmware as any fake package (11.60 or lower as of October 2026); on newer firmware, use route A or B, which work wherever an ELF loader does.
-
-### D. Payload Manager (auto-start on boot)
+### C. Payload Manager (auto-start on boot)
 
 Add `https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/payloads.json` as a source, pick **XENO STORE** and enable auto-start.
-CI writes the sha256 of every release into that file, so the manager verifies the download. Settings → Setup shows the same URL as a QR code.
+CI writes the sha256 of every released ELF into that file, so the manager verifies the download. Settings → Setup shows the same URL as a QR code.
 
-All four routes run the same store on `:9095`, sharing one settings file, queue and save library — mix and match freely.
+### D. PC or phone
+
+**XENO STORE Desktop** (Windows, macOS, Linux) finds your PS5 (**Search my network**, or type its IP), opens the whole store in your PC browser and sends files from your PC to the PS5's download queue. Any phone or PC browser can open `http://<ps5-ip>:9095` or `http://xeno.local:9095` too. Both start with **Link to your PS5**: press **Show code on my PS5** and type the code from the PS5 notification ([Phone companion](#phone-companion)).
+
+Every route runs the same store on `:9095`, sharing one settings file, queue and save library.
 
 ---
 
@@ -266,7 +265,7 @@ The literal code is only ever returned to the console's own browser (loopback), 
 
 ## Updating
 
-Settings → **Updates** → **Check** reads `updates/payloads.json` (fallback: the GitHub release API + `SHA256SUMS`). **Install update** downloads the new `xeno-store.elf` to `/data/xeno-store/xeno-store.elf.new`, verifies the sha256 and renames it into place. Then **Stop XENO STORE** and send the staged ELF with your loader, or reboot when Payload Manager auto-starts the store from its source (it downloads the new release itself). The catalog and the feeds update on their own every 6 hours and never need an ELF update.
+Settings → **Updates** → **Check** reads `updates/payloads.json` (fallback: the GitHub release API + `SHA256SUMS`). **Install update** downloads the new `xeno-store.elf` to `/data/xeno-store/xeno-store.elf.new`, verifies the sha256 and renames it to `/data/xeno-store/xeno-store.elf` (its version is written next to it). **Restart now** hands it to the ELF loader right away. Otherwise the next start picks it up: whichever copy starts — the XENO STORE app, Payload Manager or an ELF you send — hands over to the newer downloaded version before it opens. If that version stopped right after its last start, the older copy keeps running instead, so the console stays usable. The catalog and the feeds update on their own every 6 hours and never need an ELF update.
 
 ---
 
@@ -290,6 +289,7 @@ The store deletes exactly those paths (`POST /api/uninstall` returns the list), 
 | Symptom | Cause | Fix |
 |:--|:--|:--|
 | Toast **XENO STORE already running on :9095** | A copy is still up | Open the address. Use Settings → Updates → *Stop XENO STORE* before sending a new ELF. |
+| Toast **XENO STORE restarted after a problem** | The store stopped by itself last time and wrote a crash report | Settings → Diagnostics shows it (what was running, the network step, stack use); copy it into an issue. That session starts safe: the automatic catalog, update and feed checks stay off, everything you start still works. |
 | **Downloads unavailable on this firmware** banner | `libSceHttp` / `libSceSsl` / `libSceNet` did not load | Reboot and send again; report your firmware with Diagnostics → log in an issue. Browsing still works. |
 | **Console offline — browsing the saved catalog** | No route to the internet | Check the PS5 network settings; the catalog and the queue persist. |
 | Job failed: **provider_page** | Host returned HTML | Open the page in the browser, finish the check, *Enter file link*. |
@@ -317,8 +317,8 @@ The store deletes exactly those paths (`POST /api/uninstall` returns the list), 
 
 CI builds the ELF on every push (`make ps5`), but a console is needed to verify the Sony calls. Before a release the owner walks this list on real hardware and notes the firmware:
 
-1. Send `xeno-store-browser.elf`; the toast and the browser appear; `GET /api/status` shows `platform:"ps5"`, the firmware and `downloadsAvailable:true`.
-2. `XENO-STORE.zip` under `/data/homebrew/` launches from etaHEN / itemzflow with the XENO icon.
+1. Send `xeno-store.elf`; the toast and the browser appear; `GET /api/status` shows `platform:"ps5"`, the firmware and `downloadsAvailable:true`. After a few minutes Settings → Diagnostics still shows no crash report.
+2. Settings → Updates → **Install the XENO STORE app**: the XENO STORE tile appears under Games with the XENO icon; pressing it opens the store full screen (and starts it first when it was not running).
 3. Download a small verified Archive.org release with 8 connections; pause, close the browser, reopen, resume; hash verifies; toast arrives with the icon.
 4. Put the console in rest mode mid-download; wake it; the job goes `connecting` → `downloading` without a failed attempt.
 5. PKG auto-install (native), then with the native path blocked, the DPI fallback; `/user/app/<id>` appears; **Play** launches the title.

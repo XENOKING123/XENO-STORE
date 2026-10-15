@@ -328,7 +328,7 @@
     "showQr": "QR を表示",
     "noChecks": "本体はチェックを報告しませんでした。",
     "check": {
-      "shadowmount": "ShadowMountPlus API",
+      "shadowmount": "ShadowMountPlus",
       "dpi": "ダイレクトパッケージインストーラー（DPI）",
       "etahen": "etaHEN DPI",
       "internet": "インターネット到達性",

@@ -328,7 +328,7 @@
     "showQr": "QR'ı göster",
     "noChecks": "Konsol hiç denetim bildirmedi.",
     "check": {
-      "shadowmount": "ShadowMountPlus API",
+      "shadowmount": "ShadowMountPlus",
       "dpi": "Doğrudan paket kurucu (DPI)",
       "etahen": "etaHEN DPI",
       "internet": "İnternet erişilebilirliği",

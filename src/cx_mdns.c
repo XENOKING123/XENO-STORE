@@ -7,6 +7,7 @@
 #include "settings.h"
 #include "sys.h"
 #include "util.h"
+#include "xthread.h"
 
 #include <arpa/inet.h>
 #include <errno.h>
@@ -235,7 +236,7 @@ static void start(void) {
   sock_fd = fd;
   stop_flag = 0;
   last_announce = 0;
-  if (pthread_create(&th, NULL, responder, NULL) != 0) { set_error("thread: %s", errno); close(fd); sock_fd = -1; return; }
+  if (xthread_start(&th, "mdns", responder, NULL, 0, 0) != 0) { set_error("thread: %s", errno); close(fd); sock_fd = -1; return; }
   running = 1;
   pthread_mutex_lock(&mdns_mu);
   last_error[0] = 0;

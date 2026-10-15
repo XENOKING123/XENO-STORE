@@ -9,6 +9,7 @@
  * symbol resolves) from the housekeeping thread.
  */
 #include "install.h"
+#include "cx_common.h"
 #include "http_client.h"
 #include "log.h"
 #include "storage.h"
@@ -29,6 +30,7 @@
 
 #ifndef XENO_HOST
 #include <dlfcn.h>
+#include <sys/sysctl.h>
 /* ---- AppInstUtil ABI (copied from payload/dpi/sceAppInstUtil.h) ---------- */
 #define PLAYGOSCENARIOID_SIZE 3
 #define CONTENTID_SIZE 0x30
@@ -294,28 +296,79 @@ int install_poll(const char *titleId, const char *contentId, time_t startedAt, c
 
 /* ---- ShadowMount -------------------------------------------------------- */
 
-int install_shadowmount_scan(char *status, size_t cap) {
-  xhttp_req r;
-  memset(&r, 0, sizeof r);
-  r.method = "POST";
-  r.url = "http://127.0.0.1:10101/api/v1/scan";
-  r.range_start = r.range_end = -1;
-  r.connect_timeout_ms = 2000;
-  r.recv_timeout_ms = 5000;
-  r.body = "{}";
-  r.body_len = 2;
-  r.extra_headers = "Content-Type: application/json\r\n";
-  xhttp_resp resp;
-  size_t len;
-  char *body = xhttp_fetch(&r, &resp, 64 << 10, &len);
-  if (!body) {
-    xsnprintf(status, cap, "ShadowMount not reachable (%s)", xhttp_last_error());
-    return 0;
+#define SM_API_PORT 10101
+
+#ifndef XENO_HOST
+/* ShadowMountPlus names its main thread "shadowmountplus.elf" and finds a
+ * running copy of itself by that name in kern.proc.proc (its main.c
+ * find_pid_by_name); 447 is the name offset it and the SDK samples read. */
+#define SM_THREAD_NAME "shadowmountplus.elf"
+#define KINFO_TDNAME_OFFSET 447
+#endif
+
+int install_shadowmount_running(void) {
+#ifdef XENO_HOST
+  const char *e = getenv("XENO_HOST_SHADOWMOUNT");   /* tests: "running" / "stopped" */
+  if (!e || !*e) return -1;
+  return strcmp(e, "running") == 0;
+#else
+  int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PROC, 0};
+  size_t size = 0;
+  if (sysctl(mib, 4, NULL, &size, NULL, 0) != 0 || size == 0) return -1;
+  size += size / 4;   /* processes started between the two calls */
+  unsigned char *buf = malloc(size);
+  if (!buf) return -1;
+  if (sysctl(mib, 4, buf, &size, NULL, 0) != 0) { free(buf); return -1; }
+  int found = 0, syscore = 0;
+  for (size_t off = 0; off + sizeof(int) <= size;) {
+    int ks;
+    memcpy(&ks, buf + off, sizeof ks);
+    if (ks <= KINFO_TDNAME_OFFSET || (size_t)ks > size - off) break;
+    const char *name = (const char *)buf + off + KINFO_TDNAME_OFFSET;
+    size_t ncap = (size_t)ks - KINFO_TDNAME_OFFSET;
+    if (strnlen(name, ncap) < ncap) {
+      if (strcmp(name, SM_THREAD_NAME) == 0) found = 1;
+      else if (strcmp(name, "SceSysCore.elf") == 0) syscore = 1;
+    }
+    off += (size_t)ks;
   }
-  char snippet[96];
-  xstrlcpy(snippet, body, sizeof snippet);
-  util_trim(snippet);
-  xsnprintf(status, cap, "HTTP %d %s", resp.status, snippet);
-  free(body);
-  return 1;
+  free(buf);
+  /* a list without SceSysCore is not the whole process table */
+  return found ? 1 : syscore ? 0 : -1;
+#endif
+}
+
+int install_shadowmount_scan(char *status, size_t cap) {
+  /* a plain connect first: nothing listens before 1.7 (or when it is not
+   * running), and that answer must not take an HTTP transport slot */
+  if (cx_tcp_probe(SM_API_PORT, 400)) {
+    char url[64];
+    xsnprintf(url, sizeof url, "http://127.0.0.1:%d/api/v1/scan", SM_API_PORT);
+    xhttp_req r;
+    memset(&r, 0, sizeof r);
+    r.method = "POST";
+    r.url = url;
+    r.range_start = r.range_end = -1;
+    r.connect_timeout_ms = 2000;
+    r.recv_timeout_ms = 5000;
+    r.body = "{}";
+    r.body_len = 2;
+    r.extra_headers = "Content-Type: application/json\r\n";
+    xhttp_resp resp;
+    size_t len;
+    char *body = xhttp_fetch(&r, &resp, 64 << 10, &len);
+    if (body) {
+      char snippet[96];
+      xstrlcpy(snippet, body, sizeof snippet);
+      util_trim(snippet);
+      xsnprintf(status, cap, "HTTP %d %s", resp.status, snippet);
+      free(body);
+      return 1;
+    }
+  }
+  int run = install_shadowmount_running();
+  if (run == 1) xsnprintf(status, cap, "ShadowMountPlus is running (no scan API before 1.7); it picks new files up on its own within about a minute");
+  else if (run == 0) xsnprintf(status, cap, "ShadowMountPlus is not running");
+  else xsnprintf(status, cap, "ShadowMountPlus API not answering on :%d; if it runs, it picks new files up on its own within about a minute", SM_API_PORT);
+  return run == 1;
 }

@@ -19,12 +19,27 @@ void update_status_json(jw *w);
  * (when the feed provides one), renames to <data>/xeno-store.elf. */
 int update_apply(char *out_path, size_t cap, char *err, size_t errcap);
 
-/* 1 when a downloaded update waits in <data>/xeno-store.elf; fills its path. */
+/* 1 when a downloaded update newer than this build waits in
+ * <data>/xeno-store.elf (its version recorded in xeno-store.elf.version);
+ * fills its path. */
 int update_staged(char *path, size_t cap);
 
-/* Called after the server and the downloads have shut down: sends the staged
- * ELF to the local ELF loader so the new version starts on the freed port.
- * 0 sent, -1 nothing staged or the loader did not take it (err filled). */
+/* Called after the server and the downloads have shut down: writes
+ * <data>/handoff.pending and sends the staged ELF to the local ELF loader so
+ * the new version starts on the freed port. 0 sent, -1 nothing staged or the
+ * loader did not take it (err filled, marker removed). */
 int update_relaunch(int loader_port, char *err, size_t errcap);
+
+/* At start, before the server binds: when a downloaded update newer than this
+ * build waits in the data dir, hand it to the ELF loader and return 1 so this
+ * older copy exits. 0 = keep running: nothing newer (a stale ELF is renamed
+ * to *.old), the loader refused, this copy was just handed the ELF, another
+ * copy of this build handed it off moments ago, or the update stopped right
+ * after its last start / never came up after the last hand-off — then it is
+ * renamed to *.failed and the built-in version keeps the console usable. */
+int update_handoff_newer(int loader_port);
+
+/* Clears the hand-off marker once this copy's server is up. */
+void update_handoff_done(void);
 
 #endif

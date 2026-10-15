@@ -70,5 +70,47 @@
   },
   "discover4": {
     "topPs5": "Meilleurs jeux PS5"
+  },
+  "diag2": {
+    "crashTitle": "Dernier problème",
+    "crashLastRun": "XENO STORE s'est arrêté de façon inattendue la dernière fois et a redémarré tout seul. Si cela se reproduit, copiez ce rapport et envoyez-le.",
+    "crashOlder": "Une session précédente s'est arrêtée avec ce problème.",
+    "none": "Aucun problème enregistré.",
+    "stack": "Pile des threads",
+    "safeMode": "Démarrage sécurisé : les vérifications automatiques en arrière-plan sont suspendues pour cette session."
+  },
+  "gameapp": {
+    "title": "Appli XENO STORE",
+    "sub": "La vignette de l'appli dans Jeux. La boutique la télécharge dans /data/homebrew et ShadowMountPlus ajoute la vignette — sans FTP.",
+    "group": "Appli de la rangée Jeux",
+    "installed": "Installée",
+    "notInstalled": "Non installée",
+    "installing": "Installation…",
+    "install": "Installer l'appli",
+    "reinstall": "Réinstaller / mettre à jour",
+    "cancel": "Annuler",
+    "cancelled": "Installation annulée",
+    "version": "Version {v}",
+    "already": "L'appli est déjà en cours d'installation",
+    "checking": "Recherche de la dernière version…",
+    "verifying": "Vérification du téléchargement…",
+    "registering": "Ajout de la vignette…",
+    "jobTitle": "Appli XENO STORE",
+    "doneTitle": "Appli XENO STORE installée",
+    "doneDesc": "La vignette XENO STORE apparaît dans Jeux d'ici une minute environ (ShadowMountPlus relance son analyse tout seul). Sinon, redémarrez la console avec votre jailbreak et ShadowMountPlus chargés.",
+    "failedTitle": "Impossible d'installer l'appli",
+    "hintTitle": "Ajoutez XENO STORE à votre rangée Jeux",
+    "hintText": "Installez l'appli une fois et ouvrez la boutique depuis sa propre vignette — sans FTP ni adresse dans le navigateur.",
+    "notNow": "Pas maintenant",
+    "openOnStart": "Ouvrir XENO STORE à son démarrage",
+    "openOnStartHint": "Ouvre la boutique sur la TV à chaque démarrage. Désactivez-le si la boutique démarre automatiquement au lancement de la console.",
+    "err": {
+      "sha256_mismatch": "Le téléchargement ne correspond pas à sa somme de contrôle — rien n'a été installé. Réessayez.",
+      "sha256_unavailable": "La version n'a pas encore de somme de contrôle — réessayez dans quelques minutes.",
+      "no_space": "Espace libre insuffisant sur le stockage interne.",
+      "not_package": "Le fichier téléchargé n'est pas une image d'appli.",
+      "too_large": "Le téléchargement est plus volumineux que prévu — rien n'a été installé.",
+      "download_failed": "Échec du téléchargement. Vérifiez la connexion internet de la console et réessayez."
+    }
   }
 }

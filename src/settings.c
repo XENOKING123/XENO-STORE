@@ -58,6 +58,7 @@ static void settings_defaults(settings_t *s) {
   xstrlcpy(s->cardSize, "m", sizeof s->cardSize);
   xstrlcpy(s->designPack, "broadcast", sizeof s->designPack);
   s->reduceMotion = 0; s->sounds = 1; s->hints = 1; s->showPs4 = 1; s->adultFilter = 0;
+  s->openOnStart = 1;
   xstrlcpy(s->defaultRoot, "/data", sizeof s->defaultRoot);
   s->connections = 8; s->concurrentJobs = 1; s->maxBytesPerSec = 0;
   s->verifyHashes = 1; s->autoInstallPkg = 1; s->shadowMountScan = 1; s->keepAwake = 1;
@@ -112,6 +113,7 @@ static void write_settings(jw *w, const settings_t *s, int mask) {
   jw_key(w, "general"); jw_obj_begin(w);
   jw_kv_str(w, "language", s->language); jw_kv_str(w, "theme", s->theme); jw_kv_str(w, "cardSize", s->cardSize); jw_kv_str(w, "designPack", s->designPack);
   jw_kv_bool(w, "reduceMotion", s->reduceMotion); jw_kv_bool(w, "sounds", s->sounds); jw_kv_bool(w, "hints", s->hints);
+  jw_kv_bool(w, "openOnStart", s->openOnStart);
   jw_kv_bool(w, "showPs4", s->showPs4); jw_kv_bool(w, "adultFilter", s->adultFilter);
   jw_kv_bool(w, "largeText", s->largeText); jw_kv_bool(w, "highContrast", s->highContrast);
   jw_kv_bool(w, "safeMode", s->safeMode); jw_kv_bool(w, "screensaver", s->screensaver);
@@ -308,6 +310,7 @@ static int merge_into(settings_t *s, jv o, char *err, size_t errcap) {
     merge_str(g, "cardSize", s->cardSize, sizeof s->cardSize);
     merge_str(g, "designPack", s->designPack, sizeof s->designPack);
     merge_bool(g, "reduceMotion", &s->reduceMotion); merge_bool(g, "sounds", &s->sounds);
+    merge_bool(g, "openOnStart", &s->openOnStart);
     merge_bool(g, "hints", &s->hints); merge_bool(g, "showPs4", &s->showPs4); merge_bool(g, "adultFilter", &s->adultFilter);
     merge_bool(g, "largeText", &s->largeText); merge_bool(g, "highContrast", &s->highContrast);
     merge_bool(g, "safeMode", &s->safeMode); merge_bool(g, "screensaver", &s->screensaver);
@@ -643,6 +646,13 @@ void settings_get(settings_t *out) {
   pthread_mutex_lock(&settings_mu);
   *out = S;
   pthread_mutex_unlock(&settings_mu);
+}
+
+int settings_open_on_start(void) {
+  pthread_mutex_lock(&settings_mu);
+  int v = S.openOnStart;
+  pthread_mutex_unlock(&settings_mu);
+  return v;
 }
 
 int settings_merge(jv obj, char *err, size_t errcap) {

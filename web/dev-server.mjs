@@ -444,6 +444,9 @@ route('GET', /^\/api\/status$/, () => ({
 }));
 const bump = (v) => v.replace(/(\d+)$/, (m) => String(Number(m) + 1));
 route('GET', /^\/api\/log$/, (q) => ({ ok: true, lines: logLines.slice(-Math.max(1, Math.min(400, Number(q.lines) || 200))) }));
+route('GET', /^\/api\/diagnostics$/, () => ({ ok: true, version: VERSION, build: 'mock', platform: 'ps5', fw: '12.40', transport: 'sceHttp', uptime: 120, safeMode: false,
+  threads: { platformDefaultStack: 65536, storeStack: 1048576 },
+  crash: { present: true, lastRun: false, uptime: 9, report: 'XENO STORE 1.2.0 stopped: SIGSEGV (bad memory access)\nthread: setup-check\nactivity: setup check: internet\nnetwork: sceHttp SendRequest raw.githubusercontent.com\nstack: 60 KiB used of 64 KiB (stack overflow)\nuptime: 9 s\n' } }));
 route('POST', /^\/api\/system\/toast$/, (q, body) => { log('info', `toast: ${body.text || ''}`); return { ok: true }; });
 route('POST', /^\/api\/system\/stop$/, () => { log('warn', 'stop requested (mock keeps running)'); return { ok: true }; });
 route('GET', /^\/api\/update\/check$/, () => { settings.updates.lastCheck = now(); return { ok: true, current: VERSION, latest: UPDATE_AVAILABLE ? bump(VERSION) : VERSION, url: `https://github.com/XENOKING123/XENO-STORE/releases/download/v${bump(VERSION)}/xeno-store.elf`, sha256: 'c0ffee'.repeat(10) + 'abcd', notes: UPDATE_AVAILABLE ? 'Faster segmented downloads, new themes, bug fixes.' : '', available: UPDATE_AVAILABLE }; });

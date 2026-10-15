@@ -11,6 +11,7 @@
 #include "http_client.h"
 #include "log.h"
 #include "util.h"
+#include "xthread.h"
 
 #include <pthread.h>
 #include <stdlib.h>
@@ -97,11 +98,7 @@ int dlx_turbo_race(const char *const *urls, int n, int insecure_tls, volatile in
     px[i].stop = &stop;
     px[i].out = &out->tested[i];
     xstrlcpy(out->tested[i].url, urls[i], sizeof out->tested[i].url);
-    pthread_attr_t attr;
-    pthread_attr_init(&attr);
-    pthread_attr_setstacksize(&attr, 256 << 10);
-    started[i] = pthread_create(&th[i], &attr, probe_thread, &px[i]) == 0;
-    pthread_attr_destroy(&attr);
+    started[i] = xthread_start(&th[i], "turbo-probe", probe_thread, &px[i], XT_STACK_SMALL, 0) == 0;
     if (!started[i]) { out->tested[i].status = 0; px[i].finished = 1; }
   }
   int64_t t0 = util_now_ms(), first_done_ms = 0;

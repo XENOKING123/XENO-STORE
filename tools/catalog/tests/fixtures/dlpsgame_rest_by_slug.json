@@ -1,0 +1,44 @@
+[
+ {
+  "id": 104,
+  "date": "2026-05-30T00:00:00",
+  "link": "https://dlpsgame.com/elden-ring-nightreign-ps5/",
+  "title": {
+   "rendered": "Elden Ring Nightreign PS5"
+  },
+  "content": {
+   "rendered": "<h3>PPSA17418 - EUR (v1.01)</h3><div class=\"xeno-links\" data-payload=\"PHA+R2FtZSA6IDxhIGhyZWY9Imh0dHBzOi8vZ29maWxlLmlvL2QvbmlnaHRyZWlnbiI+R29GaWxlPC9hPjwvcD4=\"></div>"
+  },
+  "categories": [
+   70002
+  ],
+  "_embedded": {
+   "wp:featuredmedia": [
+    {
+     "source_url": "https://dlpsgame.com/wp-content/uploads/2026/05/nightreign.jpg",
+     "media_details": {
+      "sizes": {
+       "medium": {
+        "source_url": "https://dlpsgame.com/wp-content/uploads/2026/05/nightreign-300x300.jpg"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ {
+  "id": 107,
+  "date": "2023-01-01T00:00:00",
+  "link": "https://dlpsgame.com/ratchet-clank-ps4/",
+  "title": {
+   "rendered": "Ratchet &#038; Clank PS4"
+  },
+  "content": {
+   "rendered": "<p>PS4 post.</p>"
+  },
+  "categories": [
+   4371
+  ]
+ }
+]

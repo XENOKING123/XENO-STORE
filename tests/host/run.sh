@@ -7,6 +7,9 @@
 #   test_ext_downloads.py  Phase 2 engine: turbo, best version, stats, schedule,
 #                          install sets, debrid, rest mode, copy/move, zip extraction
 #   test_ext_console.py    Phase 2 console features (skipped with a message when absent)
+#   test_app_install.py    the store installs its own Games-row app (PPSA99500.ffpkg)
+#   test_hardening.py      request gate, pairing, durability, USB window, update hand-off, zips
+#   test_seg_stall.py      segment threads never outlive their job (~80 s by design)
 # Prints a summary and exits non-zero when anything failed.
 set -u
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -24,7 +27,7 @@ export TMPDIR="$TMPBASE"
 unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy
 
 # XENO_TESTS="test_api.py test_downloads.py" narrows the run.
-SUITES="${XENO_TESTS:-test_api.py test_downloads.py test_ext_downloads.py test_ext_console.py test_hardening.py}"
+SUITES="${XENO_TESTS:-test_api.py test_downloads.py test_ext_downloads.py test_ext_console.py test_app_install.py test_hardening.py test_seg_stall.py}"
 
 status=0
 summary=()

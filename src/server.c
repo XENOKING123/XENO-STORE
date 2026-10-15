@@ -18,6 +18,7 @@
 #include "install.h"
 #include "log.h"
 #include "util.h"
+#include "xthread.h"
 
 #include <arpa/inet.h>
 #include <ctype.h>
@@ -488,6 +489,7 @@ static int security_gate(http_req *r) {
 }
 
 static void dispatch(http_req *r) {
+  xthread_note("%s %.100s", r->method, r->path);
   if (!security_gate(r)) return;
   if (strcmp(r->method, "OPTIONS") == 0) { http_send(r, 204, "text/plain", NULL, 0, "Access-Control-Max-Age: 600\r\n"); return; }
   if (util_starts_with(r->path, "/api/") || strcmp(r->path, "/api") == 0) { api_handle(r); return; }
@@ -553,6 +555,7 @@ static void *worker_main(void *arg) {
     memset(&peer, 0, sizeof peer);
     getpeername(fd, (struct sockaddr *)&peer, &pl);
     handle_connection(fd, &peer);
+    xthread_note("idle");
   }
 }
 
@@ -672,6 +675,18 @@ static void *acceptor_main(void *arg) {
 static void on_force_rebind(int sig) { (void)sig; force_rebind = 1; }
 #endif
 
+/* A thread failed to start: stop the `nworkers` workers already running and release the port. */
+static int start_failed(int nworkers) {
+  pthread_mutex_lock(&ring_mu);
+  running = 0;
+  pthread_cond_broadcast(&ring_cv);
+  pthread_mutex_unlock(&ring_mu);
+  for (int i = 0; i < nworkers; i++) pthread_join(worker_th[i], NULL);
+  close(listen_fd);
+  listen_fd = -1;
+  return -2;
+}
+
 int server_start(int port) {
   signal(SIGPIPE, SIG_IGN);
 #ifdef XENO_HOST
@@ -682,9 +697,9 @@ int server_start(int port) {
   if (listen_fd < 0) return -1;
   running = 1;
   for (int i = 0; i < HTTP_WORKERS; i++) {
-    if (pthread_create(&worker_th[i], NULL, worker_main, NULL) != 0) { LOGE("server: cannot create worker %d", i); return -1; }
+    if (xthread_start(&worker_th[i], "http-worker", worker_main, NULL, 0, 0) != 0) { LOGE("server: cannot create worker %d", i); return start_failed(i); }
   }
-  if (pthread_create(&acceptor_th, NULL, acceptor_main, NULL) != 0) { LOGE("server: cannot create acceptor"); return -1; }
+  if (xthread_start(&acceptor_th, "http-acceptor", acceptor_main, NULL, 0, 0) != 0) { LOGE("server: cannot create acceptor"); return start_failed(HTTP_WORKERS); }
   LOGI("server: listening on :%d (%d workers)", port, HTTP_WORKERS);
   return 0;
 }

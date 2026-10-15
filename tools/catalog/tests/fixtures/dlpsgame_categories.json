@@ -1,0 +1,32 @@
+{
+ "63019": [
+  {
+   "id": 70001,
+   "slug": "ps5-games",
+   "name": "PS5 Games",
+   "parent": 63019
+  },
+  {
+   "id": 70002,
+   "slug": "ps5-backport",
+   "name": "PS5 Backport",
+   "parent": 63019
+  }
+ ],
+ "70001": [
+  {
+   "id": 70003,
+   "slug": "ps5-vr2",
+   "name": "PS5 VR2",
+   "parent": 70001
+  }
+ ],
+ "4370": [
+  {
+   "id": 4371,
+   "slug": "ps4-games",
+   "name": "PS4 Games",
+   "parent": 4370
+  }
+ ]
+}

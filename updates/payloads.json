@@ -1,7 +1,7 @@
 {
   "name": "XENO STORE",
   "author": "XENOKING",
-  "description": "PS5 game store + download manager by XENOKING. Serves the store on :9095, keeps downloading while the browser is closed, auto-installs PKGs, backs up saves and more.",
+  "description": "PS5 game store + download manager by XENOKING. Opens on the TV, serves the store on :9095, keeps downloading while the browser is closed, auto-installs PKGs, backs up saves and more.",
   "homepage": "https://github.com/XENOKING123/XENO-STORE",
   "payloads": [
     {
@@ -11,16 +11,7 @@
       "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/v1.2.0/xeno-store.elf",
       "sha256": "0d26000c1dddcb93735ddab25119d1cf8d447f6187ae94dc31e2925c976724ee",
       "minFw": "",
-      "notes": "Server only. Open http://<ps5-ip>:9095 (or http://xeno.local:9095) in the PS5 browser or on your phone. Recommended for Payload Manager auto-start."
-    },
-    {
-      "name": "XENO STORE (opens browser)",
-      "version": "1.2.0",
-      "filename": "xeno-store-browser.elf",
-      "url": "https://github.com/XENOKING123/XENO-STORE/releases/download/v1.2.0/xeno-store-browser.elf",
-      "sha256": "0a27d0d588be615db3f9cc1d64417f0676962ece16e9812e2a3e9201c08b8e7c",
-      "minFw": "",
-      "notes": "Same server, and it opens the PS5 web browser straight to the store. Pick this one when sending the payload by hand."
+      "notes": "The whole store in one ELF. It opens on the TV when it starts (Settings → General), serves http://<ps5-ip>:9095 (or http://xeno.local:9095) to your phone and PC, and keeps downloading with the browser closed. Recommended for Payload Manager auto-start."
     }
   ],
   "minimumVersion": "1.0.0"

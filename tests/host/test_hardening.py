@@ -11,6 +11,9 @@ test_hardening.py — Phase 3 C hardening and download durability:
     last fsync, even when a flush fails mid-transfer,
   * the exFAT/USB bounded-window download path produces correct bytes,
   * restart into a staged update hands the ELF to the loader after a clean shutdown,
+  * the start-up hand-off to a downloaded update: the hand-off marker, an update
+    that never came up or crashed right away is set aside, stale ELFs are not
+    "staged", the crash report survives the hand-off, a second copy stays quiet,
   * classic ZipCrypto extraction with the community password list, a user
     override password, and a zip-slip refusal.
 
@@ -398,6 +401,13 @@ class UpdateRestartTests(unittest.TestCase):
             elf = b"\x7fELF" + bytes(range(256)) * 64
             with open(os.path.join(srv.data_dir, "xeno-store.elf"), "wb") as f:
                 f.write(elf)
+            # without a recorded newer version it is a leftover, not an update
+            st, b = srv.api("GET", "/api/status")
+            self.assertFalse(b["update"]["staged"], b["update"])
+            st, b = srv.api("POST", "/api/update/restart", {})
+            self.assertEqual(st, 409, b)
+            with open(os.path.join(srv.data_dir, "xeno-store.elf.version"), "w") as f:
+                f.write("99.0.0\n")
             st, b = srv.api("GET", "/api/status")
             self.assertTrue(b["update"]["staged"], b["update"])
             st, b = srv.api("POST", "/api/update/restart", {})
@@ -409,6 +419,7 @@ class UpdateRestartTests(unittest.TestCase):
             while time.time() < deadline and elf not in got:
                 time.sleep(0.05)
             self.assertIn(elf, got, "the loader must receive exactly the staged ELF")
+            self.assertTrue(os.path.exists(os.path.join(srv.data_dir, "handoff.pending")))
             # the port is free again for the new version
             s2 = socket.socket()
             s2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -417,6 +428,254 @@ class UpdateRestartTests(unittest.TestCase):
         finally:
             srv.stop()
             sink.close()
+
+
+class LoaderSink:
+    """A fake ELF loader: records every payload sent to it."""
+
+    def __init__(self):
+        import socket, threading
+        self.sock = socket.socket()
+        self.sock.bind(("127.0.0.1", 0))
+        self.sock.listen(4)
+        self.port = self.sock.getsockname()[1]
+        self.got = []
+        threading.Thread(target=self._serve, daemon=True).start()
+
+    def _serve(self):
+        while True:
+            try:
+                c, _ = self.sock.accept()
+            except OSError:
+                return
+            c.settimeout(10)
+            buf = b""
+            try:
+                while True:
+                    d = c.recv(65536)
+                    if not d:
+                        break
+                    buf += d
+            except OSError:
+                pass
+            c.close()
+            self.got.append(buf)
+
+    def close(self):
+        self.sock.close()
+
+
+class UpdateHandoffTests(unittest.TestCase):
+    """At start, a newer downloaded xeno-store.elf takes over (XENO_HANDOFF=1 on
+    host). handoff.pending ("<time> <version that handed off>") is cleared by a
+    copy once its server is up, so an update that never comes up, or crashes
+    right after its start, is set aside as *.failed instead of retried forever."""
+
+    ELF = b"\x7fELF" + bytes(range(256)) * 64
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.mkdtemp(prefix="xeno-handoff.")
+        srv = XenoServer(os.path.join(cls.tmp, "probe")).start()
+        try:
+            cls.version = srv.api("GET", "/api/diagnostics")[1]["version"]
+        finally:
+            srv.stop()
+
+    def setUp(self):
+        self.sink = LoaderSink()
+        self.data = tempfile.mkdtemp(prefix="data.", dir=self.tmp)
+        self.env = {"XENO_HANDOFF": "1", "XENO_PORT_LOADER": str(self.sink.port)}
+
+    def tearDown(self):
+        self.sink.close()
+
+    def path(self, name):
+        return os.path.join(self.data, name)
+
+    def write(self, name, data):
+        with open(self.path(name), "wb" if isinstance(data, bytes) else "w") as f:
+            f.write(data)
+
+    def stage(self, version="99.0.0"):
+        self.write("xeno-store.elf", self.ELF)
+        if version is not None:
+            self.write("xeno-store.elf.version", version + "\n")
+
+    def run_to_exit(self, timeout=30):
+        import subprocess
+        env = dict(os.environ)
+        env.update(self.env)
+        p = subprocess.run([harness.BINARY, "--port", str(free_port()), "--data", self.data, "--log-level", "debug"],
+                           env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=timeout)
+        return p.returncode, p.stdout.decode("utf-8", "replace")
+
+    def received(self, timeout=10):
+        self.wait_for(lambda: self.sink.got, timeout)
+        return self.sink.got
+
+    @staticmethod
+    def wait_for(cond, timeout=5):
+        # main() finishes its start-up steps a moment after the server first answers
+        deadline = time.time() + timeout
+        while time.time() < deadline and not cond():
+            time.sleep(0.05)
+        return cond()
+
+    def assert_set_aside(self):
+        self.assertFalse(os.path.exists(self.path("xeno-store.elf")))
+        with open(self.path("xeno-store.elf.failed"), "rb") as f:
+            self.assertEqual(f.read(), self.ELF)
+        self.assertTrue(os.path.exists(self.path("xeno-store.elf.version.failed")))
+        self.assertFalse(os.path.exists(self.path("handoff.pending")))
+
+    def test_01_hands_off_and_leaves_crash_report(self):
+        self.stage()
+        report = f"XENO STORE {self.version} stopped: SIGSEGV (bad memory access)\nthread: http-worker\nuptime: 40 s\n"
+        self.write("crash.txt", report)
+        rc, out = self.run_to_exit()
+        self.assertEqual(rc, 0, out)
+        self.assertEqual(self.received(), [self.ELF], "the loader must receive exactly the staged ELF")
+        with open(self.path("handoff.pending")) as f:
+            ts, frm = f.read().split()
+        self.assertLess(abs(time.time() - int(ts)), 60)
+        self.assertEqual(frm, self.version)
+        # the handed-off copy must still see the report as fresh
+        with open(self.path("crash.txt")) as f:
+            self.assertEqual(f.read(), report)
+        self.assertFalse(os.path.exists(self.path("crash.prev.txt")))
+
+    def test_02_young_marker_from_another_build_runs_this_copy(self):
+        # this copy was just handed the ELF (or the .version overstates it): no hand-off loop
+        self.stage()
+        self.write("handoff.pending", "%d 0.0.1\n" % (int(time.time()) - 5))
+        srv = XenoServer(self.data, env=self.env).start()
+        try:
+            self.assertTrue(self.wait_for(lambda: not os.path.exists(self.path("handoff.pending"))),
+                            "a copy that came up clears the marker")
+            self.assertTrue(os.path.exists(self.path("xeno-store.elf")))
+            self.assertTrue(os.path.exists(self.path("xeno-store.elf.version")))
+            st, b = srv.api("GET", "/api/status")
+            self.assertTrue(b["update"]["staged"], b["update"])
+        finally:
+            srv.stop()
+        self.assertEqual(self.sink.got, [])
+
+    def test_03_old_marker_sets_update_aside(self):
+        self.stage()
+        self.write("handoff.pending", "%d 0.0.1\n" % (int(time.time()) - 600))
+        srv = XenoServer(self.data, env=self.env).start()
+        try:
+            self.assert_set_aside()
+            st, b = srv.api("GET", "/api/status")
+            self.assertFalse(b["update"]["staged"], b["update"])
+            self.assertIn("never came up", srv.log_text())
+            self.assertIn("toast: XENO STORE 99.0.0 did not start", srv.log_text())
+        finally:
+            srv.stop()
+        self.assertEqual(self.sink.got, [])
+
+    def test_04_same_build_started_again_sets_update_aside(self):
+        # Two copies of this build start at once: the second runs this build and
+        # leaves the update and the marker to the copy the first one handed off.
+        # That copy died before its server came up: the next start retires the update.
+        self.stage()
+        rc, out = self.run_to_exit()
+        self.assertEqual(rc, 0, out)
+        self.assertEqual(self.received(), [self.ELF])
+        srv = XenoServer(self.data, env=self.env).start()
+        try:
+            self.assertTrue(os.path.exists(self.path("xeno-store.elf")))
+            self.assertTrue(os.path.exists(self.path("handoff.pending")))
+            self.assertIn("may still be starting", srv.log_text())
+        finally:
+            srv.stop()
+        self.assertEqual(len(self.sink.got), 1, "no second hand-off")
+        with open(self.path("handoff.pending")) as f:
+            ts, frm = f.read().split()
+        self.write("handoff.pending", "%d %s\n" % (int(ts) - 600, frm))
+        srv = XenoServer(self.data, env=self.env).start()
+        try:
+            self.assert_set_aside()
+            self.assertIn("never came up", srv.log_text())
+        finally:
+            srv.stop()
+        self.assertEqual(len(self.sink.got), 1, "no second hand-off")
+
+    def test_05_crash_guard_sets_update_aside(self):
+        # 200 s is past the old 120 s window and inside the 300 s safe-start one
+        self.stage()
+        self.write("crash.txt", "XENO STORE 99.0.0 stopped: SIGSEGV (bad memory access)\nthread: main\nuptime: 200 s\n")
+        srv = XenoServer(self.data, env=self.env).start()
+        try:
+            self.assert_set_aside()
+            st, d = srv.api("GET", "/api/diagnostics")
+            self.assertTrue(d["safeMode"])
+            self.assertTrue(d["crash"]["lastRun"])
+            self.assertEqual(d["crash"]["uptime"], 200)
+            self.assertFalse(os.path.exists(self.path("crash.txt")))
+            self.assertTrue(os.path.exists(self.path("crash.prev.txt")))
+        finally:
+            srv.stop()
+        self.assertEqual(self.sink.got, [])
+
+    def test_06_not_newer_is_not_staged(self):
+        cases = ((None, ".old"), ("0.0.1", ".old"), (self.version, None))
+        for version, aside in cases:
+            with self.subTest(version=version):
+                self.data = tempfile.mkdtemp(prefix="data.", dir=self.tmp)
+                self.stage(version)
+                srv = XenoServer(self.data, env=self.env).start()
+                try:
+                    st, b = srv.api("GET", "/api/status")
+                    self.assertFalse(b["update"]["staged"], b["update"])
+                    st, b = srv.api("POST", "/api/update/restart", {})
+                    self.assertEqual(st, 409, b)
+                    if aside:
+                        self.assertFalse(os.path.exists(self.path("xeno-store.elf")))
+                        self.assertTrue(os.path.exists(self.path("xeno-store.elf" + aside)))
+                    else:   # this copy is that update: the built-in app still needs it next start
+                        self.assertTrue(os.path.exists(self.path("xeno-store.elf")))
+                finally:
+                    srv.stop()
+                self.assertEqual(self.sink.got, [])
+
+    def test_07_crash_report_written_whole_and_kept_for_next_start(self):
+        srv = XenoServer(self.data).start()
+        srv.proc.send_signal(signal.SIGSEGV)
+        srv.proc.wait(timeout=10)
+        srv.stop()
+        with open(self.path("crash.txt")) as f:
+            rep = f.read()
+        self.assertTrue(rep.startswith(f"XENO STORE {self.version} stopped: SIGSEGV"), rep)
+        self.assertTrue(rep.endswith(" s\n"), rep)
+        self.assertFalse(os.path.exists(self.path("crash.txt.tmp")))
+        srv = XenoServer(self.data).start()
+        try:
+            st, d = srv.api("GET", "/api/diagnostics")
+            self.assertTrue(d["safeMode"])
+            self.assertTrue(d["crash"]["lastRun"])
+            self.assertFalse(os.path.exists(self.path("crash.txt")))
+            with open(self.path("crash.prev.txt")) as f:
+                self.assertEqual(f.read(), rep)
+        finally:
+            srv.stop()
+
+    def test_08_second_copy_stays_quiet(self):
+        srv = XenoServer(self.data).start()
+        try:
+            self.assertTrue(self.wait_for(lambda: "toast: XENO STORE pairing code:" in srv.log_text()))
+            log = srv.log_text()
+            self.assertLess(log.index("server: listening"), log.index("toast: XENO STORE pairing code:"))
+            import subprocess
+            p = subprocess.run([harness.BINARY, "--port", str(srv.port), "--data", tempfile.mkdtemp(dir=self.tmp)],
+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=30)
+            out = p.stdout.decode("utf-8", "replace")
+            self.assertEqual(p.returncode, 0, out)
+            self.assertIn("already running", out)
+            self.assertNotIn("pairing code", out, "a second copy must not show a code that pairs nothing")
+        finally:
+            srv.stop()
 
 
 class ArchivePasswordTests(unittest.TestCase):

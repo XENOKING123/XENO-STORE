@@ -347,6 +347,7 @@ int cx_download_file(const char *url, const cx_http *opt, const char *dest, cons
   r.recv_timeout_ms = opt && opt->timeout_ms ? opt->timeout_ms : 30000;
   r.follow_redirects = opt && opt->follow ? opt->follow : 5;
   r.cancel_flag = cancel;
+  r.transfer = 1;
   xhttp_conn *c = NULL;
   xhttp_resp resp;
   char *ts = dl_type_slot();
@@ -448,6 +449,109 @@ int cx_tcp_send_all(int port, const void *data, size_t len, int timeout_ms, char
   shutdown(fd, SHUT_WR);
   close(fd);
   return 0;
+}
+
+/* Loopback HTTP/1.1 client for local console services. The request line and
+ * every header leave in a single send(): Garlic Save Manager reads a request
+ * with one recv() and looks for Content-Length and the blank line only in
+ * that first buffer (garlic-savemgr src/main.c:1466-1469 and 3223-3229). */
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+
+static int send_full(int fd, const void *data, size_t len) {
+  const char *p = data;
+  size_t off = 0;
+  while (off < len) {
+    ssize_t n = send(fd, p + off, len - off, MSG_NOSIGNAL);
+    if (n < 0 && errno == EINTR) continue;
+    if (n <= 0) return -1;
+    off += (size_t)n;
+  }
+  return 0;
+}
+
+char *cx_local_http(int port, const char *method, const char *path_query, const void *body, size_t body_len,
+                    const char *body_file, int timeout_ms, size_t max_resp, int *status, size_t *len, char *err, size_t errcap) {
+  if (status) *status = 0;
+  if (len) *len = 0;
+  if (timeout_ms <= 0) timeout_ms = 15000;
+  if (max_resp == 0) max_resp = 1 << 20;
+  int fd = connect_local(port, timeout_ms < 3000 ? timeout_ms : 3000);
+  if (fd < 0) { xsnprintf(err, errcap, "nothing is listening on 127.0.0.1:%d", port); return NULL; }
+  struct timeval tv = { timeout_ms / 1000, (timeout_ms % 1000) * 1000 };
+  setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof tv);
+  setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof tv);
+  FILE *bf = NULL;
+  int64_t clen = body ? (int64_t)body_len : 0;
+  if (body_file) {
+    bf = fopen(body_file, "rb");
+    if (!bf) { xsnprintf(err, errcap, "cannot open %s: %s", body_file, strerror(errno)); close(fd); return NULL; }
+    clen = util_file_size(body_file);
+    if (clen < 0) clen = 0;
+  }
+  int has_body = body != NULL || bf != NULL;
+  char head[2600];
+  int hl = xsnprintf(head, sizeof head, "%s %s HTTP/1.1\r\nHost: 127.0.0.1:%d\r\nUser-Agent: XENO-STORE/%s\r\nAccept: */*\r\nConnection: close\r\n%s",
+                     method && *method ? method : "GET", path_query, port, XENO_VERSION,
+                     has_body ? "Content-Type: application/octet-stream\r\n" : "");
+  if (has_body) hl += xsnprintf(head + hl, sizeof head - (size_t)hl, "Content-Length: %lld\r\n", (long long)clen);
+  hl += xsnprintf(head + hl, sizeof head - (size_t)hl, "\r\n");
+  if ((size_t)hl >= sizeof head - 1) { xsnprintf(err, errcap, "request too long"); if (bf) fclose(bf); close(fd); return NULL; }
+  int rc = send_full(fd, head, (size_t)hl);
+  if (rc == 0 && body && body_len) rc = send_full(fd, body, body_len);
+  if (rc == 0 && bf) {
+    char *chunk = malloc(64 << 10);
+    if (!chunk) rc = -1;
+    int64_t sent = 0;
+    while (rc == 0 && chunk && sent < clen) {
+      size_t n = fread(chunk, 1, 64 << 10, bf);
+      if (n == 0) { rc = -1; break; }
+      rc = send_full(fd, chunk, n);
+      sent += (int64_t)n;
+    }
+    free(chunk);
+  }
+  if (bf) fclose(bf);
+  if (rc != 0) { xsnprintf(err, errcap, "sending to 127.0.0.1:%d failed: %s", port, strerror(errno)); close(fd); return NULL; }
+  size_t cap = 4096, got = 0;
+  char *buf = malloc(cap + 1);
+  if (!buf) { xsnprintf(err, errcap, "out of memory"); close(fd); return NULL; }
+  for (;;) {
+    if (got == cap) {
+      if (cap >= max_resp + 4096) break;
+      size_t ncap = cap * 2 > max_resp + 4096 ? max_resp + 4096 : cap * 2;
+      char *nb = realloc(buf, ncap + 1);
+      if (!nb) break;
+      buf = nb; cap = ncap;
+    }
+    ssize_t n = recv(fd, buf + got, cap - got, 0);
+    if (n < 0 && errno == EINTR) continue;
+    if (n <= 0) break;
+    got += (size_t)n;
+    /* stop early once a Content-Length body is complete (keep-alive servers) */
+    buf[got] = 0;
+    char *he = strstr(buf, "\r\n\r\n");
+    if (he) {
+      const char *cl = util_strcasestr(buf, "\r\nContent-Length:");
+      if (cl && cl < he) {
+        long long want = strtoll(cl + 17, NULL, 10);
+        if (want >= 0 && got >= (size_t)(he + 4 - buf) + (size_t)want) break;
+      }
+    }
+  }
+  close(fd);
+  buf[got] = 0;
+  char *he = strstr(buf, "\r\n\r\n");
+  if (got < 12 || !util_starts_with(buf, "HTTP/1.") || !he) { xsnprintf(err, errcap, "127.0.0.1:%d sent no HTTP answer", port); free(buf); return NULL; }
+  int st = atoi(buf + 9);
+  if (status) *status = st;
+  size_t off = (size_t)(he + 4 - buf);
+  size_t blen = got - off;
+  memmove(buf, buf + off, blen);
+  buf[blen] = 0;
+  if (len) *len = blen;
+  return buf;
 }
 
 /* ---- JSON helpers ------------------------------------------------------- */

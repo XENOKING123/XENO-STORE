@@ -1,6 +1,6 @@
-/* XENO STORE — 45-settings.js: grouped settings. General (+ accessibility, safe mode, screensaver, controller remap,
-   shortcuts), Downloads (+ prefer format, turbo, install sets, rest mode, ZIP extraction, schedule), Debrid (§17.14),
-   Sources, Catalog, Saves (§17.17), Accounts (§17.18), Setup (§17.6), Pair a device (+ mDNS §17.19), Updates,
+/* XENO STORE — 45-settings.js: grouped settings. General (+ open on start, accessibility, safe mode, screensaver,
+   controller remap, shortcuts), Downloads (+ prefer format, turbo, install sets, rest mode, ZIP extraction, schedule), Debrid (§17.14),
+   Sources, Catalog, Saves (§17.17), Accounts (§17.18), Setup (§17.6), Pair a device (+ mDNS §17.19), Updates (+ the Games-row app),
    Notifications, Diagnostics, About, Uninstall XENO STORE (§17.16). */
 (function () {
   'use strict';
@@ -78,6 +78,7 @@
     var cs = h('div.lrow', { tabindex: '-1' }, [h('span.ic', { html: U.icon('grid') }), h('div.main', [h('div.name', { text: t('set.cardSize') })])]);
     cs.appendChild(ui.segControl({ id: 'set-cards', value: sget('general.cardSize', 'm'), options: [{ value: 's', label: t('set.cardS') }, { value: 'm', label: t('set.cardM') }, { value: 'l', label: t('set.cardL') }], onChange: function (v) { sset('general.cardSize', v); } }));
     list.appendChild(cs);
+    list.appendChild(ui.toggleRow({ id: 'set-openstart', icon: 'play', label: t('gameapp.openOnStart'), desc: t('gameapp.openOnStartHint'), value: sget('general.openOnStart', true), onChange: function (v) { sset('general.openOnStart', v); } }));
     list.appendChild(ui.toggleRow({ id: 'set-motion', icon: 'zap', label: t('set.reduceMotion'), desc: t('set.reduceMotionHint'), value: sget('general.reduceMotion', false), onChange: function (v) { sset('general.reduceMotion', v); } }));
     list.appendChild(ui.toggleRow({ id: 'set-sounds', icon: 'bell', label: t('set.sounds'), desc: t('set.soundsHint'), value: sget('general.sounds', true), onChange: function (v) { sset('general.sounds', v); } }));
     list.appendChild(ui.toggleRow({ id: 'set-hints', icon: 'gamepad', label: t('set.hints'), desc: t('set.hintsHint'), value: sget('general.hints', true), onChange: function (v) { sset('general.hints', v); } }));
@@ -581,6 +582,8 @@
     } }));
     list.appendChild(ui.toggleRow({ id: 'upd-auto', icon: 'clock', label: t('set.updAuto'), desc: t('set.updAutoHint'), value: sget('updates.autoCheck', true), onChange: function (v) { sset('updates.autoCheck', v); } }));
     sec.appendChild(list);
+    /* the Games-row app: installed by the store itself, no FTP */
+    if (XS.appInstall) { sec.appendChild(h('div.group-title', { text: t('gameapp.group') })); sec.appendChild(XS.appInstall.card()); }
   };
 
   /* ---------------- Notifications ---------------- */
@@ -610,6 +613,23 @@
     add(t('diag.browser'), navigator.userAgent);
     add(t('diag.screen'), window.innerWidth + '×' + window.innerHeight + ' @' + (window.devicePixelRatio || 1) + 'x');
     sec.appendChild(h('div.panel', [h('h3', { text: t('diag.system'), style: { margin: '0 0 10px' } }), kv]));
+    /* Last problem: the crash report the console wrote (thread, activity, network step). */
+    var crashPanel = h('div.panel.diag-crash');
+    sec.appendChild(crashPanel);
+    if (api.diagnostics) api.diagnostics().then(function (d) {
+      var cr = (d && d.crash) || {};
+      if (d && d.threads && d.threads.storeStack) add(t('diag2.stack'), U.fmtBytes(d.threads.storeStack) + (d.threads.platformDefaultStack ? ' (default ' + U.fmtBytes(d.threads.platformDefaultStack) + ')' : ''));
+      U.clear(crashPanel);
+      var hd = h('div.row', { style: { marginBottom: '10px' } }, [h('h3', { text: t('diag2.crashTitle'), style: { margin: 0 } }), h('span.spacer.grow')]);
+      crashPanel.appendChild(hd);
+      if (!cr.present) { crashPanel.appendChild(h('p.muted', { text: t('diag2.none'), style: { margin: 0 } })); return; }
+      var cp = h('button.btn.sm.ghost', { nav: 'diag-crash-copy', text: t('common.copy') });
+      cp.addEventListener('click', function () { U.copyText(cr.report).then(function (ok) { ui.toast({ cls: ok ? 'good' : 'bad', title: ok ? t('toast.copied') : t('toast.copyFailed') }); }); });
+      hd.appendChild(cp);
+      crashPanel.appendChild(h('p.muted', { text: cr.lastRun ? t('diag2.crashLastRun') : t('diag2.crashOlder'), style: { margin: '0 0 8px' } }));
+      if (d.safeMode) crashPanel.appendChild(h('p.muted', { text: t('diag2.safeMode'), style: { margin: '0 0 8px' } }));
+      crashPanel.appendChild(h('div.logbox', { nav: 'diag-crash', text: cr.report }));
+    }, function () { crashPanel.remove(); });
     var logPanel = h('div.panel');
     var logBox = h('div.logbox', { nav: 'diag-log', text: t('diag.logLoading') });
     var head = h('div.row', { style: { marginBottom: '10px' } }, [h('h3', { text: t('diag.log'), style: { margin: 0 } }), h('span.spacer.grow')]);

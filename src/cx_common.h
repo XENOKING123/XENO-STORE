@@ -83,6 +83,15 @@ int cx_tcp_probe(int port, int timeout_ms);
 /* Connects to 127.0.0.1:port and sends the whole buffer. 0 ok / -1. */
 int cx_tcp_send_all(int port, const void *data, size_t len, int timeout_ms, char *err, size_t errcap);
 
+/* HTTP/1.1 request to 127.0.0.1:port with the request line and headers in
+ * ONE send() (local services that parse only their first recv(), such as
+ * Garlic Save Manager). The body comes from memory or streams from body_file
+ * (application/octet-stream, Content-Length always set). Reads the answer
+ * until close (or Content-Length). Returns the malloc'd, NUL-terminated
+ * response body or NULL with err; *status is the HTTP status. */
+char *cx_local_http(int port, const char *method, const char *path_query, const void *body, size_t body_len,
+                    const char *body_file, int timeout_ms, size_t max_resp, int *status, size_t *len, char *err, size_t errcap);
+
 /* ---- JSON helpers ------------------------------------------------------- */
 void cx_jw_kv_opt(jw *w, const char *k, const char *v);   /* skips "" values */
 /* Percent-encodes everything except unreserved chars (query component). */

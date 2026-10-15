@@ -86,10 +86,15 @@ class Http:
             time.sleep(min(wait, 0.5))
 
     # -- requests ------------------------------------------------------------
-    def get(self, url: str, *, timeout: float = DEFAULT_TIMEOUT, headers: dict[str, str] | None = None,
-            retries: int = 2, max_bytes: int = DEFAULT_MAX_BYTES, deadline: float | None = None,
-            accept: str = "*/*") -> bytes:
+    def get(self, url: str, **kw: Any) -> bytes:
         """GET ``url`` and return the (decompressed) body. Raises HttpError or BudgetExceeded."""
+        return self.get_with_headers(url, **kw)[0]
+
+    def get_with_headers(self, url: str, *, timeout: float = DEFAULT_TIMEOUT, headers: dict[str, str] | None = None,
+                         retries: int = 2, max_bytes: int = DEFAULT_MAX_BYTES, deadline: float | None = None,
+                         accept: str = "*/*") -> tuple[bytes, dict[str, str]]:
+        """Like ``get`` but also returns the response headers (lower-cased names), e.g. WordPress's
+        ``x-wp-total`` / ``x-wp-totalpages``. Same politeness, retries, deadline and accounting."""
         host = host_of(url)
         if not host:
             raise HttpError(url, 0, "bad url")
@@ -123,7 +128,7 @@ class Http:
                         body = gzip.decompress(body)
                     with self._lock:
                         self._down[host] = 0
-                    return body
+                    return body, _lower_headers(resp.headers)
             except urllib.error.HTTPError as e:
                 status = e.code
                 last_err = f"HTTP {status}"
@@ -211,10 +216,14 @@ class Http:
         return self.get(url, **kw).decode("utf-8", "replace")
 
     def json(self, url: str, **kw: Any) -> Any:
+        return self.json_with_headers(url, **kw)[0]
+
+    def json_with_headers(self, url: str, **kw: Any) -> tuple[Any, dict[str, str]]:
+        """Parsed JSON body plus the lower-cased response headers."""
         kw.setdefault("accept", "application/json, */*;q=0.5")
-        raw = self.get(url, **kw)
+        raw, headers = self.get_with_headers(url, **kw)
         try:
-            return json.loads(raw.decode("utf-8", "replace"))
+            return json.loads(raw.decode("utf-8", "replace")), headers
         except ValueError as e:
             raise HttpError(url, 200, f"invalid JSON: {e}") from None
 

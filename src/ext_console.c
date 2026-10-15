@@ -6,6 +6,7 @@
  * GET /api/status. Every handler answers with the §6 envelope.
  */
 #include "api.h"
+#include "app_install.h"
 #include "config.h"
 #include "cx_accounts.h"
 #include "cx_registry.h"
@@ -514,6 +515,25 @@ static void h_feeds_refresh(api_ctx *c) {
   h_feeds(c);
 }
 
+/* ---- Games-row app (PPSA99500) ------------------------------------------ */
+
+static void h_app_status(api_ctx *c) {
+  jw w;
+  api_begin(&w);
+  app_install_status_json(&w);
+  send_simple(c, &w);
+}
+
+static void h_app_install(api_ctx *c) {
+  char id[16], code[32], err[256];
+  if (app_install_start(id, sizeof id, code, sizeof code, err, sizeof err) != 0) { api_error(c, strcmp(code, "in_progress") == 0 ? 409 : status_for(code), code, err); return; }
+  jw w;
+  api_begin(&w);
+  jw_key(&w, "job");
+  cx_job_json(&w, id);
+  send_simple(c, &w);
+}
+
 /* ---- status extra + routes ---------------------------------------------- */
 
 void api_status_extra(jw *w) {
@@ -576,6 +596,8 @@ static const api_route ROUTES[] = {
   { "GET", "/api/image", h_image },
   { "GET", "/api/feeds", h_feeds },
   { "POST", "/api/feeds/refresh", h_feeds_refresh },
+  { "GET", "/api/app/status", h_app_status },
+  { "POST", "/api/app/install", h_app_install },
 };
 
 void ext_console_init(void) {

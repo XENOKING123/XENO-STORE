@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
-make_homebrew.py — builds the XENO STORE home-screen homebrew folder (SPEC §12).
+make_homebrew.py — builds the XENO STORE homebrew-launcher folder (SPEC §12). Optional:
+releases ship the Games-row app (PPSA99500.ffpkg) and xeno-store.elf instead.
 
     dist/XENO-STORE/
-      eboot.bin            the browser ELF (serves the store + opens the PS5 browser)
+      eboot.bin            xeno-store.elf (serves the store; opens the PS5 browser when
+                           Settings → General → "Open XENO STORE when it starts" is on)
       homebrew.json        etaHEN / itemzflow launcher metadata (title XENO STORE, id XENO00002)
       sce_sys/icon0.png    512x512 XENO logo (home-screen icon)
       sce_sys/param.json   PS5 app metadata (titleId XENO00002)
@@ -12,10 +14,10 @@ make_homebrew.py — builds the XENO STORE home-screen homebrew folder (SPEC §1
 
 Usage: python3 tools/make_homebrew.py [--elf PATH] [--out DIR] [--version X.Y.Z] [--quiet]
 
-Defaults: ELF = xeno-store-browser.elf next to the Makefile (falls back to xeno-store.elf
-with a warning), out = dist/, version = the VERSION file. The version is stamped into
-homebrew.json ("version") and param.json ("contentVersion") so the launcher shows the real
-build. Exit code 1 when an input is missing or the ELF is not an ELF.
+Defaults: ELF = xeno-store.elf next to the Makefile, out = dist/, version = the VERSION
+file. The version is stamped into homebrew.json ("version") and param.json ("contentVersion")
+so the launcher shows the real build. Exit code 1 when an input is missing or the ELF is not
+an ELF.
 """
 import argparse
 import hashlib
@@ -79,7 +81,7 @@ def add_zip_entry(zf, arcname, data, stamp):
 
 def main():
     ap = argparse.ArgumentParser(description="build dist/XENO-STORE/ and dist/XENO-STORE.zip")
-    ap.add_argument("--elf", default="", help="payload to ship as eboot.bin (default xeno-store-browser.elf)")
+    ap.add_argument("--elf", default="", help="payload to ship as eboot.bin (default xeno-store.elf)")
     ap.add_argument("--out", default=os.path.join(ROOT, "dist"), help="output directory (default dist/)")
     ap.add_argument("--version", default="", help="override the VERSION file")
     ap.add_argument("--quiet", action="store_true")
@@ -90,14 +92,7 @@ def main():
             print(msg)
 
     version = args.version.strip() or read_version(ROOT)
-    elf = args.elf
-    if not elf:
-        elf = os.path.join(ROOT, "xeno-store-browser.elf")
-        if not os.path.isfile(elf):
-            fallback = os.path.join(ROOT, "xeno-store.elf")
-            if os.path.isfile(fallback):
-                print("make_homebrew: xeno-store-browser.elf missing, shipping xeno-store.elf (no auto-open browser)", file=sys.stderr)
-                elf = fallback
+    elf = args.elf or os.path.join(ROOT, "xeno-store.elf")
     if not os.path.isfile(elf):
         print("make_homebrew: ELF not found: %s (run 'make ps5' first)" % elf, file=sys.stderr)
         return 1

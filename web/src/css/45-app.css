@@ -1,0 +1,32 @@
+/* XENO STORE — the Games-row app (PPSA99500): Settings → Updates card and the one-time Discover hint. */
+.app-card { background: linear-gradient(135deg, var(--gold-soft), rgba(0, 0, 0, 0) 60%), var(--el-1); border-color: var(--hl2); }
+.app-top { display: flex; gap: 16px; align-items: flex-start; }
+.app-badge { width: 52px; height: 52px; margin-top: 2px; }
+.app-main { flex: 1; min-width: 0; }
+.app-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.app-head h3 { margin: 0; font-size: 16px; }
+.app-head .chip svg { margin-inline-end: 4px; }
+.app-main p.small { margin-top: 4px; }
+.app-facts { font-family: var(--mono); font-size: 12px; }
+.app-card .cxjob { margin-top: 12px; }
+.app-acts { margin-top: 14px; }
+.app-path { font-family: var(--mono); font-size: 11.5px; margin-inline-start: auto; overflow-wrap: anywhere; }
+
+.app-hint-host:empty { display: none; }
+.app-hint { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 12px 16px; border-radius: var(--radius-l);
+  background: linear-gradient(90deg, var(--gold-soft), rgba(0, 0, 0, 0) 70%), var(--el-1); border: 1px solid var(--gold-line);
+  box-shadow: inset 0 1px 0 var(--hl2); }
+.app-hint .app-badge { width: 40px; height: 40px; margin: 0; }
+.app-hint .grow { flex: 1; min-width: 0; }
+.app-hint-t { font-weight: 800; font-size: 14.5px; }
+.app-hint-d { font-size: 12.5px; margin-top: 2px; }
+.app-hint .cxjob { padding-bottom: 0; }
+.app-hint .btn { flex: 0 0 auto; }
+
+@media (max-width: 819px) {
+  .app-top { gap: 12px; }
+  .app-badge { width: 44px; height: 44px; }
+  .app-path { margin-inline-start: 0; flex-basis: 100%; }
+  .app-hint { flex-wrap: wrap; }
+  .app-hint .grow { flex-basis: calc(100% - 60px); }
+}

@@ -5,6 +5,7 @@
 #include "cx_jobs.h"
 #include "log.h"
 #include "util.h"
+#include "xthread.h"
 
 #include <pthread.h>
 #include <stdlib.h>
@@ -67,13 +68,7 @@ int cx_job_start(const char *type, const char *title, cx_job_fn fn, void *arg, c
   j->fn = fn;
   j->arg = arg;
   xstrlcpy(id_out, j->id, idcap);
-  pthread_t th;
-  pthread_attr_t at;
-  pthread_attr_init(&at);
-  pthread_attr_setdetachstate(&at, PTHREAD_CREATE_DETACHED);
-  pthread_attr_setstacksize(&at, 1 << 20);
-  int rc = pthread_create(&th, &at, worker, j);
-  pthread_attr_destroy(&at);
+  int rc = xthread_start(NULL, "job", worker, j, 0, 1);
   if (rc != 0) { j->in_use = 0; pthread_mutex_unlock(&jobs_mu); return -1; }
   pthread_mutex_unlock(&jobs_mu);
   return 0;

@@ -328,7 +328,7 @@
     "showQr": "Mostra QR",
     "noChecks": "La console non ha segnalato controlli.",
     "check": {
-      "shadowmount": "API ShadowMountPlus",
+      "shadowmount": "ShadowMountPlus",
       "dpi": "Installatore diretto di pacchetti (DPI)",
       "etahen": "DPI di etaHEN",
       "internet": "Raggiungibilità di internet",

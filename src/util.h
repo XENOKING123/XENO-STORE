@@ -91,7 +91,7 @@ typedef struct xurl {
   char scheme[8];      /* "http" | "https" */
   char host[256];
   int port;            /* resolved default when absent */
-  char path[1536];     /* path + query, always starts with '/' */
+  char path[2048];     /* path + query, always starts with '/' */
   int has_userinfo;    /* "user:pass@" was present (rejected by policy) */
 } xurl;
 int util_url_parse(const char *url, xurl *out);   /* 0 ok, -1 malformed */

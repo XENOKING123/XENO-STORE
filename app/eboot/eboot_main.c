@@ -4,9 +4,12 @@
  * (raw syscalls, no libc, no .bss — see eboot.x) because an app eboot cannot link the payload SDK.
  *
  *   1. The store already runs (127.0.0.1:9095 answers): ask it to open the browser full-screen on
- *      itself (POST /api/launcher/open, loopback only) and exit.
- *   2. Otherwise hand the store that ships inside the app (/app0/xeno-store-browser.elf) to the
- *      jailbreak's ELF loader on 127.0.0.1:9021; that build starts the store and opens the browser.
+ *      itself (POST /api/launcher/open, loopback only) and exit. Only "HTTP/1.x 200" counts; any
+ *      other answer (an older store without the route says 404) is logged and nothing more happens.
+ *   2. Otherwise hand the store that ships inside the app (/app0/xeno-store.elf) to the
+ *      jailbreak's ELF loader on 127.0.0.1:9021, wait for it to answer and ask it to open the
+ *      browser (the store opens once even when its own "open on start" setting also fires). A
+ *      newer version downloaded from Settings takes over by itself at start.
  *   3. No loader either: log it and exit (the tile does nothing until the jailbreak is loaded).
  *
  * Built by app/build_eboot.sh: prospero-clang -c, prospero-lld --static -T eboot.x, make_fself.py.
@@ -25,7 +28,7 @@
 
 #define STORE_PORT 9095
 #define LOADER_PORT 9021
-#define STORE_ELF "/app0/xeno-store-browser.elf"
+#define STORE_ELF "/app0/xeno-store.elf"
 
 static long sys6(long n, long a1, long a2, long a3, long a4, long a5, long a6) {
   unsigned long ret;
@@ -70,6 +73,42 @@ static int write_all(int fd, const char *p, long n) {
   return 0;
 }
 
+/* Reads until the status line is complete (or EOF / timeout / full); returns the bytes read. */
+static long read_status_line(int fd, char *buf, long cap) {
+  long got = 0;
+  while (got < cap) {
+    long n = SYS3(SYS_read, fd, buf + got, cap - got);
+    if (n <= 0) break;
+    for (long i = got; i < got + n; i++) if (buf[i] == '\n') return got + n;
+    got += n;
+  }
+  return got;
+}
+
+static int is_http_200(const char *r, long n) {
+  static const char v[] = "HTTP/1.";
+  if (n < 12) return 0;
+  for (int i = 0; i < 7; i++) if (r[i] != v[i]) return 0;
+  return r[8] == ' ' && r[9] == '2' && r[10] == '0' && r[11] == '0' && (n == 12 || r[12] == ' ' || r[12] == '\r');
+}
+
+/* One klog line quoting the store's status line (printable bytes only; n >= 12). */
+static void klog_refused(const char *r, long n) {
+  static const char head[] = "[XENO STORE] the store on 127.0.0.1:9095 answered \"";
+  static const char tail[] = "\" - browser not opened\n";
+  static const char tail404[] = "\" - browser not opened (the running store predates /api/launcher/open, update it in Settings)\n";
+  const char *t = r[9] == '4' && r[10] == '0' && r[11] == '4' ? tail404 : tail;
+  char msg[sizeof head + 64 + sizeof tail404];
+  long at = 0;
+  for (long i = 0; head[i]; i++) msg[at++] = head[i];
+  for (long i = 0; i < n && i < 64 && r[i] >= 0x20 && r[i] < 0x7f; i++) msg[at++] = r[i];
+  for (long i = 0; t[i]; i++) msg[at++] = t[i];
+  msg[at] = 0;
+  klog(msg);
+}
+
+/* 0: the store answered 200 (browser opened). 1: a store answers on :9095 but not with a 200
+ * (logged; never start a second store next to it). -1: no store there. */
 static int open_store(void) {
   int fd = tcp_local(STORE_PORT, 5);
   if (fd < 0) return -1;
@@ -77,9 +116,13 @@ static int open_store(void) {
                             "Content-Type: application/json\r\nContent-Length: 2\r\nConnection: close\r\n\r\n{}";
   int rc = write_all(fd, req, (long)sizeof req - 1);
   char reply[512];
-  if (rc == 0) SYS3(SYS_read, fd, reply, sizeof reply);   /* wait for the answer, ignore it */
+  long n = rc == 0 ? read_status_line(fd, reply, sizeof reply) : 0;
   SYS3(SYS_close, fd, 0, 0);
-  return rc;
+  if (rc != 0) return -1;
+  if (n < 12) { klog("[XENO STORE] the store on 127.0.0.1:9095 did not answer within 5 s (busy?) - the browser may still open\n"); return 1; }
+  if (is_http_200(reply, n)) return 0;
+  klog_refused(reply, n);
+  return 1;
 }
 
 static int start_store(void) {
@@ -88,7 +131,7 @@ static int start_store(void) {
   int out = -1;
   for (int i = 0; i < 6 && out < 0; i++) { out = tcp_local(LOADER_PORT, 15); if (out < 0) sleep_ms(500); }
   if (out < 0) { klog("[XENO STORE] no ELF loader on 127.0.0.1:9021 - load your jailbreak first\n"); SYS3(SYS_close, in, 0, 0); return -1; }
-  char buf[64 * 1024];
+  char buf[16 * 1024];   /* small: the stack of an app's main thread is not ours to size */
   long n, total = 0;
   int rc = 0;
   while ((n = SYS3(SYS_read, in, buf, sizeof buf)) > 0) {
@@ -104,8 +147,20 @@ static int start_store(void) {
 
 int main(void) {
   klog("[XENO STORE] launcher\n");
-  if (open_store() == 0) { klog("[XENO STORE] store is running - browser opened\n"); return 0; }
-  return start_store() == 0 ? 0 : 1;
+  int st = open_store();
+  if (st == 0) { klog("[XENO STORE] store is running - browser opened\n"); return 0; }
+  if (st > 0) return 1;
+  if (start_store() != 0) return 1;
+  /* The store binds :9095 about a second after the loader starts it (longer when it hands over to
+   * a downloaded update); then ask it to open the browser. */
+  for (int i = 0; i < 60; i++) {
+    sleep_ms(500);
+    st = open_store();
+    if (st == 0) { klog("[XENO STORE] store started - browser opened\n"); return 0; }
+    if (st > 0) return 1;
+  }
+  klog("[XENO STORE] the store did not answer on 127.0.0.1:9095\n");
+  return 1;
 }
 
 void _start(void) {

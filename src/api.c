@@ -21,6 +21,7 @@
 #include "update.h"
 #include "cx_common.h"
 #include "util.h"
+#include "xthread.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -90,6 +91,7 @@ static void h_status(api_ctx *c) {
   jw_kv_i64(&w, "uptime", (int64_t)(util_now() - g_cfg.started_at));
   jw_kv_bool(&w, "downloadsAvailable", xhttp_available());
   jw_kv_str(&w, "transport", xhttp_backend_name());
+  jw_kv_bool(&w, "safeMode", g_cfg.safe_mode);
   jw_key(&w, "catalog"); jw_obj_begin(&w); catalog_status_json(&w); jw_obj_end(&w);
   dl_summary s;
   dl_summary_get(&s);
@@ -106,11 +108,43 @@ static void h_status(api_ctx *c) {
     jw_obj_begin(&w); jw_kv_str(&w, "id", "downloads_unavailable");
     jw_kv_str(&w, "text", "Downloads unavailable on this firmware (network libraries did not load). Browsing still works."); jw_obj_end(&w);
   }
+  if (g_cfg.safe_mode) {
+    jw_obj_begin(&w); jw_kv_str(&w, "id", "recovered_crash");
+    jw_kv_str(&w, "text", "XENO STORE restarted after a problem. Automatic checks are paused for this session; details are in Settings → Diagnostics."); jw_obj_end(&w);
+  }
   if (XENO_ASSETS_PLACEHOLDER_CATALOG) {
     jw_obj_begin(&w); jw_kv_str(&w, "id", "catalog_placeholder");
     jw_kv_str(&w, "text", "This build has no embedded catalog yet — refresh the catalog from Settings."); jw_obj_end(&w);
   }
   jw_arr_end(&w);
+  api_send(c, &w);
+}
+
+/* Everything a user can copy into a bug report: the last crash report, the
+ * thread stack sizes and the transport. */
+static void h_diagnostics(api_ctx *c) {
+  long up = -1;
+  int fresh = 0;
+  const char *rep = crash_previous(&up, &fresh);
+  jw w;
+  api_begin(&w);
+  jw_kv_str(&w, "version", XENO_VERSION);
+  jw_kv_str(&w, "build", XENO_BUILD_HASH);
+  jw_kv_str(&w, "platform", sys_platform());
+  jw_kv_str(&w, "fw", sys_fw_version());
+  jw_kv_str(&w, "transport", xhttp_backend_name());
+  jw_kv_i64(&w, "uptime", (int64_t)(util_now() - g_cfg.started_at));
+  jw_kv_bool(&w, "safeMode", g_cfg.safe_mode);
+  jw_key(&w, "threads"); jw_obj_begin(&w);
+  jw_kv_i64(&w, "platformDefaultStack", (int64_t)xthread_platform_default_stack());
+  jw_kv_i64(&w, "storeStack", (int64_t)XT_STACK_DEFAULT);
+  jw_obj_end(&w);
+  jw_key(&w, "crash"); jw_obj_begin(&w);
+  jw_kv_bool(&w, "present", rep[0] != 0);
+  jw_kv_bool(&w, "lastRun", fresh);
+  jw_kv_i64(&w, "uptime", (int64_t)up);
+  jw_kv_str(&w, "report", rep);
+  jw_obj_end(&w);
   api_send(c, &w);
 }
 
@@ -592,10 +626,13 @@ static void h_launcher_open(api_ctx *c) {
   if (!c->req->client_is_loopback) { api_error(c, 403, "forbidden", "Only the console itself can open its browser."); return; }
   char url[64];
   xsnprintf(url, sizeof url, "http://127.0.0.1:%d/?tv=1", g_cfg.port);
-  int rc = sys_launch_browser(url);
+  /* The app tile and the store's own start-up open can arrive together: open once. */
+  int recent = sys_browser_opened_ago_ms() < 8000;
+  int rc = recent ? 0 : sys_launch_browser(url);
   jw w;
   api_begin(&w);
   jw_kv_bool(&w, "launched", rc == 0);
+  jw_kv_bool(&w, "alreadyOpen", recent);
   jw_kv_str(&w, "url", url);
   api_send(c, &w);
 }
@@ -625,6 +662,7 @@ static void h_session(api_ctx *c) {
 static const api_route ROUTES[] = {
   { "GET", "/api/status", h_status },
   { "GET", "/api/log", h_log },
+  { "GET", "/api/diagnostics", h_diagnostics },
   { "POST", "/api/system/toast", h_toast },
   { "POST", "/api/system/stop", h_stop },
   { "GET", "/api/update/check", h_update_check },

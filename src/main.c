@@ -6,8 +6,9 @@
  *   xeno-store [--port N] [--data DIR] [--root PATH]... [--no-browser] [--log-level debug|info|warn]
  *
  * On the console the loader passes no arguments and the defaults apply
- * (data dir /data/xeno-store, port 9095). The LAUNCH_BROWSER variant opens
- * the PS5 web browser on the store once the server is up.
+ * (data dir /data/xeno-store, port 9095). Once the server is up the PS5
+ * browser opens on the store unless Settings → "Open when XENO STORE starts"
+ * is off (or --no-browser).
  */
 #include "api.h"
 #include "catalog.h"
@@ -24,6 +25,7 @@
 #include "update.h"
 #include "cx_common.h"
 #include "util.h"
+#include "xthread.h"
 
 #include <errno.h>
 #include <pthread.h>
@@ -89,10 +91,12 @@ static void *housekeeping(void *arg) {
     time_t now = util_now();
     settings_t s;
     settings_get(&s);
-    if (xhttp_available() && now - boot >= FIRST_SYNC_DELAY_S) {
+    xthread_note("housekeeping");
+    if (xhttp_available() && !g_cfg.safe_mode && now - boot >= FIRST_SYNC_DELAY_S) {
       if (s.catalogAutoRefresh && now - last_catalog >= CATALOG_REFRESH_S && (now - s.catalogLastCheck >= CATALOG_REFRESH_S || last_catalog == 0)) {
         last_catalog = now;
         if (now - s.catalogLastCheck >= CATALOG_REFRESH_S) {
+          xthread_note("catalog auto-refresh");
           char err[256];
           int updated = 0;
           if (catalog_refresh(0, &updated, err, sizeof err) != 0) LOGW("catalog auto-refresh: %s", err);
@@ -102,6 +106,7 @@ static void *housekeeping(void *arg) {
       if (s.updatesAutoCheck && now - last_update >= UPDATE_CHECK_S) {
         last_update = now;
         if (now - s.updatesLastCheck >= UPDATE_CHECK_S) {
+          xthread_note("update check");
           char err[256];
           update_check(err, sizeof err);
         }
@@ -128,7 +133,46 @@ int main(int argc, char **argv) {
     return 1;
   }
   log_init(g_cfg.data_dir, g_cfg.log_level);
+  int crashed = crash_init(g_cfg.data_dir);
   LOGI("%s %s starting (%s, data %s, port %d)", XENO_APP_NAME, XENO_VERSION, sys_platform(), g_cfg.data_dir, g_cfg.port);
+  LOGI("threads: platform default stack %zu KiB, store threads use %u KiB", xthread_platform_default_stack() >> 10, XT_STACK_DEFAULT >> 10);
+
+  /* A newer version downloaded from Settings takes over before anything binds,
+   * resumes a download or touches the queue (host: only with XENO_HANDOFF=1).
+   * crash.txt stays in place until then, so that copy sees the report too. */
+  update_init(g_cfg.data_dir);
+  int try_handoff = 1;
+#ifdef XENO_HOST
+  try_handoff = getenv("XENO_HANDOFF") != NULL;
+#endif
+  if (try_handoff && update_handoff_newer(cx_local_port("LOADER", 9021))) {
+    log_shutdown();
+    return 0;
+  }
+  crash_consume();
+  if (crashed) {
+    long up = -1;
+    const char *rep = crash_previous(&up, NULL);
+    LOGW("the previous run stopped unexpectedly after %ld s:", up);
+    char line[200];
+    for (const char *q = rep; *q;) {
+      const char *nl = strchr(q, '\n');
+      size_t l = nl ? (size_t)(nl - q) : strlen(q);
+      if (l >= sizeof line) l = sizeof line - 1;
+      memcpy(line, q, l);
+      line[l] = 0;
+      if (line[0]) LOGW("  %s", line);
+      if (!nl) break;
+      q = nl + 1;
+    }
+    /* Crashed soon after start: keep this session up by skipping the automatic
+     * network duties (catalog/update/feed refresh, setup internet probe). Every
+     * action the user starts still runs. */
+    if (up >= 0 && up < CRASH_EARLY_S) {
+      g_cfg.safe_mode = 1;
+      LOGW("safe start: automatic background network checks are off for this session");
+    }
+  }
 
   settings_init(g_cfg.data_dir);
   pairing_init(g_cfg.data_dir);
@@ -141,14 +185,25 @@ int main(int argc, char **argv) {
   api_init();
   api_ext_init();
 
-  if (server_start(g_cfg.port) != 0) {
+  int srv = server_start(g_cfg.port);
+  if (srv == -1) {
     LOGE("cannot bind :%d (%s)", g_cfg.port, strerror(errno));
+    update_handoff_done();   /* another copy holds the port; this one did come up */
     sys_toast("XENO STORE already running on :%d", g_cfg.port);
     log_shutdown();
     return 0;
   }
+  if (srv != 0) {
+    /* The hand-off marker stays: an update that cannot start is set aside at the next start. */
+    LOGE("cannot start the server threads");
+    sys_toast("XENO STORE could not start its server · send the payload again");
+    log_shutdown();
+    return 1;
+  }
+  update_handoff_done();
+  pairing_announce();
   pthread_t hk;
-  if (pthread_create(&hk, NULL, housekeeping, NULL) != 0) { LOGE("cannot start housekeeping thread"); return 1; }
+  if (xthread_start(&hk, "housekeeping", housekeeping, NULL, 0, 0) != 0) { LOGE("cannot start housekeeping thread"); return 1; }
 
   /* [launcher builder] Server is bound — publish the deep-link home-screen icon
    * (/user/app/XENO00002). Idempotent, never fatal; a logged no-op on host. */
@@ -158,13 +213,14 @@ int main(int argc, char **argv) {
   sys_local_ip(ip, sizeof ip);
   char url[96];
   xsnprintf(url, sizeof url, "http://%s:%d/", ip, g_cfg.port);
-#ifdef LAUNCH_BROWSER
-  if (!g_cfg.no_browser) {
+  /* Open the store on the TV (Settings → General → "Open when XENO STORE
+   * starts"); skipped when the Games-row app already asked for it. */
+  if (!g_cfg.no_browser && settings_open_on_start() && sys_browser_opened_ago_ms() > 15000) {
     char local[64];
-    xsnprintf(local, sizeof local, "http://127.0.0.1:%d/", g_cfg.port);
+    xsnprintf(local, sizeof local, "http://127.0.0.1:%d/?tv=1", g_cfg.port);
     sys_launch_browser(local);
   }
-#endif
+  if (crashed) sys_toast("XENO STORE restarted after a problem · details in Settings → Diagnostics");
   sys_toast("XENO STORE ready · %s", url);
   LOGI("ready: %s (fw %s)", url, sys_fw_version());
 

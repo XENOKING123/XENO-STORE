@@ -32,6 +32,7 @@ typedef struct settings {
   char cardSize[4];
   char designPack[16];   /* broadcast | gallery | minimal | arcade */
   int reduceMotion, sounds, hints, showPs4, adultFilter;
+  int openOnStart;       /* open the store in the PS5 browser when it starts */
   /* downloads */
   char defaultRoot[256];
   int connections, concurrentJobs;
@@ -96,6 +97,8 @@ typedef struct settings {
 
 void settings_init(const char *data_dir);
 void settings_get(settings_t *out);
+/* Cheap single-field read (no 30 KB settings_t copy). */
+int settings_open_on_start(void);
 /* Partial merge of a JSON object (unknown keys ignored, ranges clamped), then
  * atomic save. Returns 0 or -1 with err filled. */
 int settings_merge(jv obj, char *err, size_t errcap);

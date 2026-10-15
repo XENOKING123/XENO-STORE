@@ -3,6 +3,7 @@
  */
 #include "cx_library.h"
 #include "catalog.h"
+#include "cx_accounts.h"
 #include "cx_common.h"
 #include "dl.h"
 #include "log.h"
@@ -27,22 +28,31 @@ static struct { char token[24]; char titleId[12]; time_t expires; } tokens[TOKEN
 
 #ifndef XENO_HOST
 #include <dlfcn.h>
-typedef int (*lnc_init_fn)(void);
-typedef int (*lnc_launch_fn)(const char *titleId, char *argv, void *param);
-typedef int (*uss_init_fn)(void *);
+/* sceSystemServiceLaunchApp (libSceSystemService) and its launch context, as payloads call it
+ * (ps5-payload-dev websrv, elf-arsenal): argv is a NULL-terminated list, the context names the
+ * user the title starts for (the earlier sceLncUtilLaunchApp(titleId, NULL, NULL) passed none). */
+typedef struct sss_launch_ctx {
+  uint32_t structsize;
+  uint32_t user_id;
+  uint32_t app_opt;
+  uint64_t crash_report;
+  uint32_t check_flag;
+} sss_launch_ctx;
+typedef int (*sss_launch_fn)(const char *titleId, char **argv, sss_launch_ctx *ctx);
 typedef int (*aiu_init_fn)(void);
 typedef int (*aiu_uninstall_fn)(const char *titleId, int *, int *);
 
 static int native_launch(const char *titleId, char *err, size_t errcap) {
-  uss_init_fn uss = (uss_init_fn)dlsym(RTLD_DEFAULT, "sceUserServiceInitialize");
-  lnc_init_fn init = (lnc_init_fn)dlsym(RTLD_DEFAULT, "sceLncUtilInitialize");
-  lnc_launch_fn launch = (lnc_launch_fn)dlsym(RTLD_DEFAULT, "sceLncUtilLaunchApp");
-  if (!launch) { xsnprintf(err, errcap, "sceLncUtilLaunchApp is not available on this firmware — start the game from the home screen"); return -1; }
-  if (uss) uss(NULL);
-  if (init) init();
-  int rc = launch(titleId, NULL, NULL);
-  LOGI("library: sceLncUtilLaunchApp(%s) -> 0x%08x", titleId, (unsigned)rc);
-  if (rc != 0) { xsnprintf(err, errcap, "the launcher refused (0x%08x) — start the game from the home screen", (unsigned)rc); return -1; }
+  sss_launch_fn launch = (sss_launch_fn)dlsym(RTLD_DEFAULT, "sceSystemServiceLaunchApp");
+  if (!launch) { xsnprintf(err, errcap, "sceSystemServiceLaunchApp is not available on this firmware — start the game from the home screen"); return -1; }
+  sss_launch_ctx ctx;
+  memset(&ctx, 0, sizeof ctx);
+  ctx.structsize = sizeof ctx;
+  ctx.user_id = cx_user_foreground();   /* initialises sceUserService; 0 when unknown */
+  char *argv[1] = {NULL};
+  int rc = launch(titleId, argv, ctx.user_id ? &ctx : NULL);
+  LOGI("library: sceSystemServiceLaunchApp(%s, user 0x%x) -> 0x%08x", titleId, (unsigned)ctx.user_id, (unsigned)rc);
+  if (rc < 0) { xsnprintf(err, errcap, "the launcher refused (0x%08x) — start the game from the home screen", (unsigned)rc); return -1; }
   return 0;
 }
 

@@ -552,7 +552,7 @@ int util_url_parse(const char *url, xurl *out) {
   else {
     const char *frag = strchr(path, '#');
     size_t pl = frag ? (size_t)(frag - path) : strlen(path);
-    if (pl >= sizeof out->path) return -1;
+    if (pl + (path[0] == '?') >= sizeof out->path) return -1;   /* a bare "?query" gains a leading '/' */
     if (path[0] == '?') { out->path[0] = '/'; memcpy(out->path + 1, path, pl); out->path[pl + 1] = 0; }
     else { memcpy(out->path, path, pl); out->path[pl] = 0; }
   }
@@ -570,7 +570,7 @@ int util_url_resolve(const char *base, const char *loc, char *out, size_t cap) {
   if (util_starts_with(loc, "//")) { xsnprintf(out, cap, "%s:%s", b.scheme, loc); return 0; }
   if (loc[0] == '/') { xsnprintf(out, cap, "%s%s", origin, loc); return 0; }
   /* relative: replace the last path segment */
-  char dir[1536];
+  char dir[sizeof b.path];
   xstrlcpy(dir, b.path, sizeof dir);
   char *q = strchr(dir, '?');
   if (q) *q = 0;

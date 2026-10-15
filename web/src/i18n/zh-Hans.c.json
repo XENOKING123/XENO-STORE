@@ -70,5 +70,47 @@
   },
   "discover4": {
     "topPs5": "热门 PS5 游戏"
+  },
+  "diag2": {
+    "crashTitle": "最近的问题",
+    "crashLastRun": "XENO STORE 上次意外停止并已自动重启。如果再次发生，请复制此报告并发送给我们。",
+    "crashOlder": "之前的某个会话因此问题停止。",
+    "none": "没有记录到问题。",
+    "stack": "线程栈",
+    "safeMode": "安全启动：本次会话已暂停自动后台检查。"
+  },
+  "gameapp": {
+    "title": "XENO STORE 应用",
+    "sub": "“游戏”中的应用图标。商店会把它下载到 /data/homebrew，再由 ShadowMountPlus 添加图标——无需 FTP。",
+    "group": "游戏栏应用",
+    "installed": "已安装",
+    "notInstalled": "未安装",
+    "installing": "正在安装…",
+    "install": "安装应用",
+    "reinstall": "重新安装 / 更新",
+    "cancel": "取消",
+    "cancelled": "已取消安装",
+    "version": "版本 {v}",
+    "already": "应用已在安装中",
+    "checking": "正在检查最新版本…",
+    "verifying": "正在校验下载…",
+    "registering": "正在添加图标…",
+    "jobTitle": "XENO STORE 应用",
+    "doneTitle": "XENO STORE 应用已安装",
+    "doneDesc": "大约一分钟内 XENO STORE 图标会出现在“游戏”中（ShadowMountPlus 会自动重新扫描）。如果没有出现，请在加载越狱和 ShadowMountPlus 后重启主机。",
+    "failedTitle": "无法安装应用",
+    "hintTitle": "把 XENO STORE 放到游戏栏",
+    "hintText": "安装一次应用，即可从它自己的图标打开商店——无需 FTP，也无需浏览器地址。",
+    "notNow": "以后再说",
+    "openOnStart": "XENO STORE 启动时打开",
+    "openOnStartHint": "每次启动时在电视上打开商店。如果你在开机时自动启动商店，请关闭此项。",
+    "err": {
+      "sha256_mismatch": "下载内容与校验和不符——未安装任何内容。请重试。",
+      "sha256_unavailable": "此版本还没有校验和——请几分钟后重试。",
+      "no_space": "内置存储空间不足。",
+      "not_package": "下载的文件不是应用镜像。",
+      "too_large": "下载内容比预期大——未安装任何内容。",
+      "download_failed": "下载失败。请检查主机的网络连接后重试。"
+    }
   }
 }

@@ -86,13 +86,21 @@ const char *sys_platform(void) {
 #endif
 }
 
-/* Both PS5 builds can open the browser (the Games-row app asks the running store to); only the
- * browser build does it by itself at start. */
+static volatile int64_t browser_opened_ms;
+
+int64_t sys_browser_opened_ago_ms(void) {
+  int64_t t = browser_opened_ms;
+  return t ? util_now_ms() - t : INT64_MAX / 2;
+}
+
+/* Opens the PS5 browser on url: at start (Settings → open on start) and when the Games-row app
+ * asks the running store to (POST /api/launcher/open). */
 int sys_launch_browser(const char *url) {
 #if !defined(XENO_HOST)
   sceUserServiceInitialize(NULL);
   int rc = sceSystemServiceLaunchWebBrowser(url, NULL);
   if (rc != 0) LOGW("sceSystemServiceLaunchWebBrowser(%s) -> 0x%08x", url, (unsigned)rc);
+  else browser_opened_ms = util_now_ms();   /* only a real open suppresses the next request */
   return rc == 0 ? 0 : -1;
 #else
   LOGI("browser launch not built in (url %s)", url);

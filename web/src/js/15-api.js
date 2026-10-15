@@ -32,6 +32,7 @@
   var api = {
     status: function () { return get('/api/status', { timeout: 6000 }); },
     log: function (lines) { return get('/api/log' + q({ lines: lines || 200 })); },
+    diagnostics: function () { return get('/api/diagnostics'); },
     toast: function (text) { return post('/api/system/toast', { text: text }); },
     stop: function () { return post('/api/system/stop'); },
     updateCheck: function () { return get('/api/update/check', { timeout: 30000 }); },

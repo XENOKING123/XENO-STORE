@@ -70,5 +70,47 @@
   },
   "discover4": {
     "topPs5": "Top PS5-games"
+  },
+  "diag2": {
+    "crashTitle": "Laatste probleem",
+    "crashLastRun": "XENO STORE stopte de vorige keer onverwacht en is vanzelf opnieuw gestart. Gebeurt het weer, kopieer dan dit rapport en stuur het op.",
+    "crashOlder": "Een eerdere sessie stopte met dit probleem.",
+    "none": "Geen problemen vastgelegd.",
+    "stack": "Thread-stack",
+    "safeMode": "Veilige start: automatische controles op de achtergrond zijn voor deze sessie gepauzeerd."
+  },
+  "gameapp": {
+    "title": "XENO STORE-app",
+    "sub": "De app-tegel onder Games. De store downloadt hem naar /data/homebrew en ShadowMountPlus voegt de tegel toe — geen FTP nodig.",
+    "group": "App in de Games-rij",
+    "installed": "Geïnstalleerd",
+    "notInstalled": "Niet geïnstalleerd",
+    "installing": "Bezig met installeren…",
+    "install": "App installeren",
+    "reinstall": "Opnieuw installeren / bijwerken",
+    "cancel": "Annuleren",
+    "cancelled": "Installatie geannuleerd",
+    "version": "Versie {v}",
+    "already": "De app wordt al geïnstalleerd",
+    "checking": "Nieuwste versie controleren…",
+    "verifying": "Download controleren…",
+    "registering": "Tegel toevoegen…",
+    "jobTitle": "XENO STORE-app",
+    "doneTitle": "XENO STORE-app geïnstalleerd",
+    "doneDesc": "De XENO STORE-tegel verschijnt binnen ongeveer een minuut onder Games (ShadowMountPlus scant zelf opnieuw). Zo niet, herstart de console met je jailbreak en ShadowMountPlus geladen.",
+    "failedTitle": "Kan de app niet installeren",
+    "hintTitle": "Zet XENO STORE in je Games-rij",
+    "hintText": "Installeer de app één keer en open de store vanaf zijn eigen tegel — zonder FTP of browseradres.",
+    "notNow": "Niet nu",
+    "openOnStart": "XENO STORE openen bij het starten",
+    "openOnStartHint": "Opent de store op de tv telkens als hij start. Zet dit uit als de store automatisch start bij het opstarten.",
+    "err": {
+      "sha256_mismatch": "De download komt niet overeen met de controlesom — er is niets geïnstalleerd. Probeer het opnieuw.",
+      "sha256_unavailable": "Deze versie heeft nog geen controlesom — probeer het over een paar minuten opnieuw.",
+      "no_space": "Niet genoeg vrije ruimte op de interne schijf.",
+      "not_package": "De download is geen app-image.",
+      "too_large": "De download is groter dan verwacht — er is niets geïnstalleerd.",
+      "download_failed": "Downloaden mislukt. Controleer de internetverbinding van de console en probeer het opnieuw."
+    }
   }
 }

@@ -328,7 +328,7 @@
     "showQr": "Показать QR",
     "noChecks": "Консоль не сообщила ни о каких проверках.",
     "check": {
-      "shadowmount": "API ShadowMountPlus",
+      "shadowmount": "ShadowMountPlus",
       "dpi": "Прямой установщик пакетов (DPI)",
       "etahen": "etaHEN DPI",
       "internet": "Доступность интернета",

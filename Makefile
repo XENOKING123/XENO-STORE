@@ -1,16 +1,20 @@
 # XENO STORE — build system (SPEC §2). Run every target from the repository root.
 #
 #   make web      node web/build.mjs            -> web/dist/index.html
-#   make catalog  tools/catalog/build_catalog.py -> catalog/xeno-catalog.json
+#   make catalog  tools/catalog/build_catalog.py -> catalog/xeno-catalog.json (keeps a richer synced one;
+#                 CATALOG_FLAGS=--force rebuilds it from the snapshots anyway)
 #   make assets   tools/gen_assets.py            -> src/assets.h
 #   make host     host binary build/host/xeno-store (-DXENO_HOST=1, OpenSSL if found)
 #   make test     host build + tests/host/run.sh
-#   make ps5      xeno-store.elf + xeno-store-browser.elf (needs PS5_PAYLOAD_SDK)
-#   make pkg      tools/make_homebrew.py          -> dist/XENO-STORE/ + zip
-#   make eboot    app/build_eboot.sh              -> app/dist/eboot.bin (Games-row launcher SELF)
-#   make ffpkg    tools/make_ffpkg.py             -> dist/PPSA99500.ffpkg + dist/XENO-STORE.pkg
+#   make ps5      xeno-store.elf (needs PS5_PAYLOAD_SDK)
+#   make eboot    app/native-launcher/build.sh    -> app/dist/eboot.bin + app/dist/sce_module/libc.prx
+#                 (the Games-row launcher as a native app; fetches its own pinned SDK v0.42)
+#   make eboot-raw app/build_eboot.sh             -> app/dist/eboot.bin (the old freestanding launcher)
+#   make launcher-test  host test of the native launcher's logic (fake store + fake ELF loader)
+#   make ffpkg    tools/make_ffpkg.py             -> dist/PPSA99500.ffpkg (the Games-row app, needs makefs)
+#   make all      web catalog assets ps5 eboot ffpkg (what a release ships)
+#   make pkg      tools/make_homebrew.py          -> dist/XENO-STORE/ + zip for etaHEN / itemzflow (optional, not released)
 #   make launcher app/build_launcher.sh          -> app/dist/xeno-store-launcher.elf (needs PS5_PAYLOAD_SDK)
-#   make all      web catalog assets ps5 pkg
 #   make clean
 
 VERSION := $(shell cat VERSION 2>/dev/null || echo 0.0.0)
@@ -54,18 +58,23 @@ HOST_BIN  := $(BUILD_DIR)/host/xeno-store
 # though no symbol is referenced directly. PS5_LIBS is used only by the PS5 link
 # rules, so the host build never sees it.
 PS5_LIBS := -Wl,--no-as-needed -lSceSystemService -lSceUserService -lSceIpmi -lSceAppInstUtil -lSceNotification -lkernel_sys
-ELF         := xeno-store.elf
-ELF_BROWSER := xeno-store-browser.elf
+ELF := xeno-store.elf
 
-.PHONY: all web catalog assets host test ps5 ps5-check pkg eboot ffpkg desktop launcher clean distclean
+.PHONY: all web catalog assets host test ps5 ps5-check pkg eboot eboot-raw launcher-test ffpkg desktop launcher clean distclean
 
-all: web catalog assets ps5 pkg
+all: web catalog assets ps5 eboot ffpkg
 
 web:
 	$(NODE) web/build.mjs
 
+# The offline build never shrinks the catalog catalog-sync.yml commits: when
+# catalog/report.json says the current file is an online build with more games,
+# it is left alone (exit 0) and only --validate runs. CATALOG_FLAGS=--force
+# replaces it with the snapshot build.
+CATALOG_FLAGS ?=
+
 catalog:
-	$(PYTHON) tools/catalog/build_catalog.py --offline
+	$(PYTHON) tools/catalog/build_catalog.py --offline $(CATALOG_FLAGS)
 	$(PYTHON) tools/catalog/build_catalog.py --validate
 
 assets:
@@ -87,8 +96,13 @@ $(BUILD_DIR)/host/%.o: $(SRC_DIR)/%.c $(HEADERS) $(ASSETS)
 	@mkdir -p $(dir $@)
 	$(HOST_CC) $(HOST_CFLAGS) -c -o $@ $<
 
-test: host
+test: host launcher-test
 	tests/host/run.sh
+
+# The native launcher's logic, built for this machine and run against a fake store and a fake
+# ELF loader (the 30 s give-up case is left to the full run: app/native-launcher/tests/run-host-test.py).
+launcher-test:
+	$(PYTHON) app/native-launcher/tests/run-host-test.py --skip-timeout
 
 # Compile-only check of every PS5 translation unit (no link); handy without a full SDK link.
 ps5-check: assets
@@ -102,42 +116,46 @@ ps5: assets
 ifndef PS5_PAYLOAD_SDK
 	$(error PS5_PAYLOAD_SDK is not set — export it to the ps5-payload-dev SDK directory)
 endif
-	$(MAKE) PS5_PAYLOAD_SDK=$(PS5_PAYLOAD_SDK) $(ELF) $(ELF_BROWSER)
+	$(MAKE) PS5_PAYLOAD_SDK=$(PS5_PAYLOAD_SDK) $(ELF)
 
 ifdef PS5_PAYLOAD_SDK
 include $(PS5_PAYLOAD_SDK)/toolchain/prospero.mk
 PS5_CFLAGS := $(BASE_CFLAGS)
-PS5_OBJS         := $(addprefix $(BUILD_DIR)/ps5/,$(PS5_SRCS:.c=.o))
-PS5_BROWSER_OBJS := $(addprefix $(BUILD_DIR)/ps5-browser/,$(PS5_SRCS:.c=.o))
+PS5_OBJS := $(addprefix $(BUILD_DIR)/ps5/,$(PS5_SRCS:.c=.o))
 
 $(ELF): $(PS5_OBJS)
 	$(CC) $(PS5_CFLAGS) -o $@ $(PS5_OBJS) $(PS5_LIBS)
 	@echo "payload: $@"
 
-$(ELF_BROWSER): $(PS5_BROWSER_OBJS)
-	$(CC) $(PS5_CFLAGS) -DLAUNCH_BROWSER -o $@ $(PS5_BROWSER_OBJS) $(PS5_LIBS)
-	@echo "payload: $@"
-
 $(BUILD_DIR)/ps5/%.o: $(SRC_DIR)/%.c $(HEADERS) $(ASSETS)
 	@mkdir -p $(dir $@)
 	$(CC) $(PS5_CFLAGS) -c -o $@ $<
-
-$(BUILD_DIR)/ps5-browser/%.o: $(SRC_DIR)/%.c $(HEADERS) $(ASSETS)
-	@mkdir -p $(dir $@)
-	$(CC) $(PS5_CFLAGS) -DLAUNCH_BROWSER -c -o $@ $<
 endif
 
 # ---- packaging ---------------------------------------------------------------
 pkg:
 	$(PYTHON) tools/make_homebrew.py
 
-# Games-row app: dist/PPSA99500.ffpkg (UFS2 image for ShadowMountPlus, needs makefs) and
-# dist/XENO-STORE.pkg (fake package, needs ps5upload's fpkg_build). eboot.bin is the launcher
-# from 'make eboot'. Skips cleanly (exit 3) when neither tool is available.
+# Games-row app: dist/PPSA99500.ffpkg (UFS2 image for ShadowMountPlus, needs makefs; an optional
+# fake .pkg too when XENO_FPKG_BUILD points at ps5upload's fpkg_build). eboot.bin is the launcher
+# from 'make eboot'. Skips cleanly (exit 3) when makefs is missing.
+#
+# 'make eboot' builds the launcher as a native PS5 app with the ps5-native-app-boilerplate
+# toolchain (BlackBearReloaded, GPL-3.0-or-later) in app/native-launcher: it needs clang-18,
+# ninja, wget and unzip, and fetches the SDK v0.42 that toolchain pins into
+# app/native-launcher/.deps (PS5_PAYLOAD_SDK is not used). Next to eboot.bin it writes
+# sce_module/libc.prx, the toolchain's clean-room libc module that an app folder carries;
+# make_ffpkg.py stages it too.
 eboot:
+	bash app/native-launcher/build.sh app/dist
+
+# The old freestanding launcher (raw syscalls, ET_EXEC), kept until the native one is proven
+# on a console. It needs no sce_module, so the libc.prx left by 'make eboot' is removed.
+eboot-raw:
 ifndef PS5_PAYLOAD_SDK
 	$(error PS5_PAYLOAD_SDK is not set — export it to the ps5-payload-dev SDK directory)
 endif
+	rm -rf app/dist/sce_module
 	PS5_PAYLOAD_SDK=$(PS5_PAYLOAD_SDK) app/build_eboot.sh
 
 # XENO STORE Desktop for this machine (needs Go 1.22+); CI builds every OS.
@@ -160,7 +178,7 @@ endif
 # 'clean' removes the payload build outputs; web/dist belongs to 'make web'
 # (and the UI builders working in parallel), so only 'distclean' removes it.
 clean:
-	rm -rf $(BUILD_DIR) $(ELF) $(ELF_BROWSER) $(ASSETS) dist app/dist
+	rm -rf $(BUILD_DIR) $(ELF) xeno-store-browser.elf $(ASSETS) dist app/dist app/native-launcher/build
 
 distclean: clean
-	rm -rf web/dist
+	rm -rf web/dist app/native-launcher/.deps app/native-launcher/runtime/libc.prx

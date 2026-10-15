@@ -2,11 +2,13 @@
  * cx_feeds.c — see cx_feeds.h.
  */
 #include "cx_feeds.h"
+#include "config.h"
 #include "cx_common.h"
 #include "http_client.h"
 #include "log.h"
 #include "settings.h"
 #include "util.h"
+#include "xthread.h"
 
 #include <pthread.h>
 #include <stdio.h>
@@ -144,18 +146,13 @@ static void *refresh_thread(void *arg) {
 
 void cx_feeds_tick(void) {
   time_t now = util_now();
-  if (!xhttp_available() || now - boot_at < FEED_FIRST_DELAY_S) return;
+  if (!xhttp_available() || g_cfg.safe_mode || now - boot_at < FEED_FIRST_DELAY_S) return;
   if (last_auto && now - last_auto < FEED_MAX_AGE_S) return;
   settings_t s;
   settings_get(&s);
   if (!s.catalogAutoRefresh) { last_auto = now; return; }
   last_auto = now;
-  pthread_t th;
-  pthread_attr_t at;
-  pthread_attr_init(&at);
-  pthread_attr_setdetachstate(&at, PTHREAD_CREATE_DETACHED);
-  if (pthread_create(&th, &at, refresh_thread, NULL) != 0) LOGW("feeds: cannot start refresh thread");
-  pthread_attr_destroy(&at);
+  if (xthread_start(NULL, "feeds", refresh_thread, NULL, 0, 1) != 0) LOGW("feeds: cannot start refresh thread");
 }
 
 void cx_feed_json(int feed, jw *w) {

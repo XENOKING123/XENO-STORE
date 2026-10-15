@@ -11,7 +11,9 @@ void sys_toast(const char *fmt, ...) XS_PRINTF(1, 2);
 void sys_keep_awake_tick(void);
 const char *sys_fw_version(void);      /* "13.60" on PS5, "host" otherwise */
 const char *sys_platform(void);        /* "ps5" | "host" */
-int sys_launch_browser(const char *url);  /* only effective in LAUNCH_BROWSER builds */
+int sys_launch_browser(const char *url);  /* PS5 only; a logged no-op on host */
+/* Milliseconds since the store last opened the browser (a large value when never). */
+int64_t sys_browser_opened_ago_ms(void);
 int sys_local_ip(char *out, size_t cap);  /* first non-loopback IPv4; "127.0.0.1" fallback */
 
 #endif

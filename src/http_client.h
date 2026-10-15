@@ -19,7 +19,7 @@ typedef struct xhttp_resp {
   int64_t range_start, range_total;   /* from Content-Range, -1 if absent */
   char etag[128];
   char last_modified[64];
-  char location[1024];                /* final URL after redirects, or raw Location */
+  char location[2048];                /* final URL after redirects, or raw Location (signed CDN URLs run ~1 KiB) */
   char content_type[96];
   char filename[256];                 /* from Content-Disposition if any */
   int retry_after;                    /* seconds, 0 if absent */
@@ -38,6 +38,7 @@ typedef struct xhttp_req {
   int follow_redirects;               /* max hops (0 = none) */
   int insecure_tls;                   /* only honored by backends that can */
   volatile int *cancel_flag;          /* checked between reads; non-zero = abort */
+  int transfer;                       /* long body transfer: queues for a PS5 transfer slot */
 } xhttp_req;
 
 typedef struct xhttp_conn xhttp_conn;

@@ -17,6 +17,7 @@
 #include "log.h"
 #include "settings.h"
 #include "util.h"
+#include "xthread.h"
 
 #include <pthread.h>
 #include <stdio.h>
@@ -389,12 +390,7 @@ void dlx_debrid_tick(void) {
     if (!ra) { pthread_mutex_lock(&mu); C[i].refreshing = 0; pthread_mutex_unlock(&mu); continue; }
     ra->si = i;
     xstrlcpy(ra->key, key, sizeof ra->key);
-    pthread_t th;
-    pthread_attr_t attr;
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-    if (pthread_create(&th, &attr, refresh_thread, ra) != 0) { free(ra); pthread_mutex_lock(&mu); C[i].refreshing = 0; pthread_mutex_unlock(&mu); }
-    pthread_attr_destroy(&attr);
+    if (xthread_start(NULL, "debrid", refresh_thread, ra, 0, 1) != 0) { free(ra); pthread_mutex_lock(&mu); C[i].refreshing = 0; pthread_mutex_unlock(&mu); }
   }
 }
 

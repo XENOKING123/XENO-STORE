@@ -14,7 +14,7 @@
 
 <br/><br/>
 
-![version](https://img.shields.io/badge/version-1.2.0-FFCE4A?style=for-the-badge)
+![version](https://img.shields.io/badge/version-1.2.1-FFCE4A?style=for-the-badge)
 ![platform](https://img.shields.io/badge/PS5-on--console%20payload-2F7CF6?style=for-the-badge&logo=playstation&logoColor=white)
 ![catalog](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FXENOKING123%2FXENO-STORE%2Fmain%2Fcatalog%2Frevision.json&query=%24.games&suffix=%20games&label=catalog&color=2ea043&style=for-the-badge)
 ![verified](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FXENOKING123%2FXENO-STORE%2Fmain%2Fcatalog%2Frevision.json&query=%24.verifiedReleases&suffix=%20verified%20releases&label=audit&color=2f7cf6&style=for-the-badge)
@@ -32,7 +32,7 @@
 
 ### 🟢 [**⬇️  DOWNLOAD XENO STORE  ⬇️**](../../releases/latest)
 
-<sub>`PPSA99500.ffpkg` (PS5 app) · `XENO-STORE.pkg` · `xeno-store-browser.elf` · `xeno-store.elf` · `XENO-STORE.zip` · `XENO-STORE-Desktop` (Windows · macOS · Linux) · `.sha256` files</sub>
+<sub>`PPSA99500.ffpkg` (the PS5 app) · `xeno-store.elf` (the store) · `XENO-STORE-Desktop` (Windows · Mac · Linux) · `SHA256SUMS`</sub>
 
 </div>
 
@@ -71,7 +71,7 @@
 
 | | Feature | What you get |
 |:--:|:--|:--|
-| 🛒 | **One big catalog** | **1,965 PS5 + PS4 games / 2,592 releases** merged from a verified catalog feed, Archive.org, dlpsgame, SuperPSX, pkg.games and more, with cover art, screenshots, Metacritic, genres and a **6-hour auto sync** (no app update needed). |
+| 🛒 | **One big catalog** | **1,965 PS5 + PS4 games / 2,592 releases** merged from a verified catalog feed, Archive.org, dlpsgame, SuperPSX, pkg.games and more, with cover art, screenshots, Metacritic, genres and a **2-hour auto sync** (no app update needed). |
 | ⚡ | **Fast downloads** | Segmented transfer with **work-stealing chunks**, per-host adaptive windows, resume with sidecars, mirror failover, **Turbo start** (races mirrors and keeps the fastest), bandwidth limit, schedule window, lifetime stats. |
 | 📦 | **PKG auto-install** | Packages install the moment they finish (native AppInstUtil, with DPI / etaHEN DPI fallback). **Install sets**: game → backport → update → DLC, installed in order, one tap. |
 | 🧩 | **Images just work** | exFAT / FFPFSC / FFPKG dumps land in `homebrew/` and XENO STORE pokes **ShadowMountPlus** to scan them. ZIP archives are **extracted on the console**. |
@@ -104,7 +104,7 @@
 <td align="center">🕹️<br/><b>Made for the couch</b><br/><sub>controller-first, glass design, 7 themes</sub></td>
 <td align="center">📱<br/><b>Phone + PC</b><br/><sub>pair with a 6-digit code or <code>xeno.local</code></sub></td>
 <td align="center">🌍<br/><b>14 languages</b><br/><sub>Arabic right-to-left included</sub></td>
-<td align="center">🔄<br/><b>Always fresh</b><br/><sub>catalog syncs every 6 h, no reinstall</sub></td>
+<td align="center">🔄<br/><b>Always fresh</b><br/><sub>catalog syncs every 2 h, no reinstall</sub></td>
 </tr>
 </table>
 
@@ -140,35 +140,35 @@ real console every tile pulls the actual box art and media from the catalog's ar
 
 ## 🚀 Install
 
-You need a jailbroken PS5 with an ELF loader on **port 9021** (etaHEN, the ps5-payload-dev `elfldr`, XENO TOOL's Payloads tab all do). Grab the files from the **[latest release](../../releases/latest)**. Every route runs the same store, so settings, queue and saves carry over.
+You need a jailbroken PS5 with an ELF loader on **port 9021** (etaHEN, the ps5-payload-dev `elfldr`, XENO TOOL's Payloads tab or Payload Manager). The **[latest release](../../releases/latest)** has three things: **`xeno-store.elf`** (the store), **`PPSA99500.ffpkg`** (the XENO STORE app for your Games row) and **XENO STORE Desktop** for your PC. `SHA256SUMS` lists the checksum of every file.
 
-### 1 · The PS5 app — `PPSA99500.ffpkg` ⭐ recommended
-
-**XENO STORE** in your PS5 **Games** row, with the XENO icon. Press ✕ and it opens full screen.
+### 1 · First time — send `xeno-store.elf`
 
 ```text
-1.  ⬇️   Download  PPSA99500.ffpkg  (and PPSA99500.ffpkg.sha256 to check it)
-2.  📂   Copy it to  /data/homebrew/  on the PS5 (FTP, USB or XENO TOOL)
-3.  🎮   ShadowMountPlus mounts it: "XENO STORE" appears under Games — press ✕
+1.  ⬇️   Download  xeno-store.elf
+2.  📡   Send it to your ELF loader / Payload Manager (port 9021)
+3.  📺   The store opens on the TV
+4.  🎮   Settings → Updates → "Install the XENO STORE app"
+         The XENO STORE app appears under Games by itself
+```
+
+<sub>Rather do it by hand? Copy <code>PPSA99500.ffpkg</code> to <code>/data/homebrew/</code> (FTP, USB or XENO TOOL) and ShadowMountPlus mounts it. The app needs kstuff + ShadowMountPlus, like every <code>.ffpkg</code> app. Don't want the browser to open when the store starts? Settings → General → <i>Open XENO STORE when it starts</i>.</sub>
+
+### 2 · After that — the XENO STORE tile
+
+```text
+1.  🎮   Games → XENO STORE → ✕
          The app starts the store if it is not running yet, then opens it full screen
+2.  🔄   Updates: Settings → Updates → Check → Install update
+         The app starts the new version by itself from then on
 ```
 
-<sub>Needs kstuff + ShadowMountPlus, like every <code>.ffpkg</code> app. The image is UFS2 with the layout ShadowMountPlus documents and is checked file by file at build time. Prefer a classic package? <code>XENO-STORE.pkg</code> is the same app for consoles that install fake packages.</sub>
-
-### 2 · The web version — `xeno-store-browser.elf`
-
-```text
-1.  ⬇️   Download  xeno-store-browser.elf
-2.  📡   XENO TOOL → Payloads → Send file  (or any loader on port 9021)
-3.  🌐   The PS5 browser opens the store by itself
-```
-
-The store also adds a **XENO STORE Web** shortcut on the PS5 that opens the browser version, so you can pick either one. Sent `xeno-store.elf` instead? Open `http://<ps5-ip>:9095` or `http://xeno.local:9095`.
+The store also adds a **XENO STORE Web** shortcut on the PS5 that opens it in the browser. On your phone or laptop, open `http://<ps5-ip>:9095` or `http://xeno.local:9095`.
 
 ### 3 · On your PC — `XENO-STORE-Desktop` (Windows · macOS · Linux)
 
 ```text
-1.  ⬇️   Download the Desktop zip for your system and run XENO-STORE-Desktop
+1.  ⬇️   Download the Desktop archive for your system and run XENO-STORE-Desktop
 2.  🔎   "Search my network" finds your PS5 (or type its IP)
 3.  🔔   "Show code on my PS5" → the code pops up as a PS5 notification → type it
 4.  🛒   "Open XENO STORE": the whole store in your PC browser, every download goes to the PS5
@@ -178,14 +178,6 @@ The store also adds a **XENO STORE Web** shortcut on the PS5 that opens the brow
 
 <sub>A phone or a PC browser that opens <code>http://&lt;ps5-ip&gt;:9095</code> directly gets the same <b>Link to your PS5</b> page first. macOS may ask you to allow the app in System Settings → Privacy &amp; Security the first time.</sub>
 
-### 4 · Homebrew folder — `XENO-STORE.zip` (etaHEN / itemzflow launcher)
-
-```text
-1.  ⬇️   Download  XENO-STORE.zip
-2.  📂   Extract it to  /data/homebrew/XENO-STORE/  (eboot.bin, sce_sys/, homebrew.json)
-3.  🏠   Start XENO STORE from your homebrew launcher
-```
-
 ### 🔁 Auto-start — Payload Manager
 
 Add this URL as a **source** in Payload Manager and enable auto-start for **XENO STORE**, so the download service is up after every boot:
@@ -194,9 +186,9 @@ Add this URL as a **source** in Payload Manager and enable auto-start for **XENO
 https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/payloads.json
 ```
 
-<sub>Settings → Setup shows the same URL as a QR code. Every release writes the sha256 of each file into that list, so Payload Manager verifies what it downloads.</sub>
+<sub>Settings → Setup shows the same URL as a QR code. Every release writes the sha256 of the ELF into that list, so Payload Manager verifies what it downloads.</sub>
 
-> 💡 **Updates** are built in: Settings → Updates → *Check* → *Install update* downloads the new version, checks its sha256 and stages it for the next start.
+> 💡 **Updates** are built in: Settings → Updates → *Check* → *Install update* downloads the new version, checks its sha256 and keeps it for the next start (*Restart now* switches right away).
 
 ---
 
@@ -206,7 +198,7 @@ The welcome sheet asks three things: which **sources** you want to see, which **
 
 | Check | Why it matters | Fix offered |
 |:--|:--|:--|
-| ShadowMountPlus API (`127.0.0.1:10101`) | Mounts exFAT / FFPFSC dumps so they show on the home screen | **Launch ShadowMountPlus now** when a copy is on the console, or install it from Companions |
+| ShadowMountPlus (running, or its API on `127.0.0.1:10101`) | Mounts exFAT / FFPFSC dumps so they show on the home screen | **Launch ShadowMountPlus now** when a copy is on the console, or install it from Companions |
 | Package installer (`:9040`) | Fallback for PKG install when the native call is refused | Install the companion daemon |
 | etaHEN DPI (`:12800`) | Optional second fallback | Load etaHEN before the store |
 | Internet | Catalog sync, cover art, downloads | Shows the exact host that failed |
@@ -346,6 +338,7 @@ XENO STORE is a GPL-3.0 download manager and catalog browser. Only download cont
 | Symptom | What to do |
 |:--|:--|
 | "XENO STORE already running on :9095" toast | A copy is still running — just open the address. Use Settings → Updates → *Stop XENO STORE* before sending a new ELF. |
+| "XENO STORE restarted after a problem" toast | The store stopped by itself last time. Settings → Diagnostics shows the report (what was running, the network step); copy it into an issue. That session starts safe: automatic catalog / update checks stay off, everything you start still works. |
 | "Downloads unavailable on this firmware" | The network libraries did not load (`libSceHttp` / `libSceSsl`). Browsing still works; retry after a reboot and report your firmware in an issue. |
 | Download fails with *provider_page* | The host answered with a web page instead of the file. Open the page and use **Enter file link**. |
 | *source_changed* | The file on the server changed under a paused download. **Restart** from zero or choose another source. |
@@ -372,12 +365,11 @@ make catalog    # tools/catalog/build_catalog.py --offline + --validate → cata
 make assets     # tools/gen_assets.py           → src/assets.h (UI + catalog + logo + icon, gzip variants)
 make host       # host binary build/host/xeno-store (-DXENO_HOST=1, OpenSSL when pkg-config finds it)
 make test       # make host + tests/host/run.sh  (100+ tests across 5 suites)
-make ps5        # xeno-store.elf + xeno-store-browser.elf (needs PS5_PAYLOAD_SDK)
+make ps5        # xeno-store.elf (needs PS5_PAYLOAD_SDK)
 make ps5-check  # compile-only check of every PS5 translation unit
-make pkg        # tools/make_homebrew.py        → dist/XENO-STORE/ + dist/XENO-STORE.zip
-make ffpkg      # tools/make_ffpkg.py           → dist/XENO-STORE.pkg (needs fpkg_build)
-make launcher   # app/build_launcher.sh         → app/dist/xeno-store-launcher.elf
-make all        # web catalog assets ps5 pkg
+make eboot      # app/build_eboot.sh            → app/dist/eboot.bin (the Games-row app's launcher)
+make ffpkg      # tools/make_ffpkg.py           → dist/PPSA99500.ffpkg (needs makefs; checked by tools/ufs2_check.py)
+make all        # web catalog assets ps5 eboot ffpkg — exactly what a release ships
 make clean      # build outputs (distclean also removes web/dist)
 ```
 
@@ -386,7 +378,7 @@ and the [ps5-payload-dev SDK](https://github.com/ps5-payload-dev/sdk) v0.40 with
 
 ```bash
 export PS5_PAYLOAD_SDK=/opt/ps5-payload-sdk
-make ps5 pkg
+make ps5 eboot ffpkg
 ```
 
 Compiler flags are `-std=gnu11 -Wall -Wextra -Werror -O2 -fstack-protector-strong`. The PS5 build links only libraries proven to load on every firmware
@@ -400,10 +392,10 @@ UI development without a console: `node web/dev-server.mjs --port 9095` serves t
 
 ## 🔄 Catalog sync & audit
 
-* **`catalog-sync.yml`** runs every 6 hours (`17 */6 * * *`) and on demand: `build_catalog.py --online` scrapes every source with a per-source time budget (a broken site falls back to its last good data, never breaks the build), then `audit.py --budget-seconds 1500` checks release links (Archive.org metadata with sizes and hashes, `HEAD` + 1-byte `Range` for direct hosts, "does the page still mention the game" for page sources), then `--validate` guards the result. Changes are committed as `catalog: sync (revision N) [catalog-sync]`.
+* **`catalog-sync.yml`** runs every 2 hours (`17 */2 * * *`) and on demand: `build_catalog.py --online` scrapes every source with a per-source time budget (a broken site falls back to its last good data, never breaks the build), then `audit.py --budget-seconds 1500` checks release links (Archive.org metadata with sizes and hashes, `HEAD` + 1-byte `Range` for direct hosts, "does the page still mention the game" for page sources), then `--validate` guards the result. Changes are committed as `catalog: sync (revision N) [catalog-sync]`.
 * **Audit verdicts** are `ok`, `flaky`, `dead` and `page`; `dead` links are dropped at the next build, `release.health` is set and `game.verified` means "at least one direct release audited ok". Results live in `catalog/snapshots/audit/results.json` and are re-checked after 7 days.
 * The console checks `catalog/revision.json` every 6 hours (Settings → Catalog → Auto-refresh) and downloads the new catalog only when the revision grew; `updates/featured.json`, `messages.json`, `companions.json` and `saves-backend.json` ride along, so Discover rows, announcements and companions change **without an app update**.
-* **`build.yml`** builds the UI, builds + validates the catalog, runs the host tests, cross-compiles the ELFs, and on `main` publishes the `v<VERSION>` release with `SHA256SUMS`, then writes the hashes into `updates/payloads.json`.
+* **`build.yml`** builds the UI, builds + validates the catalog, runs the host tests, cross-compiles `xeno-store.elf`, builds `PPSA99500.ffpkg` and XENO STORE Desktop, and on `main` publishes the `v<VERSION>` release (the app, the ELF, one Desktop download per OS and `SHA256SUMS`), then writes the ELF's hash into `updates/payloads.json`.
 
 ---
 
@@ -427,9 +419,12 @@ UI development without a console: `node web/dev-server.mjs --port 9095` serves t
 | **[offact](https://github.com/ps5-payload-dev)** | The offline account activation method vendored in this repo |
 | **[earthonion / np-fake-signin](https://github.com/earthonion/np-fake-signin)** | NP fake sign-in / sign-out companions |
 | **[miniz](https://github.com/richgel999/miniz)** | The single-file ZIP engine used for extraction and save backups |
-| **[ps5upload](https://github.com/phantomptr/ps5upload)** (phantomptr, GPL-3.0) | The `fpkg_build` engine that builds and verifies the Games-row `.pkg` |
+| **[ps5upload](https://github.com/phantomptr/ps5upload)** (phantomptr, GPL-3.0) | The `fpkg_build` engine `tools/make_ffpkg.py` can use for a local `.pkg` build of the app |
 | **[ShadowMountPlus](https://github.com/drakmor/shadowMountPlus)** | Mounts the `.ffpkg` app; its documented UFS2 profile is what `make ffpkg` writes |
-| **ps5-payload-sdk `install_app` sample** — John Törnblom (GPL-3.0) | `make_fself.py` and the app linker script behind the Games-row launcher |
+| **[ps5-native-app-boilerplate / ps5-homebrew-ui](https://github.com/blackbearreloaded/ps5-homebrew-ui)** — BlackBearReloaded (GPL-3.0-or-later) | The native app toolchain in `app/native-launcher`: `app_crt.cpp`, the PIE layout, `ps5-native-tool` and the clean-room `libc.prx` module the Games-row launcher ships with |
+| **[SharpProspero](https://github.com/SvenGDK/SharpProspero)** — SvenGDK (GPL-3.0) | The FSELF and module-writer work `ps5-native-tool` is derived from |
+| **[Orbit Store](https://github.com/saawant12/orbit-store-ps5)** (GPL-3.0-or-later) | Its native TV app showed the app layout that launches on the console; the toolchain copy comes from its 1.2.0 source |
+| **ps5-payload-sdk `install_app` sample** — John Törnblom (GPL-3.0) | `make_fself.py` and the app linker script behind the old freestanding launcher (`make eboot-raw`) |
 | **[makefs](https://man.netbsd.org/makefs.8)** (NetBSD / FreeBSD) | Builds the UFS2 `.ffpkg` image on Linux without mounting anything |
 | **[qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator)** — Kazuhiko Arase (MIT) | Pairing and share QR codes |
 
@@ -447,7 +442,7 @@ Modifying a console can void its warranty and may violate the platform holder's 
 
 ## ⚖️ License
 
-**GNU GPL-3.0-or-later** — see [`LICENSE`](LICENSE). Third-party notices are in `src/third_party/README.md` and the in-app **About** screen.
+**GNU GPL-3.0-or-later** — see [`LICENSE`](LICENSE). Third-party notices are in `src/third_party/README.md`, `app/native-launcher/NOTICE` (the native launcher's toolchain and its `libc.prx` module) and the in-app **About** screen.
 
 <br/>
 

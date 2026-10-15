@@ -328,7 +328,7 @@
     "showQr": "عرض رمز QR",
     "noChecks": "لم يُبلِّغ الجهاز عن أيّ فحوص.",
     "check": {
-      "shadowmount": "واجهة ShadowMountPlus",
+      "shadowmount": "ShadowMountPlus",
       "dpi": "مثبّت الحزم المباشر (DPI)",
       "etahen": "etaHEN DPI",
       "internet": "إمكانية الوصول إلى الإنترنت",

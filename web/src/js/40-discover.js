@@ -333,6 +333,7 @@
     surprise.addEventListener('click', function () { var pool = games(S.data.games); var g = pool[Math.floor(Math.random() * pool.length)]; if (g) XS.router.go('game', { id: g.id }); });
     top.appendChild(surprise);
     inner.appendChild(top);
+    if (XS.appInstall) inner.appendChild(XS.appInstall.hint());   /* PS5 without the Games-row app: one-time install hint */
     rails(inner);
     allGames(inner);
     root.scrollTop = scroll;

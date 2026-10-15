@@ -328,7 +328,7 @@
     "showQr": "QR anzeigen",
     "noChecks": "Die Konsole hat keine Prüfungen gemeldet.",
     "check": {
-      "shadowmount": "ShadowMountPlus-API",
+      "shadowmount": "ShadowMountPlus",
       "dpi": "Direct Package Installer (DPI)",
       "etahen": "etaHEN DPI",
       "internet": "Interneterreichbarkeit",

@@ -14,8 +14,10 @@
 #include "log.h"
 #include "settings.h"
 #include "sha256.h"
+#include "sys.h"
 #include "cx_common.h"
 #include "util.h"
+#include "xthread.h"
 
 #include <fcntl.h>
 #include <pthread.h>
@@ -25,9 +27,11 @@
 #include <unistd.h>
 
 #define GITHUB_LATEST "https://api.github.com/repos/XENOKING123/XENO-STORE/releases/latest"
+#define HANDOFF_WINDOW_S 90   /* a handed-off copy reaches server_start well within this */
 
 static pthread_mutex_t update_mu = PTHREAD_MUTEX_INITIALIZER;
 static char data_dir[512];
+static int handoff_settling;   /* another copy of this build just handed off: its marker is not ours to clear */
 static struct {
   char latest[32], url[1024], sha256[65], notes[512];
   time_t checkedAt;
@@ -244,14 +248,126 @@ int update_apply(char *out_path, size_t cap, char *err, size_t errcap) {
   if (!file_is_elf(staging)) { xsnprintf(err, errcap, "Downloaded file is not an ELF"); util_unlink_quiet(staging); return -1; }
   if (rename(staging, final) != 0) { xsnprintf(err, errcap, "Cannot rename staged ELF"); return -1; }
   util_fsync_dir(final);
+  /* The version next to it lets an older copy (the Games-row app's built-in ELF) hand over at start. */
+  char vpath[640], ver[32];
+  xsnprintf(vpath, sizeof vpath, "%s.version", final);
+  pthread_mutex_lock(&update_mu);
+  xstrlcpy(ver, U.latest, sizeof ver);
+  pthread_mutex_unlock(&update_mu);
+  if (util_write_file_atomic(vpath, ver, strlen(ver)) != 0) LOGW("update: cannot record the staged version in %s", vpath);
   xstrlcpy(out_path, final, cap);
   LOGI("update: staged %s (sha256 %s)", final, hex);
   return 0;
 }
 
+/* The version recorded next to the staged ELF ("" when missing or unreadable). */
+static void staged_version(const char *elf, char *ver, size_t cap) {
+  char vpath[640];
+  xsnprintf(vpath, sizeof vpath, "%s.version", elf);
+  ver[0] = 0;
+  size_t len = 0;
+  char *v = util_read_file(vpath, &len, 64);
+  if (!v) return;
+  xstrlcpy(ver, v, cap);
+  free(v);
+  util_trim(ver);
+}
+
 int update_staged(char *path, size_t cap) {
   xsnprintf(path, cap, "%s/xeno-store.elf", data_dir);
-  return file_is_elf(path);
+  if (!file_is_elf(path)) return 0;
+  /* Only a download newer than this build counts: a leftover from 1.1.x/1.2.0
+   * has no .version and restarting into it would downgrade. */
+  char ver[32];
+  staged_version(path, ver, sizeof ver);
+  return ver[0] && util_semver_cmp(ver, XENO_VERSION) > 0;
+}
+
+static void marker_path(char *out, size_t cap) { xsnprintf(out, cap, "%s/handoff.pending", data_dir); }
+
+/* Renames the staged ELF and its .version to <name><suffix> so no later start picks them up. */
+static void staged_set_aside(const char *elf, const char *suffix) {
+  char from[640], to[660];
+  xsnprintf(to, sizeof to, "%s%s", elf, suffix);
+  rename(elf, to);
+  xsnprintf(from, sizeof from, "%s.version", elf);
+  xsnprintf(to, sizeof to, "%s.version%s", elf, suffix);
+  rename(from, to);
+}
+
+/* The staged update cannot be trusted: set it aside, drop the marker, keep this copy. */
+static int handoff_failed(const char *elf, const char *ver, const char *why) {
+  char mpath[600];
+  staged_set_aside(elf, ".failed");
+  marker_path(mpath, sizeof mpath);
+  util_unlink_quiet(mpath);
+  LOGW("update: the downloaded %s %s — set aside as %s.failed, running the built-in %s", ver, why, elf, XENO_VERSION);
+  sys_toast("XENO STORE %s did not start · running %s", ver, XENO_VERSION);
+  return 0;
+}
+
+int update_handoff_newer(int loader_port) {
+  char path[600], ver[32];
+  xsnprintf(path, sizeof path, "%s/xeno-store.elf", data_dir);
+  if (!file_is_elf(path)) return 0;
+  staged_version(path, ver, sizeof ver);
+  if (!ver[0] || util_semver_cmp(ver, XENO_VERSION) < 0) {
+    LOGI("update: setting aside the stale %s (version %s) as .old", path, ver[0] ? ver : "unknown");
+    staged_set_aside(path, ".old");
+    return 0;
+  }
+  if (util_semver_cmp(ver, XENO_VERSION) == 0) return 0;   /* this copy is that update */
+  /* Crash guard: the staged version stopped soon after its last start. */
+  long up = -1;
+  int fresh = 0;
+  const char *rep = crash_previous(&up, &fresh);
+  char tag[64];
+  xsnprintf(tag, sizeof tag, "XENO STORE %s stopped", ver);
+  if (fresh && up >= 0 && up < CRASH_EARLY_S && util_starts_with(rep, tag)) return handoff_failed(path, ver, "stopped right after its last start");
+  /* Hand-off marker ("<time> <version that handed off>"), cleared by a copy
+   * once its server is up. A young one from another build means this copy was
+   * just handed the ELF (or the .version overstates it): do not hand over again.
+   * A young one this very build wrote means two copies started at once: run this
+   * one and leave the marker to the handed-off copy. An old one means the copy it
+   * started never came up. */
+  char mpath[600];
+  marker_path(mpath, sizeof mpath);
+  size_t len = 0;
+  char *m = util_read_file(mpath, &len, 128);
+  if (m) {
+    char *end = m;
+    long long ts = strtoll(m, &end, 10);
+    char from[32] = "";
+    if (end == m) ts = (long long)util_file_mtime(mpath);
+    else xstrlcpy(from, end, sizeof from);
+    free(m);
+    util_trim(from);
+    long long age = (long long)util_now() - ts;
+    if (age < HANDOFF_WINDOW_S && strcmp(from, XENO_VERSION) != 0) {
+      LOGI("update: started by a hand-off %lld s ago — not handing over to %s again", age, ver);
+      return 0;
+    }
+    if (age >= 0 && age < HANDOFF_WINDOW_S) {
+      handoff_settling = 1;
+      LOGI("update: this build handed over to %s %lld s ago and that copy may still be starting — not handing over again", ver, age);
+      return 0;
+    }
+    return handoff_failed(path, ver, "never came up after the last hand-off");
+  }
+  char err[160];
+  if (update_relaunch(loader_port, err, sizeof err) != 0) {
+    LOGW("update: could not start the downloaded %s (%s) — running %s", ver, err, XENO_VERSION);
+    return 0;
+  }
+  LOGI("update: handed over to the downloaded %s (this copy is %s)", ver, XENO_VERSION);
+  return 1;
+}
+
+void update_handoff_done(void) {
+  if (handoff_settling) return;
+  char mpath[600];
+  marker_path(mpath, sizeof mpath);
+  util_unlink_quiet(mpath);
 }
 
 int update_relaunch(int loader_port, char *err, size_t errcap) {
@@ -260,9 +376,14 @@ int update_relaunch(int loader_port, char *err, size_t errcap) {
   size_t len = 0;
   char *elf = util_read_file(path, &len, 96u << 20);
   if (!elf || len < 64) { free(elf); xsnprintf(err, errcap, "Cannot read %s", path); return -1; }
+  /* Written first: the started copy may come up before this one returns. */
+  char mpath[600], mark[64];
+  marker_path(mpath, sizeof mpath);
+  xsnprintf(mark, sizeof mark, "%lld %s\n", (long long)util_now(), XENO_VERSION);
+  if (util_write_file_atomic(mpath, mark, strlen(mark)) != 0) LOGW("update: cannot write %s", mpath);
   int rc = cx_tcp_send_all(loader_port, elf, len, 15000, err, errcap);
   free(elf);
   if (rc == 0) LOGI("update: handed %s (%zu bytes) to the ELF loader on :%d", path, len, loader_port);
-  else LOGE("update: relaunch failed: %s", err);
+  else { util_unlink_quiet(mpath); LOGE("update: relaunch failed: %s", err); }
   return rc;
 }

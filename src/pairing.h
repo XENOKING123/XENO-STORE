@@ -1,10 +1,11 @@
 /*
  * pairing.h — device pairing (SPEC §6.6).
  *
- * At start a random 6-digit code is generated and shown on the console as a
- * toast; a phone proves it is in the room by entering that code and receives a
- * 64-hex bearer token (capped at 16, persisted to <data>/pairing.json). A
- * valid token lets a mutating api request through without the optional PIN.
+ * At start a random 6-digit code is picked and, once the server is up,
+ * shown on the console as a toast; a phone proves it is in the room by
+ * entering that code and receives a 64-hex bearer token (capped at 16,
+ * persisted to <data>/pairing.json). A valid token lets a mutating api
+ * request through without the optional PIN.
  * All state lives here under its own mutex — settings.c is never touched.
  */
 #ifndef XENO_PAIRING_H
@@ -12,8 +13,11 @@
 
 #include <stddef.h>
 
-/* Loads persisted tokens, generates the session code, shows it as a toast. */
+/* Loads persisted tokens and picks the session code. */
 void pairing_init(const char *data_dir);
+
+/* Shows the session code as a console toast (main, once the server is up). */
+void pairing_announce(void);
 
 /* The current 6-digit code (always 6 chars + NUL). */
 const char *pairing_code(void);

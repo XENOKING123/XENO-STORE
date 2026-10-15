@@ -15,6 +15,7 @@
 #include "log.h"
 #include "settings.h"
 #include "util.h"
+#include "xthread.h"
 
 #include <pthread.h>
 #include <stdio.h>
@@ -644,7 +645,7 @@ int catalog_links_check(jv urls, jw *w) {
     n++;
   }
   int started[8] = {0};
-  for (int i = 0; i < n; i++) started[i] = pthread_create(&th[i], NULL, probe_thread, &ps[i]) == 0;
+  for (int i = 0; i < n; i++) started[i] = xthread_start(&th[i], "catalog-probe", probe_thread, &ps[i], 0, 0) == 0;
   for (int i = 0; i < n; i++) if (started[i]) pthread_join(th[i], NULL); else probe_thread(&ps[i]);
   jw_key(w, "results");
   jw_arr_begin(w);

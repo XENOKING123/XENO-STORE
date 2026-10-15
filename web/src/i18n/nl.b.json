@@ -328,7 +328,7 @@
     "showQr": "QR tonen",
     "noChecks": "De console meldde geen controles.",
     "check": {
-      "shadowmount": "ShadowMountPlus-API",
+      "shadowmount": "ShadowMountPlus",
       "dpi": "Directe pakketinstallatie (DPI)",
       "etahen": "etaHEN DPI",
       "internet": "Internetbereikbaarheid",

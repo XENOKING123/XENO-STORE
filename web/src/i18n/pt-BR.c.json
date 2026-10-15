@@ -70,5 +70,47 @@
   },
   "discover4": {
     "topPs5": "Melhores jogos de PS5"
+  },
+  "diag2": {
+    "crashTitle": "Último problema",
+    "crashLastRun": "O XENO STORE parou inesperadamente da última vez e reiniciou sozinho. Se acontecer de novo, copie este relatório e envie.",
+    "crashOlder": "Uma sessão anterior parou com este problema.",
+    "none": "Nenhum problema registrado.",
+    "stack": "Pilha de threads",
+    "safeMode": "Início seguro: as verificações automáticas em segundo plano estão pausadas nesta sessão."
+  },
+  "gameapp": {
+    "title": "App XENO STORE",
+    "sub": "O ícone do app em Jogos. A loja o baixa para /data/homebrew e o ShadowMountPlus adiciona o ícone — sem FTP.",
+    "group": "App da fileira Jogos",
+    "installed": "Instalado",
+    "notInstalled": "Não instalado",
+    "installing": "Instalando…",
+    "install": "Instalar o app",
+    "reinstall": "Reinstalar / atualizar",
+    "cancel": "Cancelar",
+    "cancelled": "Instalação cancelada",
+    "version": "Versão {v}",
+    "already": "O app já está sendo instalado",
+    "checking": "Verificando a versão mais recente…",
+    "verifying": "Verificando o download…",
+    "registering": "Adicionando o ícone…",
+    "jobTitle": "App XENO STORE",
+    "doneTitle": "App XENO STORE instalado",
+    "doneDesc": "O ícone do XENO STORE aparece em Jogos em cerca de um minuto (o ShadowMountPlus faz uma nova varredura sozinho). Se não aparecer, reinicie o console com o jailbreak e o ShadowMountPlus carregados.",
+    "failedTitle": "Não foi possível instalar o app",
+    "hintTitle": "Coloque o XENO STORE na sua fileira de Jogos",
+    "hintText": "Instale o app uma vez e abra a loja pelo próprio ícone — sem FTP e sem endereço no navegador.",
+    "notNow": "Agora não",
+    "openOnStart": "Abrir o XENO STORE ao iniciar",
+    "openOnStartHint": "Abre a loja na TV toda vez que ela inicia. Desative se a loja inicia automaticamente quando o console liga.",
+    "err": {
+      "sha256_mismatch": "O download não corresponde à soma de verificação — nada foi instalado. Tente novamente.",
+      "sha256_unavailable": "Esta versão ainda não tem soma de verificação — tente novamente em alguns minutos.",
+      "no_space": "Espaço livre insuficiente no armazenamento interno.",
+      "not_package": "O arquivo baixado não é uma imagem de app.",
+      "too_large": "O download é maior do que o esperado — nada foi instalado.",
+      "download_failed": "O download falhou. Verifique a conexão de internet do console e tente novamente."
+    }
   }
 }

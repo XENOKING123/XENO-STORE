@@ -235,16 +235,21 @@ Sealed keys (`sce_sys/keystone`, `sealedkey`) are never included. Garlic Save Ma
 
 ---
 
-## 10. Homebrew folder (`XENO-STORE.zip`)
+## 10. Games-row app (`PPSA99500.ffpkg`)
+
+A UFS2 image that ShadowMountPlus mounts from `/data/homebrew/` and shows as **XENO STORE** under Games:
 
 ```
-XENO-STORE/
-  eboot.bin               xeno-store-browser.elf (the store + opens the PS5 browser)
-  homebrew.json           {"title":"XENO STORE","id":"XENO00002","exec":"eboot.bin","args":"","icon":"sce_sys/icon0.png","version":"1.0.0","author":"XENOKING","description":"…"}
+PPSA99500/
+  eboot.bin               the launcher (fake-signed SELF, app/eboot/eboot_main.c): opens the running store,
+                          or hands xeno-store.elf below to the ELF loader on :9021 first
+  xeno-store.elf          the store
   sce_sys/icon0.png       512×512 XENO logo
-  sce_sys/param.json      {"titleId":"XENO00002","contentId":"IV0000-XENO00002_00-XENOKINGSTORE001","contentVersion":"01.00",…}
+  sce_sys/param.json      {"applicationCategoryType":0,"contentBadgeType":1,"titleId":"PPSA99500","contentId":"IV0000-PPSA99500_00-XENOSTORE0000000","contentVersion":"01.002.001","gameIntent":{"permittedIntents":[{"intentType":"launchActivity"}]},"sdkVersion":"0x0000000000000000",…}
 ```
-Extract into `/data/homebrew/` for etaHEN / itemzflow launchers. `tools/make_homebrew.py` builds it from `homebrew/` + the ELF, stamps the version into both JSON files and writes every zip entry with mode `0777`.
+`tools/make_ffpkg.py` stages the folder (every entry mode `0777`) and builds the image with `makefs` (UFS2, 64 KiB blocks and fragments, `minfree=0`), sized to the files plus 8 MiB of slack. No `-S`: the console's UFS driver addresses blocks in 512-byte units, so `fs_fsbtodb` must be log2(fsize / 512) = 7; makefs with `-S 4096` writes 4 and the image cannot be read on the PS5. `tools/ufs2_check.py` reads the image back the way the console does (superblock search, `fs_fsbtodb` addressing), rejects a wrong `fs_fsbtodb`, a truncated file or a missing icon, and compares every file with the staged folder. contentVersion is `NN.NNN.NNN` (1.2.1 → `01.002.001`). Settings → Updates → *Install the XENO STORE app* puts it in place on the console; copying it to `/data/homebrew/` by hand works too.
+
+`make pkg` (`tools/make_homebrew.py`) can still build a `dist/XENO-STORE/` folder (+ zip) for etaHEN / itemzflow homebrew launchers (`eboot.bin` = `xeno-store.elf`, title id `XENO00002`); it is not part of a release.
 
 ---
 
@@ -254,8 +259,7 @@ Tag `v<VERSION>`:
 
 | asset | what |
 |:--|:--|
-| `xeno-store.elf` | the store (server only) |
-| `xeno-store-browser.elf` | the store + opens the PS5 browser |
-| `XENO-STORE.zip` | home-screen app folder (§10) |
-| `xeno-catalog.json` | the catalog embedded in these ELFs |
-| `SHA256SUMS` | `sha256sum` lines for the four files above; the updater and Payload Manager verify against it |
+| `PPSA99500.ffpkg` | the Games-row app (§10) |
+| `xeno-store.elf` | the store; Payload Manager and the in-app updater download this file |
+| `XENO-STORE-Desktop-Windows.zip`, `XENO-STORE-Desktop-Mac.zip` (universal: Apple silicon + Intel), `XENO-STORE-Desktop-Linux.tar.gz` | XENO STORE Desktop |
+| `SHA256SUMS` | `sha256sum` lines for every file above; the in-app updater and app installer verify against it |

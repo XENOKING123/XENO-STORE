@@ -111,9 +111,10 @@ void pairing_init(const char *data_dir) {
   pair_show_after = 0;
   pair_ready = 1;
   pthread_mutex_unlock(&pair_mu);
-  sys_toast("XENO STORE pairing code: %s", pair_code_val);
   LOGI("pairing: code ready (%d paired device%s)", pair_ntokens, pair_ntokens == 1 ? "" : "s");
 }
+
+void pairing_announce(void) { sys_toast("XENO STORE pairing code: %s", pair_code_val); }
 
 const char *pairing_code(void) { return pair_code_val; }
 

@@ -70,5 +70,47 @@
   },
   "discover4": {
     "topPs5": "인기 PS5 게임"
+  },
+  "diag2": {
+    "crashTitle": "마지막 문제",
+    "crashLastRun": "지난번에 XENO STORE가 예기치 않게 중지되어 자동으로 다시 시작되었습니다. 다시 발생하면 이 보고서를 복사해 보내 주세요.",
+    "crashOlder": "이전 세션이 이 문제로 중지되었습니다.",
+    "none": "기록된 문제가 없습니다.",
+    "stack": "스레드 스택",
+    "safeMode": "안전 시작: 이번 세션에서는 자동 백그라운드 검사가 일시 중지됩니다."
+  },
+  "gameapp": {
+    "title": "XENO STORE 앱",
+    "sub": "게임 줄에 있는 앱 타일입니다. 스토어가 /data/homebrew에 내려받고 ShadowMountPlus가 타일을 추가합니다. FTP가 필요 없습니다.",
+    "group": "게임 줄 앱",
+    "installed": "설치됨",
+    "notInstalled": "설치 안 됨",
+    "installing": "설치 중…",
+    "install": "앱 설치",
+    "reinstall": "다시 설치 / 업데이트",
+    "cancel": "취소",
+    "cancelled": "설치가 취소되었습니다",
+    "version": "버전 {v}",
+    "already": "앱을 이미 설치하는 중입니다",
+    "checking": "최신 릴리스 확인 중…",
+    "verifying": "다운로드 확인 중…",
+    "registering": "타일 추가 중…",
+    "jobTitle": "XENO STORE 앱",
+    "doneTitle": "XENO STORE 앱이 설치되었습니다",
+    "doneDesc": "약 1분 안에 게임 줄에 XENO STORE 타일이 나타납니다(ShadowMountPlus가 알아서 다시 스캔합니다). 나타나지 않으면 탈옥과 ShadowMountPlus를 불러온 상태로 본체를 다시 시작하세요.",
+    "failedTitle": "앱을 설치할 수 없습니다",
+    "hintTitle": "XENO STORE를 게임 줄에 추가하세요",
+    "hintText": "앱을 한 번 설치하면 전용 타일에서 스토어를 열 수 있습니다. FTP도 브라우저 주소도 필요 없습니다.",
+    "notNow": "나중에",
+    "openOnStart": "XENO STORE가 시작될 때 열기",
+    "openOnStartHint": "스토어가 시작될 때마다 TV에서 엽니다. 부팅 시 자동으로 시작한다면 끄세요.",
+    "err": {
+      "sha256_mismatch": "다운로드가 체크섬과 일치하지 않아 아무것도 설치하지 않았습니다. 다시 시도하세요.",
+      "sha256_unavailable": "이 릴리스에는 아직 체크섬이 없습니다. 몇 분 후 다시 시도하세요.",
+      "no_space": "내장 드라이브의 여유 공간이 부족합니다.",
+      "not_package": "다운로드한 파일이 앱 이미지가 아닙니다.",
+      "too_large": "다운로드가 예상보다 커서 아무것도 설치하지 않았습니다.",
+      "download_failed": "다운로드에 실패했습니다. 본체의 인터넷 연결을 확인하고 다시 시도하세요."
+    }
   }
 }

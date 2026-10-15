@@ -34,6 +34,7 @@
 #include "storage.h"
 #include "sys.h"
 #include "util.h"
+#include "xthread.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -55,6 +56,7 @@
 #define SIDECAR_EVERY_MS 5000
 #define QUEUE_SAVE_EVERY_MS 5000
 #define SEG_RESPAWN_DELAY_MS 2000
+#define SEG_STUCK_LOG_MS 60000
 #define REST_WAIT_MAX_MS (15 * 60 * 1000)
 #define REST_POLL_MS 2000
 #define MAX_GROUPS 64
@@ -126,8 +128,22 @@ static int host_fsync(int fd, int64_t covered) {
   if (fail_after >= 0 && covered > fail_after) { errno = EIO; return -1; }
   return fsync(fd);
 }
+/* XENO_HOST_SEG_STALL_MS: every ranged segment request opened before that many
+ * ms after the first one blocks until then, ignoring stop_io — the shape of a
+ * sceHttpSendRequest the console cannot abort, for the segment-lifetime test. */
+static void host_seg_stall(int64_t range_start) {
+  static int64_t until = -1;   /* guarded by queue_mu */
+  const char *e = getenv("XENO_HOST_SEG_STALL_MS");
+  if (!e || !*e || range_start <= 0) return;
+  pthread_mutex_lock(&queue_mu);
+  if (until < 0) until = util_now_ms() + atoll(e);
+  int64_t left = until - util_now_ms();
+  pthread_mutex_unlock(&queue_mu);
+  if (left > 0) util_sleep_ms((int)left);
+}
 #else
 #define host_fsync(fd, covered) fsync(fd)
+#define host_seg_stall(range_start) ((void)0)
 #endif
 
 /* ---- small helpers ------------------------------------------------------ */
@@ -939,8 +955,10 @@ static int transfer_chunk(dl_job *j, dl_chunk *ck, char *buf, int slot) {
   req.recv_timeout_ms = 30000;
   req.insecure_tls = insecure;
   req.cancel_flag = &j->stop_io;
+  req.transfer = 1;
   xhttp_conn *c = NULL;
   xhttp_resp resp;
+  host_seg_stall(req.range_start);
   if (xhttp_open(&req, &c, &resp) != 0) {
     if (j->stop_io) return 0;
     char m[160];
@@ -1054,21 +1072,14 @@ static void spawn_segments_locked(dl_job *j) {
     if (!sc) break;
     sc->job = j;
     sc->slot = slot;
-    pthread_t th;
-    pthread_attr_t attr;
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-    pthread_attr_setstacksize(&attr, 256 << 10);
     j->active_segments++;
     j->slot_mask |= 1u << slot;
-    if (pthread_create(&th, &attr, segment_thread, sc) != 0) {
+    if (xthread_start(NULL, "dl-segment", segment_thread, sc, XT_STACK_SMALL, 1) != 0) {
       j->active_segments--;
       j->slot_mask &= ~(1u << slot);
       free(sc);
-      pthread_attr_destroy(&attr);
       break;
     }
-    pthread_attr_destroy(&attr);
   }
 }
 
@@ -1358,11 +1369,23 @@ static int space_check(dl_job *j) {
   return 0;
 }
 
+/* Waits for every segment thread to exit — without a cap. A thread blocked in
+ * sceHttpSendRequest is aborted by the HTTP layer's watcher within about 100 ms
+ * of stop_io; without sceHttpAbortRequest it waits out the console's timeouts,
+ * and it still uses the job, its chunk table and its fd. The worker keeps
+ * `running` set meanwhile, so remove, resume and clear leave the job alone
+ * until the last segment is gone. */
 static void wait_segments(dl_job *j) {
-  for (int i = 0; i < 600; i++) {   /* ≤ 60 s; reads time out at 30 s */
+  int64_t t0 = util_now_ms();
+  int logged = 0;
+  for (;;) {
     pthread_mutex_lock(&queue_mu);
     int n = j->active_segments;
     if (n > 0) for (int s = 0; s < DL_MAX_SEGMENTS; s++) if (j->seg_conns[s]) xhttp_abort(j->seg_conns[s]);
+    if (n > 0 && !logged && util_now_ms() - t0 >= SEG_STUCK_LOG_MS) {
+      logged = 1;
+      jlog_locked(j, "%d segment(s) still stuck in a network call; waiting for them to return", n);
+    }
     pthread_mutex_unlock(&queue_mu);
     if (n == 0) return;
     util_sleep_ms(100);
@@ -1819,7 +1842,8 @@ static int net_wait(dl_job *j) {
     addr = 1;   /* sandboxes may have no routable interface; the origin probe decides */
 #endif
     if (addr) {
-      if (dlx_net_origin_reachable(url, insecure, &j->stop_io, 4000)) return 1;
+      /* stop_io is still set from the interrupted transfer; only a user stop ends the probe */
+      if (dlx_net_origin_reachable(url, insecure, &j->cancel, 4000)) return 1;
       if (i % 5 == 4 && dlx_net_catalog_reachable(4000)) return 1;
     }
     util_sleep_ms(REST_POLL_MS);
@@ -1988,8 +2012,8 @@ static void *job_worker(void *arg) {
     j->discard_partial = 0;
   }
   if (j->delete_files_pending && !j->remove_pending) { remove_partial_files(j); j->delete_files_pending = 0; }
+  /* run_job() returns only after wait_segments() saw the last segment exit */
   j->running = 0;
-  j->active_segments = 0;
   queue_dirty = 1;
   pthread_mutex_unlock(&queue_mu);
   return NULL;
@@ -2047,11 +2071,7 @@ static void begin_install(dl_job *j) {
   j->running = 1;
   mark_installing_locked(j);
   pthread_mutex_unlock(&queue_mu);
-  pthread_t th;
-  pthread_attr_t attr;
-  pthread_attr_init(&attr);
-  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-  if (pthread_create(&th, &attr, install_thread, j) != 0) {
+  if (xthread_start(NULL, "install", install_thread, j, 0, 1) != 0) {
     pthread_mutex_lock(&queue_mu);
     j->running = 0;
     j->state = j->synthetic ? DL_FAILED : DL_DONE;
@@ -2059,7 +2079,6 @@ static void begin_install(dl_job *j) {
     set_error_locked(j, "install_failed", "Cannot start the install thread");
     pthread_mutex_unlock(&queue_mu);
   }
-  pthread_attr_destroy(&attr);
 }
 
 /* Caller holds queue_mu and passes its settings snapshot (SPEC §5: no second
@@ -2144,12 +2163,7 @@ static int start_worker_locked(dl_job *j) {
   j->running = 1;
   j->cancel = 0;
   j->stop_io = 0;
-  pthread_t th;
-  pthread_attr_t attr;
-  pthread_attr_init(&attr);
-  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-  int rc = pthread_create(&th, &attr, job_worker, j);
-  pthread_attr_destroy(&attr);
+  int rc = xthread_start(NULL, "dl-job", job_worker, j, 0, 1);
   if (rc != 0) { j->running = 0; LOGE("dl: cannot create worker for %s", j->id); return -1; }
   return 0;
 }
@@ -2158,7 +2172,7 @@ static int reap_removed_locked(char (*toks)[24], int tokcap) {
   int ntok = 0;
   for (int i = 0; i < n_jobs;) {
     dl_job *j = jobs[i];
-    if (j->remove_pending && !j->running) {
+    if (j->remove_pending && !j->running && j->active_segments == 0) {
       if (j->delete_files_pending) { remove_partial_files(j); if (state_is_complete(j->state)) util_unlink_quiet(j->path); }
       if (ntok < tokcap && j->install.token[0]) xstrlcpy(toks[ntok++], j->install.token, 24);
       memmove(&jobs[i], &jobs[i + 1], (size_t)(n_jobs - i - 1) * sizeof jobs[0]);
@@ -2359,7 +2373,7 @@ void dl_housekeeping_tick(void) {
     int best = -1;
     for (int i = 0; i < n_jobs && running < max_jobs; i++) {
       dl_job *j = jobs[i];
-      if (j->state != DL_QUEUED || j->running || j->synthetic || j->nextRetryAt > now) continue;
+      if (j->state != DL_QUEUED || j->running || j->active_segments || j->synthetic || j->nextRetryAt > now) continue;
       if (j->scheduledFor[0]) continue;
       if (best < 0 || j->priority > jobs[best]->priority) best = i;
     }
@@ -2375,12 +2389,7 @@ void dl_housekeeping_tick(void) {
   release_tokens(toks, ntok);
   for (int i = 0; i < n_inst; i++) { jlog(to_install[i], "install set: installing %s step", to_install[i]->kind); begin_install(to_install[i]); }
   if (want_scan) {
-    pthread_t th;
-    pthread_attr_t attr;
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-    if (pthread_create(&th, &attr, scan_thread, NULL) != 0) LOGW("install set: cannot start the ShadowMount scan thread");
-    pthread_attr_destroy(&attr);
+    if (xthread_start(NULL, "shadowmount-scan", scan_thread, NULL, 0, 1) != 0) LOGW("install set: cannot start the ShadowMount scan thread");
   }
   if (downloading && s.keepAwake && now - last_keepawake >= 30) { last_keepawake = now; sys_keep_awake_tick(); }
   if ((dirty || any_running) && now_ms - last_save_ms >= QUEUE_SAVE_EVERY_MS) dl_save_queue();
@@ -3122,12 +3131,7 @@ int dl_action(const char *id, const char *action, jv body, char *code, size_t cc
       j->stop_io = 0;
       j->written = 0;
       xstrlcpy(j->phase, "sha256", sizeof j->phase);
-      pthread_t th;
-      pthread_attr_t attr;
-      pthread_attr_init(&attr);
-      pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-      if (pthread_create(&th, &attr, verify_thread, j) != 0) { j->running = 0; j->state = st; rc = -1; }
-      pthread_attr_destroy(&attr);
+      if (xthread_start(NULL, "verify", verify_thread, j, 0, 1) != 0) { j->running = 0; j->state = st; rc = -1; }
     } else rc = -1;
   } else if (strcmp(action, "move") == 0) {
     rc = act_move_locked(j, jv_get_str(body, "direction", "up"));
@@ -3150,12 +3154,7 @@ int dl_action(const char *id, const char *action, jv body, char *code, size_t cc
       j->stop_io = 0;
       j->state = DL_EXTRACTING;
       xstrlcpy(j->extract.state, "extracting", sizeof j->extract.state);
-      pthread_t th;
-      pthread_attr_t attr;
-      pthread_attr_init(&attr);
-      pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-      if (pthread_create(&th, &attr, extract_thread, j) != 0) { j->running = 0; j->state = st; rc = -1; }
-      pthread_attr_destroy(&attr);
+      if (xthread_start(NULL, "extract", extract_thread, j, 0, 1) != 0) { j->running = 0; j->state = st; rc = -1; }
     } else { rc = -1; xsnprintf(msg, mcap, "Only a finished ZIP download that is still on the drive can be extracted"); }
   } else if (strcmp(action, "url") == 0) {
     rc = act_url_locked(j, body, code, ccap, msg, mcap);
@@ -3197,7 +3196,7 @@ int dl_clear(jv states) {
   pthread_mutex_lock(&queue_mu);
   for (int i = 0; i < n_jobs;) {
     dl_job *j = jobs[i];
-    if (want[j->state] && !j->running) {
+    if (want[j->state] && !j->running && j->active_segments == 0) {
       if (ntok < 16 && j->install.token[0]) xstrlcpy(toks[ntok++], j->install.token, 24);
       memmove(&jobs[i], &jobs[i + 1], (size_t)(n_jobs - i - 1) * sizeof jobs[0]);
       n_jobs--;

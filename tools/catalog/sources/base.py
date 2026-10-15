@@ -55,6 +55,16 @@ class SourceContext:
     def get_json(self, url: str, **kw: Any) -> Any:
         return self.http.json(url, deadline=self.deadline, **kw)
 
+    def get_json_headers(self, url: str, **kw: Any) -> tuple[Any, dict[str, str]]:
+        """JSON body plus lower-cased response headers (``{}`` when the client cannot expose them).
+
+        Same politeness, retries and deadline as ``get_json``; WordPress puts its totals in
+        ``x-wp-total`` / ``x-wp-totalpages``."""
+        fn = getattr(self.http, "json_with_headers", None)
+        if fn is None:
+            return self.get_json(url, **kw), {}
+        return fn(url, deadline=self.deadline, **kw)
+
     def info(self, msg: str) -> None:
         self.log(f"[{self.source_id}] {msg}")
 

@@ -52,6 +52,19 @@ export function register({ route, state }) {
   }, 250);
   route('GET', /^\/api\/saves\/jobs$/, () => ({ ok: true, jobs: cxJobs.map(pubCx) }));
   route('GET', /^\/api\/saves\/jobs\/([^/]+)$/, (q, body, m) => { const j = cxJobs.find((x) => x.id === m[1]); if (!j) throw new ApiError(404, 'not_found', 'No such job'); return { ok: true, job: pubCx(j) }; });
+  /* The Games-row app (PPSA99500): GET /api/app/status, POST /api/app/install (a cx job). */
+  const gameApp = { installed: false, size: 0, version: '', job: '' };
+  route('GET', /^\/api\/app\/status$/, () => ({ ok: true, titleId: 'PPSA99500', file: 'PPSA99500.ffpkg', path: '/data/homebrew/PPSA99500.ffpkg',
+    installed: gameApp.installed, registered: gameApp.installed, size: gameApp.size, version: gameApp.version,
+    job: gameApp.job && cxJobs.some((j) => j.id === gameApp.job && (j.state === 'running' || j.state === 'queued')) ? gameApp.job : '', lastJob: gameApp.job }));
+  route('POST', /^\/api\/app\/install$/, () => {
+    if (gameApp.job && cxJobs.some((j) => j.id === gameApp.job && (j.state === 'running' || j.state === 'queued'))) throw new ApiError(409, 'in_progress', 'The XENO STORE app is already being installed');
+    const size = 17825792;
+    const job = cxStart('app-install', 'XENO STORE app (Games row)', size, 6 * 1024 * 1024, () => { gameApp.installed = true; gameApp.size = size; gameApp.version = '1.2.1'; },
+      { path: '/data/homebrew/PPSA99500.ffpkg', size, sha256: 'c0ffee'.repeat(10) + 'abcd', scan: 'ShadowMountPlus asked to rescan' });
+    gameApp.job = job.id;
+    return { ok: true, id: job.id, job: pubCx(job) };
+  });
   route('POST', /^\/api\/saves\/jobs\/([^/]+)\/cancel$/, (q, body, m) => { const j = cxJobs.find((x) => x.id === m[1]); if (!j || (j.state !== 'running' && j.state !== 'queued')) throw new ApiError(404, 'not_found', 'No such running job'); j._cancel = true; if (j.state === 'queued') { j.state = 'cancelled'; j.finishedAt = now(); } return { ok: true, job: pubCx(j) }; });
 
   /* ============================== stats (§17.5) ============================== */

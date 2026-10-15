@@ -70,5 +70,47 @@
   },
   "discover4": {
     "topPs5": "Najlepsze gry na PS5"
+  },
+  "diag2": {
+    "crashTitle": "Ostatni problem",
+    "crashLastRun": "XENO STORE ostatnio nieoczekiwanie się zatrzymał i sam uruchomił ponownie. Jeśli to się powtórzy, skopiuj ten raport i wyślij go.",
+    "crashOlder": "Wcześniejsza sesja zakończyła się tym problemem.",
+    "none": "Brak zarejestrowanych problemów.",
+    "stack": "Stos wątków",
+    "safeMode": "Bezpieczny start: automatyczne sprawdzanie w tle jest wstrzymane w tej sesji."
+  },
+  "gameapp": {
+    "title": "Aplikacja XENO STORE",
+    "sub": "Kafelek aplikacji w sekcji Gry. Sklep pobiera ją do /data/homebrew, a ShadowMountPlus dodaje kafelek — bez FTP.",
+    "group": "Aplikacja w rzędzie Gry",
+    "installed": "Zainstalowana",
+    "notInstalled": "Niezainstalowana",
+    "installing": "Instalowanie…",
+    "install": "Zainstaluj aplikację",
+    "reinstall": "Zainstaluj ponownie / zaktualizuj",
+    "cancel": "Anuluj",
+    "cancelled": "Instalacja anulowana",
+    "version": "Wersja {v}",
+    "already": "Aplikacja jest już instalowana",
+    "checking": "Sprawdzanie najnowszej wersji…",
+    "verifying": "Weryfikowanie pobranego pliku…",
+    "registering": "Dodawanie kafelka…",
+    "jobTitle": "Aplikacja XENO STORE",
+    "doneTitle": "Zainstalowano aplikację XENO STORE",
+    "doneDesc": "Kafelek XENO STORE pojawi się w sekcji Gry w ciągu mniej więcej minuty (ShadowMountPlus sam skanuje ponownie). Jeśli nie, uruchom ponownie konsolę z załadowanym jailbreakiem i ShadowMountPlus.",
+    "failedTitle": "Nie udało się zainstalować aplikacji",
+    "hintTitle": "Dodaj XENO STORE do rzędu Gry",
+    "hintText": "Zainstaluj aplikację raz i otwieraj sklep z jego własnego kafelka — bez FTP i adresu w przeglądarce.",
+    "notNow": "Nie teraz",
+    "openOnStart": "Otwieraj XENO STORE przy uruchomieniu",
+    "openOnStartHint": "Otwiera sklep na telewizorze przy każdym uruchomieniu. Wyłącz, jeśli sklep startuje automatycznie przy włączaniu konsoli.",
+    "err": {
+      "sha256_mismatch": "Pobrany plik nie zgadza się z sumą kontrolną — nic nie zainstalowano. Spróbuj ponownie.",
+      "sha256_unavailable": "To wydanie nie ma jeszcze sumy kontrolnej — spróbuj za kilka minut.",
+      "no_space": "Za mało wolnego miejsca na dysku wewnętrznym.",
+      "not_package": "Pobrany plik nie jest obrazem aplikacji.",
+      "too_large": "Pobrany plik jest większy niż oczekiwano — nic nie zainstalowano.",
+      "download_failed": "Pobieranie nie powiodło się. Sprawdź połączenie konsoli z internetem i spróbuj ponownie."
+    }
   }
 }

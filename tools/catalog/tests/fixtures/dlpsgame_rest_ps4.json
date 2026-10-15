@@ -1,0 +1,45 @@
+[
+ {
+  "id": 201,
+  "date": "2024-03-03T09:00:00",
+  "link": "https://dlpsgame.com/bloodborne-ps4/",
+  "title": {
+   "rendered": "Bloodborne PS4"
+  },
+  "content": {
+   "rendered": "<p>CUSA00900</p>"
+  },
+  "categories": [
+   4371
+  ]
+ },
+ {
+  "id": 202,
+  "date": "2024-01-15T10:00:00",
+  "link": "https://dlpsgame.com/god-of-war-ps4/",
+  "title": {
+   "rendered": "God of War PS4"
+  },
+  "content": {
+   "rendered": "<p>Soon.</p>"
+  },
+  "categories": [
+   4370
+  ]
+ },
+ {
+  "id": 103,
+  "date": "2025-02-11T12:00:00",
+  "link": "https://dlpsgame.com/hogwarts-legacy-ps5-ps4/",
+  "title": {
+   "rendered": "Hogwarts Legacy PS5 &#038; PS4"
+  },
+  "content": {
+   "rendered": "<p>Cross-gen post.</p>"
+  },
+  "categories": [
+   63019,
+   4370
+  ]
+ }
+]

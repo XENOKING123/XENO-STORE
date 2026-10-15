@@ -6,9 +6,9 @@
  *
  * Two backends share one code path through a function table:
  *   - "sceHttp"  (primary, §17.19 — what shipped PS5 payloads use):
- *     sceNetInit → sceNetPoolCreate → sceSslInit → sceHttpInit(net, ssl, 2 MiB)
+ *     sceNetInit → sceNetPoolCreate → sceSslInit → sceHttpInit(net, ssl, 8 MiB)
  *     then per request: sceHttpCreateTemplate(ctx, ua, 2 = HTTP/1.1, 1),
- *     sceHttpSetResponseHeaderMaxSize(tmpl, 0x2000), timeouts, auto-redirect,
+ *     sceHttpSetResponseHeaderMaxSize(tmpl, 0x2000), timeouts, auto-redirect off,
  *     sceHttpCreateConnectionWithURL(tmpl, url, 0), sceHttpCreateRequestWithURL,
  *     sceHttpAddRequestHeader, sceHttpSendRequest, sceHttpGetStatusCode,
  *     sceHttpGetAllResponseHeaders, sceHttpGetResponseContentLength,
@@ -22,18 +22,28 @@
  * request) creates its own template/connection/request triple and deletes it
  * in xhttp_close(), so contexts never see two requests in flight.
  *
+ * Request slots: the net/SSL/HTTP pools are sized for SCE_HTTP_MAX_INFLIGHT
+ * requests and xhttp_open() takes one of that many slots (transfers wait until
+ * their cancel flag is raised, other requests a bounded time) until
+ * xhttp_close(), so a full download queue cannot run the pools dry and turn
+ * every create/send into an out-of-memory failure.
+ *
  * TLS: the accept-any certificate callback is installed only when the caller
  * asked for insecure TLS (settings.downloads.allowInsecureTls) or, once per
- * request, as a logged automatic retry after the library reported an SSL
- * error (expired/unknown roots on older firmware).
+ * request, as a logged automatic retry after the library rejected the
+ * certificate (expired/unknown roots on older firmware). Out-of-memory and
+ * other TLS-range codes never trigger it.
  *
- * Redirects: sceHttpSetAutoRedirect is enabled when it resolves; the manual
- * 301/302/303/307/308 loop stays as the safety net (and the only path when
- * the symbol is absent), so the Range header is re-sent on the new location.
+ * Redirects: sceHttpSetAutoRedirect is turned off, so every 301/302/303/307/
+ * 308 comes back to the manual loop in xhttp_open(): it re-sends the Range
+ * header on the new location, re-checks the URL policy per hop and leaves the
+ * real final URL in resp->location. Without the symbol the library follows
+ * redirects itself and the final URL stays the requested one (logged).
  */
 #include "http_client.h"
 #include "log.h"
 #include "util.h"
+#include "xthread.h"
 
 #include <dlfcn.h>
 #include <pthread.h>
@@ -76,11 +86,16 @@ enum { SCE_HTTP_METHOD_GET = 0, SCE_HTTP_METHOD_POST = 1, SCE_HTTP_METHOD_HEAD =
        SCE_HTTP_METHOD_PUT = 4, SCE_HTTP_METHOD_DELETE = 5 };
 #define SCE_HTTP_VERSION_1_1 2
 #define SCE_HTTP_HEADER_MAX 0x2000
-#define SCE_HTTP_POOL (2u << 20)      /* §17.19: 2 MiB, sized for 16 concurrent requests */
-#define SCE_HTTP2_POOL (1u << 20)
-#define SCE_NET_POOL (1 << 20)
-#define SCE_SSL_POOL (512 * 1024)
-#define SCE_HTTP2_MAX_CONCURRENT 32
+/* Pools are sized for SCE_HTTP_MAX_INFLIGHT requests at once (the SDK's
+ * single-request sample gives SSL and HTTP 256 KiB each). */
+#define SCE_HTTP_MAX_INFLIGHT 24      /* request slots, see slot_enter() */
+#define SCE_HTTP_JOB_INFLIGHT 20      /* of those, long transfers (xhttp_req.transfer) */
+#define SCE_HTTP_POOL (8u << 20)      /* ~340 KiB per request */
+#define SCE_HTTP2_POOL (8u << 20)
+#define SCE_NET_POOL (2 << 20)
+#define SCE_SSL_POOL (4u << 20)       /* ~170 KiB per TLS connection */
+#define SCE_HTTP2_MAX_CONCURRENT 32   /* >= SCE_HTTP_MAX_INFLIGHT */
+#define SLOT_POLL_MS 50
 #define READ_CHUNK (256u << 10)
 
 typedef struct sce_api {
@@ -116,6 +131,7 @@ struct xhttp_conn {
   volatile int aborted;
   int head_only;
   int eof;
+  int slot_job;              /* holds a transfer slot (see slot_enter) */
 };
 
 static pthread_once_t init_once = PTHREAD_ONCE_INIT;
@@ -224,7 +240,9 @@ static void do_init(void) {
       xstrlcpy(g_backend, "sceHttp", sizeof g_backend);
       g_available = 1;
       g_init_rc = 0;
-      LOGI("http: sceHttp ready (ctx %d, pool %u KiB)", A.ctx, SCE_HTTP_POOL >> 10);
+      LOGI("http: sceHttp ready (ctx %d, pool %u KiB, ssl %u KiB, %d request slots)", A.ctx, SCE_HTTP_POOL >> 10,
+           SCE_SSL_POOL >> 10, SCE_HTTP_MAX_INFLIGHT);
+      if (!A.SetAutoRedirect) LOGW("http: auto-redirect cannot be turned off — final URLs after redirects are not visible");
       return;
     }
     LOGW("http: sceHttpInit -> 0x%08x, trying sceHttp2", (unsigned)A.ctx);
@@ -238,7 +256,9 @@ static void do_init(void) {
       xstrlcpy(g_backend, "sceHttp2", sizeof g_backend);
       g_available = 1;
       g_init_rc = 0;
-      LOGI("http: sceHttp2 ready (ctx %d)", A.ctx);
+      LOGI("http: sceHttp2 ready (ctx %d, pool %u KiB, ssl %u KiB, %d request slots)", A.ctx, SCE_HTTP2_POOL >> 10,
+           SCE_SSL_POOL >> 10, SCE_HTTP_MAX_INFLIGHT);
+      if (!A.SetAutoRedirect) LOGW("http: auto-redirect cannot be turned off — final URLs after redirects are not visible");
       return;
     }
     LOGW("http: sceHttp2Init -> 0x%08x", (unsigned)A.ctx);
@@ -258,9 +278,17 @@ const char *xhttp_backend_name(void) { return g_backend; }
 
 /* ---- error mapping -------------------------------------------------------- */
 
+#define SCE_HTTP_ERROR_OUT_OF_MEMORY 0x80431022u
+#define SCE_SSL_ERROR_OUT_OF_MEMORY 0x80435022u
+#define SCE_HTTPS_ERROR_CERT 0x80435060u
+#define SCE_HTTPS_ERROR_HANDSHAKE 0x80435061u
+
+static int is_oom(int rc) { return (unsigned)rc == SCE_HTTP_ERROR_OUT_OF_MEMORY || (unsigned)rc == SCE_SSL_ERROR_OUT_OF_MEMORY; }
+
 /* SCE_NET_ERROR_* carry the BSD errno in the low byte (0x804100xx). */
 static int sce_error_class(int rc) {
   unsigned u = (unsigned)rc;
+  if (is_oom(rc)) return XHTTP_ERR_OTHER;
   if ((u & 0xFFFF0000u) == 0x80410000u) {
     switch (u & 0xFF) {
       case 49: /* EADDRNOTAVAIL */ case 50: /* ENETDOWN */ case 51: /* ENETUNREACH */ case 64: /* EHOSTDOWN */ case 65: /* EHOSTUNREACH */
@@ -278,11 +306,139 @@ static int sce_error_class(int rc) {
   return XHTTP_ERR_OTHER;
 }
 
-static int is_ssl_error(int rc) { return sce_error_class(rc) == XHTTP_ERR_TLS; }
+/* Only a rejected certificate earns the retry without certificate checks;
+ * pool exhaustion, handshake and I/O failures are reported as they are. */
+static int is_cert_error(int rc) { return (unsigned)rc == SCE_HTTPS_ERROR_CERT; }
+
+static const char *sce_error_name(int rc) {
+  switch ((unsigned)rc) {
+    case SCE_HTTP_ERROR_OUT_OF_MEMORY: return " (HTTP pool out of memory)";
+    case SCE_SSL_ERROR_OUT_OF_MEMORY: return " (SSL pool out of memory)";
+    case SCE_HTTPS_ERROR_CERT: return " (certificate rejected)";
+    case SCE_HTTPS_ERROR_HANDSHAKE: return " (TLS handshake failed)";
+    case 0x80431068u: return " (timeout)";
+    case 0x80431080u: return " (aborted)";
+    default: return "";
+  }
+}
+
+static int slots_in_use(void);
 
 static void set_sce_error(const char *what, int rc) {
-  xhttp_set_error("%s%s 0x%08x", A.v1 ? "sceHttp" : "sceHttp2", what, (unsigned)rc);
+  const char *api = A.v1 ? "sceHttp" : "sceHttp2";
+  xhttp_set_error("%s%s 0x%08x%s", api, what, (unsigned)rc, sce_error_name(rc));
   xhttp_set_error_class(sce_error_class(rc));
+  if (is_oom(rc)) LOGW("http: %s%s 0x%08x%s with %d requests in flight", api, what, (unsigned)rc, sce_error_name(rc), slots_in_use());
+}
+
+/* ---- request slots -------------------------------------------------------- */
+
+/* Every request holds pool memory from xhttp_open() to xhttp_close(), and
+ * the settings allow 16 connections × 4 jobs next to the server workers'
+ * image and catalog fetches. Long transfers (xhttp_req.transfer + a cancel
+ * flag: download segments, installs) keep a slot for minutes, so they get at
+ * most SCE_HTTP_JOB_INFLIGHT and the rest stays free for the short fetches the
+ * UI is waiting on. Transfers wait for a slot with no deadline (every holder is
+ * a transfer that ends, and a timeout would only burn the job's retries while
+ * the others run) and never overtake transfers that are already waiting, so a
+ * segment re-opening after its chunk cannot keep its slot from another job. */
+static pthread_mutex_t g_slot_mu = PTHREAD_MUTEX_INITIALIZER;
+static int g_slots, g_slots_job, g_job_waiters;
+
+static int slots_in_use(void) {
+  pthread_mutex_lock(&g_slot_mu);
+  int n = g_slots;
+  pthread_mutex_unlock(&g_slot_mu);
+  return n;
+}
+
+static int slot_enter(const xhttp_req *req, int job, const char *host) {
+  int64_t wait_ms = req->connect_timeout_ms > 0 ? req->connect_timeout_ms : 10000;
+  int64_t deadline = util_now_ms() + wait_ms;
+  int waiting = 0, queued = 0;
+  for (;;) {
+    pthread_mutex_lock(&g_slot_mu);
+    int busy = g_slots >= SCE_HTTP_MAX_INFLIGHT ||
+               (job && (g_slots_job >= SCE_HTTP_JOB_INFLIGHT || (!queued && g_job_waiters > 0)));
+    int stop = busy && req->cancel_flag && *req->cancel_flag;
+    if (!busy) { g_slots++; if (job) g_slots_job++; }
+    if (job && queued != (busy && !stop)) { queued = !queued; g_job_waiters += queued ? 1 : -1; }
+    int used = g_slots, used_job = g_slots_job;
+    pthread_mutex_unlock(&g_slot_mu);
+    if (!busy) return 0;
+    if (stop) { xhttp_set_error("cancelled"); xhttp_set_error_class(XHTTP_ERR_CANCELLED); return -1; }
+    if (!job && util_now_ms() >= deadline) {
+      xhttp_set_error("all request slots busy (%d in flight, %d transfers)", used, used_job);
+      LOGW("http: no request slot for %s after %lld ms (%d/%d in flight, %d/%d transfers)", host, (long long)wait_ms, used,
+           SCE_HTTP_MAX_INFLIGHT, used_job, SCE_HTTP_JOB_INFLIGHT);
+      return -1;
+    }
+    if (!waiting) {
+      waiting = 1;
+      LOGD("http: waiting for a request slot for %s (%d in flight, %d transfers)", host, used, used_job);
+      xthread_net("sceHttp wait for a request slot", host);
+    }
+    util_sleep_ms(SLOT_POLL_MS);
+  }
+}
+
+static void slot_leave(int job) {
+  pthread_mutex_lock(&g_slot_mu);
+  g_slots--;
+  if (job) g_slots_job--;
+  pthread_mutex_unlock(&g_slot_mu);
+}
+
+/* ---- abort watcher -------------------------------------------------------- */
+
+/* sceHttpSendRequest resolves, connects, does the TLS handshake and waits for
+ * the response headers in one call, before xhttp_open() can hand the conn to
+ * anyone who could xhttp_abort() it. Requests that carry a cancel flag are
+ * listed here for that call, and a watcher thread aborts the ones whose flag
+ * is set, so pause/remove do not wait out the connect and receive timeouts.
+ * An entry leaves the table (under the lock) before its request is deleted,
+ * so a deleted or reused id is never aborted. */
+#define WATCH_POLL_MS 100
+static pthread_mutex_t g_watch_mu = PTHREAD_MUTEX_INITIALIZER;
+static pthread_once_t g_watch_once = PTHREAD_ONCE_INIT;
+static int g_watch_ok;
+static struct { volatile int *cancel; int req, aborted; } g_watch[SCE_HTTP_MAX_INFLIGHT];
+
+static void *watch_thread(void *arg) {
+  (void)arg;
+  for (;;) {
+    pthread_mutex_lock(&g_watch_mu);
+    for (int i = 0; i < SCE_HTTP_MAX_INFLIGHT; i++)
+      if (g_watch[i].cancel && *g_watch[i].cancel && !g_watch[i].aborted) { g_watch[i].aborted = 1; A.AbortRequest(g_watch[i].req); }
+    pthread_mutex_unlock(&g_watch_mu);
+    util_sleep_ms(WATCH_POLL_MS);
+  }
+  return NULL;
+}
+
+static void watch_start(void) {
+  g_watch_ok = A.AbortRequest && xthread_start(NULL, "http-abort", watch_thread, NULL, XT_STACK_SMALL, 1) == 0;
+  if (A.AbortRequest && !g_watch_ok) LOGW("http: cannot start the abort watcher — cancels wait for sceHttpSendRequest to return");
+}
+
+/* Returns the table index, or -1 when the request is not watched. */
+static int watch_add(int req_id, volatile int *cancel) {
+  if (!cancel) return -1;
+  pthread_once(&g_watch_once, watch_start);
+  if (!g_watch_ok) return -1;
+  int k = -1;
+  pthread_mutex_lock(&g_watch_mu);
+  for (int i = 0; i < SCE_HTTP_MAX_INFLIGHT && k < 0; i++)
+    if (!g_watch[i].cancel) { g_watch[i].cancel = cancel; g_watch[i].req = req_id; g_watch[i].aborted = 0; k = i; }
+  pthread_mutex_unlock(&g_watch_mu);
+  return k;
+}
+
+static void watch_remove(int k) {
+  if (k < 0) return;
+  pthread_mutex_lock(&g_watch_mu);
+  g_watch[k].cancel = NULL;
+  pthread_mutex_unlock(&g_watch_mu);
 }
 
 /* ---- request ------------------------------------------------------------- */
@@ -311,14 +467,15 @@ static int method_code(const char *m) {
   return SCE_HTTP_METHOD_GET;
 }
 
-static void apply_timeouts(int tmpl, const xhttp_req *req, int auto_redirect) {
+static void apply_timeouts(int tmpl, const xhttp_req *req) {
   uint32_t cms = (uint32_t)(req->connect_timeout_ms > 0 ? req->connect_timeout_ms : 10000);
   uint32_t rms = (uint32_t)(req->recv_timeout_ms > 0 ? req->recv_timeout_ms : 30000);
   if (A.SetConnectTimeOut) A.SetConnectTimeOut(tmpl, cms * 1000u);
   if (A.SetResolveTimeOut) A.SetResolveTimeOut(tmpl, cms * 1000u);
   if (A.SetRecvTimeOut) A.SetRecvTimeOut(tmpl, rms * 1000u);
   if (A.SetSendTimeOut) A.SetSendTimeOut(tmpl, rms * 1000u);
-  if (A.SetAutoRedirect) A.SetAutoRedirect(tmpl, auto_redirect ? 1 : 0);
+  /* redirects come back to xhttp_open(), which re-sends Range and records the final URL */
+  if (A.SetAutoRedirect) A.SetAutoRedirect(tmpl, 0);
 }
 
 /* Adds Range, Accept and the caller's extra headers. */
@@ -391,13 +548,17 @@ static xhttp_conn *do_request(const xhttp_req *req, const char *method, const ch
   c->cancel = req->cancel_flag;
   c->head_only = strcmp(method, "HEAD") == 0;
   const char *ua = req->user_agent ? req->user_agent : XHTTP_DEFAULT_UA;
+  char host[128];
+  util_url_host(url, host, sizeof host);
   int rc;
+  xthread_net("sceHttp CreateTemplate", host);
   if (A.v1) {
     c->tmpl = A.h1_CreateTemplate(A.ctx, ua, SCE_HTTP_VERSION_1_1, 1);
     if (c->tmpl < 0) { *rc_out = c->tmpl; set_sce_error("CreateTemplate", c->tmpl); conn_release(c); return NULL; }
     if (A.h1_SetResponseHeaderMaxSize) A.h1_SetResponseHeaderMaxSize(c->tmpl, SCE_HTTP_HEADER_MAX);
-    apply_timeouts(c->tmpl, req, req->follow_redirects > 0);
+    apply_timeouts(c->tmpl, req);
     if (insecure && A.h1_SetSslCallback) A.h1_SetSslCallback(c->tmpl, ssl_accept_any, NULL);
+    xthread_net("sceHttp CreateConnection", host);
     c->conn = A.h1_CreateConnectionWithURL(c->tmpl, url, 0);
     if (c->conn < 0) { *rc_out = c->conn; set_sce_error("CreateConnectionWithURL", c->conn); conn_release(c); return NULL; }
     c->req = A.h1_CreateRequestWithURL(c->conn, method_code(method), url, (uint64_t)req->body_len);
@@ -405,43 +566,45 @@ static xhttp_conn *do_request(const xhttp_req *req, const char *method, const ch
   } else {
     c->tmpl = A.h2_CreateTemplate(A.ctx, ua, 3, 1);
     if (c->tmpl < 0) { *rc_out = c->tmpl; set_sce_error("CreateTemplate", c->tmpl); conn_release(c); return NULL; }
-    apply_timeouts(c->tmpl, req, req->follow_redirects > 0);
+    apply_timeouts(c->tmpl, req);
     c->req = A.h2_CreateRequestWithURL(c->tmpl, method, url, (uint64_t)req->body_len);
     if (c->req < 0) { *rc_out = c->req; set_sce_error("CreateRequestWithURL", c->req); conn_release(c); return NULL; }
   }
   if (add_headers(c->req, req) != 0) { conn_release(c); return NULL; }
+  xthread_net("sceHttp SendRequest", host);
+  int w = watch_add(c->req, req->cancel_flag);
   rc = A.SendRequest(c->req, req->body_len ? req->body : NULL, req->body_len);
-  if (rc != 0) { *rc_out = rc; set_sce_error("SendRequest", rc); conn_release(c); return NULL; }
+  if (rc != 0) { watch_remove(w); *rc_out = rc; set_sce_error("SendRequest", rc); conn_release(c); return NULL; }
   int status = 0;
+  xthread_net("sceHttp GetStatusCode", host);
   rc = A.GetStatusCode(c->req, &status);
+  watch_remove(w);
   if (rc != 0) { *rc_out = rc; set_sce_error("GetStatusCode", rc); conn_release(c); return NULL; }
   xhttp_resp_reset(resp);
   resp->status = status;
+  xthread_net("sceHttp GetAllResponseHeaders", host);
   parse_response_headers(c, resp);
+  xthread_net("sceHttp ReadData", host);
   return c;
 }
 
-int xhttp_open(const xhttp_req *req, xhttp_conn **out, xhttp_resp *resp) {
-  *out = NULL;
-  xhttp_resp_reset(resp);
-  xhttp_set_error("");
-  if (xhttp_global_init() != 0 || !g_available) { xhttp_set_error("Sony HTTP library unavailable"); return -1; }
+/* Runs the request and follows redirects by hand (auto-redirect is off): one
+ * template/connection/request per hop, Range re-sent, every hop's URL checked
+ * like the first one, the final URL left in resp->location. */
+static xhttp_conn *open_follow(const xhttp_req *req, xhttp_resp *resp) {
   char url[2048];
   xstrlcpy(url, req->url, sizeof url);
-  xurl u;
-  if (util_url_parse(url, &u) != 0) { xhttp_set_error("malformed URL"); return -1; }
-  if (u.has_userinfo) { xhttp_set_error("URLs with credentials are not allowed"); return -1; }
   const char *method = req->method ? req->method : "GET";
   xhttp_req cur = *req;
   int insecure = req->insecure_tls ? 1 : 0;
   int ssl_retried = 0;
-  for (int hops = 0;; hops++) {
-    if (req->cancel_flag && *req->cancel_flag) { xhttp_set_error("cancelled"); xhttp_set_error_class(XHTTP_ERR_CANCELLED); return -1; }
+  for (int hops = 0;;) {
+    if (req->cancel_flag && *req->cancel_flag) { xhttp_set_error("cancelled"); xhttp_set_error_class(XHTTP_ERR_CANCELLED); return NULL; }
     int rc = 0;
     xhttp_conn *c = do_request(&cur, method, url, insecure, resp, &rc);
     if (!c) {
-      /* Logged automatic retry after an SSL error (SPEC §17.19). */
-      if (A.v1 && A.h1_SetSslCallback && !insecure && !ssl_retried && is_ssl_error(rc) && util_istarts_with(url, "https")) {
+      /* Logged automatic retry after a rejected certificate (SPEC §17.19). */
+      if (A.v1 && A.h1_SetSslCallback && !insecure && !ssl_retried && is_cert_error(rc) && util_istarts_with(url, "https")) {
         ssl_retried = 1;
         insecure = 1;
         char host[256];
@@ -450,22 +613,47 @@ int xhttp_open(const xhttp_req *req, xhttp_conn **out, xhttp_resp *resp) {
         else LOGD("http: TLS retry without certificate checks for %s (0x%08x)", host, (unsigned)rc);
         continue;
       }
-      return -1;
+      return NULL;
     }
     if (is_redirect(resp->status) && resp->location[0] && hops < req->follow_redirects) {
       char next[2048];
-      if (util_url_resolve(url, resp->location, next, sizeof next) != 0) { xhttp_set_error("bad redirect"); conn_release(c); return -1; }
+      xurl nu;
+      if (util_url_resolve(url, resp->location, next, sizeof next) != 0 || util_url_parse(next, &nu) != 0 || nu.has_userinfo) {
+        xhttp_set_error("bad redirect");
+        conn_release(c);
+        return NULL;
+      }
       conn_release(c);
+      hops++;
       xstrlcpy(url, next, sizeof url);
       if (resp->status == 303 && strcmp(method, "HEAD") != 0) { method = "GET"; cur.body = NULL; cur.body_len = 0; }
+      /* the next host's certificate is verified again (with its own retry) */
+      insecure = req->insecure_tls ? 1 : 0;
+      ssl_retried = 0;
       LOGD("http: redirect %d -> %s", resp->status, url);
       continue;
     }
     xstrlcpy(resp->location, url, sizeof resp->location);
     if (c->head_only || resp->status == 204 || resp->status == 304) c->eof = 1;
-    *out = c;
-    return 0;
+    return c;
   }
+}
+
+int xhttp_open(const xhttp_req *req, xhttp_conn **out, xhttp_resp *resp) {
+  *out = NULL;
+  xhttp_resp_reset(resp);
+  xhttp_set_error("");
+  if (xhttp_global_init() != 0 || !g_available) { xhttp_set_error("Sony HTTP library unavailable"); return -1; }
+  xurl u;
+  if (util_url_parse(req->url, &u) != 0) { xhttp_set_error("malformed URL"); return -1; }
+  if (u.has_userinfo) { xhttp_set_error("URLs with credentials are not allowed"); return -1; }
+  int job = req->transfer && req->cancel_flag != NULL;
+  if (slot_enter(req, job, u.host) != 0) return -1;
+  xhttp_conn *c = open_follow(req, resp);
+  if (!c) { slot_leave(job); return -1; }
+  c->slot_job = job;
+  *out = c;
+  return 0;
 }
 
 int xhttp_read(xhttp_conn *c, void *buf, size_t cap) {
@@ -487,4 +675,12 @@ void xhttp_abort(xhttp_conn *c) {
   if (c->req >= 0 && A.AbortRequest) A.AbortRequest(c->req);
 }
 
-void xhttp_close(xhttp_conn *c) { conn_release(c); }
+void xhttp_close(xhttp_conn *c) {
+  if (c) {
+    int job = c->slot_job;
+    xthread_net("sceHttp Delete", "");
+    conn_release(c);
+    slot_leave(job);
+  }
+  xthread_net(NULL, NULL);
+}

@@ -219,7 +219,20 @@ static int64_t zc_data_offset(int zfd, uint64_t local_hdr_ofs, uint8_t *time_hi)
 
 /* One full ZipCrypto pass with password `pw` into outfd. 0 ok (CRC matches),
  * 1 CRC mismatch (wrong password), -1 I/O or inflate error. */
+#define ZC_INBUF (64u << 10)
+
+/* The 64 KiB input buffer lives on the heap: this runs on download threads. */
+static int zc_extract_pass_buf(int zfd, int64_t doff, const mz_zip_archive_file_stat *s, const char *pw, int outfd, unsigned char *inbuf);
+
 static int zc_extract_pass(int zfd, int64_t doff, const mz_zip_archive_file_stat *s, const char *pw, int outfd) {
+  unsigned char *inbuf = malloc(ZC_INBUF);
+  if (!inbuf) return -1;
+  int rc = zc_extract_pass_buf(zfd, doff, s, pw, outfd, inbuf);
+  free(inbuf);
+  return rc;
+}
+
+static int zc_extract_pass_buf(int zfd, int64_t doff, const mz_zip_archive_file_stat *s, const char *pw, int outfd, unsigned char *inbuf) {
   if (ftruncate(outfd, 0) != 0 || lseek(outfd, 0, SEEK_SET) != 0) return -1;
   zc_keys k;
   zc_init(&k, pw);
@@ -230,10 +243,9 @@ static int zc_extract_pass(int zfd, int64_t doff, const mz_zip_archive_file_stat
   int64_t src = doff + 12;
   if (remaining < 0) return -1;
   uint32_t crc = (uint32_t)mz_crc32(0, NULL, 0);
-  unsigned char inbuf[65536];
   if (s->m_method == 0) {   /* stored */
     while (remaining > 0) {
-      size_t want = remaining < (int64_t)sizeof inbuf ? (size_t)remaining : sizeof inbuf;
+      size_t want = remaining < (int64_t)ZC_INBUF ? (size_t)remaining : ZC_INBUF;
       ssize_t rd = pread(zfd, inbuf, want, (off_t)src);
       if (rd <= 0) return -1;
       for (ssize_t i = 0; i < rd; i++) inbuf[i] = zc_decode(&k, inbuf[i]);
@@ -250,7 +262,7 @@ static int zc_extract_pass(int zfd, int64_t doff, const mz_zip_archive_file_stat
     int rc = -1;
     for (;;) {
       if (in_ofs == in_have && remaining > 0) {
-        size_t want = remaining < (int64_t)sizeof inbuf ? (size_t)remaining : sizeof inbuf;
+        size_t want = remaining < (int64_t)ZC_INBUF ? (size_t)remaining : ZC_INBUF;
         ssize_t rd = pread(zfd, inbuf, want, (off_t)src);
         if (rd <= 0) break;
         for (ssize_t i = 0; i < rd; i++) inbuf[i] = zc_decode(&k, inbuf[i]);

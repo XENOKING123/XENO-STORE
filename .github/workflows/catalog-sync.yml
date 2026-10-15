@@ -1,15 +1,18 @@
 name: xeno-store-catalog-sync
 
 # Keeps catalog/ fresh without a code change (SPEC §13, §17.12):
-# every 6 hours (and on demand) the live sources are scraped, every release
+# every 2 hours (and on demand) the live sources are scraped, every release
 # link is audited, the result is validated and committed only when something
-# actually changed. The console refreshes its catalog from the committed
-# revision.json / xeno-catalog.json, and the next build.yml run on main
-# re-embeds it in the ELF.
+# actually changed, together with the dlpsgame snapshot
+# (catalog/snapshots/xeno-dlpsgame) so new PS5 posts land within ~2 hours and
+# the offline build keeps up. The console refreshes its catalog from the
+# committed revision.json / xeno-catalog.json, and build.yml ships that same
+# committed file in the next release (ELF + xeno-catalog.json asset).
 
 on:
   schedule:
-    - cron: '17 */6 * * *'
+    # Minute 17, not :00, to stay clear of the top-of-hour scheduler rush.
+    - cron: '17 */2 * * *'
   workflow_dispatch:
     inputs:
       audit_budget_seconds:
@@ -24,6 +27,8 @@ on:
 permissions:
   contents: write
 
+# Runs never overlap: a run still going when the next one fires keeps it
+# queued (never cancelled mid-commit), and GitHub keeps at most one queued run.
 concurrency:
   group: xeno-store-catalog-sync
   cancel-in-progress: false
@@ -67,13 +72,29 @@ jobs:
       - name: Summary
         run: |
           python3 - <<'PY'
-          import json
-          rev = json.load(open('catalog/revision.json'))
-          rep = json.load(open('catalog/report.json'))
-          print("revision %s · %s games · %s releases · %s verified · audited %s" % (
-              rev.get('revision'), rev.get('games'), rev.get('releases'), rev.get('verifiedReleases'), rev.get('auditedAt') or 'never'))
+          import json, os, sys
+          sys.path.insert(0, 'tools/catalog')
+          from schema import expand_catalog   # the file is compact: empty members are left out
+          rev = json.load(open('catalog/revision.json', encoding='utf-8'))
+          rep = json.load(open('catalog/report.json', encoding='utf-8'))
+          games = expand_catalog(json.load(open('catalog/xeno-catalog.json', encoding='utf-8')))['games']
+          count = lambda p: sum(1 for g in games if g.get('platform') == p)
+          lines = ["revision %s · %s games · %s releases · %s verified · audited %s" % (
+              rev.get('revision'), rev.get('games'), rev.get('releases'), rev.get('verifiedReleases'), rev.get('auditedAt') or 'never'),
+              "PS5 games: %d · PS4 games: %d · homebrew: %d" % (count('PS5'), count('PS4'), count('HOMEBREW'))]
+          try:
+              rows = json.load(open('catalog/snapshots/xeno-dlpsgame/catalog.json', encoding='utf-8'))
+              if isinstance(rows, list):
+                  plat = lambda p: sum(1 for r in rows if isinstance(r, dict) and r.get('platform') == p)
+                  lines.append("dlpsgame snapshot: %d posts (%d PS5, %d PS4)" % (len(rows), plat('PS5'), plat('PS4')))
+          except (OSError, ValueError):
+              pass
           for info in rep.get('sources') or []:
-              print("  %-14s %-9s %6s games  %6s releases" % (info.get('id', '?'), info.get('status', '?'), info.get('games', ''), info.get('releases', '')))
+              lines.append("  %-14s %-9s %6s games  %6s releases" % (info.get('id', '?'), info.get('status', '?'), info.get('games', ''), info.get('releases', '')))
+          print("\n".join(lines))
+          if os.environ.get('GITHUB_STEP_SUMMARY'):
+              with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as fh:
+                  fh.write("### Catalog sync\n\n```\n%s\n```\n" % "\n".join(lines))
           PY
 
       - name: Commit catalog changes
@@ -84,7 +105,7 @@ jobs:
           git config user.name "xeno-store-catalog-sync"
           git config user.email "xeno-store-catalog-sync@users.noreply.github.com"
           git add catalog/xeno-catalog.json catalog/revision.json catalog/report.json
-          git add -A catalog/snapshots/audit catalog/snapshots/enrich
+          git add -A catalog/snapshots/audit catalog/snapshots/enrich catalog/snapshots/xeno-dlpsgame
           if git diff --cached --quiet; then
             echo "catalog unchanged — nothing to commit"
             exit 0

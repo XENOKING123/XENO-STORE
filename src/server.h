@@ -41,7 +41,7 @@ typedef struct http_req {
   int responded;
 } http_req;
 
-int server_start(int port);          /* 0 ok, -1 bind/listen failed (errno kept) */
+int server_start(int port);          /* 0 ok, -1 bind/listen failed (errno kept), -2 a server thread did not start */
 void server_stop(void);              /* stops accepting, joins workers */
 
 /* ---- response helpers (used by server.c and api.c) ---------------------- */

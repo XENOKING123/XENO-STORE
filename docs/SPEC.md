@@ -80,7 +80,9 @@ xeno-store/
     snapshots/              vendored upstream inputs for offline builds
   tools/
     gen_assets.py           embeds web/dist/index.html, catalog, logo, icon into src/assets.h (+ gzip variants)
-    make_homebrew.py        builds dist/XENO-STORE/ homebrew folder (+zip) from the ELF + homebrew/
+    make_ffpkg.py           builds dist/PPSA99500.ffpkg, the Games-row app (launcher + ELF in a UFS2 image)
+    ufs2_check.py           checks that image file by file against the staged app
+    make_homebrew.py        optional: dist/XENO-STORE/ homebrew-launcher folder (+zip), not released
     catalog/                §10 pipeline (stdlib Python 3.10+)
       build_catalog.py      CLI: --offline (snapshots) | --online (scrapers) | --validate
       schema.py             dataclasses + validation
@@ -102,7 +104,7 @@ xeno-store/
     ui/                     Playwright scripts (screenshots + keyboard walk)
 .github/workflows/
   build.yml            build web → catalog validate → host build + tests → cross-compile ELF → artifacts → release (main only)
-  catalog-sync.yml  cron every 6h: online catalog build, commit if changed
+  catalog-sync.yml  cron every 2h: online catalog build, commit if changed
 ```
 
 Legacy `ps5-app/` stays untouched but its README points here.
@@ -120,15 +122,17 @@ Targets (all run from the repository root):
 | `make assets` | `python3 tools/gen_assets.py` → `src/assets.h` (needs web + catalog) |
 | `make host` | host binary `build/host/xeno-store` with `cc` (gcc/clang). `-DXENO_HOST=1`. Links OpenSSL if `pkg-config --exists openssl`, else HTTP only. |
 | `make test` | `make host` then `tests/host/run.sh` |
-| `make ps5` | cross-compile `xeno-store.elf` and `xeno-store-browser.elf` (needs `PS5_PAYLOAD_SDK`) |
-| `make pkg` | `tools/make_homebrew.py` → `dist/XENO-STORE/` + `dist/XENO-STORE.zip` |
-| `make all` | web catalog assets ps5 pkg |
+| `make ps5` | cross-compile `xeno-store.elf` (needs `PS5_PAYLOAD_SDK`) |
+| `make eboot` | `app/build_eboot.sh` → `app/dist/eboot.bin`, the Games-row app's launcher (needs `PS5_PAYLOAD_SDK`) |
+| `make ffpkg` | `tools/make_ffpkg.py` → `dist/PPSA99500.ffpkg` (needs `makefs`) |
+| `make pkg` | optional: `tools/make_homebrew.py` → `dist/XENO-STORE/` (+ zip) for etaHEN / itemzflow launchers; not released |
+| `make all` | web catalog assets ps5 eboot ffpkg |
 | `make clean` | remove build outputs |
 
 Compiler flags: `-std=gnu11 -Wall -Wextra -Werror -O2 -fstack-protector-strong -D_FILE_OFFSET_BITS=64 -DXENO_VERSION=\"$(VERSION)\"`.
 PS5 link set (proven to load): `-lSceSystemService -lSceUserService -lSceAppInstUtil -lSceNotification -lkernel_sys`.
 **Do NOT direct-link** `-lSceNet -lSceSsl -lSceHttp2` — resolve them at runtime (§4.2).
-The browser variant adds `-DLAUNCH_BROWSER`.
+There is one ELF: it opens the PS5 browser at start when the `general.openOnStart` setting is on (default).
 
 ---
 
@@ -161,7 +165,7 @@ The browser variant adds `-DLAUNCH_BROWSER`.
 ### 3.2 Startup order
 log → data dir → settings load → catalog load (embedded, then cached if newer) → storage scan →
 queue load (jobs that were running become `paused` with message "Stopped when XENO STORE closed") →
-server bind → housekeeping thread → (LAUNCH_BROWSER: open `http://127.0.0.1:9095/`) → toast
+server bind → housekeeping thread → (`general.openOnStart`: open `http://127.0.0.1:9095/?tv=1`, unless the Games-row app just asked for it) → toast
 "XENO STORE ready · http://<ip>:9095" (ip from `getifaddrs`, first non-loopback IPv4).
 
 ---
@@ -246,8 +250,8 @@ UI reloads via `/catalog.json` ETag change. Auto every 6 h when `settings.catalo
 - `sys_keep_awake_tick()`: `sceSystemServicePowerTick()` (direct-linked, proven) every 30 s while
   any job is `downloading` and `settings.downloads.keepAwake`.
 - `sys_fw_version()`: `kernel_get_fw_version()` from `<ps5/kernel.h>` → "13.60".
-- `sys_launch_browser(url)`: only in `LAUNCH_BROWSER` build (`sceUserServiceInitialize`,
-  `sceSystemServiceLaunchWebBrowser`).
+- `sys_launch_browser(url)`: `sceUserServiceInitialize` + `sceSystemServiceLaunchWebBrowser`; used at start
+  (`general.openOnStart`) and by `POST /api/launcher/open` (the Games-row app; repeats within 8 s are ignored).
 - `sys_local_ip(char*, size_t)`: `getifaddrs`.
 ### 4.9 json.c
 Writer: growable buffer with `json_obj_begin/end`, `json_key`, `json_str` (escapes \" \\ \n \r \t and <0x20 as \u00XX; valid UTF-8 passthrough),
@@ -594,27 +598,32 @@ Every error names the problem and the fix in one line (no raw codes except in Di
 ---
 
 ## 12. Packaging & distribution
-- `xeno-store.elf` (server only) and `xeno-store-browser.elf` (server + opens the PS5 browser to the store).
-- `XENO-STORE.zip` → `/data/homebrew/XENO-STORE/` (`eboot.bin` = browser ELF, `sce_sys/icon0.png`, `sce_sys/param.json`,
-  `homebrew.json`) for etaHEN/itemzflow homebrew launchers.
-- `updates/payloads.json` (Payload Manager repo format):
+- `xeno-store.elf`: the store (one ELF; opens the PS5 browser at start unless `general.openOnStart` is off).
+- `PPSA99500.ffpkg`: the Games-row app, a UFS2 image (`eboot.bin` launcher + `xeno-store.elf` + `sce_sys/`) that
+  ShadowMountPlus mounts from `/data/homebrew/`. The store can put it in place itself (Settings → Updates →
+  Install the XENO STORE app).
+- XENO STORE Desktop archives (Windows, macOS, Linux).
+- `updates/payloads.json` (Payload Manager repo format, one entry: `xeno-store.elf`):
 ```json
 {"name":"XENO STORE","author":"XENOKING","description":"PS5 game store + download manager",
  "payloads":[{"name":"XENO STORE","version":"1.0.0","filename":"xeno-store.elf",
    "url":"https://github.com/XENOKING123/XENO-STORE/releases/download/v1.0.0/xeno-store.elf","sha256":"<filled by CI>","minFw":"","notes":""}],
  "minimumVersion":"1.0.0"}
 ```
-- GitHub Release tag `v<VERSION>` with: both ELFs, the zip, `SHA256SUMS`, `xeno-catalog.json`.
+- GitHub Release tag `v<VERSION>` with: `PPSA99500.ffpkg`, `xeno-store.elf`, `XENO-STORE-Desktop-Windows.zip`,
+  `XENO-STORE-Desktop-Mac.zip`, `XENO-STORE-Desktop-Linux.tar.gz` and `SHA256SUMS`.
 
 ## 13. CI
 - `build.yml`: on push (any branch) + `workflow_dispatch`:
   job `web-and-catalog` (Node 22 + Python 3.12: build web, build+validate catalog offline, upload artifacts) →
-  job `host-tests` (gcc + OpenSSL: `make test`) → job `ps5-elf` (LLVM 18 + SDK v0.40 exactly like
-  `.github/workflows/release.yml` → `make ps5 pkg`, upload ELFs/zip) → job `release` (only `refs/heads/main`):
-  creates/updates release `v<VERSION>`, uploads assets, computes `SHA256SUMS`, and patches
-  `updates/payloads.json` sha256 (commit back with `[skip ci]`).
-- `catalog-sync.yml`: cron `17 */6 * * *` + dispatch; runs `build_catalog.py --online`, and commits
-  `catalog/xeno-catalog.json`, `revision.json`, `report.json` if changed (`[catalog-sync]` commit message).
+  job `host-tests` (gcc + OpenSSL: `make test`) → job `ps5-elf` (LLVM 18 + SDK v0.40 + makefs →
+  `make ps5`, `make eboot ffpkg`, `tools/ufs2_check.py`, upload the ELF and the `.ffpkg`) and job `desktop`
+  (Go, every OS) → job `release` (only `refs/heads/main`): creates/updates release `v<VERSION>`, uploads
+  the assets of §12 (`SHA256SUMS` covers them all), and patches
+  `updates/payloads.json` url/version/sha256 (commit back with `[skip ci]`).
+- `catalog-sync.yml`: cron `17 */2 * * *` + dispatch; runs `build_catalog.py --online`, and commits
+  `catalog/xeno-catalog.json`, `revision.json`, `report.json` and `catalog/snapshots/xeno-dlpsgame` if changed
+  (`[catalog-sync]` commit message).
 
 ## 14. Testing
 - Host: `tests/host/run.sh` starts the host binary on a random port with a temp data dir and roots, runs
@@ -707,7 +716,7 @@ title with trailing numbers/subtitles stripped), `steamId`. Offline: `screenshot
 
 ### 17.6 Easy setup
 - **Readiness checklist** (Settings → Setup, and shown once on first run): checks and explains fixes for
-  ShadowMountPlus API (`127.0.0.1:10101`), DPI (`:9040`), etaHEN DPI (`:12800`), internet reachability
+  ShadowMountPlus (running, or its API on `127.0.0.1:10101`), DPI (`:9040`), etaHEN DPI (`:12800`), internet reachability
   (HEAD to the catalog revision URL), default drive writable, free space, firmware (and the FPKG note), payload manager
   auto-start tip, "Add XENO STORE to Payload Manager" (shows the `payloads.json` URL + QR).
 - `GET /api/setup/check` → `{ok, checks:[{id,ok,detail,fix}]}`.

@@ -328,7 +328,7 @@
     "showQr": "显示二维码",
     "noChecks": "主机未报告任何检查。",
     "check": {
-      "shadowmount": "ShadowMountPlus API",
+      "shadowmount": "ShadowMountPlus",
       "dpi": "直接包安装器（DPI）",
       "etahen": "etaHEN DPI",
       "internet": "互联网可达性",

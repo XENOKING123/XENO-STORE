@@ -70,5 +70,47 @@
   },
   "discover4": {
     "topPs5": "PS5 人気ゲーム"
+  },
+  "diag2": {
+    "crashTitle": "最後の問題",
+    "crashLastRun": "前回 XENO STORE が予期せず停止し、自動的に再起動しました。再発した場合は、このレポートをコピーして送ってください。",
+    "crashOlder": "以前のセッションがこの問題で停止しました。",
+    "none": "問題は記録されていません。",
+    "stack": "スレッドスタック",
+    "safeMode": "セーフスタート：このセッションでは自動バックグラウンドチェックを一時停止しています。"
+  },
+  "gameapp": {
+    "title": "XENO STORE アプリ",
+    "sub": "「ゲーム」に表示されるアプリのタイルです。ストアが /data/homebrew にダウンロードし、ShadowMountPlus がタイルを追加します。FTP は不要です。",
+    "group": "ゲーム列のアプリ",
+    "installed": "インストール済み",
+    "notInstalled": "未インストール",
+    "installing": "インストール中…",
+    "install": "アプリをインストール",
+    "reinstall": "再インストール / 更新",
+    "cancel": "キャンセル",
+    "cancelled": "インストールをキャンセルしました",
+    "version": "バージョン {v}",
+    "already": "アプリはすでにインストール中です",
+    "checking": "最新リリースを確認中…",
+    "verifying": "ダウンロードを検証中…",
+    "registering": "タイルを追加中…",
+    "jobTitle": "XENO STORE アプリ",
+    "doneTitle": "XENO STORE アプリをインストールしました",
+    "doneDesc": "約1分以内に「ゲーム」に XENO STORE のタイルが表示されます（ShadowMountPlus が自動で再スキャンします）。表示されない場合は、脱獄と ShadowMountPlus を読み込んだ状態で本体を再起動してください。",
+    "failedTitle": "アプリをインストールできませんでした",
+    "hintTitle": "XENO STORE をゲーム列に追加",
+    "hintText": "アプリを一度インストールすれば、専用タイルからストアを開けます。FTP もブラウザのアドレスも不要です。",
+    "notNow": "今はしない",
+    "openOnStart": "起動時に XENO STORE を開く",
+    "openOnStartHint": "ストアが起動するたびにテレビで開きます。起動時に自動で開始している場合はオフにしてください。",
+    "err": {
+      "sha256_mismatch": "ダウンロードがチェックサムと一致しません。何もインストールされていません。もう一度お試しください。",
+      "sha256_unavailable": "このリリースにはまだチェックサムがありません。数分後にもう一度お試しください。",
+      "no_space": "内蔵ストレージの空き容量が足りません。",
+      "not_package": "ダウンロードしたファイルはアプリのイメージではありません。",
+      "too_large": "ダウンロードが想定より大きいため、何もインストールされていません。",
+      "download_failed": "ダウンロードに失敗しました。本体のインターネット接続を確認して、もう一度お試しください。"
+    }
   }
 }

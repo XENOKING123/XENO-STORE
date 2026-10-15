@@ -70,5 +70,47 @@
   },
   "discover4": {
     "topPs5": "I migliori giochi PS5"
+  },
+  "diag2": {
+    "crashTitle": "Ultimo problema",
+    "crashLastRun": "XENO STORE si è fermato in modo imprevisto l'ultima volta e si è riavviato da solo. Se succede di nuovo, copia questo rapporto e invialo.",
+    "crashOlder": "Una sessione precedente si è fermata con questo problema.",
+    "none": "Nessun problema registrato.",
+    "stack": "Stack dei thread",
+    "safeMode": "Avvio sicuro: i controlli automatici in background sono in pausa per questa sessione."
+  },
+  "gameapp": {
+    "title": "App XENO STORE",
+    "sub": "Il riquadro dell'app in Giochi. Lo store la scarica in /data/homebrew e ShadowMountPlus aggiunge il riquadro, senza FTP.",
+    "group": "App nella riga Giochi",
+    "installed": "Installata",
+    "notInstalled": "Non installata",
+    "installing": "Installazione…",
+    "install": "Installa l'app",
+    "reinstall": "Reinstalla / aggiorna",
+    "cancel": "Annulla",
+    "cancelled": "Installazione annullata",
+    "version": "Versione {v}",
+    "already": "L'app è già in fase di installazione",
+    "checking": "Controllo dell'ultima versione…",
+    "verifying": "Verifica del download…",
+    "registering": "Aggiunta del riquadro…",
+    "jobTitle": "App XENO STORE",
+    "doneTitle": "App XENO STORE installata",
+    "doneDesc": "Il riquadro di XENO STORE comparirà in Giochi entro circa un minuto (ShadowMountPlus ripete la scansione da solo). Se non appare, riavvia la console con il jailbreak e ShadowMountPlus caricati.",
+    "failedTitle": "Impossibile installare l'app",
+    "hintTitle": "Metti XENO STORE nella riga Giochi",
+    "hintText": "Installa l'app una volta e apri lo store dal suo riquadro, senza FTP né indirizzi nel browser.",
+    "notNow": "Non ora",
+    "openOnStart": "Apri XENO STORE all'avvio",
+    "openOnStartHint": "Apre lo store sulla TV a ogni avvio. Disattivalo se lo store parte automaticamente all'accensione.",
+    "err": {
+      "sha256_mismatch": "Il download non corrisponde al suo checksum: non è stato installato nulla. Riprova.",
+      "sha256_unavailable": "La versione non ha ancora un checksum: riprova tra qualche minuto.",
+      "no_space": "Spazio libero insufficiente sull'unità interna.",
+      "not_package": "Il file scaricato non è un'immagine di app.",
+      "too_large": "Il download è più grande del previsto: non è stato installato nulla.",
+      "download_failed": "Download non riuscito. Controlla la connessione a internet della console e riprova."
+    }
   }
 }

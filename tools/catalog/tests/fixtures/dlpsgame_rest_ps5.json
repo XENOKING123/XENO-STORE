@@ -1,0 +1,73 @@
+[
+ {
+  "id": 101,
+  "date": "2026-09-01T10:00:00",
+  "link": "https://dlpsgame.com/astro-bot-ps5/",
+  "title": {
+   "rendered": "Astro Bot PS5"
+  },
+  "content": {
+   "rendered": "<h3>PPSA01342 - USA (v1.00)</h3><div class=\"xeno-links\" data-payload=\"PHA+R2FtZSA6IDxhIGhyZWY9Imh0dHBzOi8vMWZpY2hpZXIuY29tLz9hc3RybyI+MUZpY2hpZXI8L2E+PC9wPjxwPlBhc3N3b3JkIDogRExQU0dBTUUuQ09NPC9wPg==\"></div>"
+  },
+  "categories": [
+   63019
+  ],
+  "_embedded": {
+   "wp:featuredmedia": [
+    {
+     "source_url": "https://dlpsgame.com/wp-content/uploads/2026/09/astro.jpg",
+     "media_details": {
+      "sizes": {
+       "medium": {
+        "source_url": "https://dlpsgame.com/wp-content/uploads/2026/09/astro-300x300.jpg"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ {
+  "id": 102,
+  "date": "2026-10-02T08:30:00",
+  "link": "https://dlpsgame.com/ghost-of-yotei-ps5/",
+  "title": {
+   "rendered": "Ghost of Y&#333;tei PS5"
+  },
+  "content": {
+   "rendered": "<p>Links soon.</p>"
+  },
+  "categories": [
+   70003
+  ],
+  "_embedded": {
+   "wp:featuredmedia": [
+    {
+     "source_url": "https://dlpsgame.com/wp-content/uploads/2026/10/yotei.jpg",
+     "media_details": {
+      "sizes": {
+       "medium": {
+        "source_url": "https://dlpsgame.com/wp-content/uploads/2026/10/yotei-300x300.jpg"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ {
+  "id": 103,
+  "date": "2025-02-11T12:00:00",
+  "link": "https://dlpsgame.com/hogwarts-legacy-ps5-ps4/",
+  "title": {
+   "rendered": "Hogwarts Legacy PS5 &#038; PS4"
+  },
+  "content": {
+   "rendered": "<p>Cross-gen post.</p>"
+  },
+  "categories": [
+   63019,
+   4370
+  ]
+ }
+]

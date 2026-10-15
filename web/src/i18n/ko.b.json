@@ -328,7 +328,7 @@
     "showQr": "QR 표시",
     "noChecks": "콘솔이 검사를 보고하지 않았습니다.",
     "check": {
-      "shadowmount": "ShadowMountPlus API",
+      "shadowmount": "ShadowMountPlus",
       "dpi": "직접 패키지 설치기(DPI)",
       "etahen": "etaHEN DPI",
       "internet": "인터넷 연결 가능",
