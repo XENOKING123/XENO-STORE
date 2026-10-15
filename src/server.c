@@ -86,6 +86,8 @@ static int send_all(int fd, const void *buf, size_t n) {
 const char *http_status_text(int s) {
   switch (s) {
     case 200: return "OK";
+    case 201: return "Created";
+    case 202: return "Accepted";
     case 204: return "No Content";
     case 206: return "Partial Content";
     case 304: return "Not Modified";
@@ -96,11 +98,17 @@ const char *http_status_text(int s) {
     case 405: return "Method Not Allowed";
     case 409: return "Conflict";
     case 413: return "Payload Too Large";
+    case 414: return "URI Too Long";
+    case 415: return "Unsupported Media Type";
     case 416: return "Range Not Satisfiable";
     case 422: return "Unprocessable Entity";
+    case 428: return "Precondition Required";
+    case 429: return "Too Many Requests";
+    case 431: return "Request Header Fields Too Large";
     case 500: return "Internal Server Error";
     case 502: return "Bad Gateway";
     case 503: return "Service Unavailable";
+    case 507: return "Insufficient Storage";
     default: return "Unknown";
   }
 }
@@ -138,6 +146,15 @@ void http_send_error(http_req *r, int status, const char *code, const char *mess
   jw_kv_str(&w, "error", code);
   jw_kv_str(&w, "message", message);
   jw_kv_int(&w, "status", status);
+  jw_obj_end(&w);
+  http_send_json(r, status, &w);
+}
+
+void http_send_sentence(http_req *r, int status, const char *sentence) {
+  jw w;
+  jw_init(&w);
+  jw_obj_begin(&w);
+  jw_kv_str(&w, "error", sentence);
   jw_obj_end(&w);
   http_send_json(r, status, &w);
 }
@@ -339,7 +356,11 @@ static void route_manifest(http_req *r) {
 }
 
 /* /pkgsrv/<token>: range-capable serving of a staged .pkg, loopback only. */
-static void route_pkgsrv(http_req *r) {
+static volatile int pkgsrv_streams;
+
+int server_pkgsrv_streams(void) { return __atomic_load_n(&pkgsrv_streams, __ATOMIC_SEQ_CST); }
+
+static void pkgsrv_answer(http_req *r) {
   if (!r->client_is_loopback) { http_send_error(r, 403, "forbidden", "pkgsrv is loopback only"); return; }
   const char *token = r->path + 8;
   char path[1024];
@@ -384,7 +405,7 @@ static void route_pkgsrv(http_req *r) {
   char *buf = malloc(256u << 10);
   if (!buf) { close(fd); return; }
   int64_t off = start;
-  while (off <= end) {
+  while (off <= end && running) {   /* server_stop() never waits for a whole package */
     size_t want = (size_t)XS_MIN((int64_t)(256u << 10), end - off + 1);
     ssize_t rd = pread(fd, buf, want, off);
     if (rd <= 0) break;
@@ -393,6 +414,12 @@ static void route_pkgsrv(http_req *r) {
   }
   free(buf);
   close(fd);
+}
+
+static void route_pkgsrv(http_req *r) {
+  __atomic_add_fetch(&pkgsrv_streams, 1, __ATOMIC_SEQ_CST);
+  pkgsrv_answer(r);
+  __atomic_sub_fetch(&pkgsrv_streams, 1, __ATOMIC_SEQ_CST);
 }
 
 /* Route table for non-API paths; extend here for new static resources. */

@@ -512,6 +512,11 @@ int xhttp_open(const xhttp_req *req, xhttp_conn **out, xhttp_resp *resp) {
     if (is_redirect(resp->status) && resp->location[0] && hops < req->follow_redirects) {
       char next[2048];
       if (util_url_resolve(url, resp->location, next, sizeof next) != 0) { xhttp_set_error("bad redirect"); conn_free(c); return -1; }
+      if (req->redirect_ok && !req->redirect_ok(next, req->redirect_user)) {
+        xhttp_set_error("redirect refused by policy");
+        conn_free(c);
+        return -1;
+      }
       conn_free(c);
       hops++;
       xstrlcpy(url, next, sizeof url);

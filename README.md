@@ -18,6 +18,7 @@
 ![platform](https://img.shields.io/badge/PS5-on--console%20payload-2F7CF6?style=for-the-badge&logo=playstation&logoColor=white)
 ![catalog](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FXENOKING123%2FXENO-STORE%2Fmain%2Fcatalog%2Frevision.json&query=%24.games&suffix=%20games&label=catalog&color=2ea043&style=for-the-badge)
 ![verified](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FXENOKING123%2FXENO-STORE%2Fmain%2Fcatalog%2Frevision.json&query=%24.verifiedReleases&suffix=%20verified%20releases&label=audit&color=2f7cf6&style=for-the-badge)
+![tv app](https://img.shields.io/badge/TV%20app-native%20PS5%20%C2%B7%20GPU%20%C2%B7%20controller-FFCE4A?style=for-the-badge&logo=playstation&logoColor=black)
 ![license](https://img.shields.io/badge/license-GPL--3.0-4c6ef5?style=for-the-badge)
 
 [![release](https://img.shields.io/github/v/release/XENOKING123/XENO-STORE?style=for-the-badge&color=8957e5&label=latest)](../../releases/latest)
@@ -32,7 +33,7 @@
 
 ### 🟢 [**⬇️  DOWNLOAD XENO STORE  ⬇️**](../../releases/latest)
 
-<sub>`PPSA99500.ffpkg` (the PS5 app) · `xeno-store.elf` (the store) · `XENO-STORE-Desktop` (Windows · Mac · Linux) · `SHA256SUMS`</sub>
+<sub>`PPSA99500.ffpkg` (the PS5 TV app, store inside) · `xeno-store.elf` (the store) · `XENO-STORE-Desktop` (Windows · Mac · Linux) · `SHA256SUMS`</sub>
 
 </div>
 
@@ -45,8 +46,8 @@
 </div>
 
 > **XENO STORE** is a **native PS5 game store and download manager** that runs
-> *on the console itself*. Send one payload, open the store in the PS5 browser
-> (or on your phone), pick a game, pick a drive, press ✕. The console downloads it
+> *on the console itself*. Open the **XENO STORE app** from your Games row (or the
+> store in the PS5 browser, or on your phone), pick a game, pick a drive, press ✕. The console downloads it
 > with up to **16 parallel connections**, verifies it, **installs the package** or
 > drops the image where **ShadowMountPlus** finds it, and keeps going while the
 > browser is closed. No PC in the loop. 🔥
@@ -71,6 +72,7 @@
 
 | | Feature | What you get |
 |:--:|:--|:--|
+| 📺 | **Native TV app** | The Games-row tile opens a **real PS5 app**: GPU-drawn at 1080p, driven with the controller, in the gold-on-dark XENO look. Discover, Browse with filters and search, game pages with every release, Downloads, Library with copy/move between drives, Settings and app updates. It **starts the store by itself** through your ELF loader and never opens a browser over it. [More below](#-the-tv-app). |
 | 🛒 | **One big catalog** | **1,965 PS5 + PS4 games / 2,592 releases** merged from a verified catalog feed, Archive.org, dlpsgame, SuperPSX, pkg.games and more, with cover art, screenshots, Metacritic, genres and a **2-hour auto sync** (no app update needed). |
 | ⚡ | **Fast downloads** | Segmented transfer with **work-stealing chunks**, per-host adaptive windows, resume with sidecars, mirror failover, **Turbo start** (races mirrors and keeps the fastest), bandwidth limit, schedule window, lifetime stats. |
 | 📦 | **PKG auto-install** | Packages install the moment they finish (native AppInstUtil, with DPI / etaHEN DPI fallback). **Install sets**: game → backport → update → DLC, installed in order, one tap. |
@@ -101,7 +103,7 @@
 <td align="center" width="25%">💾<br/><b>Saves built in</b><br/><sub>backup · restore · transfer · community store</sub></td>
 </tr>
 <tr>
-<td align="center">🕹️<br/><b>Made for the couch</b><br/><sub>controller-first, glass design, 7 themes</sub></td>
+<td align="center">🕹️<br/><b>Made for the couch</b><br/><sub>a native TV app, controller-first, 7 web themes</sub></td>
 <td align="center">📱<br/><b>Phone + PC</b><br/><sub>pair with a 6-digit code or <code>xeno.local</code></sub></td>
 <td align="center">🌍<br/><b>14 languages</b><br/><sub>Arabic right-to-left included</sub></td>
 <td align="center">🔄<br/><b>Always fresh</b><br/><sub>catalog syncs every 2 h, no reinstall</sub></td>
@@ -140,7 +142,7 @@ real console every tile pulls the actual box art and media from the catalog's ar
 
 ## 🚀 Install
 
-You need a jailbroken PS5 with an ELF loader on **port 9021** (etaHEN, the ps5-payload-dev `elfldr`, XENO TOOL's Payloads tab or Payload Manager). The **[latest release](../../releases/latest)** has three things: **`xeno-store.elf`** (the store), **`PPSA99500.ffpkg`** (the XENO STORE app for your Games row) and **XENO STORE Desktop** for your PC. `SHA256SUMS` lists the checksum of every file.
+You need a jailbroken PS5 with an ELF loader on **port 9021** (etaHEN, the ps5-payload-dev `elfldr`, XENO TOOL's Payloads tab or Payload Manager). The **[latest release](../../releases/latest)** has three things: **`xeno-store.elf`** (the store), **`PPSA99500.ffpkg`** (the XENO STORE TV app for your Games row, with the store inside) and **XENO STORE Desktop** for your PC. `SHA256SUMS` lists the checksum of every file.
 
 ### 1 · First time — send `xeno-store.elf`
 
@@ -158,9 +160,11 @@ You need a jailbroken PS5 with an ELF loader on **port 9021** (etaHEN, the ps5-p
 
 ```text
 1.  🎮   Games → XENO STORE → ✕
-         The app starts the store if it is not running yet, then opens it full screen
-2.  🔄   Updates: Settings → Updates → Check → Install update
-         The app starts the new version by itself from then on
+         The TV app opens; if the store is not running yet, it starts it through
+         your ELF loader (port 9021) and carries on as soon as the store answers
+2.  🔄   Updates: Settings → Updates (in the app or the web UI)
+         The store and the TV app each have their own card; the app starts the
+         new store by itself from then on
 ```
 
 The store also adds a **XENO STORE Web** shortcut on the PS5 that opens it in the browser. On your phone or laptop, open `http://<ps5-ip>:9095` or `http://xeno.local:9095`.
@@ -208,6 +212,42 @@ The welcome sheet asks three things: which **sources** you want to see, which **
 
 ---
 
+## 📺 The TV app
+
+The XENO STORE tile in your Games row is a **native PS5 app** (`PPSA99500`), not a browser page. It is drawn on the
+console's GPU at 1920×1080, driven with the controller, and uses the store's gold-on-dark look.
+
+| Screen | What you get |
+|:--|:--|
+| **Discover** | Featured games with full-width hero art, *New on XENO STORE*, the latest releases and every game |
+| **Browse** | The whole catalog with filters (PS5 / PS4, format, region, favourites) and an on-screen search keyboard |
+| **Game page** | Description, every release (game, backport, update, DLC) with format, size, region and version, and the drive it goes to |
+| **Downloads** | Live progress, speed and retry countdowns; pause, resume, retry, cancel (keep or delete the partial) and archive passwords |
+| **Library** | Games on every drive, installed titles, free space per drive, copy or move a game image to another drive |
+| **Settings** | Download sources, default drive, the pairing code for your phone, catalog refresh, updates for the store and the app, *Restart download service* |
+
+**How it installs.** Settings → Updates → *Install the XENO STORE app* (web UI) downloads `PPSA99500.ffpkg` from the
+latest release, checks its SHA-256 and puts it in `/data/homebrew/`, where ShadowMountPlus mounts it and adds the
+tile. From then on the app keeps itself current: **Settings → Updates → TV app** installs a new version, which opens
+the next time you start it. Copying `PPSA99500.ffpkg` to `/data/homebrew/` by hand works too.
+
+**How it starts.** The image carries the store as `xeno/xeno-store.elf`. When you open the app and nothing answers on
+`127.0.0.1:9095`, it sends the store to your ELF loader on port **9021**: the update you downloaded
+(`/data/xeno-store/xeno-store.elf`) when it is newer, otherwise the copy inside the app. The store notices the app
+and **does not open the browser** over it. If a downloaded update fails to come up, the next try uses the copy inside
+the app. **Restart download service** pauses your downloads, restarts the store the same way and lets you resume them.
+
+**One store everywhere.** The app talks to the same store as your phone and PC (through its own `/api/v1` dialect,
+see `docs/API.md` §13), so the queue, favourites, drives and settings are shared. Languages: English, German,
+Spanish, French, Hungarian, Italian, Dutch, Polish, Brazilian Portuguese, Russian and Turkish (Arabic, Japanese,
+Korean and Chinese show English in the app for now).
+
+<sub>The TV app is based on Orbit Store's TV app (saawant12/orbit-store-ps5) and BlackBearReloaded's ps5-homebrew-ui
+(GPL-3.0). Its source and every licence are in <code>app/tv/</code> (<code>app/tv/NOTICE</code>), and each release
+attaches <code>XENO-STORE-&lt;version&gt;-tv-sources.tar.gz</code> with the complete source it was built from.</sub>
+
+---
+
 ## 🎮 Controls
 
 | Button | Action |
@@ -223,6 +263,8 @@ The welcome sheet asks three things: which **sources** you want to see, which **
 | **Settings → General → Swap ✕/○** | Japanese layout |
 
 Keyboard (phone / desktop): arrows, Enter, Esc, `F` favorite, `Q`/`E` tabs, `/` search, `?` shortcuts, `Ctrl/Cmd+K` command palette. Mouse and touch work everywhere.
+
+In the **TV app** the same buttons apply (D-pad, **✕** select, **○** back, **L1 / R1** tabs: Discover · Browse · Library · Downloads); the bottom bar always shows what each button does on the current screen.
 
 ---
 
@@ -367,13 +409,19 @@ make host       # host binary build/host/xeno-store (-DXENO_HOST=1, OpenSSL when
 make test       # make host + tests/host/run.sh  (100+ tests across 5 suites)
 make ps5        # xeno-store.elf (needs PS5_PAYLOAD_SDK)
 make ps5-check  # compile-only check of every PS5 translation unit
-make eboot      # app/build_eboot.sh            → app/dist/eboot.bin (the Games-row app's launcher)
-make ffpkg      # tools/make_ffpkg.py           → dist/PPSA99500.ffpkg (needs makefs; checked by tools/ufs2_check.py)
-make all        # web catalog assets ps5 eboot ffpkg — exactly what a release ships
+make eboot      # app/native-launcher/build.sh  → app/dist/eboot.bin (the fallback native launcher)
+make tv-deps    # the TV app's pinned SDK, libwebp, ps5-opengl and GoogleTest → app/tv/.deps
+make tv         # the TV app folder app/tv/dist/PPSA99500 (runs make tv-check first)
+make tv-test    # the TV app's unit tests (ASan + UBSan)
+make tv-preview # every TV app screen rendered on this machine (Mesa llvmpipe) → app/tv/build/preview/pictures
+make tv-preview-live  # every screen against the host build of the store → build/tv-preview/index.html
+make ffpkg      # tools/make_ffpkg.py           → dist/PPSA99500.ffpkg: the TV app + xeno/xeno-store.elf when
+                #                                  app/tv/dist/PPSA99500 is built, else the native launcher (needs makefs)
+make all        # web catalog assets ps5 eboot tv ffpkg — what a release ships (tv only where its toolchain is set up)
 make clean      # build outputs (distclean also removes web/dist)
 ```
 
-**Requirements:** gcc or clang, make, Python 3.10+ (stdlib only), Node 22 (no npm packages), OpenSSL dev headers for HTTPS in the host build,
+**Requirements:** gcc or clang, make, Python 3.10+ (stdlib only; `make test` also needs Pillow 11.3 or newer, which writes WebP and AVIF: `pip install Pillow==11.3.0`), Node 22 (no npm packages), OpenSSL dev headers for HTTPS in the host build,
 and the [ps5-payload-dev SDK](https://github.com/ps5-payload-dev/sdk) v0.40 with LLVM 18 for `make ps5`:
 
 ```bash
@@ -383,6 +431,8 @@ make ps5 eboot ffpkg
 
 Compiler flags are `-std=gnu11 -Wall -Wextra -Werror -O2 -fstack-protector-strong`. The PS5 build links only libraries proven to load on every firmware
 (`SceSystemService`, `SceUserService`, `SceIpmi`, `SceAppInstUtil`, `SceNotification`, `kernel_sys`); everything else (`libSceHttp`, `libSceSsl`, `libSceNet`, `libSceSaveData`, registry, launcher) is resolved at runtime with `dlsym` and degrades gracefully.
+
+**TV app:** clang-18, lld-18, llvm-18 and `libclang-rt-18-dev`, ninja, wget, unzip and python3; the tests and previews also need `libwebp-dev`, Mesa (`libegl-dev`, `libgl-dev`, `libegl-mesa0`, `libgl1-mesa-dri`) and `python3-pil`. `make tv-deps` fetches and hash-checks everything else. `make all` builds the TV app only on a machine with clang-18 and the fetched dependencies (`TV=1` forces it, `TV=0` skips it); elsewhere `make ffpkg` packs an app folder you already have (for example the `tv-app` CI artifact built for the same `VERSION`; a folder built for another version is refused) or the native launcher. See `docs/SPEC.md` §19 and `tools/tv/README.md`.
 
 UI development without a console: `node web/dev-server.mjs --port 9095` serves the bundle with a mock of the whole API, and `web/verify-ui.mjs` runs the Playwright walk (screenshots + keyboard-only flow + "no console errors").
 
@@ -395,7 +445,7 @@ UI development without a console: `node web/dev-server.mjs --port 9095` serves t
 * **`catalog-sync.yml`** runs every 2 hours (`17 */2 * * *`) and on demand: `build_catalog.py --online` scrapes every source with a per-source time budget (a broken site falls back to its last good data, never breaks the build), then `audit.py --budget-seconds 1500` checks release links (Archive.org metadata with sizes and hashes, `HEAD` + 1-byte `Range` for direct hosts, "does the page still mention the game" for page sources), then `--validate` guards the result. Changes are committed as `catalog: sync (revision N) [catalog-sync]`.
 * **Audit verdicts** are `ok`, `flaky`, `dead` and `page`; `dead` links are dropped at the next build, `release.health` is set and `game.verified` means "at least one direct release audited ok". Results live in `catalog/snapshots/audit/results.json` and are re-checked after 7 days.
 * The console checks `catalog/revision.json` every 6 hours (Settings → Catalog → Auto-refresh) and downloads the new catalog only when the revision grew; `updates/featured.json`, `messages.json`, `companions.json` and `saves-backend.json` ride along, so Discover rows, announcements and companions change **without an app update**.
-* **`build.yml`** builds the UI, builds + validates the catalog, runs the host tests, cross-compiles `xeno-store.elf`, builds `PPSA99500.ffpkg` and XENO STORE Desktop, and on `main` publishes the `v<VERSION>` release (the app, the ELF, one Desktop download per OS and `SHA256SUMS`), then writes the ELF's hash into `updates/payloads.json`.
+* **`build.yml`** builds the UI, builds + validates the catalog, runs the host tests, builds and tests the TV app (unit tests, fixture previews and a live preview against the host build, uploaded as `tv-preview-live`), cross-compiles `xeno-store.elf`, builds `PPSA99500.ffpkg` (the TV app with the store inside) and XENO STORE Desktop, and on `main` publishes the `v<VERSION>` release (the app, the ELF, one Desktop download per OS, the TV app's source bundle and `SHA256SUMS`), then writes the ELF's hash into `updates/payloads.json` and the app's into `updates/tv-app.json`.
 
 ---
 
@@ -404,6 +454,8 @@ UI development without a console: `node web/dev-server.mjs --port 9095` serves t
 <div align="center">
 
 **XENO STORE stands on the shoulders of the scene.** Thank you to everyone below — please support their projects too.
+
+**The TV app is based on Orbit Store's TV app (saawant12/orbit-store-ps5) and BlackBearReloaded's ps5-homebrew-ui (GPL-3.0).**
 
 | Project / person | What we learned or use |
 |:--|:--|
@@ -422,9 +474,10 @@ UI development without a console: `node web/dev-server.mjs --port 9095` serves t
 | **[miniz](https://github.com/richgel999/miniz)** | The single-file ZIP engine used for extraction and save backups |
 | **[ps5upload](https://github.com/phantomptr/ps5upload)** (phantomptr, GPL-3.0) | The `fpkg_build` engine `tools/make_ffpkg.py` can use for a local `.pkg` build of the app |
 | **[ShadowMountPlus](https://github.com/drakmor/shadowMountPlus)** | Mounts the `.ffpkg` app; its documented UFS2 profile is what `make ffpkg` writes |
-| **[ps5-native-app-boilerplate / ps5-homebrew-ui](https://github.com/blackbearreloaded/ps5-homebrew-ui)** — BlackBearReloaded (GPL-3.0-or-later) | The native app toolchain in `app/native-launcher`: `app_crt.cpp`, the PIE layout, `ps5-native-tool` and the clean-room `libc.prx` module the Games-row launcher ships with |
+| **[ps5-native-app-boilerplate / ps5-homebrew-ui](https://github.com/blackbearreloaded/ps5-homebrew-ui)** — BlackBearReloaded (GPL-3.0-or-later) | The UI kit, renderer, controller and sound layer the TV app is built on (`app/tv`), and the native app toolchain (`app_crt.cpp`, the PIE layout, `ps5-native-tool`, the clean-room `libc.prx` module) both apps ship with |
 | **[SharpProspero](https://github.com/SvenGDK/SharpProspero)** — SvenGDK (GPL-3.0) | The FSELF and module-writer work `ps5-native-tool` is derived from |
-| **[Orbit Store](https://github.com/saawant12/orbit-store-ps5)** (GPL-3.0-or-later) | Its native TV app showed the app layout that launches on the console; the toolchain copy comes from its 1.2.0 source |
+| **[Orbit Store](https://github.com/saawant12/orbit-store-ps5)** — saawant12 (GPL-3.0-or-later) | The TV app: XENO STORE's native app in `app/tv` is its 1.2.0 TV app, ported to our backend, brand and paths (provenance and changed files in `app/tv/NOTICE`) |
+| **[ps5-opengl SDK](https://github.com/blackbearreloaded/ps5-opengl)** — BlackBearReloaded (GPL-3.0-or-later), **[libwebp](https://chromium.googlesource.com/webm/libwebp)** (BSD-3-Clause), **LLVM** libc++ / libunwind / compiler-rt (Apache-2.0 with LLVM exception), **[stb](https://github.com/nothings/stb)**, **[Inter](https://rsms.me/inter/)** (OFL-1.1) | The TV app's OpenGL layer, artwork decoding, C++ runtime, image loading and typeface (`app/tv/licenses/`) |
 | **ps5-payload-sdk `install_app` sample** — John Törnblom (GPL-3.0) | `make_fself.py` and the app linker script behind the old freestanding launcher (`make eboot-raw`) |
 | **[makefs](https://man.netbsd.org/makefs.8)** (NetBSD / FreeBSD) | Builds the UFS2 `.ffpkg` image on Linux without mounting anything |
 | **[qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator)** — Kazuhiko Arase (MIT) | Pairing and share QR codes |
@@ -443,7 +496,7 @@ Modifying a console can void its warranty and may violate the platform holder's 
 
 ## ⚖️ License
 
-**GNU GPL-3.0-or-later** — see [`LICENSE`](LICENSE). Third-party notices are in `src/third_party/README.md`, `app/native-launcher/NOTICE` (the native launcher's toolchain and its `libc.prx` module) and the in-app **About** screen.
+**GNU GPL-3.0-or-later** — see [`LICENSE`](LICENSE). Third-party notices are in `src/third_party/README.md`, `app/tv/NOTICE` (the TV app: Orbit Store's TV app, ps5-homebrew-ui and every linked component), `app/native-launcher/NOTICE` (the native launcher's toolchain and its `libc.prx` module) and the in-app **About** screen.
 
 <br/>
 

@@ -6,11 +6,19 @@
  *   Real-Debrid  GET  /user, GET /hosts/domains, POST /unrestrict/link (link=)      → download
  *   AllDebrid    GET  /user?agent=&apikey=, GET /hosts?agent=, GET /link/unlock?… → data.link
  *   Premiumize   GET  /account/info?apikey=, GET /services/list, POST /transfer/directdl (src=) → content[0].link
- *   TorBox       GET  /user/me, POST /webdl/createwebdownload (link=), poll /webdl/mylist?id=
- *                until download_finished, GET /webdl/requestdl?token=&web_id=&file_id= → url
+ *   TorBox       GET  /user/me, GET /webdl/hosters, POST /webdl/createwebdownload (link=),
+ *                poll /webdl/mylist?id= until download_finished,
+ *                GET /webdl/requestdl?token=&web_id=&file_id= → url
  * Keys stay in settings.json and are only ever sent to their own service.
  * Base URLs can be redirected to a loopback mock on the host build through
  * XENO_RD_BASE / XENO_AD_BASE / XENO_TB_BASE / XENO_PM_BASE (tests).
+ *
+ * TorBox's host list (/webdl/hosters) carries per-host limits: a host counts
+ * only while TorBox reports it up and within its daily link and bandwidth
+ * allowance, and its per-file limit is the per-link limit, lowered to the
+ * remaining daily bandwidth. Ported from Orbit Store backend/debrid.c
+ * check_account (GPL-3.0-or-later). Those numbers change during the day, so
+ * TorBox's list is refreshed hourly (the others daily).
  */
 #include "dlx_debrid.h"
 #include "http_client.h"
@@ -27,6 +35,7 @@
 #define MAX_HOSTS 400
 #define HOST_LEN 64
 #define HOSTS_TTL_S (24 * 3600)
+#define HOSTS_TTL_TB_S (60 * 60)
 #define RETRY_AFTER_FAIL_S (10 * 60)
 #define TICK_EVERY_S 60
 #define API_TIMEOUT_MS 15000
@@ -47,6 +56,7 @@ static const svc_def SVC[DLX_DEBRID_N] = {
 typedef struct svc_cache {
   char user[64], expires[40], lastError[160];
   char (*hosts)[HOST_LEN];
+  int64_t *limits;        /* per host: largest file in bytes, 0 = no limit (TorBox) */
   int nhosts;
   int hostsKnown;         /* a list was fetched at least once */
   time_t fetchedAt;
@@ -88,9 +98,8 @@ static void get_key(int si, char *out, size_t cap) {
 int dlx_debrid_connected(const char *id) {
   int si = svc_index(id);
   if (si < 0) return 0;
-  char k[SET_DEBRID_KEY_LEN];
-  get_key(si, k, sizeof k);
-  return k[0] != 0;
+  /* a single-field read: the TV app polls this (no settings_t copy) */
+  return settings_debrid_key_set(SVC[si].id);
 }
 
 /* application/x-www-form-urlencoded value */
@@ -190,6 +199,9 @@ static void cache_save_locked(void) {
     jw_key(&w, "hosts"); jw_arr_begin(&w);
     for (int k = 0; k < C[i].nhosts; k++) jw_str(&w, C[i].hosts[k]);
     jw_arr_end(&w);
+    jw_key(&w, "limits"); jw_arr_begin(&w);
+    for (int k = 0; k < C[i].nhosts; k++) jw_i64(&w, C[i].limits ? C[i].limits[k] : 0);
+    jw_arr_end(&w);
     jw_obj_end(&w);
   }
   jw_obj_end(&w);
@@ -215,9 +227,15 @@ static void cache_load_locked(void) {
     C[i].fetchedAt = (time_t)jv_get_i64(o, "fetchedAt", 0);
     C[i].hostsKnown = jv_get_bool(o, "hostsKnown", 0);
     C[i].nhosts = 0;
+    if (!C[i].hosts) continue;
+    jv lim = jv_first(jv_get(o, "limits"));   /* parallel to "hosts"; absent in older caches */
     JV_FOREACH(h, jv_get(o, "hosts")) {
       const char *s = jv_str(h, NULL);
-      if (s && *s && C[i].nhosts < MAX_HOSTS) xstrlcpy(C[i].hosts[C[i].nhosts++], s, HOST_LEN);
+      int64_t l = jv_i64(lim, 0);
+      lim = jv_next(lim);
+      if (!s || !*s || C[i].nhosts >= MAX_HOSTS) continue;
+      if (C[i].limits) C[i].limits[C[i].nhosts] = l > 0 ? l : 0;
+      xstrlcpy(C[i].hosts[C[i].nhosts++], s, HOST_LEN);
     }
   }
   json_free(d);
@@ -229,6 +247,7 @@ void dlx_debrid_init(const char *data_dir) {
   for (int i = 0; i < DLX_DEBRID_N; i++) {
     memset(&C[i], 0, sizeof C[i]);
     C[i].hosts = calloc(MAX_HOSTS, HOST_LEN);
+    C[i].limits = calloc(MAX_HOSTS, sizeof *C[i].limits);
   }
   cache_load_locked();
   pthread_mutex_unlock(&mu);
@@ -296,7 +315,7 @@ static int check_user(int si, const char *key, char *user, size_t ucap, char *ex
 
 /* ---- per-service: hosts -------------------------------------------------- */
 
-static void add_host(char (*hosts)[HOST_LEN], int *n, const char *h) {
+static void add_host_limit(char (*hosts)[HOST_LEN], int64_t *limits, int *n, const char *h, int64_t limit) {
   if (!h || !*h || *n >= MAX_HOSTS) return;
   char v[HOST_LEN];
   xstrlcpy(v, h, sizeof v);
@@ -305,12 +324,27 @@ static void add_host(char (*hosts)[HOST_LEN], int *n, const char *h) {
   if (util_starts_with(v, "www.")) memmove(v, v + 4, strlen(v + 4) + 1);
   if (!v[0]) return;
   for (int i = 0; i < *n; i++) if (strcmp(hosts[i], v) == 0) return;
+  if (limits) limits[*n] = limit > 0 ? limit : 0;
   xstrlcpy(hosts[(*n)++], v, HOST_LEN);
 }
 
-/* Fetches the supported-host list into hosts/n. 1 fetched, 0 no list for
- * this service, -1 transport/parse error. */
-static int fetch_hosts(int si, const char *key, char (*hosts)[HOST_LEN], int *n) {
+static void add_host(char (*hosts)[HOST_LEN], int64_t *limits, int *n, const char *h) { add_host_limit(hosts, limits, n, h, 0); }
+
+/* A TorBox count: a JSON number, finite, whole, 0..2^53-1. Writes *out only
+ * when it is one. Ported from Orbit Store backend/debrid.c identifier(). */
+static int tb_count(jv o, const char *key, int64_t *out) {
+  jv v = jv_get(o, key);
+  if (jv_type(v) != JV_NUM) return 0;
+  double d = jv_dbl(v, -1);
+  if (!(d >= 0 && d <= 9007199254740991.0) || (double)(int64_t)d != d) return 0;
+  *out = (int64_t)d;
+  return 1;
+}
+
+/* Fetches the supported-host list into hosts/n (and the per-host limits
+ * into limits[], 0 = none). 1 fetched, 0 no list for this service, -1
+ * transport/parse error. */
+static int fetch_hosts(int si, const char *key, char (*hosts)[HOST_LEN], int64_t *limits, int *n) {
   *n = 0;
   int status = 0;
   size_t len = 0;
@@ -319,7 +353,8 @@ static int fetch_hosts(int si, const char *key, char (*hosts)[HOST_LEN], int *n)
     case RD: body = call(si, "GET", "/hosts/domains", key, NULL, &status, &len, NULL); break;
     case AD: body = call(si, "GET", "/hosts?agent=xeno-store", NULL, NULL, &status, &len, NULL); break;
     case PM: { char ek[400]; form_encode(key, ek, sizeof ek); xsnprintf(path, sizeof path, "/services/list?apikey=%s", ek); body = call(si, "GET", path, NULL, NULL, &status, &len, NULL); break; }
-    default: return 0;   /* TorBox publishes no host list: it is tried and tells us */
+    case TB: body = call(si, "GET", "/webdl/hosters", key, NULL, &status, &len, NULL); break;
+    default: return 0;
   }
   if (!body || status != 200) { free(body); return -1; }
   jdoc *d = parse(body, len);
@@ -327,16 +362,33 @@ static int fetch_hosts(int si, const char *key, char (*hosts)[HOST_LEN], int *n)
   if (!d) return -1;
   jv r = json_root(d);
   if (si == RD) {
-    JV_FOREACH(h, r) add_host(hosts, n, jv_str(h, NULL));
+    JV_FOREACH(h, r) add_host(hosts, limits, n, jv_str(h, NULL));
   } else if (si == AD) {
     jv hs = jv_get(jv_get(r, "data"), "hosts");
     JV_FOREACH(h, hs) {
       if (!jv_get_bool(h, "status", 1)) continue;
-      JV_FOREACH(dmn, jv_get(h, "domains")) add_host(hosts, n, jv_str(dmn, NULL));
-      add_host(hosts, n, jv_get_str(h, "name", ""));
+      JV_FOREACH(dmn, jv_get(h, "domains")) add_host(hosts, limits, n, jv_str(dmn, NULL));
+      add_host(hosts, limits, n, jv_get_str(h, "name", ""));
+    }
+  } else if (si == TB) {
+    /* Ported from Orbit Store backend/debrid.c check_account (GPL-3.0-or-later):
+     * a host is usable while TorBox says it is up, it reports a per-link limit
+     * and the daily link and bandwidth allowances are not used up; its file
+     * limit is the per-link limit, lowered to the bandwidth left today. */
+    jv hs = jv_get(r, "data");
+    if (!jv_get_bool(r, "success", 0) || jv_type(hs) != JV_ARR) { json_free(d); return -1; }
+    JV_FOREACH(h, hs) {
+      int64_t limit = 0, daily = 0, used = 0, links = 0, link_used = 0;
+      int valid = tb_count(h, "per_link_size_limit", &limit);
+      int bandwidth = !tb_count(h, "daily_bandwidth_limit", &daily) || !daily || (tb_count(h, "daily_bandwidth_used", &used) && used < daily);
+      int count = !tb_count(h, "daily_link_limit", &links) || !links || (tb_count(h, "daily_link_used", &link_used) && link_used < links);
+      jv up = jv_get(h, "status");
+      if (!(valid && bandwidth && count && jv_type(up) == JV_BOOL && jv_bool(up, 0))) continue;
+      int64_t file_limit = daily > used && (!limit || daily - used < limit) ? daily - used : limit;
+      JV_FOREACH(dmn, jv_get(h, "domains")) if (jv_type(dmn) == JV_STR) add_host_limit(hosts, limits, n, jv_str(dmn, NULL), file_limit);
     }
   } else {
-    JV_FOREACH(h, jv_get(r, "directdl")) add_host(hosts, n, jv_str(h, NULL));
+    JV_FOREACH(h, jv_get(r, "directdl")) add_host(hosts, limits, n, jv_str(h, NULL));
   }
   json_free(d);
   return 1;
@@ -348,17 +400,29 @@ static void refresh_service(int si, const char *key, int with_hosts) {
   memset(&o, 0, sizeof o);
   int urc = check_user(si, key, user, sizeof user, expires, sizeof expires, &o);
   char (*hosts)[HOST_LEN] = calloc(MAX_HOSTS, HOST_LEN);
+  int64_t *limits = calloc(MAX_HOSTS, sizeof *limits);
   int n = 0, hrc = 0;
-  if (hosts && with_hosts && urc == 0) hrc = fetch_hosts(si, key, hosts, &n);
+  if (hosts && limits && with_hosts && urc == 0) hrc = fetch_hosts(si, key, hosts, limits, &n);
   pthread_mutex_lock(&mu);
   if (urc == 0) { xstrlcpy(C[si].user, user, sizeof C[si].user); xstrlcpy(C[si].expires, expires, sizeof C[si].expires); C[si].lastError[0] = 0; }
   else xstrlcpy(C[si].lastError, o.error, sizeof C[si].lastError);
-  if (hosts && hrc == 1) { memcpy(C[si].hosts, hosts, (size_t)MAX_HOSTS * HOST_LEN); C[si].nhosts = n; C[si].hostsKnown = 1; }
+  if (hosts && limits && hrc == 1 && C[si].hosts && C[si].limits) {
+    memcpy(C[si].hosts, hosts, (size_t)MAX_HOSTS * HOST_LEN);
+    memcpy(C[si].limits, limits, (size_t)MAX_HOSTS * sizeof *limits);
+    C[si].nhosts = n;
+    C[si].hostsKnown = 1;
+  } else if (si == TB && with_hosts && C[si].hostsKnown) {
+    /* TorBox's allowances expire: a failed refresh must not leave the last
+     * list looking usable (Orbit Store backend/debrid.c, GPL-3.0-or-later).
+     * No host is listed until a refresh succeeds (retried after 10 min). */
+    C[si].nhosts = 0;
+  }
   if (urc == 0) C[si].fetchedAt = util_now();
   C[si].refreshing = 0;
   cache_save_locked();
   pthread_mutex_unlock(&mu);
   free(hosts);
+  free(limits);
   if (urc == 0) LOGI("debrid: %s ok (%s, %d host%s)", SVC[si].name, user, n, n == 1 ? "" : "s");
   else LOGW("debrid: %s check failed: %s", SVC[si].name, o.error);
 }
@@ -382,7 +446,8 @@ void dlx_debrid_tick(void) {
     get_key(i, key, sizeof key);
     if (!key[0]) continue;
     pthread_mutex_lock(&mu);
-    int stale = !C[i].refreshing && (now - C[i].fetchedAt >= HOSTS_TTL_S) && (now - C[i].lastTry >= RETRY_AFTER_FAIL_S);
+    time_t ttl = i == TB ? HOSTS_TTL_TB_S : HOSTS_TTL_S;
+    int stale = !C[i].refreshing && (now - C[i].fetchedAt >= ttl) && (now - C[i].lastTry >= RETRY_AFTER_FAIL_S);
     if (stale) { C[i].refreshing = 1; C[i].lastTry = now; }
     pthread_mutex_unlock(&mu);
     if (!stale) continue;
@@ -465,15 +530,22 @@ int dlx_debrid_connect(const char *id, const char *apiKey, char *code, size_t cc
   pthread_mutex_unlock(&mu);
   /* host list: synchronous (bounded by the API timeout) so the answer is complete */
   char (*hosts)[HOST_LEN] = calloc(MAX_HOSTS, HOST_LEN);
-  if (hosts) {
+  int64_t *limits = calloc(MAX_HOSTS, sizeof *limits);
+  if (hosts && limits) {
     int n = 0;
-    int hrc = fetch_hosts(si, key, hosts, &n);
+    int hrc = fetch_hosts(si, key, hosts, limits, &n);
     pthread_mutex_lock(&mu);
-    if (hrc == 1) { memcpy(C[si].hosts, hosts, (size_t)MAX_HOSTS * HOST_LEN); C[si].nhosts = n; C[si].hostsKnown = 1; }
+    if (hrc == 1 && C[si].hosts && C[si].limits) {
+      memcpy(C[si].hosts, hosts, (size_t)MAX_HOSTS * HOST_LEN);
+      memcpy(C[si].limits, limits, (size_t)MAX_HOSTS * sizeof *limits);
+      C[si].nhosts = n;
+      C[si].hostsKnown = 1;
+    }
     cache_save_locked();
     pthread_mutex_unlock(&mu);
-    free(hosts);
   }
+  free(hosts);
+  free(limits);
   LOGI("debrid: %s connected as %s", SVC[si].name, user);
   return 0;
 }
@@ -508,6 +580,38 @@ int dlx_debrid_host_supported(const char *service, const char *host) {
   }
   pthread_mutex_unlock(&mu);
   return rc;
+}
+
+int dlx_debrid_host_info(const char *service, const char *host, int64_t *limit) {
+  if (limit) *limit = 0;
+  int si = svc_index(service);
+  if (si < 0 || !host || !*host) return 0;
+  char h[256];
+  xstrlcpy(h, host, sizeof h);
+  util_lower(h);
+  if (util_starts_with(h, "www.")) memmove(h, h + 4, strlen(h + 4) + 1);
+  pthread_mutex_lock(&mu);
+  int rc = -1;
+  if (C[si].hostsKnown) {
+    rc = 0;
+    for (int k = 0; k < C[si].nhosts; k++) {
+      if (!util_host_matches(h, C[si].hosts[k])) continue;
+      rc = 1;
+      if (limit && C[si].limits) *limit = C[si].limits[k];
+      break;
+    }
+  }
+  pthread_mutex_unlock(&mu);
+  return rc;
+}
+
+int dlx_debrid_busy(const char *service) {
+  int si = svc_index(service);
+  if (si < 0) return 0;
+  pthread_mutex_lock(&mu);
+  int busy = C[si].refreshing != 0;
+  pthread_mutex_unlock(&mu);
+  return busy;
 }
 
 int dlx_debrid_pick(const char *via, const char *url, char *out, size_t cap, char *err, size_t errcap) {

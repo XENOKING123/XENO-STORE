@@ -1,0 +1,21 @@
+{
+ "enabled": [
+  "archive"
+ ],
+ "options": [
+  {
+   "id": "archive",
+   "label": "Archive.org",
+   "releaseCount": 45,
+   "downloadReady": true
+  },
+  {
+   "id": "vikingfile",
+   "label": "Vikingfile",
+   "releaseCount": 4,
+   "downloadReady": false
+  }
+ ],
+ "acknowledged": true,
+ "noticeVersion": 1
+}

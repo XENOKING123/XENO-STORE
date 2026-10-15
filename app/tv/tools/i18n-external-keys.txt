@@ -1,0 +1,196 @@
+# XENO STORE TV app - English keys that reach tr() at run time.
+# Copyright (C) 2026 XENO STORE contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# The app translates the backend's {"error": "..."} sentences, job and Library
+# messages, catalogue genres and drive names through tr(), so they are keys in
+# i18n/*.json although no tr() literal in src/ names them. tools/i18n-coverage.py
+# treats the keys below as used; every other key must come from src/.
+#
+# One key per line, exactly as the backend or the catalogue sends it; a key with
+# a leading or trailing space is written as a JSON string ("..."). A line
+# "[backend]" or "[data]" sets the kind of the keys that follow; with --backend,
+# the gate warns when a [backend] key is not a literal in the backend sources.
+# Change a sentence here, in en.json and in the backend in the same commit; the
+# sentences are listed in PORT-SPEC 1.3-1.5 and Appendix A and in the maps
+# (map-downloads 12, map-library 6.7, map-system 5-6, map-catalog-art 3-9).
+
+[backend]
+# Every /api/v1 route: the gate and the dispatcher (PORT-SPEC 1.3).
+XENO STORE is stopping. It will be back in a moment.
+Pair this device with your PS5 to continue.
+Pair this device again from Settings.
+Expected a JSON object.
+Use application/json.
+This request is not available in this version of XENO STORE.
+XENO STORE is low on memory. Try again.
+
+# /session
+Pair this device using the code shown on your PS5.
+Could not save pairing.
+
+# /sources, /catalog/updates, /favorites
+Select the sources you want to enable.
+Unknown or duplicate source.
+Read and acknowledge the current download notice before saving sources.
+Could not save source settings. Check console storage.
+Could not save source settings. Try again.
+Expected refresh action.
+Catalogue refresh needs the console's network. Try again shortly.
+The catalogue is already refreshing.
+Please wait before refreshing the catalogue again.
+Pair this device first.
+Expected a game and favourite choice.
+Game is not in this catalogue.
+Favourites are full.
+Could not save favourites.
+
+# /art
+Unknown artwork.
+This artwork could not be loaded.
+Artwork is busy. Try again shortly.
+
+# /downloads: create
+Unknown curated release.
+Choose direct or torbox delivery.
+Enable this source and acknowledge the download notice in Sources first.
+This provider does not support direct console downloads yet.
+Connect TorBox in App settings first.
+Refresh TorBox in App settings before starting this download.
+This option is not supported by TorBox.
+TorBox currently cannot download this host or file size. Choose the original source.
+Selected storage is not connected or writable.
+Wait for the Library copy to finish before downloading.
+Another download uses this filename on that drive. Open Downloads to manage it.
+This release already has a job on that drive. Open Downloads to resume or retry it.
+Open Downloads to resume this cancelled download, or reconnect its original drive and delete the partial file before downloading again.
+Queue is full. Clear finished or cancelled history to make room.
+Queue state cannot be saved. Check console storage.
+A file with this name is already on that drive. XENO STORE will not overwrite it.
+Not enough space after unfinished downloads. Free space or cancel a queued download.
+Downloads are unavailable on this console's firmware.
+
+# /downloads/{id}/{action} and the rows
+Unknown download.
+Unknown queue action.
+This job is not running.
+This job cannot be resumed in its current state.
+Extraction cannot be paused. Wait for it to finish.
+Reconnect the original destination drive.
+Enable a supported source in Sources before resuming this download.
+The archive is no longer on the drive. Remove this download and download it again.
+Completed files cannot be deleted through cancellation.
+This download is still stopping. Try again in a moment.
+Only cancelled downloads can be deleted.
+Reconnect the original drive before deleting the partial file.
+Wait for the install to finish before removing it from history.
+Only completed or cancelled history can be removed. Reconnect the original drive and delete any kept partial file first.
+Enter an archive password of up to 128 bytes.
+The archive password cannot contain control characters.
+Pause extraction or wait for it to finish before entering a password.
+This download has no link to refresh.
+Preparing with TorBox
+Download failed.
+# The prefix of a failed install's row text ("Install failed: " + detail).
+"Install failed: "
+
+# /storage/preferred, /settings/downloads, /settings/extraction
+Expected storageId.
+Could not save the default drive.
+Choose a whole number from 1 to 4.
+Expected deleteArchives.
+Could not save the setting.
+
+# /browser (no provider capture in XENO STORE)
+Vikingfile asks for a human check, so XENO STORE cannot fetch it by itself. Download it with TorBox, or open this game in the browser version.
+This verification session is no longer active.
+Unknown browser action.
+
+# /library, /library/actions, /library/storage
+Expected a supported action and its current Library identifiers.
+Confirm this action first.
+Library is unavailable.
+Library is unavailable. Restart XENO STORE to try again.
+This request ID was already used for another action.
+Another Library operation is in progress. Wait for it to finish.
+Refresh Library with a compatible ShadowMount version before using this action.
+Waiting to start…
+Checking current game and drive status…
+Library updated.
+Scan requested. ShadowMount may register or mount detected games. Refresh Library after it finishes.
+Storage operation started. Progress is available in Library and Storage.
+Cancellation requested. Waiting for the storage job to stop.
+Pause active and queued downloads before copying or moving games.
+This game's source changed. Refresh Library and select it again.
+This source is missing or does not support that action.
+The selected destination changed or is no longer writable. Refresh storage.
+Choose a different destination outside the source folder.
+Not enough free space after unfinished downloads on the destination drive.
+Could not complete the Library action. Refresh and try again.
+This job has finished or can no longer be cancelled.
+Cannot confirm the current storage job. Refresh storage before trying again.
+Cannot confirm storage job status. Reconnect ShadowMount; the job may still be running.
+
+# /updates
+A XENO STORE update is in progress. Wait for it to finish.
+Automatic mode is only valid for release checks.
+Unknown update action.
+Updates work with XENO STORE running on your PS5.
+Please wait before checking or downloading again.
+Confirm stopping XENO STORE and pausing downloads first.
+Check for updates again before installing this release.
+A game is still installing from XENO STORE. Wait for it to finish, then restart.
+This release has no published checksum. Install it from the web version.
+An older release will not replace this build.
+No newer XENO STORE release was found. An older release will not replace this build.
+No compatible XENO STORE release found. An older or invalid release will not replace this build.
+The release failed SHA-256 or ELF validation. The saved copy was not replaced.
+Could not save the queue. XENO STORE has not been stopped.
+Update interrupted. Try again.
+Could not start the update worker. Restart XENO STORE to retry.
+
+# /tv-app
+Unknown TV app action.
+Replace is only valid, as true or false, when installing.
+Automatic mode is only valid for TV app checks.
+The TV app is installed from XENO STORE running on your PS5.
+The TV app is already being checked or installed. Wait for it.
+Check for the TV app again before installing it.
+The TV app is already installed as the folder /data/homebrew/PPSA99500. Remove that folder to install the release, or keep updating it yourself.
+Something other than the TV app is at /data/homebrew/PPSA99500.ffpkg. Move it away to install updates here.
+A newer TV app is already installed. Nothing was replaced.
+A copy you placed yourself is already in /data/homebrew. Confirm replacing it with this release.
+The TV app release information is invalid. Nothing was downloaded.
+The TV app hasn't been published yet. Check again after the next release.
+Could not start the TV app download.
+Another copy of the TV app appeared while downloading. Nothing was replaced; check again to see what's installed.
+Could not save the TV app on the console's internal storage.
+The TV app download stopped because XENO STORE is closing.
+The TV app failed its SHA-256 check. Nothing was installed.
+The TV app release redirected outside XENO STORE's allowed download hosts.
+The TV app was installed, but XENO STORE could not record its version. It will show as a copy you placed yourself.
+The download isn't a TV app image. Nothing was installed.
+The download was larger than the release says. Nothing was installed.
+
+[data]
+# Drive and location names (i18n::place; "USB storage {number}" and
+# "Extended storage {number}" are tr() literals in src/). "M.2 SSD" reads the
+# same in every language and is not a key.
+Internal storage
+Other location
+
+# Catalogue genres (i18n::genre), as XENO STORE's catalogue names them.
+Action
+Adventure
+Family
+Fighting
+Horror
+Indie
+Music
+Puzzle
+RPG
+Racing
+Shooter
+Simulation
+Sports
+Strategy

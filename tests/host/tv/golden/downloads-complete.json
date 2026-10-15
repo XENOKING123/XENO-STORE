@@ -1,0 +1,27 @@
+[
+ {
+  "id": "<job:1>",
+  "releaseId": "fx-tidewater-ffpfsc",
+  "gameId": "fx-tidewater-ps5",
+  "titleId": "PPSA90001",
+  "title": "Tidewater",
+  "format": "FFPFSC",
+  "filename": "PPSA90001 Tidewater.ffpfsc",
+  "storageId": "internal",
+  "path": "<root:0>/homebrew/PPSA90001 Tidewater.ffpfsc",
+  "status": "complete",
+  "error": "",
+  "verification": "size",
+  "delivery": "direct",
+  "deliveryPhase": "",
+  "canRefreshLink": false,
+  "canEnterArchivePassword": false,
+  "received": 8388608,
+  "total": 8388608,
+  "speed": 0,
+  "retryAt": 0,
+  "extracted": 0,
+  "extractTotal": 0,
+  "order": 1
+ }
+]

@@ -1,0 +1,27 @@
+#!/bin/sh
+# XENO STORE TV app - clang-18 with this app folder mapped to /work/app.
+# Copyright (C) 2026 XENO STORE contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Used as PS5_CLANG for the console build (the root Makefile's tv targets).
+# The upstream build runs in Docker with the app folder at /work/app, so a few
+# assert() messages that expand __FILE__ (src/third_party/stb/*.inc) read
+# "/work/app/src/...". This wrapper maps this folder (app/tv, wherever the
+# checkout is) to the same /work/app prefix, so eboot.bin does not record the
+# local directory and two checkouts in different places build the same bytes.
+# Nothing else about the compile changes.
+#
+# Environment (optional):
+#   REAL_CLANG       the compiler to run (default: clang-18)
+#   XENO_TV_APP_DIR  the folder to map (default: the folder above this script)
+
+here=$(cd -- "$(dirname -- "$0")" && pwd)
+app=$(cd -- "${XENO_TV_APP_DIR:-$here/..}" && pwd)
+physical=$(cd -- "$app" && pwd -P)
+
+set -- "-ffile-prefix-map=$app=/work/app" "$@"
+if [ "$physical" != "$app" ]; then
+    # Reached through a symlink: map the resolved path as well.
+    set -- "-ffile-prefix-map=$physical=/work/app" "$@"
+fi
+exec "${REAL_CLANG:-clang-18}" "$@"

@@ -247,6 +247,7 @@ void catalog_status_json(jw *w) {
   jw_kv_str(w, "source", cur ? cur->source : "embedded");
   jw_kv_i64(w, "updatedAt", cur ? (int64_t)cur->updatedAt : 0);
   pthread_mutex_unlock(&catalog_mu);
+  jw_kv_bool(w, "refreshing", catalog_refreshing());
 }
 
 void catalog_info_json(jw *w) {
@@ -276,16 +277,38 @@ static char *fetch_text(const char *url, int timeout_ms, size_t max, size_t *len
   r.connect_timeout_ms = timeout_ms;
   r.recv_timeout_ms = timeout_ms;
   r.extra_headers = "Cache-Control: no-cache\r\n";
+  r.cancel_flag = &g_cfg.stop_requested;   /* a shutdown never waits for the catalogue host */
   return xhttp_fetch(&r, resp, max, len);
 }
 
 static int catalog_refresh_inner(int force, int *updated, char *err, size_t errcap);
 
+/* Serialises refreshes: the housekeeping auto-refresh, POST /api/catalog/refresh
+ * and the TV app's refresh used to be able to run at once and both write
+ * catalog.json. refresh_mu is only ever try-locked, so a second caller gets
+ * CATALOG_REFRESH_BUSY at once instead of waiting minutes on the network. */
+static pthread_mutex_t refresh_mu = PTHREAD_MUTEX_INITIALIZER;
+static volatile int refresh_running;
+static volatile unsigned refresh_done;
+
 int catalog_refresh(int force, int *updated, char *err, size_t errcap) {
+  *updated = 0;
+  if (pthread_mutex_trylock(&refresh_mu) != 0) {
+    xsnprintf(err, errcap, "A catalog refresh is already running");
+    return CATALOG_REFRESH_BUSY;
+  }
+  __atomic_store_n(&refresh_running, 1, __ATOMIC_SEQ_CST);
   int rc = catalog_refresh_inner(force, updated, err, errcap);
+  __atomic_add_fetch(&refresh_done, 1, __ATOMIC_SEQ_CST);
+  __atomic_store_n(&refresh_running, 0, __ATOMIC_SEQ_CST);
+  pthread_mutex_unlock(&refresh_mu);
   if (catalog_on_refresh) catalog_on_refresh(*updated);
   return rc;
 }
+
+int catalog_refreshing(void) { return __atomic_load_n(&refresh_running, __ATOMIC_SEQ_CST); }
+
+unsigned catalog_refresh_runs(void) { return __atomic_load_n(&refresh_done, __ATOMIC_SEQ_CST); }
 
 static int catalog_refresh_inner(int force, int *updated, char *err, size_t errcap) {
   *updated = 0;
@@ -524,6 +547,14 @@ int catalog_visit_game(const char *gameId, catalog_visit_fn fn, void *user) {
   jv g = find_game_node_locked(gameId);
   int rc = jv_ok(g) ? 0 : -1;
   if (rc == 0) fn(g, user);
+  pthread_mutex_unlock(&catalog_mu);
+  return rc;
+}
+
+int catalog_visit_root(catalog_visit_fn fn, void *user) {
+  pthread_mutex_lock(&catalog_mu);
+  int rc = cur ? 0 : -1;
+  if (cur) fn(json_root(cur->doc), user);
   pthread_mutex_unlock(&catalog_mu);
   return rc;
 }

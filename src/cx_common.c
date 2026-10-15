@@ -356,7 +356,7 @@ int cx_download_file(const char *url, const cx_http *opt, const char *dest, cons
   if (ts) xstrlcpy(ts, resp.content_type, 96);
   if (resp.status != 200) { xsnprintf(err, errcap, "HTTP %d", resp.status); xhttp_close(c); return -1; }
   if (util_istarts_with(resp.content_type, "text/html")) { xsnprintf(err, errcap, "the host returned a web page instead of the file"); xhttp_close(c); return -1; }
-  if (max_bytes > 0 && resp.content_length > max_bytes) { xsnprintf(err, errcap, "file is larger than the limit"); xhttp_close(c); return -1; }
+  if (max_bytes > 0 && resp.content_length > max_bytes) { xsnprintf(err, errcap, "file is larger than the limit"); xhttp_close(c); return CX_DL_REJECTED; }
   char tmp[CX_PATH_MAX];
   xsnprintf(tmp, sizeof tmp, "%s.part", dest);
   int fd = open(tmp, O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -366,13 +366,13 @@ int cx_download_file(const char *url, const cx_http *opt, const char *dest, cons
   sha256_ctx h;
   sha256_init(&h);
   int64_t done = 0;
-  int rc = 0;
+  int rc = 0, rejected = 0;
   for (;;) {
     if (cancel && *cancel) { xsnprintf(err, errcap, "cancelled"); rc = -1; break; }
     int n = xhttp_read(c, buf, 512 << 10);
     if (n < 0) { xsnprintf(err, errcap, "%s", xhttp_last_error()); rc = -1; break; }
     if (n == 0) break;
-    if (max_bytes > 0 && done + n > max_bytes) { xsnprintf(err, errcap, "file is larger than the limit"); rc = -1; break; }
+    if (max_bytes > 0 && done + n > max_bytes) { xsnprintf(err, errcap, "file is larger than the limit"); rc = -1; rejected = 1; break; }
     ssize_t off = 0;
     while (off < n) {
       ssize_t w = write(fd, buf + off, (size_t)(n - off));
@@ -397,9 +397,9 @@ int cx_download_file(const char *url, const cx_http *opt, const char *dest, cons
     char want[65];
     xstrlcpy(want, sha256_expected, sizeof want);
     util_lower(want);
-    if (strcmp(hex, want) != 0) { xsnprintf(err, errcap, "sha256 mismatch (file is not the published one)"); rc = -1; }
+    if (strcmp(hex, want) != 0) { xsnprintf(err, errcap, "sha256 mismatch (file is not the published one)"); rc = -1; rejected = 1; }
   }
-  if (rc != 0) { unlink(tmp); return -1; }
+  if (rc != 0) { unlink(tmp); return rejected ? CX_DL_REJECTED : -1; }
   if (rename(tmp, dest) != 0) { xsnprintf(err, errcap, "cannot rename to %s", dest); unlink(tmp); return -1; }
   return 0;
 }

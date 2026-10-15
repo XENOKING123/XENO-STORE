@@ -198,7 +198,9 @@ void install_start(const char *path, int port, install_result *out) {
 #ifdef XENO_HOST
   (void)port;
   out->ok = 1;
-  xstrlcpy(out->via, "host-sim", sizeof out->via);
+  /* XENO_HOST_INSTALL_VIA: tests report another route (e.g. dpi12800) */
+  const char *via = getenv("XENO_HOST_INSTALL_VIA");
+  xstrlcpy(out->via, via && *via ? via : "host-sim", sizeof out->via);
   xsnprintf(out->message, sizeof out->message, "Installing (simulated) %s", out->contentId[0] ? out->contentId : util_basename(path));
   LOGI("install: simulated start for %s (content %s, title %s)", path, out->contentId, out->titleId);
   return;
@@ -264,7 +266,8 @@ int install_poll(const char *titleId, const char *contentId, time_t startedAt, c
   if (cap) msg[0] = 0;
 #ifdef XENO_HOST
   (void)contentId;
-  if (now - startedAt < 3) return 0;
+  const char *secs = getenv("XENO_HOST_INSTALL_SECS");   /* tests: a longer simulated install */
+  if (now - startedAt < (secs && *secs ? atoi(secs) : 3)) return 0;
   if (titleId && *titleId) {
     char dir[700];
     xsnprintf(dir, sizeof dir, "%s/%s", storage_user_app_dir(), titleId);

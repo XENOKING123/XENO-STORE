@@ -118,8 +118,11 @@ int sys_local_ip(char *out, size_t cap) {
     if (p->ifa_flags & IFF_LOOPBACK) continue;
     if (!(p->ifa_flags & IFF_UP)) continue;
     const struct sockaddr_in *sin = (const struct sockaddr_in *)p->ifa_addr;
-    const char *s = inet_ntoa(sin->sin_addr);
-    if (!s || util_starts_with(s, "127.") || util_starts_with(s, "169.254.")) continue;
+    /* inet_ntop into a local buffer: inet_ntoa's static buffer is shared by every
+     * thread (/api/session, /api/v1/session and the start-up URL can race on it) */
+    char s[INET_ADDRSTRLEN];
+    if (!inet_ntop(AF_INET, &sin->sin_addr, s, sizeof s)) continue;
+    if (util_starts_with(s, "127.") || util_starts_with(s, "169.254.")) continue;
     xstrlcpy(out, s, cap);
     found = 1;
     break;

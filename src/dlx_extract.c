@@ -44,10 +44,22 @@ static void rm_tree(const char *dir, int depth) {
 
 typedef struct prog { dl_job *j; int64_t last_pub; } prog;
 
+#ifdef XENO_HOST
+/* XENO_HOST_EXTRACT_SLOW_MS: every progress step sleeps that long, so a test
+ * can stop an extraction halfway through. */
+static void host_extract_slow(void) {
+  const char *e = getenv("XENO_HOST_EXTRACT_SLOW_MS");
+  if (e && *e) util_sleep_ms(atoi(e));
+}
+#else
+static void host_extract_slow(void) {}
+#endif
+
 static int progress_cb(void *user, uint64_t done, uint64_t total, const char *entry) {
   prog *p = user;
   dl_job *j = p->j;
   (void)entry;
+  host_extract_slow();
   int64_t now = util_now_ms();
   if (now - p->last_pub >= 200 || done >= total) {
     p->last_pub = now;
@@ -82,7 +94,7 @@ static const char *const DLX_COMMUNITY_PW[] = {
 };
 
 int dlx_extract_run(dl_job *j, const settings_t *s) {
-  char archive[1024], root[256], label[32], filename[256], id[16], password[128];
+  char archive[1024], root[256], label[32], filename[256], id[16], password[129];
   dl_lock();
   xstrlcpy(archive, j->path, sizeof archive);
   xstrlcpy(root, j->root, sizeof root);

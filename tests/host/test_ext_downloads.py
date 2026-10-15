@@ -532,6 +532,72 @@ class ExtDownloadTests(unittest.TestCase):
         self.assertEqual(st, 400)
 
     # ------------------------------------------------------------ summary shape
+    def test_10b_stopped_extraction_stays_a_finished_download(self):
+        """A Pause or the TV stop during an extraction leaves a finished download whose
+        extraction failed (also after a restart): Resume never fetches the archive again,
+        Extract runs it again."""
+        data = os.path.join(self.tmp, "data-xstop")
+        env = dict(self.env, XENO_HOST_EXTRACT_SLOW_MS="40")
+        zsize = os.path.getsize(os.path.join(self.files_dir, "single.zip"))
+        url = f"{self.rs}/ok/single.zip"
+
+        def workers_idle(srv):
+            harness.wait_until(lambda: srv.api("GET", "/api/diagnostics")[1]["queue"]["workersRunning"] == 0,
+                               timeout=30, what="workers stopped")
+
+        def assert_stopped(j):
+            self.assertEqual((j["state"], j["extract"]["state"]), ("done", "failed"), j)
+            self.assertEqual((j["written"], j["total"]), (zsize, zsize), j)
+
+        def extracting(x):
+            return x["state"] == "extracting" and x["written"] > 0
+
+        srv = harness.XenoServer(data, env=env).start()
+        try:
+            # auto-extraction after the download, stopped by a plain Pause
+            srv.api("PUT", "/api/settings", {"downloads": {"extractZip": True, "deleteArchiveAfterExtract": False}})
+            auto = srv.add(url=url, filename="Stop Auto.zip", size=zsize)["id"]
+            srv.wait_job(auto, None, timeout=60, until=extracting)
+            st, b = srv.action(auto, "pause")
+            self.assertEqual(st, 200, b)
+            workers_idle(srv)
+            assert_stopped(srv.job(auto))
+            st, b = srv.action(auto, "resume")
+            self.assertNotEqual(st, 200, b)
+            self.assertEqual(srv.job(auto)["state"], "done")
+            # a manual Extract, stopped by the TV stop's pause-all
+            srv.api("PUT", "/api/settings", {"downloads": {"extractZip": False}})
+            manual = srv.add(url=url, filename="Stop Manual.zip", size=zsize)["id"]
+            srv.wait_job(manual, "done", timeout=60)
+            st, b = srv.action(manual, "extract")
+            self.assertEqual(st, 200, b)
+            srv.wait_job(manual, None, timeout=30, until=extracting)
+            st, b = srv.api("POST", "/api/debug/queue/pause-all")
+            self.assertEqual(st, 200, b)
+            workers_idle(srv)
+            assert_stopped(srv.job(manual))
+        finally:
+            srv.stop()
+        with open(os.path.join(data, "queue.json"), encoding="utf-8") as f:
+            saved = {x["id"]: x for x in json.load(f)["jobs"]}
+        for jid in (auto, manual):
+            self.assertEqual((saved[jid]["state"], saved[jid]["extract"]["state"]), ("done", "failed"), saved[jid])
+        fetched = ctl(self.rs, "stats")["requests"].get("/ok/single.zip", 0)
+        srv = harness.XenoServer(data, env=env).start()
+        try:
+            for jid in (auto, manual):
+                assert_stopped(srv.job(jid))
+            st, b = srv.action(manual, "resume")
+            self.assertNotEqual(st, 200, b)
+            st, b = srv.action(manual, "extract")
+            self.assertEqual(st, 200, b)
+            j = srv.wait_job(manual, "extracted", timeout=60)
+            self.assertEqual(j["extract"]["state"], "extracted")
+            self.assertEqual(ctl(self.rs, "stats")["requests"].get("/ok/single.zip", 0), fetched,
+                             "the archive was downloaded again")
+        finally:
+            srv.stop()
+
     def test_11_queue_summary_phase2_shape(self):
         # the pill names rest mode only while nothing downloads: let what earlier tests started settle first
         # (on a loaded machine a job can still be running here), cancelling whatever is still busy after 30 s

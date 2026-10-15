@@ -1,0 +1,18 @@
+{
+ "available": true,
+ "runningVersion": "<version>",
+ "instanceId": "<hex32>",
+ "savedVersion": "",
+ "latestVersion": "",
+ "checksum": "",
+ "updateAvailable": false,
+ "automaticCheckAfter": 0,
+ "phase": "idle",
+ "error": "",
+ "busy": false,
+ "restartRequired": false,
+ "received": 0,
+ "retryAt": 0,
+ "checkedAt": 0,
+ "checkAfter": 0
+}

@@ -36,6 +36,10 @@ typedef struct xhttp_req {
   size_t body_len;
   int connect_timeout_ms, recv_timeout_ms;   /* 0 → defaults (10 s / 30 s) */
   int follow_redirects;               /* max hops (0 = none) */
+  /* Optional per-hop policy: called with each resolved redirect target before
+   * it is contacted; 0 refuses the hop (xhttp_open fails). NULL = any hop. */
+  int (*redirect_ok)(const char *next_url, void *user);
+  void *redirect_user;
   int insecure_tls;                   /* only honored by backends that can */
   volatile int *cancel_flag;          /* checked between reads; non-zero = abort */
   int transfer;                       /* long body transfer: queues for a PS5 transfer slot */

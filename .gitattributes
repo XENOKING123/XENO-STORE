@@ -1,0 +1,9 @@
+# Binary assets: never diffed, merged or converted.
+*.huifont binary
+*.ogg binary
+*.wav binary
+*.png binary
+*.ttf binary
+# Upstream licence texts in app/tv/licenses are kept byte for byte, line endings included
+# (two ps5-opengl texts use CRLF).
+app/tv/licenses/** -text -whitespace

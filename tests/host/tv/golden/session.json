@@ -1,0 +1,5 @@
+{
+ "token": "<hex64>",
+ "pairCode": "<code6>",
+ "address": "<ipv4 or empty>"
+}

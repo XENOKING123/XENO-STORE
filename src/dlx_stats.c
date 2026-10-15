@@ -84,7 +84,16 @@ static void write_locked(jw *w) {
   jw_obj_end(w);
 }
 
+static int frozen;   /* dlx_stats_freeze(); guarded by mu */
+
+void dlx_stats_freeze(void) {
+  pthread_mutex_lock(&mu);
+  frozen = 1;
+  pthread_mutex_unlock(&mu);
+}
+
 static void flush_locked(void) {
+  if (frozen) return;
   jw w;
   jw_init(&w);
   write_locked(&w);

@@ -5,15 +5,21 @@
 #                 CATALOG_FLAGS=--force rebuilds it from the snapshots anyway)
 #   make assets   tools/gen_assets.py            -> src/assets.h
 #   make host     host binary build/host/xeno-store (-DXENO_HOST=1, OpenSSL if found)
-#   make test     host build + tests/host/run.sh + launcher-test + saves-test
+#   make test     host build + tests/host/run.sh + launcher-test + saves-test + tools-test
 #   make saves-test  tools/saves/tests (save submission intake; the tests write their own fixtures)
 #   make ps5      xeno-store.elf (needs PS5_PAYLOAD_SDK)
 #   make eboot    app/native-launcher/build.sh    -> app/dist/eboot.bin + app/dist/sce_module/libc.prx
 #                 (the Games-row launcher as a native app; fetches its own pinned SDK v0.42)
 #   make eboot-raw app/build_eboot.sh             -> app/dist/eboot.bin (the old freestanding launcher)
 #   make launcher-test  host test of the native launcher's logic (fake store + fake ELF loader)
-#   make ffpkg    tools/make_ffpkg.py             -> dist/PPSA99500.ffpkg (the Games-row app, needs makefs)
-#   make all      web catalog assets ps5 eboot ffpkg (what a release ships)
+#   make tools-test     the release tools' input checks (tools/tests: make_ffpkg.py, make_source_bundle.py)
+#   make tv       app/tv (the native TV app)      -> app/tv/dist/PPSA99500 (needs 'make tv-deps' and
+#                 clang-18; the TV app targets are listed at the end of this file)
+#   make ffpkg    tools/make_ffpkg.py             -> dist/PPSA99500.ffpkg (the Games-row app, needs makefs):
+#                 the TV app with xeno-store.elf in xeno/ when app/tv/dist/PPSA99500 holds a built
+#                 app folder, otherwise the native launcher with the ELF next to it
+#   make all      web catalog assets ps5 eboot tv ffpkg (what a release ships; tv only on a machine
+#                 set up for it, see TV_ALL below)
 #   make pkg      tools/make_homebrew.py          -> dist/XENO-STORE/ + zip for etaHEN / itemzflow (optional, not released)
 #   make launcher app/build_launcher.sh          -> app/dist/xeno-store-launcher.elf (needs PS5_PAYLOAD_SDK)
 #   make clean
@@ -61,9 +67,21 @@ HOST_BIN  := $(BUILD_DIR)/host/xeno-store
 PS5_LIBS := -Wl,--no-as-needed -lSceSystemService -lSceUserService -lSceIpmi -lSceAppInstUtil -lSceNotification -lkernel_sys
 ELF := xeno-store.elf
 
-.PHONY: all web catalog assets host test saves-test ps5 ps5-check pkg eboot eboot-raw launcher-test ffpkg desktop launcher clean distclean
+# ---- TV app in 'make all' ------------------------------------------------------
+# 'make all' builds the TV app (the 'tv' target, at the end of this file) only where it can:
+# clang-18 on PATH and the pinned dependencies fetched ('make tv-deps', about 400 MB).
+# Elsewhere it prints a note and goes on, and 'make ffpkg' packs an app folder already in
+# app/tv/dist/PPSA99500 (for example the tv-app CI artifact of the same VERSION: one built for
+# another version is refused) or, without one, the native launcher. TV=1 makes 'make all' build
+# the TV app regardless (and fail where the toolchain is missing); TV=0 leaves it out. Defined
+# here because 'all' expands TV_ALL as it is read.
+TV_DIR        := app/tv
+TV_DEPS_READY := $(and $(shell command -v clang-18 2>/dev/null),$(wildcard $(TV_DIR)/.deps/native/ps5-payload-sdk),$(wildcard $(TV_DIR)/.deps/pacbrew/v0.40.2),$(wildcard $(TV_DIR)/.deps/ps5-opengl/ps5-opengl-sdk-*))
+TV_ALL        := $(if $(filter 1,$(TV)),tv,$(if $(filter 0,$(TV)),,$(if $(TV_DEPS_READY),tv,tv-skip)))
 
-all: web catalog assets ps5 eboot ffpkg
+.PHONY: all web catalog assets host test saves-test ps5 ps5-check pkg eboot eboot-raw launcher-test tools-test ffpkg desktop launcher clean distclean
+
+all: web catalog assets ps5 eboot $(TV_ALL) ffpkg
 
 web:
 	$(NODE) web/build.mjs
@@ -97,7 +115,7 @@ $(BUILD_DIR)/host/%.o: $(SRC_DIR)/%.c $(HEADERS) $(ASSETS)
 	@mkdir -p $(dir $@)
 	$(HOST_CC) $(HOST_CFLAGS) -c -o $@ $<
 
-test: host launcher-test saves-test
+test: host launcher-test saves-test tools-test
 	tests/host/run.sh
 
 # The save submission intake (tools/saves/intake.py, run by saves-intake.yml): stdlib only.
@@ -108,6 +126,11 @@ saves-test:
 # ELF loader (the 30 s give-up case is left to the full run: app/native-launcher/tests/run-host-test.py).
 launcher-test:
 	$(PYTHON) app/native-launcher/tests/run-host-test.py --skip-timeout
+
+# The release tools' checks, offline: make_ffpkg.py refuses an app folder built for another VERSION
+# (or the unported Orbit Store eboot), make_source_bundle.py --fetch replaces a stale cached archive.
+tools-test:
+	$(PYTHON) -I -m unittest discover -s tools/tests
 
 # Compile-only check of every PS5 translation unit (no link); handy without a full SDK link.
 ps5-check: assets
@@ -167,8 +190,19 @@ endif
 desktop:
 	cd desktop && CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=$(VERSION)" -o ../dist/XENO-STORE-Desktop$(if $(filter Windows_NT,$(OS)),.exe,) .
 
+# With the TV app folder in place ('make tv', or the tv-app CI artifact) the image holds the TV app
+# instead of the launcher: tools/make_ffpkg.py --app-dir stages its eboot.bin, sce_module/ and
+# assets/, app/tv's NOTICE and licences, and the store ELF as xeno/xeno-store.elf.
+# The folder is looked for when the recipe runs, so 'make all' packs the app folder 'make tv'
+# built moments before. 'make ffpkg FFPKG_APP_DIR=' builds the launcher image anyway, and
+# 'make ffpkg FFPKG_APP_DIR=<dir>' packs another app folder.
+FFPKG_APP_DIR ?= auto
+
 ffpkg:
-	@$(PYTHON) tools/make_ffpkg.py; rc=$$?; \
+	@app='$(FFPKG_APP_DIR)'; \
+	  if [ "$$app" = auto ]; then app=; if [ -s app/tv/dist/PPSA99500/eboot.bin ]; then app=app/tv/dist/PPSA99500; fi; fi; \
+	  if [ -n "$$app" ]; then echo "ffpkg: TV app folder $$app"; else echo "ffpkg: native launcher (no TV app folder)"; fi; \
+	  $(PYTHON) tools/make_ffpkg.py $${app:+--app-dir "$$app"}; rc=$$?; \
 	  if [ $$rc -eq 3 ]; then echo "make: ffpkg skipped — neither makefs nor fpkg_build found"; \
 	  elif [ $$rc -ne 0 ]; then exit $$rc; fi
 
@@ -182,8 +216,109 @@ endif
 
 # 'clean' removes the payload build outputs; web/dist belongs to 'make web'
 # (and the UI builders working in parallel), so only 'distclean' removes it.
-clean:
+clean: tv-clean
 	rm -rf $(BUILD_DIR) $(ELF) xeno-store-browser.elf $(ASSETS) dist app/dist app/native-launcher/build
 
-distclean: clean
+distclean: clean tv-distclean
 	rm -rf web/dist app/native-launcher/.deps app/native-launcher/runtime/libc.prx
+
+# ---- TV app (app/tv) ---------------------------------------------------------
+# The native PS5 TV app: Orbit Store 1.2.0's TV app (GPL-3.0-or-later), built on
+# BlackBearReloaded's ps5-homebrew-ui kit, vendored in app/tv with its own Makefile and
+# pinned toolchain (provenance and licences: app/tv/NOTICE). It needs clang-18, lld-18,
+# llvm-18, libclang-rt-18-dev, ninja, wget, unzip and python3; the unit tests and the
+# preview also need libwebp-dev and Mesa (libegl-dev, libgl-dev, libegl-mesa0,
+# libgl1-mesa-dri), and tv-preview-live python3-pil.
+#
+#   make tv-deps          the pinned SDK v0.42 + zlib, PacBrew libwebp, ps5-opengl and
+#                         GoogleTest, fetched and hash-checked into app/tv/.deps
+#   make tv               the app folder app/tv/dist/<titleId> (eboot.bin, sce_module/libc.prx,
+#                         assets/, sce_sys/), built without a bundled payload ('make ffpkg'
+#                         adds xeno/xeno-store.elf when it packs the image)
+#   make tv-check         the lints 'make tv' runs first: param.json against VERSION
+#                         (tools/tv/check_param.py), the i18n coverage gate (with the backend
+#                         sentences of src/ as warnings), the colour lint and the rebrand check
+#   make tv-test          the app's GoogleTest unit tests (ASan + UBSan)
+#   make tv-preview       every screen rendered on this machine against the built-in fixture
+#                         (Mesa llvmpipe, no display) -> app/tv/build/preview/pictures
+#   make tv-probe         the contract probe: the app's own HTTP/JSON/API/model code built for
+#                         the host (app/tv/build/host/tv-contract-probe); tests/host/test_tvapi_probe.py
+#                         runs it against the backend when XENO_TV_PROBE points at it
+#   make tv-preview-live  every screen against the real host backend in a test world
+#                         (tools/tv/preview_live.py, tools/tv/README.md) -> build/tv-preview
+#                         (index.html, report.json, the PNGs); LANGS=all adds the locale sweep
+#   make tv-clean         removes app/tv/build, app/tv/dist and the generated libc.prx;
+#   make tv-distclean     also app/tv/.deps
+#
+# 'make all' and TV_ALL: see the top of this file.
+# The app folder is named after sce_sys/param.json's titleId.
+TV_TITLE_ID  = $(shell $(PYTHON) -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["titleId"])' $(TV_DIR)/sce_sys/param.json)
+TV_APPDIR    = $(TV_DIR)/dist/$(TV_TITLE_ID)
+# The app's scripts read these from the environment. PS5_CLANG: tools/clang18-prefixmap
+# maps app/tv to /work/app in __FILE__, so eboot.bin is the same from any checkout.
+# HOST_CC/HOST_CXX: its host compilers (clang), set so the store's HOST_CC never reaches it.
+# -j1: the app Makefile's prerequisites are not written for parallel make; ninja still
+# runs the compiles in parallel (BUILD_JOBS, every core by default).
+TV_HOST_CC  ?= clang
+TV_HOST_CXX ?= clang++
+TV_MAKE     := $(MAKE) -j1 -C $(TV_DIR) PS5_CLANG=$(CURDIR)/$(TV_DIR)/tools/clang18-prefixmap \
+               USE_CCACHE=0 HOST_CC=$(TV_HOST_CC) HOST_CXX=$(TV_HOST_CXX)
+# The preview binary 'make tv-preview' builds; tv-preview-live rebuilds it (with the fixture
+# pictures) only when the app's sources are newer.
+TV_PREVIEW_BIN := $(TV_DIR)/build/preview/xeno_preview
+TV_PREVIEW_SRC := $(shell find $(TV_DIR)/src $(TV_DIR)/host $(TV_DIR)/tools/preview.sh -type f 2>/dev/null)
+TV_PREVIEW_LIVE_FLAGS ?=
+
+.PHONY: tv tv-deps tv-check tv-test tv-preview tv-preview-live tv-probe tv-skip tv-clean tv-distclean
+
+tv-deps:
+	$(TV_MAKE) deps
+
+tv: tv-check
+	$(TV_MAKE) app ORBIT_PAYLOAD=none
+	cd $(TV_DIR)/runtime && sha256sum --check --strict libc.prx.sha256
+	@set -e; d='$(TV_APPDIR)'; \
+	for f in eboot.bin sce_module/libc.prx sce_sys/param.json sce_sys/icon0.png; do \
+	  test -s "$$d/$$f" || { echo "make tv: $$d/$$f is missing" >&2; exit 1; }; \
+	done; \
+	test -d "$$d/assets/fonts" || { echo "make tv: $$d/assets is incomplete" >&2; exit 1; }; \
+	cmp "$$d/sce_module/libc.prx" $(TV_DIR)/runtime/libc.prx; \
+	echo "TV app folder: $$d"; (cd "$$d" && sha256sum eboot.bin sce_module/libc.prx)
+
+tv-skip:
+	@echo "make all: the TV app is left out (it needs clang-18 and 'make tv-deps'; TV=1 forces it)."
+	@echo "make all: 'make ffpkg' packs app/tv/dist/PPSA99500 when it holds a built app folder, otherwise the native launcher."
+
+# The lock-step and lint gates (PORT-SPEC 3.4). i18n-coverage.py cross-checks the backend's
+# sentences in src/ as warnings only; it fails on a missing or stale catalogue key.
+tv-check:
+	$(PYTHON) tools/tv/check_param.py VERSION $(TV_DIR)/sce_sys/param.json
+	$(PYTHON) $(TV_DIR)/tools/i18n-coverage.py --backend $(SRC_DIR) --quiet
+	$(PYTHON) $(TV_DIR)/tools/lint-colors.py
+	$(PYTHON) $(TV_DIR)/tools/rebrand-i18n.py --check
+
+tv-test:
+	$(TV_MAKE) test
+
+tv-preview:
+	rm -rf $(TV_DIR)/build/preview/pictures
+	$(TV_MAKE) preview
+	@n=$$(find $(TV_DIR)/build/preview/pictures -maxdepth 1 -name '*.png' | wc -l); \
+	echo "tv-preview: $$n pictures in $(TV_DIR)/build/preview/pictures"; test "$$n" -gt 0
+
+$(TV_PREVIEW_BIN): $(TV_PREVIEW_SRC)
+	$(MAKE) --no-print-directory tv-preview
+
+# Exit status 0 = every check passed, 1 = a check failed, 2 = the run could not start
+# (tools/tv/README.md). The output folder keeps its report when a check fails.
+tv-preview-live: host $(TV_PREVIEW_BIN)
+	$(PYTHON) -I tools/tv/preview_live.py --out $(BUILD_DIR)/tv-preview $(if $(LANGS),--langs $(LANGS)) $(TV_PREVIEW_LIVE_FLAGS)
+
+tv-probe:
+	BUILD_JOBS=$(or $(BUILD_JOBS),2) bash $(TV_DIR)/tools/build-contract-probe.sh
+
+tv-clean:
+	rm -rf $(TV_DIR)/build $(TV_DIR)/dist $(TV_DIR)/runtime/libc.prx
+
+tv-distclean: tv-clean
+	rm -rf $(TV_DIR)/.deps

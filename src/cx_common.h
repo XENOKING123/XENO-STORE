@@ -71,7 +71,11 @@ typedef struct cx_http {
  * 0 on transport error. */
 char *cx_fetch(const char *url, const cx_http *opt, int *status, size_t *len, xhttp_resp *resp);
 /* Streams a response to a file (tmp + rename); verifies sha256 when expected
- * is non-empty. Returns 0, or -1 with err. progress may be NULL. */
+ * is non-empty. Returns 0, CX_DL_REJECTED with err when the file arrived but
+ * is not the expected one (SHA-256 mismatch, or over max_bytes), or -1 with
+ * err for every other failure (transport, HTTP status, write, cancel).
+ * progress may be NULL. */
+#define CX_DL_REJECTED (-3)
 typedef int (*cx_progress_fn)(void *user, int64_t done, int64_t total);
 int cx_download_file(const char *url, const cx_http *opt, const char *dest, const char *sha256_expected, int64_t max_bytes,
                      cx_progress_fn progress, void *user, volatile int *cancel, char *err, size_t errcap);
