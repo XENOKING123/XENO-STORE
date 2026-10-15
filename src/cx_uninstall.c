@@ -82,14 +82,19 @@ int cx_uninstall(int data, int homebrew, int payload_manager, int downloads, jw 
   jw_init(&kept); jw_arr_begin(&kept);
   jw_init(&failed); jw_arr_begin(&failed);
   int nr = 0, nf = 0;
-  char hb_app[700], hb_pkg[700];
+  char hb_app[700], hb_dir[700], hb_eboot[720], hb_pkg[700];
   xsnprintf(hb_app, sizeof hb_app, "%s/XENO-STORE", cx_data_homebrew_dir());   /* the 1.0.0 folder layout */
+  xsnprintf(hb_dir, sizeof hb_dir, "%s/%s", cx_data_homebrew_dir(), APP_TITLE_ID);   /* the app as a folder (app_install_state) */
+  xsnprintf(hb_eboot, sizeof hb_eboot, "%s/eboot.bin", hb_dir);
+  int app_dir = util_file_exists(hb_eboot);
   app_install_pkg_path(hb_pkg, sizeof hb_pkg);   /* the Games-row app since 1.2.0 */
   if (homebrew) {
     if (util_dir_exists(hb_app)) { if (cx_rm_rf(hb_app, 6) == 0) { arr_path(&removed, hb_app); nr++; } else { arr_path(&failed, hb_app); nf++; } }
+    if (app_dir) { if (cx_rm_rf(hb_dir, 8) == 0) { arr_path(&removed, hb_dir); nr++; } else { arr_path(&failed, hb_dir); nf++; } }
     if (util_file_exists(hb_pkg)) { if (util_unlink_quiet(hb_pkg) == 0) { arr_path(&removed, hb_pkg); nr++; } else { arr_path(&failed, hb_pkg); nf++; } }
   } else {
     if (util_dir_exists(hb_app)) arr_path(&kept, hb_app);
+    if (app_dir) arr_path(&kept, hb_dir);
     if (util_file_exists(hb_pkg)) arr_path(&kept, hb_pkg);
   }
   unregister_title(APP_TITLE_ID, homebrew, &removed, &kept, &failed, &nr, &nf);

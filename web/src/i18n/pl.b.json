@@ -489,7 +489,7 @@
     "data": "Ustawienia, kolejkę i pamięć podręczną",
     "dataHint": "/data/xeno-store/ – settings.json, queue.json, buforowany katalog, dzienniki, indeks kopii zapisów",
     "homebrew": "Aplikacja ekranu głównego",
-    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg i stary folder /data/homebrew/XENO-STORE/, jeśli istnieje, a także kafelki XENO STORE i XENO STORE Web na ekranie głównym",
+    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg (lub folder PPSA99500/) i stary folder /data/homebrew/XENO-STORE/, jeśli istnieje, a także kafelki XENO STORE i XENO STORE Web na ekranie głównym",
     "payloadManager": "Kopia w Payload Manager",
     "payloadManagerHint": "Tylko kopia, którą XENO STORE utworzył sam",
     "keepDownloads": "Zachowaj pobrane gry",

@@ -489,7 +489,7 @@
     "data": "設定・キュー・キャッシュ",
     "dataHint": "/data/xeno-store/ — settings.json、queue.json、キャッシュ済みカタログ、ログ、セーブバックアップのインデックス",
     "homebrew": "ホーム画面アプリ",
-    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg と、残っていれば旧 /data/homebrew/XENO-STORE/ フォルダー、さらにホーム画面の XENO STORE と XENO STORE Web のタイル",
+    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg（または PPSA99500/ フォルダー）と、残っていれば旧 /data/homebrew/XENO-STORE/ フォルダー、さらにホーム画面の XENO STORE と XENO STORE Web のタイル",
     "payloadManager": "Payload Manager のコピー",
     "payloadManagerHint": "XENO STORE が自分で作ったコピーのみ",
     "keepDownloads": "ダウンロード済みのゲームを残す",

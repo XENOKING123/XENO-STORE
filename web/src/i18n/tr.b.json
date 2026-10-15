@@ -489,7 +489,7 @@
     "data": "Ayarlar, kuyruk ve önbellek",
     "dataHint": "/data/xeno-store/ — settings.json, queue.json, önbelleğe alınmış katalog, günlükler, kayıt yedekleri dizini",
     "homebrew": "Ana ekran uygulaması",
-    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg ve varsa eski /data/homebrew/XENO-STORE/ klasörü, ayrıca ana ekrandaki XENO STORE ve XENO STORE Web kutucukları",
+    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg (veya PPSA99500/ klasörü) ve varsa eski /data/homebrew/XENO-STORE/ klasörü, ayrıca ana ekrandaki XENO STORE ve XENO STORE Web kutucukları",
     "payloadManager": "Payload Manager kopyası",
     "payloadManagerHint": "Yalnızca XENO STORE'un kendi oluşturduğu kopya",
     "keepDownloads": "İndirilmiş oyunları koru",

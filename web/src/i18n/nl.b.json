@@ -489,7 +489,7 @@
     "data": "Instellingen, wachtrij en cache",
     "dataHint": "/data/xeno-store/ — settings.json, queue.json, gecachete catalogus, logboeken, index van save-back-ups",
     "homebrew": "Startscherm-app",
-    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg en de oude map /data/homebrew/XENO-STORE/ als die er is, plus de tegels XENO STORE en XENO STORE Web op het startscherm",
+    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg (of de map PPSA99500/) en de oude map /data/homebrew/XENO-STORE/ als die er is, plus de tegels XENO STORE en XENO STORE Web op het startscherm",
     "payloadManager": "Payload Manager-kopie",
     "payloadManagerHint": "Alleen de kopie die XENO STORE zelf heeft gemaakt",
     "keepDownloads": "Gedownloade games behouden",

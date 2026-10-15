@@ -9,7 +9,8 @@
 #include <stddef.h>
 
 /* Performs the selected deletions (exact paths only) and writes "removed",
- * "kept", "failed". homebrew covers <homebrew>/PPSA99500.ffpkg, the old
+ * "kept", "failed". homebrew covers <homebrew>/PPSA99500.ffpkg, the same app
+ * as a folder (<homebrew>/PPSA99500 with an eboot.bin), the old
  * <homebrew>/XENO-STORE folder and the PPSA99500 and XENO00002 home-screen
  * titles (uninstalled, reported as <user/app>/<id>). Returns 0; the caller
  * stops the server afterwards. */

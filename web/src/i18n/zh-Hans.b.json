@@ -489,7 +489,7 @@
     "data": "设置、队列和缓存",
     "dataHint": "/data/xeno-store/ —— settings.json、queue.json、缓存目录、日志、存档备份索引",
     "homebrew": "主屏幕应用",
-    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg 及旧的 /data/homebrew/XENO-STORE/ 文件夹（如有），以及主屏幕上的 XENO STORE 和 XENO STORE Web 图标",
+    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg（或 PPSA99500/ 文件夹）及旧的 /data/homebrew/XENO-STORE/ 文件夹（如有），以及主屏幕上的 XENO STORE 和 XENO STORE Web 图标",
     "payloadManager": "Payload Manager 副本",
     "payloadManagerHint": "仅 XENO STORE 自己创建的副本",
     "keepDownloads": "保留已下载的游戏",

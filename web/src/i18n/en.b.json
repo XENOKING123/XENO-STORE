@@ -489,7 +489,7 @@
     "data": "Settings, queue and cache",
     "dataHint": "/data/xeno-store/ — settings.json, queue.json, cached catalog, logs, save backups index",
     "homebrew": "Home-screen app",
-    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg and the old /data/homebrew/XENO-STORE/ folder if present, plus the XENO STORE and XENO STORE Web tiles on the home screen",
+    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg (or the PPSA99500/ folder) and the old /data/homebrew/XENO-STORE/ folder if present, plus the XENO STORE and XENO STORE Web tiles on the home screen",
     "payloadManager": "Payload Manager copy",
     "payloadManagerHint": "Only the copy XENO STORE created itself",
     "keepDownloads": "Keep downloaded games",

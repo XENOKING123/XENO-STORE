@@ -489,7 +489,7 @@
     "data": "설정, 대기열, 캐시",
     "dataHint": "/data/xeno-store/ — settings.json, queue.json, 캐시된 카탈로그, 로그, 세이브 백업 색인",
     "homebrew": "홈 화면 앱",
-    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg와 남아 있는 경우 예전 /data/homebrew/XENO-STORE/ 폴더, 그리고 홈 화면의 XENO STORE 및 XENO STORE Web 타일",
+    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg(또는 PPSA99500/ 폴더)와 남아 있는 경우 예전 /data/homebrew/XENO-STORE/ 폴더, 그리고 홈 화면의 XENO STORE 및 XENO STORE Web 타일",
     "payloadManager": "Payload Manager 사본",
     "payloadManagerHint": "XENO STORE가 직접 만든 사본만",
     "keepDownloads": "다운로드한 게임 유지",

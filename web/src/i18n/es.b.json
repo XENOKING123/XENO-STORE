@@ -489,7 +489,7 @@
     "data": "Ajustes, cola y caché",
     "dataHint": "/data/xeno-store/ — settings.json, queue.json, catálogo en caché, registros, índice de copias de partidas",
     "homebrew": "App de pantalla de inicio",
-    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg y la antigua carpeta /data/homebrew/XENO-STORE/ si existe, además de los iconos XENO STORE y XENO STORE Web de la pantalla de inicio",
+    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg (o la carpeta PPSA99500/) y la antigua carpeta /data/homebrew/XENO-STORE/ si existe, además de los iconos XENO STORE y XENO STORE Web de la pantalla de inicio",
     "payloadManager": "Copia de Payload Manager",
     "payloadManagerHint": "Solo la copia que XENO STORE creó él mismo",
     "keepDownloads": "Conservar los juegos descargados",

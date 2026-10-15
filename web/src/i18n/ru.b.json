@@ -489,7 +489,7 @@
     "data": "Настройки, очередь и кэш",
     "dataHint": "/data/xeno-store/ — settings.json, queue.json, кэш каталога, журналы, индекс копий сохранений",
     "homebrew": "Приложение на главном экране",
-    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg и старая папка /data/homebrew/XENO-STORE/, если она есть, а также плитки XENO STORE и XENO STORE Web на главном экране",
+    "homebrewHint": "/data/homebrew/PPSA99500.ffpkg (или папка PPSA99500/) и старая папка /data/homebrew/XENO-STORE/, если она есть, а также плитки XENO STORE и XENO STORE Web на главном экране",
     "payloadManager": "Копия в Payload Manager",
     "payloadManagerHint": "Только копия, созданная самим XENO STORE",
     "keepDownloads": "Сохранить скачанные игры",
