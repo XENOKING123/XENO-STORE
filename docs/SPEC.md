@@ -830,11 +830,14 @@ Supported-host lists are fetched once a day (`/hosts/domains`, `/v4/hosts`, `/ap
 
 ### 17.16 Clean uninstall, ghost icons, companion payloads, copy/move
 - Settings → **Uninstall XENO STORE**: confirm sheet with checkboxes: remove settings/queue/cache (`/data/xeno-store/`), remove the home-screen app
-  (`/data/homebrew/XENO-STORE/`), remove the Payload Manager copy it created (only if we created it), **keep downloaded games** (default on). Then stops the server.
+  (`/data/homebrew/PPSA99500.ffpkg`, a `PPSA99500/` folder copy with an `eboot.bin`, the old `XENO-STORE/` folder, a leftover `PPSA99500.ffpkg.part`, and
+  the PPSA99500 and XENO00002 tiles, unregistered with `sceAppInstUtilAppUnInstall` like the Library's uninstall; a running app install is cancelled
+  first), remove the Payload Manager copy it created (only if we created it), **keep downloaded games** (default on). Then stops the server.
   `POST /api/uninstall {data:bool, homebrew:bool, payloadManager:bool, downloads:bool}` → performs deletions (only those exact paths) → `{ok, removed:[...]}` → exit.
-  XENO STORE never registers itself with ShadowMount and never writes outside `/data/xeno-store`, `/data/homebrew/XENO-STORE` and the chosen download roots, so no ghost icons.
+  XENO STORE never writes outside `/data/xeno-store`, its app in `/data/homebrew` and the chosen download roots, and the uninstall takes its own tiles away, so no ghost icons.
 - **Ghost icon cleaner** (Settings → Setup): lists `/data/homebrew/*` folders (name, size, has eboot.bin/icon) and lets the user delete any with a double confirm,
-  explaining that ShadowMountPlus re-registers whatever folder exists there.
+  explaining that deleting a folder stops ShadowMountPlus registering it again but that an icon it already made stays until it is deleted in the PS5's
+  Settings → Storage (ShadowMountPlus drops it by itself only with `auto_remove_missing_games` on, off by default).
 - **Companion payloads** (Settings → Setup → Payloads): a small catalog (`updates/companions.json`, owner-curated: name, version, url, sha256, notes) of scene payloads
   that make XENO STORE one-click (ShadowMountPlus, etaHEN DPI helper, kstuff…). XENO STORE downloads a payload to `/data/xeno-store/payloads/<name>.elf` (sha256 checked)
   and sends it to the local ELF loader (`127.0.0.1:9021`, raw bytes) — `POST /api/payloads/{id}/install`, `POST /api/payloads/{id}/launch`, `GET /api/payloads`.

@@ -273,7 +273,10 @@ The UI renders the QR and shows the `xeno.local` address from `/api/mdns`. `code
 nothing listens on Garlic Save Manager's port; the web UI runs it through `POST /api/saves/garlic/start`.
 
 ### `POST /api/uninstall {"data":true,"homebrew":true,"payloadManager":true,"downloads":false}`
-→ `{"ok":true,"removed":["/data/xeno-store","/data/homebrew/XENO-STORE"],"kept":["/data/homebrew"],"failed":[],"removedCount":2,"failedCount":0,"stopping":true}` then the server exits. At least one flag must be true.
+→ `{"ok":true,"removed":["/data/homebrew/PPSA99500.ffpkg","/user/app/PPSA99500","/user/app/XENO00002","/data/xeno-store"],"kept":[],"failed":[],"removedCount":4,"failedCount":0,"stopping":true}` then the server exits. At least one flag must be true.
+`homebrew` first cancels a running app install (waits up to 10 s), then deletes, when present, `/data/homebrew/XENO-STORE/`, `/data/homebrew/PPSA99500/`
+(only with an `eboot.bin`), `/data/homebrew/PPSA99500.ffpkg.part` and `/data/homebrew/PPSA99500.ffpkg`, then unregisters the PPSA99500 and XENO00002 tiles
+that exist under `/user/app` (reported as `/user/app/<id>`; a refused unregister goes in `failed`). Without `homebrew`, the items that exist are listed in `kept`.
 
 ### `GET /api/homebrew-dirs` → `{"ok":true,"dirs":[{"name":"XENO-STORE","path":"/data/homebrew/XENO-STORE","title":"XENO STORE","size":5478000,"hasEboot":true,"hasIcon":true,"isXenoStore":true,"mtime":…}],"root":"/data/homebrew","note":"…"}`.
 ### `POST /api/homebrew-dirs/delete {"name":"OldApp","confirm":"OldApp"}` → `{"ok":true,"deleted":"OldApp"}` (name must be repeated; `confirm_required` 428 otherwise).

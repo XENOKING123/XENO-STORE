@@ -243,7 +243,7 @@ Apps, emulators and tools from **pkg-zone.com**. The console fetches the listing
 
 Settings → Setup → **Payloads** lists the owner-curated catalog from `updates/companions.json`: ShadowMountPlus, the package installer daemon, kstuff, NP fake sign-in, the app dumper and Garlic Save Manager. **Install** downloads the ELF to `/data/xeno-store/payloads/<id>.elf`, checks its sha256 and **Launch** sends the bytes to the local ELF loader on `127.0.0.1:9021`. XENO STORE never loads code in-process. Every entry is the author's own release, pinned by sha256 and never rehosted; an entry whose author publishes no downloadable asset (NP fake sign-out — sign out from the console's Settings → Users and Accounts → Other → Sign out instead) is listed as unavailable and never installs. **Launch** on Garlic Save Manager starts it the way the save engine does and never sends a second copy while one is running.
 
-**Ghost icon cleaner** (same screen) lists every `/data/homebrew/*` folder with size and whether it has an `eboot.bin` / icon and lets you delete leftovers after a double confirm. ShadowMountPlus re-registers whatever folder exists there, so deleting the folder is what removes the icon.
+**Ghost icon cleaner** (same screen) lists every `/data/homebrew/*` folder with size and whether it has an `eboot.bin` / icon and lets you delete leftovers after a double confirm. Deleting a folder stops ShadowMountPlus from registering it again, but an icon it already made stays: delete that icon in the PS5's Settings → Storage (ShadowMountPlus only drops it by itself when its `auto_remove_missing_games` option is on; it is off by default).
 
 ---
 
@@ -276,11 +276,11 @@ Settings → **Uninstall XENO STORE** opens a confirm sheet with four checkboxes
 | Checkbox | Removes | Default |
 |:--|:--|:--|
 | Settings, queue and cache | `/data/xeno-store/` | on |
-| Home-screen app | `/data/homebrew/XENO-STORE/` | on |
+| Home-screen app | `/data/homebrew/PPSA99500.ffpkg` (and a `PPSA99500/` folder copy or the old `XENO-STORE/` folder, if there), plus the **XENO STORE** and **XENO STORE Web** tiles; an app install still running is cancelled first | on |
 | Payload Manager copy | only the copy the store created itself | on |
 | Downloaded games | `<root>/homebrew/*` and `<root>/xeno-store/*` created by the store | **off** (keep your games) |
 
-The store deletes exactly those paths (`POST /api/uninstall` returns the list), toasts and stops. It never registers itself with ShadowMount and never writes outside its data dir, its homebrew folder and the download roots, so there are no ghost icons to chase.
+The store deletes exactly those paths and takes its two tiles off the home screen (`POST /api/uninstall` returns the list), toasts and stops. It never writes outside its data dir, its app in `/data/homebrew` and the download roots, so no ghost icons are left behind. If a tile is listed under **Could not remove** (for example while the XENO STORE app is still open), close the app and delete the tile in the PS5's Settings → Storage.
 
 ---
 
