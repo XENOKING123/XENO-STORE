@@ -71,24 +71,31 @@ static int load_feed(comp *out, int max) {
     }
     int unavailable = jv_get_bool(it, "unavailable", 0) || !jv_get_bool(it, "available", 1);
     if (!cx_id_valid(id, 47) || !*name || (!unavailable && !util_istarts_with(url, "http"))) continue;
-    /* a sha256 that is no digest (feeds before 1.3 said "FILLED-BY-OWNER")
-     * could only fail the download after it: not available instead */
-    const char *sha = jv_get_str(it, "sha256", "");
+    const char *sha = jv_get_str(it, "sha256", ""), *version = jv_get_str(it, "version", ""), *kind = jv_get_str(it, "kind", "payload");
+    int64_t size = jv_get_i64(it, "size", 0);
+    /* Garlic's entry without a real digest (feeds before 1.3 said
+     * "FILLED-BY-OWNER") is the release this build pins, the one cx_garlic
+     * starts: listed, installed and started from the same file */
+    char pin[300] = "";
+    if (!unavailable && !is_hex64(sha) && strcmp(kind, "saves") == 0) cx_garlic_pin_url(pin, sizeof pin);
+    if (pin[0]) { url = pin; sha = CX_GARLIC_ELF_SHA256; version = CX_GARLIC_ELF_VERSION; size = CX_GARLIC_ELF_SIZE; }
+    /* any other sha256 that is no digest could only fail the download after
+     * it: not available instead */
     c->placeholder = !unavailable && *sha && !is_hex64(sha);
     c->unavailable = unavailable || c->placeholder;
     if (c->placeholder) xstrlcpy(c->reason, "the companions list on this console has a placeholder instead of its sha256, so the download cannot be verified (the payload list fetches the published list when it is opened while online)", sizeof c->reason);
     else xstrlcpy(c->reason, jv_get_str(it, "unavailableReason", ""), sizeof c->reason);
     xstrlcpy(c->id, id, sizeof c->id);
     xstrlcpy(c->name, name, sizeof c->name);
-    xstrlcpy(c->version, jv_get_str(it, "version", ""), sizeof c->version);
+    xstrlcpy(c->version, version, sizeof c->version);
     xstrlcpy(c->url, url, sizeof c->url);
-    xstrlcpy(c->sha256, jv_get_str(it, "sha256", ""), sizeof c->sha256);
+    xstrlcpy(c->sha256, sha, sizeof c->sha256);
     util_lower(c->sha256);
     xstrlcpy(c->notes, jv_get_str(it, "notes", jv_get_str(it, "description", "")), sizeof c->notes);
-    xstrlcpy(c->kind, jv_get_str(it, "kind", "payload"), sizeof c->kind);
+    xstrlcpy(c->kind, kind, sizeof c->kind);
     xstrlcpy(c->homepage, jv_get_str(it, "homepage", ""), sizeof c->homepage);
     xstrlcpy(c->filename, jv_get_str(it, "filename", ""), sizeof c->filename);
-    c->size = jv_get_i64(it, "size", 0);
+    c->size = size;
     n++;
   }
   json_free(d);
@@ -332,14 +339,6 @@ int cx_companions_fetch(const char *kind, const char *fb_id, const char *fb_url,
   int n = load_feed(all, COMP_MAX), found = 0;
   for (int i = 0; i < n && !found; i++) if (strcmp(all[i].kind, kind) == 0) { *c = all[i]; found = 1; }
   free(all);
-  /* the feed moves a valid pin to another release only with a real digest:
-   * an entry whose sha256 is a placeholder (or missing) gives way to it, an
-   * entry its owner marked unavailable does not */
-  int pin_ok = fb_id && cx_id_valid(fb_id, 47) && fb_url && util_istarts_with(fb_url, "http") && fb_sha256 && is_hex64(fb_sha256);
-  if (found && pin_ok && (c->placeholder || (!c->unavailable && !c->sha256[0]))) {
-    LOGW("companions: the %s entry of the companions list has no usable sha256, using the pinned %s", kind, fb_version ? fb_version : fb_id);
-    found = 0;
-  }
   if (found && c->unavailable) {
     xsnprintf(err, errcap, "%s is not available for download: %s", c->name, c->reason[0] ? c->reason : "its author publishes no release asset");
     free(c);

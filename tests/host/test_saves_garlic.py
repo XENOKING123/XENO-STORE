@@ -38,7 +38,10 @@ garlic-savemgr src/main.c route by route, single recv() per request included):
   * a companions list whose sha256 is a placeholder ("FILLED-BY-OWNER", as
     1.2.1 cached it): the payload is listed as not available and refuses to
     install, and Garlic is never downloaded against it (the host build pins
-    no release URL, so a copy on the console is started instead).
+    no release URL, so a copy on the console is started instead); with a
+    pinned URL (XENO_GARLIC_BASE serves a stand-in for the release) the pin
+    takes the Garlic entry's place: listed, installed and started from the
+    pinned URL and digest, never from the entry's.
 
 The native tier simulation is off (XENO_SIM_NATIVE=0) and every port is a test
 port (XENO_PORT_GARLIC / XENO_PORT_LOADER), so nothing touches /data or the
@@ -227,7 +230,7 @@ class Base(unittest.TestCase):
         cls.files.add("/saves.json", json.dumps({"schemaVersion": 1, "saves": rows}), "application/json")
         env = {"XENO_SIM_NATIVE": "0", "XENO_PORT_GARLIC": str(cls.garlic_port), "XENO_PORT_LOADER": str(cls.loader.port),
                "XENO_PORT_DPI": "1", "XENO_PORT_ETAHEN": "1", "XENO_PORT_SHADOWMOUNT": "1"}
-        env.update(cls.extra_env)
+        env.update({k: v.format(files=cls.files.base) for k, v in cls.extra_env.items()})
         cls.srv = harness.XenoServer(cls.data, env=env).start()
         st, b = cls.srv.api("PUT", "/api/settings", {
             "catalog": {"companionsUrl": cls.files.base + "/companions.json", "featuredUrl": cls.files.base + "/none.json",
@@ -966,6 +969,50 @@ class PlaceholderCompanionTests(Base):
         self.assertEqual(j["state"], "done", j)
         self.assertEqual(self.loader.received, [self.console_elf])
         self.assertNotIn("/garlic-placeholder.elf", self.files.log)
+
+
+PINNED_SHA = "124051ab3a762474720ae53187d2920bc96d6be1d69aa298e715667efc385a2f"   # CX_GARLIC_ELF_SHA256
+
+
+class PinnedPlaceholderTests(Base):
+    garlic_running_at_start = False
+    extra_env = {"XENO_GARLIC_BASE": "{files}/pin"}
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # served at the pinned URL but not the pinned file: its sha256 check fails once it is downloaded
+        cls.files.add("/pin/garlic-savemgr.elf", b"\x7fELF" + b"STAND-IN-FOR-THE-PINNED-RELEASE" + bytes(range(256)))
+        cls.files.add("/garlic-placeholder.elf", cls.companion_elf)
+
+    @classmethod
+    def companions(cls):
+        return [{"id": "garlic-save-manager", "name": "Garlic Save Manager", "kind": "saves", "version": "1.0",
+                 "url": cls.files.base + "/garlic-placeholder.elf", "sha256": "FILLED-BY-OWNER"}]
+
+    def test_01_the_pin_is_listed_installed_and_started(self):
+        pin = self.files.base + "/pin/garlic-savemgr.elf"
+        st, b = self.srv.api("GET", "/api/payloads")
+        self.assertEqual(st, 200, b)
+        g = {p["id"]: p for p in b["payloads"]}["garlic-save-manager"]
+        self.assertEqual((g["available"], g["version"], g["url"], g["sha256"]), (True, "1.7", pin, PINNED_SHA), g)
+        st, b = self.srv.api("GET", "/api/saves/garlic")
+        self.assertEqual(st, 200, b)
+        self.assertEqual((b["garlic"].get("source"), b["garlic"].get("version"), b["garlic"]["canStart"]), ("download", "1.7", True), b)
+        # the payload install and the Garlic start both download the pinned URL against the pinned digest
+        st, b = self.srv.api("POST", "/api/payloads/garlic-save-manager/install", {})
+        self.assertEqual(st, 200, b)
+        j = self.job_of(b)
+        self.assertEqual(j["state"], "failed", j)
+        self.assertIn("sha256 mismatch", j["error"])
+        st, b = self.srv.api("POST", "/api/saves/garlic/start", {"wait": True})
+        self.assertEqual(st, 200, b)
+        j = self.job_of(b)
+        self.assertEqual(j["state"], "failed", j)
+        self.assertIn("sha256 mismatch", j["error"])
+        self.assertEqual(self.files.log.count("/pin/garlic-savemgr.elf"), 2)
+        self.assertNotIn("/garlic-placeholder.elf", self.files.log)
+        self.assertEqual(self.loader.received, [])
 
 
 if __name__ == "__main__":
