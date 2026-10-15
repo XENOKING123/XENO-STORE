@@ -13,12 +13,15 @@ saves-backend) cached under <data>/feeds/ when the store is updated:
     nothing is marked; the boot refresh tries once, then leaves the host
     alone; once the host answers again the next refresh fetches them;
   * with catalog auto-refresh off, a catalog refresh keeps the 6-hour rule
-    for them while the Save Store still gets the published saves-backend.json.
+    for featured and messages, while the Save Store still gets the published
+    saves-backend.json and the payload list and a payload install get the
+    published companions.json (no placeholder hashes left to refuse).
 
 Everything is loopback: the feed URLs come from settings.json, the default
 GitHub save index from XENO_SAVES_INDEX_BASE and the save site is
 supabase_mock.SupabaseMock.
 """
+import hashlib
 import http.server
 import json
 import os
@@ -64,11 +67,12 @@ def current(site):
 
 
 class Feeds(threading.Thread):
-    """The feeds host: serves <name>.json, logs every request, answers 503 while down."""
+    """The feeds host: serves <name>.json (and the files in .files), logs every request, answers 503 while down."""
 
     def __init__(self):
         super().__init__(daemon=True)
         self.docs = {}
+        self.files = {}
         self.log = []
         self.down = False
         host = self
@@ -83,6 +87,8 @@ class Feeds(threading.Thread):
                 name = path.strip("/")[:-len(".json")] if path.endswith(".json") else ""
                 if host.down:
                     st, body = 503, b'{"error":"unavailable"}'
+                elif path in host.files:
+                    st, body = 200, host.files[path]
                 elif name in host.docs:
                     st, body = 200, json.dumps(host.docs[name]).encode()
                 else:
@@ -232,13 +238,49 @@ class AutoRefreshOffTests(Base):
 
     def test_1_save_store_still_follows_the_site(self):
         self.assertEqual(self.store_backend(), ("supabase", "XenoKing"))
-        # a catalog refresh started by hand keeps the 6-hour rule for the others
+        # a catalog refresh started by hand keeps the 6-hour rule for the featured feed
         self.catalog_refresh()
-        served = self.served()
-        self.assertEqual(served["featured"], OLD["featured"])
-        self.assertEqual(served["companions"], OLD["companions"])
+        self.assertEqual(self.served()["featured"], OLD["featured"])
         self.assertEqual(self.feeds.hits("featured"), 0)
         self.assertIsNone(self.marker())
+
+    def test_2_payload_list_fetches_the_published_companions(self):
+        # the other build's copy has placeholder hashes: the list fetches the published one at once
+        st, b = self.srv.api("GET", "/api/payloads")
+        self.assertEqual(st, 200, b)
+        g = {p["id"]: p for p in b["payloads"]}["garlic-save-manager"]
+        self.assertEqual((g["available"], g["version"], g["sha256"]), (True, "1.7", REAL_SHA), g)
+        self.assertEqual(self.served()["companions"], current(self.site)["companions"])
+        self.srv.api("GET", "/api/payloads")
+        self.assertEqual(self.feeds.hits("companions"), 1)                       # once
+        self.assertEqual(self.served()["featured"], OLD["featured"])             # the others are left alone
+        self.assertEqual(self.feeds.hits("featured"), 0)
+
+
+class AutoRefreshOffInstallTests(Base):
+    auto_refresh = False
+
+    def test_1_install_fetches_the_published_companions_first(self):
+        elf = b"\x7fELF" + b"GARLIC-FROM-THE-PUBLISHED-LIST" + bytes(range(256))
+        self.feeds.files["/garlic.elf"] = elf
+        self.feeds.docs["companions"] = {"payloads": [{"id": "garlic-save-manager", "name": "Garlic Save Manager", "kind": "saves",
+                                                       "version": "1.7", "url": self.feeds.base + "/garlic.elf",
+                                                       "sha256": hashlib.sha256(elf).hexdigest()}]}
+        st, b = self.srv.api("POST", "/api/payloads/garlic-save-manager/install", {})
+        self.assertEqual(st, 200, b)
+        jid = b["job"]["id"]
+        deadline = time.time() + 30
+        while time.time() < deadline:
+            st, j = self.srv.api("GET", "/api/saves/jobs/%s" % jid)
+            if j["job"]["state"] in ("done", "failed"):
+                break
+            time.sleep(0.1)
+        self.assertEqual(j["job"]["state"], "done", j)
+        self.assertTrue(j["job"]["result"]["verified"], j)
+        with open(os.path.join(self.data, "payloads", "garlic-save-manager.elf"), "rb") as f:
+            self.assertEqual(f.read(), elf)
+        self.assertEqual(self.feeds.hits("companions"), 1)
+        self.assertEqual(self.feeds.hits("featured"), 0)
 
 
 if __name__ == "__main__":

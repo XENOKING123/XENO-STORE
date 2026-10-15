@@ -76,7 +76,7 @@ static int load_feed(comp *out, int max) {
     const char *sha = jv_get_str(it, "sha256", "");
     c->placeholder = !unavailable && *sha && !is_hex64(sha);
     c->unavailable = unavailable || c->placeholder;
-    if (c->placeholder) xstrlcpy(c->reason, "the companions list has a placeholder instead of its sha256, so the download cannot be verified (refresh the catalog for the current list)", sizeof c->reason);
+    if (c->placeholder) xstrlcpy(c->reason, "the companions list on this console has a placeholder instead of its sha256, so the download cannot be verified (the payload list fetches the published list when it is opened while online)", sizeof c->reason);
     else xstrlcpy(c->reason, jv_get_str(it, "unavailableReason", ""), sizeof c->reason);
     xstrlcpy(c->id, id, sizeof c->id);
     xstrlcpy(c->name, name, sizeof c->name);
@@ -147,6 +147,10 @@ void cx_companions_init(void) {
 }
 
 void cx_companions_json(jw *w) {
+  /* the published list, catalog auto-refresh on or off: a copy cached by
+   * another build (1.2.1's placeholder hashes) or 6 h old is fetched first,
+   * waited for a few seconds at most */
+  cx_feed_ensure_wait(CX_FEED_COMPANIONS, 5000);
   comp *all = calloc(COMP_MAX, sizeof *all);
   int n = all ? load_feed(all, COMP_MAX) : 0;
   jdoc *inst = installed_doc();
@@ -232,6 +236,7 @@ static int install_worker(cx_job *j, void *p) {
 int cx_companions_install(const char *id, char *job_id, size_t idcap, char *code, size_t ccap, char *err, size_t errcap) {
   xstrlcpy(code, "bad_request", ccap);
   if (!cx_id_valid(id, 47)) { xsnprintf(err, errcap, "invalid payload id"); return -1; }
+  cx_feed_ensure(CX_FEED_COMPANIONS, 6 * 3600);   /* installs from the published list (cx_companions_json) */
   inst_arg *a = calloc(1, sizeof *a);
   if (!a) { xstrlcpy(code, "oom", ccap); xsnprintf(err, errcap, "out of memory"); return -1; }
   if (find_comp(id, &a->c) != 0) { free(a); xstrlcpy(code, "not_found", ccap); xsnprintf(err, errcap, "unknown payload id (refresh the catalog to update the list)"); return -1; }

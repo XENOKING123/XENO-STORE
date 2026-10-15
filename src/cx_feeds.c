@@ -31,6 +31,7 @@ static struct {
 } feeds[CX_FEED_COUNT] = { {"featured", NULL, 0, 0, 0}, {"messages", NULL, 0, 0, 0}, {"companions", NULL, 0, 0, 0}, {"saves-backend", NULL, 0, 0, 0} };
 static time_t boot_at, last_auto;
 static volatile int refreshing;
+static volatile int ensuring[CX_FEED_COUNT];   /* a cx_feed_ensure_wait thread runs for the feed */
 static int build_marked;   /* <data>/feeds/.build names this build (guarded by fetch_mu) */
 
 static const char *const FEED_HOSTS[] = {"raw.githubusercontent.com", "github.com", "githubusercontent.com", "api.github.com"};
@@ -140,16 +141,40 @@ static int other_build_left(void) {
   return n > 0;
 }
 
-void cx_feed_ensure(int feed, int max_age_s) {
-  if (feed < 0 || feed >= CX_FEED_COUNT) return;
+/* Missing, older than max_age_s or cached by another build (due whatever its age). */
+static int due(int feed, int max_age_s, int *other) {
   pthread_mutex_lock(&feeds_mu);
   time_t at = feeds[feed].text ? feeds[feed].fetchedAt : 0;
-  int other = feeds[feed].otherBuild;
+  *other = feeds[feed].otherBuild;
   pthread_mutex_unlock(&feeds_mu);
-  /* a copy cached by another build is due whatever its age */
-  if (!other && at > 0 && util_now() - at < max_age_s) return;
+  return *other || at <= 0 || util_now() - at >= max_age_s;
+}
+
+void cx_feed_ensure(int feed, int max_age_s) {
+  int other;
+  if (feed < 0 || feed >= CX_FEED_COUNT || !due(feed, max_age_s, &other)) return;
   /* a shorter age than the feed's own 6 h means "fetch now" (user refresh) */
   load_one(feed, other || max_age_s < FEED_MAX_AGE_S);
+}
+
+static void *ensure_thread(void *arg) {
+  int feed = (int)(intptr_t)arg;
+  cx_feed_ensure(feed, FEED_MAX_AGE_S);
+  __atomic_store_n(&ensuring[feed], 0, __ATOMIC_SEQ_CST);
+  return NULL;
+}
+
+void cx_feed_ensure_wait(int feed, int wait_ms) {
+  int other;
+  if (feed < 0 || feed >= CX_FEED_COUNT || !due(feed, FEED_MAX_AGE_S, &other)) return;
+  if (!__atomic_exchange_n(&ensuring[feed], 1, __ATOMIC_SEQ_CST) &&
+      xthread_start(NULL, "feed-ensure", ensure_thread, (void *)(intptr_t)feed, 0, 1) != 0) {
+    __atomic_store_n(&ensuring[feed], 0, __ATOMIC_SEQ_CST);
+    LOGW("feeds: cannot start the %s fetch", feeds[feed].name);
+    return;
+  }
+  int64_t until = util_now_ms() + wait_ms;
+  while (__atomic_load_n(&ensuring[feed], __ATOMIC_SEQ_CST) && util_now_ms() < until) util_sleep_ms(50);
 }
 
 void cx_feeds_init(void) {
@@ -189,7 +214,8 @@ void cx_feeds_refresh(int force) {
   settings_get(&s);
   /* a copy of another build is due at once while the catalog refreshes on
    * its own; with auto-refresh off it keeps the 6 h rule here and is
-   * fetched where it is needed (cx_feed_ensure) */
+   * fetched where it is needed (cx_feed_ensure: the Save Store's
+   * saves-backend.json, the payload list's and install's companions.json) */
   for (int i = 0; i < CX_FEED_COUNT; i++) load_one(i, force || (s.catalogAutoRefresh && other_build(i)));
   refreshing = 0;
 }
