@@ -612,7 +612,7 @@ Every error names the problem and the fix in one line (no raw codes except in Di
 - `PPSA99500.ffpkg`: the Games-row app, a UFS2 image that ShadowMountPlus mounts from `/data/homebrew/`: the native
   TV app (`eboot.bin`, `sce_module/libc.prx`, `assets/`, `licenses/`, `sce_sys/`) with the store in
   `xeno/xeno-store.elf` + `xeno/version.txt` (§19, FORMATS §10). The store can put it in place itself (Settings →
-  Updates → Install the XENO STORE app, or the TV app's Settings → Updates → TV app).
+  Updates → XENO STORE app → Install the app, or the TV app's App settings → Updates → TV app).
 - `XENO-STORE-<VERSION>-tv-sources.tar.gz`: the TV app's complete corresponding source (GPL-3.0): `git archive` of
   the release commit plus every pinned upstream source archive, hash-checked (`tools/tv/make_source_bundle.py`).
 - `updates/tv-app.json`: the TV app feed the store's `/api/v1/tv-app` check reads (FORMATS §8), written by the

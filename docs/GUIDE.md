@@ -33,7 +33,7 @@ Every release has three things: `xeno-store.elf` (the store), `PPSA99500.ffpkg` 
 
 1. Send `xeno-store.elf` to your ELF loader / Payload Manager (port **9021**): **XENO TOOL → Payloads → Send file**, `nc -q0 <ps5-ip> 9021 < xeno-store.elf`, or etaHEN's payload menu.
 2. A toast says **XENO STORE ready · http://192.168.x.x:9095** and the store opens on the TV. (Settings → General → *Open XENO STORE when it starts* turns that off; then open the address in the PS5 browser or on your phone.)
-3. Open **Settings → Updates → Install the XENO STORE app**. It puts the app in place by itself, and **XENO STORE** appears under **Games**.
+3. Open **Settings → Updates → XENO STORE app** and press **Install the app**. It puts the app in place by itself, and **XENO STORE** appears under **Games**.
    Rather do it by hand? Copy `PPSA99500.ffpkg` to `/data/homebrew/` (XENO TOOL → Files, FTP or USB) and ShadowMountPlus mounts it.
 4. If the toast says **XENO STORE already running on :9095**, a copy is already up — just open the address.
 
@@ -322,7 +322,7 @@ The store deletes exactly those paths (`POST /api/uninstall` returns the list), 
 CI builds the ELF on every push (`make ps5`), but a console is needed to verify the Sony calls. Before a release the owner walks this list on real hardware and notes the firmware:
 
 1. Send `xeno-store.elf`; the toast and the browser appear; `GET /api/status` shows `platform:"ps5"`, the firmware and `downloadsAvailable:true`. After a few minutes Settings → Diagnostics still shows no crash report.
-2. Settings → Updates → **Install the XENO STORE app**: the XENO STORE tile appears under Games with the XENO icon; pressing it opens the store full screen (and starts it first when it was not running).
+2. Settings → Updates → XENO STORE app → **Install the app**: the XENO STORE tile appears under Games with the XENO icon; pressing it opens the store full screen (and starts it first when it was not running).
 3. Download a small verified Archive.org release with 8 connections; pause, close the browser, reopen, resume; hash verifies; toast arrives with the icon.
 4. Put the console in rest mode mid-download; wake it; the job goes `connecting` → `downloading` without a failed attempt.
 5. PKG auto-install (native), then with the native path blocked, the DPI fallback; `/user/app/<id>` appears; **Play** launches the title.

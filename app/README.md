@@ -60,7 +60,7 @@ for it.
 
 1. Send `xeno-store.elf` to the ELF loader (port 9021) or Payload Manager once.
    The store opens on the TV.
-2. **Settings → Updates → Install the XENO STORE app.** The store downloads
+2. **Settings → Updates → XENO STORE app → Install the app.** The store downloads
    `PPSA99500.ffpkg` from the latest release into `/data/homebrew/`, checks it
    against the release's `SHA256SUMS` and asks ShadowMountPlus to rescan
    (`src/app_install.c`). Copying `PPSA99500.ffpkg` to `/data/homebrew/` by

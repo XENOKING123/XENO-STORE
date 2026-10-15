@@ -15,19 +15,19 @@ All notable changes to XENO STORE. The version lives in `VERSION`; releases are 
   - **Settings**: download sources, the default drive (or *Choose automatically*), the pairing code for your phone, a catalog refresh, updates for the store and for the app, and *Restart download service*.
 - **It starts the store for you.** When the store isn't running, the app sends the copy it carries (or the newer update you downloaded) to your ELF loader on port 9021 and opens as soon as the store answers. No browser opens over it. If a downloaded update doesn't come up, the next try uses the copy inside the app.
 - **One store, everywhere.** The app uses the same store as your phone and PC: a download started on the TV shows up in the web UI and the other way round, and favourites, drives and settings are shared.
-- **The app updates itself**: **Settings → Updates → TV app** checks for a new version of the app and installs it; it opens the next time you start it. A copy you placed yourself is only replaced when you confirm.
+- **The app updates itself**: **App settings → Updates → TV app** in the app checks for a new version of the app and installs it; it opens the next time you start it. A copy you placed yourself is only replaced when you confirm.
 - **Vikingfile games**: the app says why it can't fetch them by itself and offers TorBox or *Open browser version*.
 - **Languages**: English, Deutsch, Español, Français, Magyar, Italiano, Nederlands, Polski, Português (Brasil), Русский and Türkçe. Arabic, Japanese, Korean and Chinese show English in the TV app for now; the web UI keeps all 14 languages.
 
 ### Save Store
 - **The XenoKing community saves** are in the Save Data Store: ready-made saves shared by the XenoKing community (57 today, more as people share), each one crediting the player who shared it, installable in one tap with a backup of your own save first. New saves added on the XenoKing site show up in the store by themselves.
 - **Share yours with one press**: a save you share from the store goes straight to the XenoKing collection and shows up there and in the store right away.
-- **Nothing to set up**: the store talks to Garlic Save Manager's real API and starts it for you when a save needs re-signing (it downloads the official release and checks it first, and never starts a second copy over a running one).
+- **Nothing to set up**: the store talks to Garlic Save Manager's real API and starts it for you when a save needs re-signing (it downloads the official release and checks its hash first; with no internet it can use a Garlic copy already on the console's internal storage; it never starts a second copy over a running one).
 - **Safer installs**: a save is refused while its game is running, when it belongs to another game, or when it isn't a real save; restoring a backup swaps folders so your current save is only removed once the restored one is in place; only one save operation runs per game and profile at a time.
 - **Companions** (ShadowMountPlus, kstuff, DPI, Garlic, the app dumper, NP fake sign-in) now come from each author's own release with checked hashes.
 
 ### Install and update
-- Update the store as usual (**Settings → Updates**), then **Settings → Updates → Install the XENO STORE app** puts the new app in your Games row. Copying the new `PPSA99500.ffpkg` to `/data/homebrew/` yourself works too. The app needs kstuff + ShadowMountPlus, and an ELF loader on port 9021 to start the store.
+- Update the store as usual (**Settings → Updates**), then **Settings → Updates → XENO STORE app → Reinstall / update** (*Install the app* when it is not there yet) puts the new app in your Games row. Copying the new `PPSA99500.ffpkg` to `/data/homebrew/` yourself works too. The app needs kstuff + ShadowMountPlus, and an ELF loader on port 9021 to start the store.
 - `PPSA99500.ffpkg` now carries the TV app with the store inside (`xeno/xeno-store.elf`). Each release also attaches `XENO-STORE-<version>-tv-sources.tar.gz`, the TV app's complete source with every pinned part it is built from, as its GPL-3.0 licence asks.
 
 ### Fixes
@@ -49,7 +49,7 @@ All notable changes to XENO STORE. The version lives in `VERSION`; releases are 
 
 ### Apps
 - **One ELF**: `xeno-store.elf` is the only payload now (`xeno-store-browser.elf` is gone). It opens the store on the TV when it starts; turn that off with **Settings → General → Open XENO STORE when it starts**.
-- **The store installs its own app**: **Settings → Updates → Install the XENO STORE app** puts the XENO STORE app in your Games row. Copying `PPSA99500.ffpkg` to `/data/homebrew/` yourself still works.
+- **The store installs its own app**: **Settings → Updates → XENO STORE app → Install the app** puts the XENO STORE app in your Games row. Copying `PPSA99500.ffpkg` to `/data/homebrew/` yourself still works.
 - **Smaller app**: the `.ffpkg` keeps only 8 MiB of spare room, so `PPSA99500.ffpkg` is about 17 MiB instead of 81 MiB.
 - **The app picks up updates**: an update downloaded in **Settings → Updates** is the version the app starts from then on.
 - A much simpler release: `PPSA99500.ffpkg` (the app), `xeno-store.elf` (the store), one XENO STORE Desktop download per OS (Windows, Mac — universal for Apple silicon and Intel — and Linux) and one `SHA256SUMS`. The second browser ELF, `XENO-STORE.pkg`, the homebrew zip, the per-file `.sha256` files, `BUILD-INFO.json` and the catalog copy are gone.

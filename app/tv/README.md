@@ -23,7 +23,7 @@ provenance, every licence and every changed file.
   without `/api/v1` (1.2.x) on the port is named on the opening screen,
   with **Replace it now** and **Open browser version**.
 - **Install** as `app/README.md` ("How people install it") describes: the
-  store's **Install the XENO STORE app**, or `PPSA99500.ffpkg` copied to
+  store's **Settings → Updates → XENO STORE app → Install the app**, or `PPSA99500.ffpkg` copied to
   `/data/homebrew/`.
 - **Log:** `/download0/hui/dev/app.log` in the app's sandbox, that is
   `/mnt/sandbox/PPSA99500_000/download0/hui/dev/app.log` over FTP while it

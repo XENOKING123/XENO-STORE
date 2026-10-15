@@ -303,8 +303,8 @@ to the files plus 8 MiB of slack. No `-S`: the console's UFS driver addresses bl
 rejects a wrong `fs_fsbtodb`, a truncated file or a missing icon, and compares every file with the staged folder; in
 `--app-dir` mode the script also checks the UFS2 magic `19 01 54 19` at 65536 + 1372 (what the store's installer
 checks), reads `xeno/version.txt` back from the image and keeps the image at most 512 MiB. contentVersion is
-`NN.NNN.NNN` (1.3.0 → `01.003.000`), checked against `VERSION` by `tools/tv/check_param.py` (`make tv-check`).
-Settings → Updates → *Install the XENO STORE app* (web UI) and Settings → Updates → *TV app* (the app) put it in
+`NN.NNN.NNN` (1.3.1 → `01.003.001`), checked against `VERSION` by `tools/tv/check_param.py` (`make tv-check`).
+Settings → Updates → *XENO STORE app* → *Install the app* (web UI) and App settings → Updates → *TV app* (the TV app) put it in
 place on the console; copying it to `/data/homebrew/` by hand works too.
 
 `make pkg` (`tools/make_homebrew.py`) can still build a `dist/XENO-STORE/` folder (+ zip) for etaHEN / itemzflow homebrew launchers (`eboot.bin` = `xeno-store.elf`, title id `XENO00002`); it is not part of a release.
