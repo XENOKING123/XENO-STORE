@@ -171,8 +171,7 @@ static int zip_cb(void *user, uint64_t done, uint64_t total, const char *entry) 
   return cx_job_cancelled(j);
 }
 
-static int backup_worker(cx_job *j, void *p) {
-  backup_arg *a = p;
+static int backup_claimed(cx_job *j, backup_arg *a) {
   int64_t total = cx_dir_size(a->title_dir, 8);
   cx_job_progress(j, 0, total, "Preparing");
   if (util_mkdir_p(a->dest) != 0) { cx_job_fail(j, "io", "Cannot create the backup folder"); return -1; }
@@ -215,6 +214,15 @@ static int backup_worker(cx_job *j, void *p) {
   return 0;
 }
 
+/* Holds the (profile, title) claim cx_saves_backup_start took: a restore
+ * swaps the folder this job zips. Released whatever the outcome. */
+static int backup_worker(cx_job *j, void *p) {
+  backup_arg *a = p;
+  int rc = backup_claimed(j, a);
+  cx_savemount_release(a->uid, a->titleId);
+  return rc;
+}
+
 int cx_saves_backup_start(uint32_t uid, const char *titleId, const char *kind, char *job_id, size_t idcap, char *code, size_t ccap, char *err, size_t errcap) {
   xstrlcpy(code, "bad_request", ccap);
   if (!uid) uid = cx_user_foreground();
@@ -239,7 +247,13 @@ int cx_saves_backup_start(uint32_t uid, const char *titleId, const char *kind, c
   cat_game g;
   if (catalog_match_titleid(titleId, &g) == 0) xsnprintf(a->display, sizeof a->display, "%s (%s)", g.title, titleId);
   else xstrlcpy(a->display, titleId, sizeof a->display);
-  if (cx_job_start("backup", a->display, backup_worker, a, job_id, idcap) != 0) { free(a); xstrlcpy(code, "busy", ccap); xsnprintf(err, errcap, "too many operations running"); return -1; }
+  if (cx_savemount_claim(uid, titleId) != 0) {
+    free(a);
+    xstrlcpy(code, "busy", ccap);
+    xsnprintf(err, errcap, "another backup, restore, install or transfer of the %s save is still running — wait for it to finish", titleId);
+    return -1;
+  }
+  if (cx_job_start("backup", a->display, backup_worker, a, job_id, idcap) != 0) { cx_savemount_release(uid, titleId); free(a); xstrlcpy(code, "busy", ccap); xsnprintf(err, errcap, "too many operations running"); return -1; }
   return 0;
 }
 
@@ -249,6 +263,10 @@ int cx_saves_backup_all(uint32_t uid, jw *w, char *err, size_t errcap) {
   if (cx_user_find(uid, NULL) != 0 || cx_user_home(uid, home, sizeof home) != 0) { xsnprintf(err, errcap, "unknown user"); return -1; }
   jw_key(w, "jobs");
   jw_arr_begin(w);
+  /* titles whose backup did not start (busy: another operation holds the save), with the reason */
+  jw skipped;
+  jw_init(&skipped);
+  jw_arr_begin(&skipped);
   const char *subs[2] = {"savedata_prospero", "savedata"};
   const char *kinds[2] = {"ps5", "ps4"};
   int started = 0;
@@ -260,13 +278,19 @@ int cx_saves_backup_all(uint32_t uid, jw *w, char *err, size_t errcap) {
     struct dirent *e;
     while ((e = readdir(d)) != NULL && started < 200) {
       if (!cx_titleid_valid(e->d_name)) continue;
-      char id[16], code[32], e2[128];
+      char id[16], code[32], e2[256];
       if (cx_saves_backup_start(uid, e->d_name, kinds[k], id, sizeof id, code, sizeof code, e2, sizeof e2) == 0) { jw_str(w, id); started++; }
+      else { jw_obj_begin(&skipped); jw_kv_str(&skipped, "titleId", e->d_name); jw_kv_str(&skipped, "kind", kinds[k]); jw_kv_str(&skipped, "error", code); jw_kv_str(&skipped, "message", e2); jw_obj_end(&skipped); }
     }
     closedir(d);
   }
   jw_arr_end(w);
   jw_kv_int(w, "started", started);
+  jw_arr_end(&skipped);
+  size_t sl;
+  char *st = jw_detach(&skipped, &sl);
+  jw_key(w, "skipped"); if (st) jw_raw(w, st, sl); else { jw_arr_begin(w); jw_arr_end(w); }
+  free(st);
   return 0;
 }
 
@@ -429,8 +453,8 @@ static pthread_mutex_t xfer_mu = PTHREAD_MUTEX_INITIALIZER;
 static int transfer_claimed(uint32_t from, uint32_t to, const char *titleId, const char *kind, int move, jw *w, char *code, size_t ccap, char *err, size_t errcap);
 
 /* One transfer at a time (it runs on the request thread and holds Garlic for
- * every save of the title), and never while a restore or install holds
- * either profile's save folder of the title. */
+ * every save of the title), and never while a backup, restore or install
+ * holds either profile's save folder of the title. */
 int cx_saves_transfer(uint32_t from, uint32_t to, const char *titleId, const char *kind, int move, jw *w, char *code, size_t ccap, char *err, size_t errcap) {
   if (!from || !to || from == to || !cx_titleid_valid(titleId)) return transfer_claimed(from, to, titleId, kind, move, w, code, ccap, err, errcap);   /* refuses with the reason */
   if (pthread_mutex_trylock(&xfer_mu) != 0) { xstrlcpy(code, "busy", ccap); xsnprintf(err, errcap, "another save transfer is still running — wait for it to finish"); return -1; }
@@ -438,7 +462,7 @@ int cx_saves_transfer(uint32_t from, uint32_t to, const char *titleId, const cha
   int got_to = got_from && cx_savemount_claim(to, titleId) == 0;
   int rc = -1;
   if (got_to) rc = transfer_claimed(from, to, titleId, kind, move, w, code, ccap, err, errcap);
-  else { xstrlcpy(code, "busy", ccap); xsnprintf(err, errcap, "another restore, install or transfer of the %s save is still running — wait for it to finish", titleId); }
+  else { xstrlcpy(code, "busy", ccap); xsnprintf(err, errcap, "another backup, restore, install or transfer of the %s save is still running — wait for it to finish", titleId); }
   if (got_to) cx_savemount_release(to, titleId);
   if (got_from) cx_savemount_release(from, titleId);
   pthread_mutex_unlock(&xfer_mu);

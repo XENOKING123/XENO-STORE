@@ -25,6 +25,9 @@ garlic-savemgr src/main.c route by route, single recv() per request included):
   * profile-to-profile transfer re-signed through Garlic (export for the
     source profile, import for the destination; a move removes the source),
     and refused while the title runs;
+  * a backup takes the same (profile, title) claim as an install or restore:
+    refused (busy) while one runs, skipped with its reason by "back up all",
+    and given back whether the backup worked or failed;
   * Garlic down: status/setup report it, POST /api/saves/garlic/start sends
     the pinned companion release (downloaded, sha256 checked) to a fake ELF
     loader and waits for the port, and falls back to an ELF on the console
@@ -634,6 +637,53 @@ class GarlicFlowTests(Base):
         self.assertEqual(st3, 200, b3)
         self.assertEqual(self.job_of(b)["state"], "done")
         self.assertEqual(len(self.since(m, "/api/create_pfs")), 2)          # the install's and the guest's restore
+
+    def test_13d_backups_take_the_save_claim(self):
+        # a backup zips the folder a restore or install swaps: while an install holds (PLAYER, TITLE) it is refused
+        self.garlic.delay = {"/api/create_pfs": 2.0}
+        try:
+            m = self.mark()
+            st, b = self.srv.api("POST", "/api/saves/store/sv_plain/install", {"user": PLAYER, "backupFirst": False})
+            self.assertEqual(st, 200, b)
+            deadline = time.time() + 20
+            while not self.since(m, "/api/create_pfs") and time.time() < deadline:
+                time.sleep(0.05)
+            self.assertTrue(self.since(m, "/api/create_pfs"))
+            st1, one = self.srv.api("POST", "/api/saves/backup", {"user": PLAYER, "titleId": TITLE})
+            st2, every = self.srv.api("POST", "/api/saves/backup", {"user": PLAYER, "all": True})
+        finally:
+            self.garlic.delay = {}
+        self.assertEqual(self.job_of(b)["state"], "done")
+        backups = [self.job_of({"job": {"id": jid}}) for jid in every.get("jobs", [])]
+        if st1 == 200:
+            backups.append(self.job_of(one))
+        self.assertEqual(st1, 429, one)
+        self.assertEqual(one.get("error"), "busy", one)
+        self.assertIn("still running", one.get("message", ""))
+        # backup all: the held title is skipped with its reason, the others start
+        self.assertEqual(st2, 200, every)
+        self.assertEqual([(s["titleId"], s["error"]) for s in every["skipped"]], [(TITLE, "busy")], every)
+        self.assertIn("still running", every["skipped"][0]["message"])
+        self.assertEqual(every["started"], len(every["jobs"]))
+        self.assertEqual([j["state"] for j in backups], ["done"] * len(backups))
+        # the claim is given back on every exit path: a finished backup, then a failed one, then a restore runs
+        st, b = self.srv.api("POST", "/api/saves/backup", {"user": PLAYER, "titleId": TITLE, "wait": True})
+        self.assertEqual(st, 200, b)
+        done = self.job_of(b)
+        self.assertEqual(done["state"], "done", done)
+        dest = os.path.dirname(done["result"]["zipPath"])
+        os.rename(dest, dest + ".off")
+        write(dest, b"not a folder")
+        try:
+            st, b = self.srv.api("POST", "/api/saves/backup", {"user": PLAYER, "titleId": TITLE, "wait": True})
+            self.assertEqual(st, 200, b)
+            failed = self.job_of(b)
+        finally:
+            os.unlink(dest)
+            os.rename(dest + ".off", dest)
+        self.assertEqual(failed["state"], "failed", failed)
+        st, r = self.srv.api("POST", "/api/saves/restore", {"user": PLAYER, "zipPath": done["result"]["zipPath"], "overwrite": True})
+        self.assertEqual(st, 200, r)
 
     def test_14_garlic_without_the_import_api_is_not_used(self):
         self.garlic.no_import_api = True
