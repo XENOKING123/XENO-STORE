@@ -74,8 +74,9 @@ The welcome sheet has three steps (all skippable, all editable later in Settings
 |:--|:--|
 | **Discover** | Hero spotlight (owner-curated picks first, then the newest art), rails: New on XENO, owner-curated rows, Latest releases, Trending, Verified & fast, Backports, Light downloads (< 10 GB), Massive worlds (> 80 GB), PS4 classics, Critically acclaimed, Your favorites, Continue downloading, Recently viewed, New community saves, Homebrew essentials, Popular genres, Surprise me, All games. |
 | **Browse** | Search with ranking (exact → prefix → word → fuzzy) and "Did you mean", quick chips (PS5 · PS4 · Under 20 GB · Verified · New this week · Has updates · Direct only · Backports), facets with live counts (platform, source, format, region, genre, year, size, publisher, verified, updates, DLC, compat, features), presets you can save, 8 sort orders, a virtualized grid with Load more and a pager. |
+| **Saves** | The Save Data Store: community saves (the XenoKing collection and the GitHub index) with sharer credit, categories, version checks and one-press install; **Upload my save**; entries to the **Saves hub** (your backups, restore, transfer) and to the Save Store options. |
 | **Homebrew** | Apps, emulators and tools from pkg-zone: Essentials, Emulators, Tools, New versions, categories, search; app page with Install, "Installed · Update available". |
-| **Library** | Storage bars per drive with a **Disk analyzer** (games, dumps, packages, saves, partials) and *Clean up partials*; installed titles with **Play** and **Uninstall**; files on drives with Install / Delete / Copy or move to another drive / Scan with ShadowMount; **Updates center** (newer updates and backports for what you have); **Saves hub**; **Community Saves**. |
+| **Library** | Storage bars per drive with a **Disk analyzer** (games, dumps, packages, saves, partials) and *Clean up partials*; installed titles with **Play** and **Uninstall**; files on drives with Install / Delete / Copy or move to another drive / Scan with ShadowMount; **Updates center** (newer updates and backports for what you have); shortcuts to the **Saves hub** and **Community Saves**. |
 | **Downloads** | Summary strip (speed, remaining, ETA, free space, keep-awake / rest-mode pill, lifetime stats), tabs Active · Queued · Finished · Failed · Cancelled, rows with segment visual and sparkline, install-set groups with "Install set paused at: …", per-state actions, retry countdowns, errors with the fix. |
 | **Settings** | General, Accessibility, Downloads, Debrid, Sources, Catalog, Saves, Accounts, Setup, Pair a device, Updates, Notifications, Diagnostics, Uninstall, About. |
 
@@ -118,7 +119,7 @@ Destinations under the chosen drive (`<root>` is `/data`, `/mnt/ext0`, `/mnt/usb
 | PKG · FPKG | `<root>/xeno-store/pkg/<filename>` | auto-install (see below) |
 | ZIP | `<root>/xeno-store/files/<filename>` | extracted on the console: a folder dump goes to `<root>/homebrew/<name>/`, a single image straight to the image file; the archive is deleted after success (Settings → Downloads → *Extract ZIP* / *Delete archive after extract*) |
 | RAR · 7z · anything else | `<root>/xeno-store/files/<filename>` | nothing — no RAR/7z engine on the console; extract with XENO TOOL on a PC and send the result |
-| Save backups | `<root>/xeno-store/saves/<userName>/<TITLEID>_<ps5|ps4>_<YYYYMMDD-HHMM>.zip` | restore from Library → Saves hub |
+| Save backups | `<root>/xeno-store/saves/<userName>/<TITLEID>_<ps5|ps4>_<YYYYMMDD-HHMM>.zip` | restore from Saves → Saves hub |
 | Community saves (file only) | `<root>/xeno-store/saves/community/<title>/…zip` | reachable from a PC through XENO TOOL / FTP |
 | In-progress file | `<final>.xpart` + `<final>.xpart.json` | removed on completion; *Clean up partials* removes orphans |
 
@@ -184,7 +185,7 @@ Errors are plain language: "Real-Debrid says this host is not supported", "Your 
 
 ## Saves hub
 
-Library → **Saves hub** **(console only)** lists the console's profiles and every save folder (`/user/home/<uid>/savedata_prospero/<TITLEID>/` for PS5, `/user/home/<uid>/savedata/<TITLEID>/` for PS4).
+Saves → **Saves hub** (also from Library) **(console only)** lists the console's profiles and every save folder (`/user/home/<uid>/savedata_prospero/<TITLEID>/` for PS5, `/user/home/<uid>/savedata/<TITLEID>/` for PS4).
 
 * **Back up** — a ZIP per title (image files + `sce_sys/`) into `<backup drive>/xeno-store/saves/<userName>/`. Runs as a job with progress and cancel. *Back up all saves now* does every title.
 * **Restore** — picks a backup; the current save is zipped first as `.pre-restore` automatically (Settings → Saves → *Auto-backup before restore/transfer*).
@@ -194,7 +195,7 @@ Library → **Saves hub** **(console only)** lists the console's profiles and ev
 
 ## Save Data Store
 
-PS5 titles only (PPSA). Entry points: the **Saves (n)** tab on a PS5 game page and Library → **Community Saves**.
+PS5 titles only (PPSA). Entry points: the **Saves** tab in the top bar (right after Browse, also on the phone bar) and the **Saves (n)** tab on a PS5 game page.
 
 **Compatibility check** on every card: installed? (`/user/app/<titleId>`), installed version (read from the console's app metadata), region (exact title ID — a save never loads on a different title ID; other regions are shown under *Other regions* with a warning), and version compare: ✓ *Matches your 01.004.000*, ⚠ *Made on 01.004.000, you have 01.000.000 — update the game first* (one tap opens the game's updates), ✗ *Game not installed*. Incompatible saves are hidden unless you toggle **Show all**. PS4 → PS5 conversion is not offered; the UI says so.
 
@@ -212,7 +213,7 @@ PS5 titles only (PPSA). Entry points: the **Saves (n)** tab on a PS5 game page a
 
 ### Upload my save (one-click share)
 
-Library → Community Saves → **Upload my save**: pick profile → pick an installed PS5 title with saves → pick the save dir → the engine exports it (account ID stripped, no sealed keys ever included) → ZIP + `xeno-save.json` manifest → upload to **XenoKing** (the default: the owner's save site; or pixeldrain, catbox ≤ 200 MB, or your own endpoint) → fill category, name, description, tags, nickname → **Submit**.
+Saves → **Upload my save**: pick profile → pick an installed PS5 title with saves → pick the save dir → the engine exports it (account ID stripped, no sealed keys ever included) → ZIP + `xeno-save.json` manifest → upload to **XenoKing** (the default: the owner's save site; or pixeldrain, catbox ≤ 200 MB, or your own endpoint) → fill category, name, description, tags, nickname → **Submit**.
 Uploaded to XenoKing, the save is added to the site's community collection, credited to your nickname, and is live on the site and in every store at once. Without the site backend (or when the site refuses it) the console shows a QR + short link to a prefilled GitHub issue so you finish on your phone; the owner approves it and it appears for everyone.
 Privacy: no account IDs, console IDs or usernames leave the console; the nickname is what you typed.
 

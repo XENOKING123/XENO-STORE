@@ -902,7 +902,7 @@ enumerated with `sceUserServiceGetLoginUserIdList` / `sceUserServiceGetUserName`
 - **Safe mode**: holding L2 while opening the store disables animations/sounds/enrichment (for struggling consoles); also a Settings toggle.
 
 ### 17.21 Homebrew apps store (pkg-zone) — one-tap install of apps, emulators and tools
-pkg-zone.com lists homebrew PKGs (apps, emulators, tools) with versions and authors; XENO STORE adds a **Homebrew** tab (nav: Discover · Browse · Homebrew · Library · Downloads).
+pkg-zone.com lists homebrew PKGs (apps, emulators, tools) with versions and authors; XENO STORE adds a **Homebrew** tab (nav: Discover · Browse · Saves · Downloads · Library · Homebrew).
 - Pipeline `sources/pkgzone.py` (adapter proven by a shipped payload): listing pages `https://pkg-zone.com/?page=N` (stop when a page has no cards, max 40 pages);
   each card is `<article class="pkg …">` with: id after `/details/` (alnum + `_`), title inside `class="title font-bold"`, version inside `class="number …"`,
   author after `text-gray-300">`, "Supports PS5" text flag, cover `https://pkg-zone.com/images/<id>/cover.png`, details `https://pkg-zone.com/details/<id>`,
@@ -916,7 +916,7 @@ pkg-zone.com lists homebrew PKGs (apps, emulators, tools) with versions and auth
   even before the catalog sync includes it; covers are proxied through `/api/image?url=` (allowlisted host, resized not needed — the PS5 browser handles PNG).
 
 ### 17.22 PS5 Save Data Store (community saves, re-signed on the fly)
-PS5 titles only (PPSA). Two entry points: a **Saves** tab on every PS5 game page ("Saves (n)" next to Download) and **Library → Community Saves** (browse all,
+PS5 titles only (PPSA). Two entry points: a **Saves** tab on every PS5 game page ("Saves (n)" next to Download) and the **Saves** main tab right after Browse (browse all,
 search, "My saves", "Upload my save"). Design: same cards/rails/sheets as the rest of the store; one primary gold action per screen.
 
 **17.22.1 Data model** — `updates/saves.json` (published index; fetched like the catalog, cached 1 h; `settings.saves.indexUrls` may add more feeds):

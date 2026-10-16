@@ -257,7 +257,7 @@ attaches <code>XENO-STORE-&lt;version&gt;-tv-sources.tar.gz</code> with the comp
 | **○** | Back (also closes sheets and the gallery) |
 | **□** | Favorite the focused game |
 | **△** | Search |
-| **L1 / R1** | Previous / next tab (Discover · Browse · Homebrew · Library · Downloads) |
+| **L1 / R1** | Previous / next tab (Discover · Browse · Saves · Downloads · Library · Homebrew) |
 | **Options** | Settings |
 | **L2 held while the store opens** | **Safe mode** — no animations, sounds or online enrichment (also a Settings toggle) |
 | **Settings → General → Swap ✕/○** | Japanese layout |
@@ -293,7 +293,7 @@ A community library of PS5 saves — the collection of the **XenoKing** site, ea
 * **Safe installs.** Downloads are sha256-checked whenever the listing carries a hash, the install **backs up your current save first**, and a save for the wrong title id is refused outright.
 * **Share yours in one flow.** *Upload my save* exports the chosen save, strips the account id, uploads it to the XenoKing site and adds it to the site's collection under your nickname — **live on the site and in every store at once** (a pre-filled GitHub submission is the fallback when the site is unreachable).
 
-The companion **Saves hub** (Library → Saves hub) backs up any profile to ZIP, restores it, transfers saves between profiles on the same console, and has a "Back up all saves now". Full walkthrough: [`docs/SAVES.md`](docs/SAVES.md).
+The **Saves** tab is a main section of its own: the community store, plus **Saves hub** (from the Saves tab or Library) which backs up any profile to ZIP, restores it, transfers saves between profiles on the same console, and has a "Back up all saves now". Full walkthrough: [`docs/SAVES.md`](docs/SAVES.md).
 
 ---
 
