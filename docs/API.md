@@ -489,7 +489,7 @@ and a non-local `Host` are refused (403) before any route runs.
 
 ### 13.3 Routes
 
-31 method + path entries, one table in `src/tvapi.c` (`TV_ROUTES`):
+32 method + path entries, one table in `src/tvapi.c` (`TV_ROUTES`):
 
 | Method | Path | Gate | Success | Module |
 |:--|:--|:--|:--|:--|
@@ -502,6 +502,7 @@ and a non-local `Host` are refused (403) before any route runs.
 | GET | `/catalog/updates` | S | 200 object | `tvapi_catalog.c` |
 | POST | `/catalog/updates` | S B O | 202 object | `tvapi_catalog.c` |
 | GET | `/art/{gameId}/{cover\|hero}` | S B | 200 image / 202 | `tvapi_art.c` |
+| GET | `/art/{gameId}/shot/{n}` | S B | 200 image / 202 | `tvapi_art.c` |
 | GET | `/favorites` | S B | 200 array of game ids | `tvapi_catalog.c` |
 | POST | `/favorites` | S B O | 200 array | `tvapi_catalog.c` |
 | GET | `/downloads` | S B | 200 array of jobs | `tvapi_downloads.c` |
@@ -570,13 +571,27 @@ snapshot) and the queue's health under `"queue":{"stateHealthy","workersRunning"
   notice is acknowledged, filtered to the enabled sources, in catalogue game order:
   `{"id":"<releaseId>","gameId":"…","titleId":"CUSA04622","platform":"ps4","title":"…","genre":"Action / RPG",
   "tagline":"","description":"…","publisher":"…","releaseDate":"2016-03-22","addedAt":"2025-03-30T00:00:00Z",
-  "artworkLayout":"wide","provider":"Archive.org","sourceId":"archive","format":"PKG","region":"USA",
-  "version":"1.03","filename":"….pkg","notes":"","sizeBytes":4052484096,"browserAvailable":false,
-  "directAvailable":true}` (plus `newOnOrbitRank` 1–100 for the featured games, from the featured feed's hero order).
+  "popularRank":12,"cheats":3,"screenshotCount":4,"artworkLayout":"wide","provider":"Archive.org",
+  "sourceId":"archive","format":"PKG","region":"USA","version":"1.03","filename":"….pkg","kind":"game","notes":"",
+  "sizeBytes":4052484096,"browserAvailable":false,"directAvailable":true}` (plus `newOnOrbitRank` 1–100 for the
+  featured games, from the featured feed's hero order, just before `popularRank`).
+  - `popularRank` (every option): its game's place among all TV-visible games, 1 = the most popular; every
+    TV-visible game gets its own rank from 1 to `gameCount`, by the catalogue `popularity` that the web UI's Top PS5
+    and Trending rows and its showcase sort by, highest first. At equal popularity PS5 comes before PS4, then
+    catalogue order (the tie rule of Trending and Top PS5; the web showcase breaks ties by `featured`, `metacritic`
+    and title instead). Ranks are computed over every exposed source, so the source filter never renumbers them (a
+    filtered list has gaps).
+  - `cheats` (only when > 0): the catalogue cheat count, as the web UI's cheats chip shows it.
+  - `screenshotCount` (only when > 0, at most 10): how many of the game's catalogue screenshots pass the art URL
+    policy (§13.6), served by `GET /art/{gameId}/shot/{n}` for n = 0 … `screenshotCount` − 1. A `.avif`, `.gif`
+    or non-https screenshot is not counted.
+  - `kind` (every option): `"game"`, `"backport"`, `"update"` or `"dlc"`, to group a game's options by. It is the
+    key the options are already ordered by and their notes are prefixed by; any other catalogue kind reads as
+    `"game"`.
   Scope (tier A): PS4/PS5 games only, direct and browser sources, formats PKG, FPKG, FFPKG, exFAT, FFPFSC and FFPFS,
   a known size. ZIP options are hidden (compile switch `TV_SHOW_ZIP`, host `XENO_TV_SHOW_ZIP=1`); RAR and 7z always.
   Options within a game are ordered by kind (game, backport, update, DLC), direct before browser, healthy before
-  flaky, verified first, then catalogue order. URLs, mirrors, hashes, passwords and art URLs are never sent. The
+  flaky, verified first, then catalogue order. URLs, mirrors, hashes, passwords, art URLs and screenshot URLs are never sent. The
   list is rendered from an immutable snapshot rebuilt when the catalogue or the featured feed changes.
 - `GET /catalog/updates` → `{"available":true,"busy":false,"cached":true,"revision":10,"gameCount":2593,
   "checkedAt":…,"checkAfter":…,"error":""}`. `POST /catalog/updates {"action":"refresh"}` → `202` and the refresh
@@ -589,29 +604,34 @@ snapshot) and the queue's health under `"queue":{"stateHealthy","workersRunning"
 
 ### 13.6 Art
 
-`GET /api/v1/art/{gameId}/{cover|hero}` serves game artwork asynchronously. The app decodes the pictures itself
+`GET /api/v1/art/{gameId}/{cover|hero}` and `GET /api/v1/art/{gameId}/shot/{n}` serve game artwork and screenshots
+asynchronously. The app decodes the pictures itself
 (WebP scaled while decoding; PNG and JPEG fully decoded into its fixed 128 MiB heap first), so the store passes
 the original bytes through and polices what it serves:
 
 - **Candidates** come only from our own catalogue entry for that game (any catalogue game, not only TV-visible
   ones): cover = `cover` unless it is an archive.org `services/img` thumbnail or shared with another game, else
-  `coverFallback`; hero = `hero` (when it differs from the cover), then `heroFallback`. Nothing usable → `404` at
-  once (the app draws its title placeholder or the cover wash).
+  `coverFallback`; hero = `hero` (when it differs from the cover), then `heroFallback`; screenshot n = the n-th of
+  the game's `screenshots` that pass the URL policy (the ones `/catalog`'s `screenshotCount` counts, at most 10),
+  one candidate each. Nothing usable, or n ≥ `screenshotCount` (n is a single digit 0–9) → `404` at once (the app
+  draws its title placeholder or the cover wash).
 - **URL policy:** `https://` only (host build: also `http://$XENO_HOST_ART_FIXTURE`), no userinfo, no loopback or
-  private literals, no `.avif` or `.gif`; `image.api.playstation.com` gets `w=512` (cover) or `w=1920` (hero). The
+  private literals, no `.avif` or `.gif`; `image.api.playstation.com` gets `w=512` (cover) or `w=1920` (hero, screenshot). The
   client never supplies a URL, so there is no host allow-list.
 - **Fetch:** 2 `tv-art` workers, 10 s per connect/receive and 30 s per transfer, at most 12 MiB, 3 redirects (each
   hop re-checked), `Accept: image/webp,image/png,image/jpeg;q=0.9`. The server's `Content-Type` is never trusted:
   the body is sniffed.
 - **Accepted:** WebP (still; animated refused), sides ≤ 8192; PNG and JPEG at most 1,048,576 px for a cover and
-  3,686,400 px (2560×1440) for a hero; JPEG only baseline/extended/progressive, 8-bit, 1 or 3 components. A hero
-  must be at least 1.4× as wide as it is tall. A refused picture makes the worker try the next candidate; refusals
-  are remembered per URL until the catalogue changes.
-- **Cache:** key `gameId#kind`, 256 entries / 24 MiB of pictures, least-recently-used eviction, a 64-key queue
-  served newest first; cleared when the catalogue revision changes.
+  3,686,400 px (2560×1440) for a hero or a screenshot; JPEG only baseline/extended/progressive, 8-bit, 1 or 3
+  components. A hero must be at least 1.4× as wide as it is tall; a screenshot may have any shape. A refused picture
+  makes the worker try the next candidate; refusals are remembered per URL and kind until the catalogue changes, so
+  a URL refused as a cover (pixel cap) or as a hero (shape) can still be served as a screenshot.
+- **Cache:** key `gameId#kind` (`#cover`, `#hero`, `#shot0` … `#shot9`), 256 entries / 24 MiB of pictures, least-recently-used eviction, a 64-key queue
+  served newest first; cleared when the catalogue revision changes. A screenshot with the same URL as the game's
+  hero is fetched and cached under its own key.
 - **Replies:** `202 {"pending":true}` while queued or fetching (the app asks again every 0.6 s); `200` with the
-  bytes and `Content-Type: image/webp|png|jpeg`; `404` "Unknown artwork." (bad id or kind, no game, no usable
-  candidate); `502` "This artwork could not be loaded." for 120 s after a failed fetch; `503` "Artwork is busy. Try
+  bytes and `Content-Type: image/webp|png|jpeg`; `404` "Unknown artwork." (bad id, kind or n, no game, no
+  usable candidate); `502` "This artwork could not be loaded." for 120 s after a failed fetch; `503` "Artwork is busy. Try
   again shortly." when the queue is full; `401` when unpaired.
 
 ### 13.7 Downloads, drives and download settings
