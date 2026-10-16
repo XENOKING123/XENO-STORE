@@ -224,6 +224,16 @@ TEST(SavesModel, AnEndedInstallSaysWhatHappened)
     EXPECT_EQ(save_install_outcome(job, "Ember Hollow"), "The save could not be installed.");
 }
 
+TEST(SavesModel, SizesUnderAMegabyteAreKilobytes)
+{
+    // As the browser version's Saves: a 3 KB save never reads "0.0 MB".
+    EXPECT_EQ(format_save_size(3278.0), "3.3 KB");
+    EXPECT_EQ(format_save_size(34420.0), "34 KB");
+    EXPECT_EQ(format_save_size(999400.0), "999 KB");
+    EXPECT_EQ(format_save_size(1653856.0), "1.7 MB");
+    EXPECT_EQ(format_save_size(67108864.0), format_bytes(67108864.0));
+}
+
 // ---- the client ----
 
 TEST(SavesApi, EncodesTheSaveIdAndAlwaysBacksUpFirst)

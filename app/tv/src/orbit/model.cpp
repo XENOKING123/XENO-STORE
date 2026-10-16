@@ -7,6 +7,7 @@
 #include "orbit/i18n.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 
@@ -1252,6 +1253,16 @@ std::string format_bytes(double bytes)
     // 49.4 GB in English, 49,4 GB in German, 49,4 ГБ in Russian.
     const bool giga = bytes >= 1e9;
     return i18n::decimal(giga ? bytes / 1e9 : bytes / 1e6) + " " + std::string(i18n::unit(giga));
+}
+
+std::string format_save_size(double bytes)
+{
+    if (bytes >= 1e6)
+        return format_bytes(bytes);
+    // One decimal below 10 KB, whole kilobytes above, as the browser version.
+    const double kilo = std::max(0.0, bytes) / 1e3;
+    return (kilo < 10.0 ? i18n::decimal(kilo) : i18n::count(std::lround(kilo))) + " " +
+           std::string(i18n::kilo_unit());
 }
 
 std::string format_age(double unix_time, double now)

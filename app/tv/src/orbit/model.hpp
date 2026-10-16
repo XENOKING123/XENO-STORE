@@ -610,6 +610,9 @@ bool check_fresh(double checked_at, double now);
 
 // ---- formatting ----
 std::string format_bytes(double bytes);        // "12.4 GB", "512.0 MB" (as the web app)
+// XENO STORE: a save's size, often under a megabyte: "3.3 KB", "340 KB", "2.4 MB"
+// (as the browser version's Saves).
+std::string format_save_size(double bytes);
 std::string format_date(std::string_view iso); // "Feb 15, 2022"
 // How long ago, relative ("just now", "12 min ago", "3 h ago", "2 days ago",
 // "never"), because the console's runtime offers no local time zone.

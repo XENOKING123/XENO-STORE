@@ -738,7 +738,7 @@ void SavesScreen::draw_card(hui::gfx::DrawList &list, const SaveRow &save, const
     const float badge = compat_badge(list, type, tx, r.y + 154.0f, save, 15.0f);
     std::string facts;
     if (save.size > 0.0)
-        facts = format_bytes(save.size);
+        facts = format_save_size(save.size);
     if (save.created_at.size() >= 10)
         facts += (facts.empty() ? "" : " \xC2\xB7 ") + format_date(save.created_at.substr(0, 10));
     ui::text_fit(list, type.regular, facts, r.x + r.w - 24.0f, r.y + 160.0f, 17.0f,
@@ -1004,7 +1004,7 @@ void SavesScreen::draw_details(Frame &frame, bool focused) const
         {tr("Your version"), save->installed_version.empty()
                                  ? std::string(save->installed ? tr("Unknown") : tr("Not installed"))
                                  : save->installed_version},
-        {tr("Size"), save->size > 0.0 ? format_bytes(save->size) : std::string("\xE2\x80\x94")},
+        {tr("Size"), save->size > 0.0 ? format_save_size(save->size) : std::string("\xE2\x80\x94")},
         {tr("Shared on"), save->created_at.size() >= 10 ? format_date(save->created_at.substr(0, 10))
                                                         : std::string("\xE2\x80\x94")},
     };
@@ -1048,7 +1048,7 @@ void SavesScreen::draw_details(Frame &frame, bool focused) const
                  ui::color::text2, ui::Align::right);
         ui::progress_bar(list, {left, status_y - 46.0f, right - left, 10.0f}, fraction, ui::color::action);
         if (job.total > 0.0)
-            ui::text(list, type.regular, format_bytes(job.done) + " / " + format_bytes(job.total), left,
+            ui::text(list, type.regular, format_save_size(job.done) + " / " + format_save_size(job.total), left,
                      status_y - 6.0f, 18.0f, ui::color::text2);
     }
     else if (mine && install.ended())
