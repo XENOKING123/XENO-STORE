@@ -10,9 +10,10 @@
  * into an immutable, reference-counted snapshot of everything the TV app can
  * be shown (tier A, R1): the exposed sources with their TV release counts,
  * the visible games in catalogue order with their game-level fields already
- * mapped (lowercase platform, joined genres, checked dates, ranks), and each
- * game's visible releases in R2 order with their option fields already
- * mapped (title ID, TV format spelling, filename, region, notes). Two hash
+ * mapped (lowercase platform, joined genres, checked dates, ranks, cheat and
+ * screenshot counts), and each game's visible releases in R2 order with
+ * their option fields already mapped (title ID, TV format spelling,
+ * filename, region, kind, notes). Two hash
  * indexes (release id, catalogue filename) serve the lookups of the
  * downloads and library subsystems. GET /api/v1/catalog renders from the
  * snapshot, so it never holds catalog_mu; only a rebuild walks the catalogue.
@@ -126,6 +127,10 @@ typedef struct tc_src {
 typedef struct tc_game {
   pstr id, title, platform, genre, tagline, description, publisher, releaseDate, addedAt, artworkLayout;
   int rank;             /* newOnOrbitRank 1..100, 0 = unranked */
+  int popular_rank;     /* popularRank 1..game_count (1 = the most popular) */
+  int shots;            /* screenshotCount 0..TV_ART_MAX_SHOTS */
+  int64_t cheats;       /* catalogue cheats, 0 = none */
+  double popularity;    /* catalogue popularity: the order of popularRank */
   uint32_t first, n;    /* its releases: rels[first .. first + n), R2 order */
   uint32_t cat_index;   /* position in the catalogue's games[] */
 } tc_game;
@@ -703,6 +708,16 @@ static void add_game(build_ctx *b, jv g, jv dg, uint32_t first, uint32_t cat_ind
   }
   s = mstr(g, dg, "artworkLayout", "wide", &len);
   e->artworkLayout = pool_add(x, s, len);
+  e->popularity = jv_dbl(mem(g, dg, "popularity"), 0);   /* as catalog.c reads it */
+  int64_t cheats = mint(g, dg, "cheats");
+  e->cheats = cheats > 0 ? cheats : 0;
+  jv shots = mem(g, dg, "screenshots");
+  if (jv_type(shots) == JV_ARR) {   /* the rule of tvapi.h TV_ART_MAX_SHOTS, as tvapi_art.c indexes them */
+    JV_FOREACH(it, shots) {
+      if (e->shots >= TV_ART_MAX_SHOTS) break;
+      if (jv_type(it) == JV_STR && jv_strlen(it) > 0) e->shots++;
+    }
+  }
   e->first = first;
   e->n = x->nrels - first;
   e->cat_index = cat_index;
@@ -803,18 +818,47 @@ static int64_t compose_revision(int64_t revision, uint32_t hero_hash) {
   return ((revision & ((INT64_C(1) << TVCAT_REV_BITS) - 1)) << 20) | (int64_t)(hero_hash & 0xFFFFFu);
 }
 
+typedef struct pop_key { double popularity; int ps4; uint32_t game; } pop_key;
+
+/* popularRank order: the catalogue popularity the web UI ranks its Top PS5
+ * and Trending rows and its showcase by (web/src/js/10-state.js, 40-discover.js),
+ * highest first; at equal popularity PS5 before PS4 (Trending), then
+ * catalogue order. */
+static int pop_cmp(const void *a, const void *b) {
+  const pop_key *x = a, *y = b;
+  if (x->popularity != y->popularity) return x->popularity > y->popularity ? -1 : 1;
+  if (x->ps4 != y->ps4) return x->ps4 - y->ps4;
+  return x->game < y->game ? -1 : (x->game > y->game ? 1 : 0);
+}
+
 /* Ranks (newOnOrbitRank): the feed's hero ids in feed order, then games with
  * catalogue featured > 0 by (featured, catalogue order); TV-visible games
- * only, each once, at most 100, over every exposed source. */
+ * only, each once, at most 100, over every exposed source. popularRank: every
+ * TV-visible game id once, 1..game_count in pop_cmp order (a repeated id
+ * takes its first visible entry's). */
 static int build_ranks(tcat_idx *x, build_ctx *b, char (*hero)[TVCAT_GAME_ID_MAX + 1], int nhero) {
   htab gids = { NULL, 0 };
   int *rank_of = calloc(x->ngames ? x->ngames : 1, sizeof *rank_of);   /* by first game index of an id */
-  if (!rank_of || ht_init(&gids, x->ngames) != 0) { free(rank_of); free(gids.slot); return -1; }
+  int *pop_of = calloc(x->ngames ? x->ngames : 1, sizeof *pop_of);
+  pop_key *pk = malloc((x->ngames ? x->ngames : 1) * sizeof *pk);
+  if (!rank_of || !pop_of || !pk || ht_init(&gids, x->ngames) != 0) {
+    free(rank_of);
+    free(pop_of);
+    free(pk);
+    free(gids.slot);
+    return -1;
+  }
   for (uint32_t i = 0; i < x->ngames; i++) {
-    if (ht_get(x, &gids, key_game_id, P(x, x->games[i].id), x->games[i].id.len) >= 0) continue;
+    const tc_game *g = &x->games[i];
+    if (ht_get(x, &gids, key_game_id, P(x, g->id), g->id.len) >= 0) continue;
     ht_put(x, &gids, key_game_id, i, 0);
+    pk[x->game_count].popularity = g->popularity;
+    pk[x->game_count].ps4 = !str_eq(P(x, g->platform), g->platform.len, "ps5");
+    pk[x->game_count].game = i;
     x->game_count++;
   }
+  if (x->game_count > 1) qsort(pk, (size_t)x->game_count, sizeof *pk, pop_cmp);
+  for (int k = 0; k < x->game_count; k++) pop_of[pk[k].game] = k + 1;
   int next = 1;
   for (int i = 0; i < nhero && next <= TVCAT_MAX_RANK; i++) {
     int64_t gi = ht_get(x, &gids, key_game_id, hero[i], strlen(hero[i]));
@@ -829,8 +873,11 @@ static int build_ranks(tcat_idx *x, build_ctx *b, char (*hero)[TVCAT_GAME_ID_MAX
   for (uint32_t i = 0; i < x->ngames; i++) {
     int64_t gi = ht_get(x, &gids, key_game_id, P(x, x->games[i].id), x->games[i].id.len);
     x->games[i].rank = gi >= 0 ? rank_of[gi] : 0;
+    x->games[i].popular_rank = gi >= 0 ? pop_of[gi] : 0;
   }
   free(rank_of);
+  free(pop_of);
+  free(pk);
   free(gids.slot);
   return 0;
 }
@@ -1165,6 +1212,14 @@ void tvcat_h_sources(api_ctx *c) {
 
 /* ==== /api/v1/catalog ======================================================= */
 
+/* What the option is, for the app to group a game's options by (R2 key 1);
+ * any other catalogue kind reads as a game, as its notes do. */
+static const char *wire_kind(const tc_rel *r) {
+  static const char *const KINDS[] = { "game", "backport", "update", "dlc" };
+  unsigned k = (unsigned)(r->sort >> 3);
+  return k < XS_ARRAY_LEN(KINDS) ? KINDS[k] : "game";
+}
+
 static void write_option(jw *w, const tcat_idx *x, const tc_game *g, const tc_rel *r) {
   const tc_src *s = &x->src[r->src];
   jw_obj_begin(w);
@@ -1180,6 +1235,9 @@ static void write_option(jw *w, const tcat_idx *x, const tc_game *g, const tc_re
   kv_p(w, "releaseDate", x, g->releaseDate);
   kv_p(w, "addedAt", x, g->addedAt);
   if (g->rank) jw_kv_int(w, "newOnOrbitRank", g->rank);
+  jw_kv_int(w, "popularRank", g->popular_rank);
+  if (g->cheats) jw_kv_i64(w, "cheats", g->cheats);
+  if (g->shots) jw_kv_int(w, "screenshotCount", g->shots);
   kv_p(w, "artworkLayout", x, g->artworkLayout);
   kv_p(w, "provider", x, r->provider);
   kv_p(w, "sourceId", x, r->sourceId);
@@ -1192,6 +1250,7 @@ static void write_option(jw *w, const tcat_idx *x, const tc_game *g, const tc_re
   kv_p(w, "region", x, r->region);
   kv_p(w, "version", x, r->version);
   kv_p(w, "filename", x, r->filename);
+  jw_kv_str(w, "kind", wire_kind(r));
   kv_p(w, "notes", x, r->notes);
   jw_kv_i64(w, "sizeBytes", r->size);
   jw_kv_bool(w, "browserAvailable", s->browser);   /* R6: from the source kind */
@@ -1201,9 +1260,10 @@ static void write_option(jw *w, const tcat_idx *x, const tc_game *g, const tc_re
 
 /* GET /api/v1/catalog: a bare array, [] until the notice is acknowledged,
  * filtered to the enabled sources. Rendered from the snapshot into one
- * buffer (about 2.4 MB today) and freed; the app asks only when its
+ * buffer (about 2.6 MB today) and freed; the app asks only when its
  * catalog_key changes. Never sent: url, browserUrl, mirrors, hashes,
- * password, health, art URLs (the snapshot does not hold them). */
+ * password, health, art or screenshot URLs (the snapshot does not hold
+ * them: screenshots are counts, served by /art/{gameId}/shot/{n}). */
 void tvcat_h_catalog(api_ctx *c) {
   jw w;
   if (!settings_sources_acknowledged()) { tv_arr_begin(&w); tv_arr_send(c, 200, &w); return; }

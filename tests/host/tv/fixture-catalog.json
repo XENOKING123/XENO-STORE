@@ -120,7 +120,7 @@
    "slug": "fx-tidewater",
    "title": "Tidewater",
    "platform": "PS5",
-   "_case": "R2 kind order (game, backport, update, dlc) against catalogue order; notes prefixes; JSON escapes in the description; art WebP cover and hero; an AVIF coverFallback that is never needed",
+   "_case": "R2 kind order (game, backport, update, dlc) against catalogue order; notes prefixes; JSON escapes in the description; art WebP cover and hero; an AVIF coverFallback that is never needed; popularRank 1; 12 cheats; screenshotCount 5 (an empty string and a number are skipped): WebP and JPEG served, an AVIF never fetched, a tall WebP served (a screenshot may have any shape), a PNG over the 2560x1440 cap refused",
    "artworkLayout": "wide",
    "titleIds": [
     "PPSA90001"
@@ -138,6 +138,17 @@
    "cover": "{{ART}}/art/fx-tidewater-ps5/cover.webp",
    "hero": "{{ART}}/art/fx-tidewater-ps5/hero.webp",
    "coverFallback": "{{ART}}/art/fx-tidewater-ps5/fallback/cover.avif",
+   "popularity": 0.42,
+   "cheats": 12,
+   "screenshots": [
+    "{{ART}}/art/fx-tidewater-ps5/shot.webp",
+    "",
+    7,
+    "{{ART}}/art/fx-tidewater-ps5/shot.jpg",
+    "{{ART}}/art/fx-tidewater-ps5/cover.avif",
+    "{{ART}}/art/fx-tidewater-ps5/shot-tall.webp",
+    "{{ART}}/art/fx-tidewater-ps5/hero-2561.png"
+   ],
    "releases": [
     {
      "id": "fx-tidewater-dlc",
@@ -206,7 +217,7 @@
    "slug": "fx-neon-courier",
    "title": "Neon Courier",
    "platform": "PS5",
-   "_case": "R2 direct before browser; a Vikingfile release with a browserUrl (browserAvailable true, directAvailable false) whose URL is a local file (TorBox tests); art PNG cover and hero",
+   "_case": "R2 direct before browser; a Vikingfile release with a browserUrl (browserAvailable true, directAvailable false) whose URL is a local file (TorBox tests); art PNG cover and hero; popularity 0.3: popularRank 2",
    "artworkLayout": "wide",
    "titleIds": [
     "PPSA90002"
@@ -221,6 +232,7 @@
    "region": "USA",
    "cover": "{{ART}}/art/fx-neon-courier-ps5/cover.png",
    "hero": "{{ART}}/art/fx-neon-courier-ps5/hero.png",
+   "popularity": 0.3,
    "releases": [
     {
      "id": "fx-neon-courier-vf",
@@ -255,7 +267,7 @@
    "slug": "fx-ember-hollow",
    "title": "Ember Hollow",
    "platform": "PS5",
-   "_case": "R2 health: flaky last, an unaudited release (health \"\") ranks with ok and keeps catalogue order; art JPEG cover and hero",
+   "_case": "R2 health: flaky last, an unaudited release (health \"\") ranks with ok and keeps catalogue order; art JPEG cover and hero; popularity 0.2 like fx-aurora-drift-ps5: the earlier PS5 game ranks first",
    "artworkLayout": "wide",
    "titleIds": [
     "PPSA90003"
@@ -268,6 +280,7 @@
    "addedAt": "2026-09-01",
    "cover": "{{ART}}/art/fx-ember-hollow-ps5/cover.jpg",
    "hero": "{{ART}}/art/fx-ember-hollow-ps5/hero.jpg",
+   "popularity": 0.2,
    "releases": [
     {
      "id": "fx-ember-hollow-flaky",
@@ -471,7 +484,7 @@
    "slug": "fx-quiet-harbour",
    "title": "Quiet Harbour",
    "platform": "PS4",
-   "_case": "title ID from the game titleIds[0] (upper-cased); region from the game when the release has none",
+   "_case": "title ID from the game titleIds[0] (upper-cased); region from the game when the release has none; popularity 0.3 like fx-neon-courier-ps5 (the PS5 game ranks first); negative cheats -> none",
    "artworkLayout": "wide",
    "titleIds": [
     "cusa90007",
@@ -484,6 +497,8 @@
    "region": "USA",
    "addedAt": "2026-06-20",
    "cover": "{{ART}}/art/fx-quiet-harbour-ps4/cover.png",
+   "popularity": 0.3,
+   "cheats": -3,
    "releases": [
     {
      "id": "fx-quiet-harbour-pkg",
@@ -504,7 +519,7 @@
    "slug": "fx-frostline",
    "title": "Frostline",
    "platform": "PS4",
-   "_case": "title ID from the filename (no release titleId, no game titleIds); PS4 lower-cased",
+   "_case": "title ID from the filename (no release titleId, no game titleIds); PS4 lower-cased; popularity 0.25 like fx-iron-meridian-ps5, which comes later but ranks first (PS5 before PS4)",
    "artworkLayout": "wide",
    "genres": [
     "Action"
@@ -512,6 +527,7 @@
    "publisher": "Polar Bear Games",
    "addedAt": "2026-06-10",
    "cover": "{{ART}}/art/fx-frostline-ps4/cover.jpg",
+   "popularity": 0.25,
    "releases": [
     {
      "id": "fx-frostline-pkg",
@@ -583,7 +599,7 @@
    "slug": "fx-iron-meridian",
    "title": "Iron Meridian",
    "platform": "PS5",
-   "_case": "releaseDate \"TBA\" -> \"\"; addedAt missing (sparse) -> \"\"; no genres -> \"\"",
+   "_case": "releaseDate \"TBA\" -> \"\"; addedAt missing (sparse) -> \"\"; no genres -> \"\"; popularity 0.25 (see fx-frostline-ps4); screenshots an object, not a list -> none",
    "artworkLayout": "wide",
    "titleIds": [
     "PPSA90011"
@@ -591,6 +607,10 @@
    "releaseDate": "TBA",
    "publisher": "Meridian Works",
    "cover": "{{ART}}/art/fx-iron-meridian-ps5/cover.webp",
+   "popularity": 0.25,
+   "screenshots": {
+    "first": "{{ART}}/art/fx-iron-meridian-ps5/shot.webp"
+   },
    "releases": [
     {
      "id": "fx-iron-meridian-ffpfsc",
@@ -611,7 +631,7 @@
    "slug": "fx-copper-coast",
    "title": "Copper Coast",
    "platform": "PS4",
-   "_case": "releaseDate \"2026-7-1\" -> \"\"; date-only addedAt -> T00:00:00Z",
+   "_case": "releaseDate \"2026-7-1\" -> \"\"; date-only addedAt -> T00:00:00Z; popularity a string -> 0 (jv_dbl); cheats 2.7 -> 2 (jv_i64)",
    "artworkLayout": "wide",
    "titleIds": [
     "CUSA90012"
@@ -622,6 +642,8 @@
     "Strategy"
    ],
    "cover": "{{ART}}/art/fx-copper-coast-ps4/cover.webp",
+   "popularity": "0.9",
+   "cheats": 2.7,
    "releases": [
     {
      "id": "fx-copper-coast-pkg",
@@ -643,7 +665,7 @@
    "slug": "fx-aurora-drift",
    "title": "Aurora Drift",
    "platform": "PS5",
-   "_case": "featured feed hero[1] (visible): rank 1",
+   "_case": "featured feed hero[1] (visible): rank 1; popularity 0.2 (see fx-ember-hollow-ps5)",
    "artworkLayout": "wide",
    "titleIds": [
     "PPSA90013"
@@ -656,6 +678,7 @@
    "addedAt": "2026-10-12",
    "cover": "{{ART}}/art/fx-aurora-drift-ps5/cover.webp",
    "hero": "{{ART}}/art/fx-aurora-drift-ps5/hero.webp",
+   "popularity": 0.2,
    "releases": [
     {
      "id": "fx-aurora-drift-ffpfsc",
@@ -830,7 +853,7 @@
    "slug": "fx-paper-moon",
    "title": "Paper Moon",
    "platform": "PS4",
-   "_case": "dlpsgame PAGE only: hidden; featured 2 and feed hero[0] are both skipped",
+   "_case": "dlpsgame PAGE only: hidden; featured 2 and feed hero[0] are both skipped; the highest popularity, but hidden: no popularRank",
    "artworkLayout": "wide",
    "titleIds": [
     "CUSA90019"
@@ -838,6 +861,7 @@
    "featured": 2,
    "addedAt": "2026-10-09",
    "cover": "{{ART}}/art/fx-paper-moon-ps4/cover.webp",
+   "popularity": 0.99,
    "releases": [
     {
      "id": "fx-paper-moon-page",
@@ -896,13 +920,16 @@
    "slug": "fx-pixel-shell",
    "title": "Pixel Shell",
    "platform": "HOMEBREW",
-   "_case": "HOMEBREW app from pkgzone: hidden",
+   "_case": "HOMEBREW app from pkgzone: hidden; a screenshot served although the TV catalogue hides the game (R9)",
    "artworkLayout": "wide",
    "category": "Tool",
    "author": "Fixture",
    "supportsPs5": true,
    "addedAt": "2026-04-04",
    "cover": "{{ART}}/art/fx-pixel-shell-homebrew/cover.webp",
+   "screenshots": [
+    "{{ART}}/art/fx-pixel-shell-homebrew/shot.jpg"
+   ],
    "releases": [
     {
      "id": "fx-pixel-shell-pkg",
@@ -1515,13 +1542,26 @@
    "slug": "fx-vast-archive",
    "title": "Vast Archive",
    "platform": "PS5",
-   "_case": "Downloads: the largest real size (296,579,432,448 bytes): never enough space",
+   "_case": "Downloads: the largest real size (296,579,432,448 bytes): never enough space; 11 screenshots: screenshotCount 10, shot/9 is the tenth, the eleventh is never offered",
    "artworkLayout": "wide",
    "titleIds": [
     "PPSA90053"
    ],
    "addedAt": "2026-01-04",
    "cover": "{{ART}}/art/fx-vast-archive-ps5/cover.webp",
+   "screenshots": [
+    "{{ART}}/art/fx-vast-archive-ps5-1/shot.webp",
+    "{{ART}}/art/fx-vast-archive-ps5-2/shot.webp",
+    "{{ART}}/art/fx-vast-archive-ps5-3/shot.webp",
+    "{{ART}}/art/fx-vast-archive-ps5-4/shot.webp",
+    "{{ART}}/art/fx-vast-archive-ps5-5/shot.webp",
+    "{{ART}}/art/fx-vast-archive-ps5-6/shot.webp",
+    "{{ART}}/art/fx-vast-archive-ps5-7/shot.webp",
+    "{{ART}}/art/fx-vast-archive-ps5-8/shot.webp",
+    "{{ART}}/art/fx-vast-archive-ps5-9/shot.webp",
+    "{{ART}}/art/fx-vast-archive-ps5-10/shot.webp",
+    "{{ART}}/art/fx-vast-archive-ps5-11/shot.webp"
+   ],
    "releases": [
     {
      "id": "fx-vast-archive-ffpfsc",
