@@ -117,5 +117,27 @@
       "too_large": "La descarga es más grande de lo esperado; no se instaló nada.",
       "download_failed": "La descarga falló. Comprueba la conexión a internet de la consola e inténtalo de nuevo."
     }
+  },
+  "pairdev": {
+    "title": "Dispositivos vinculados",
+    "loading": "Cargando dispositivos vinculados…",
+    "loadFailed": "No se pudieron cargar los dispositivos vinculados.",
+    "none": "Todavía no hay ningún móvil ni PC vinculado.",
+    "unknown": "Dispositivo desconocido",
+    "ps5Browser": "Navegador de la PS5",
+    "thisDevice": "Este dispositivo",
+    "lastSeen": "Última vez: {when}",
+    "notSeen": "Sin usar desde que se actualizó XENO STORE",
+    "unpair": "Desvincular",
+    "unpairTitle": "¿Desvincular {name}?",
+    "unpairText": "{name} necesitará un código nuevo de la PS5 para volver a controlar XENO STORE.",
+    "unpairSelfText": "Este navegador necesitará un código nuevo de la PS5 para volver a controlar XENO STORE.",
+    "unpaired": "{name} desvinculado",
+    "unpairOthers": "Desvincular todos los demás dispositivos",
+    "unpairOthersHint": "Todos los móviles y PC excepto este tendrán que vincularse de nuevo",
+    "unpairOthersText": "Todos los demás móviles y PC necesitarán un código nuevo de la PS5 para volver a controlar XENO STORE. La app de XENO STORE y el navegador de la consola siguen funcionando.",
+    "unpairOthersGo": "Desvincular todos",
+    "unpairedN": "{n, plural, one{# dispositivo desvinculado} other{# dispositivos desvinculados}}",
+    "slots": "Hasta {max} móviles y PC permanecen vinculados. Si vinculas uno más, sustituye al dispositivo que lleva más tiempo sin usarse."
   }
 }

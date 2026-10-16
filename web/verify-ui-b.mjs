@@ -426,6 +426,7 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await expect(async () => page.evaluate(() => /xeno\.local:/.test(document.querySelector('#scr-settings [data-nav-id="pair-local"]').textContent)), 'Pair a device should show http://xeno.local:<port>');
     await expect(async () => page.evaluate(() => /Answering on this network/.test(document.querySelector('#scr-settings [data-nav-id="pair-local"]').textContent)), 'Pair a device should read the mDNS state from the {ok, mdns:{…}} envelope');
     await expect(async () => !!(await page.$('#scr-settings [data-nav-id="pair-mdns"]')), 'mDNS toggle missing');
+    await expect(async () => page.evaluate(() => document.querySelectorAll('#scr-settings .pd-row button[data-nav-id$="-unpair"]').length === 4), 'Pair a device should list the paired devices, each with Unpair');
     await sleep(200);
     await shot(page, 'tv-b-settings-pair.png');
     /* downloads group: Phase 2 rows */

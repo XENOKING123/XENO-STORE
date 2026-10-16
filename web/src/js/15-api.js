@@ -70,6 +70,9 @@
     pair: function (opts) { return get('/api/pair', opts); },
     pairShow: function () { return post('/api/pair/show', {}, { noPin: true }); },
     pairRedeem: function (code) { return post('/api/pair', { code: code }, { noPin: true }); },
+    pairDevices: function () { return get('/api/pair/devices'); },
+    pairUnpair: function (id) { return post('/api/pair/unpair', { id: id }); },
+    pairUnpairOthers: function () { return post('/api/pair/unpair-others'); },
 
     /* Catalog: GET /catalog.json with ETag; cached copy in localStorage keeps browsing when the console is unreachable. */
     catalogEtag: '',

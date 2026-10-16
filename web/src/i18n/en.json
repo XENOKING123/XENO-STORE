@@ -579,6 +579,7 @@
     "not_found": "Not found on the console",
     "forbidden": "The host refused the request",
     "pin_required": "This console needs the PIN before it accepts changes",
+    "not_paired": "This browser isn't paired with the console any more — reload the page to pair it again.",
     "rate_limited": "The host is rate-limiting us — retrying with fewer connections",
     "transport": "The connection dropped — retrying automatically",
     "fix": {

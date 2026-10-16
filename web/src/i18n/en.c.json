@@ -117,5 +117,27 @@
       "too_large": "The download is larger than expected — nothing was installed.",
       "download_failed": "The download failed. Check the console's internet connection and try again."
     }
+  },
+  "pairdev": {
+    "title": "Paired devices",
+    "loading": "Loading paired devices…",
+    "loadFailed": "Could not load the paired devices.",
+    "none": "No phone or PC is paired yet.",
+    "unknown": "Unknown device",
+    "ps5Browser": "PS5 browser",
+    "thisDevice": "This device",
+    "lastSeen": "Last seen {when}",
+    "notSeen": "Not used since XENO STORE was updated",
+    "unpair": "Unpair",
+    "unpairTitle": "Unpair {name}?",
+    "unpairText": "{name} will need a new code from the PS5 before it can control XENO STORE again.",
+    "unpairSelfText": "This browser will need a new code from the PS5 before it can control XENO STORE again.",
+    "unpaired": "{name} unpaired",
+    "unpairOthers": "Unpair all other devices",
+    "unpairOthersHint": "Every phone and PC except this one has to pair again",
+    "unpairOthersText": "Every other phone and PC will need a new code from the PS5 before it can control XENO STORE again. The XENO STORE app and the console's own browser keep working.",
+    "unpairOthersGo": "Unpair all",
+    "unpairedN": "{n, plural, one{# device unpaired} other{# devices unpaired}}",
+    "slots": "Up to {max} phones and PCs stay paired. Pairing one more replaces the device unused the longest."
   }
 }

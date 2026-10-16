@@ -117,5 +117,27 @@
       "too_large": "De download is groter dan verwacht — er is niets geïnstalleerd.",
       "download_failed": "Downloaden mislukt. Controleer de internetverbinding van de console en probeer het opnieuw."
     }
+  },
+  "pairdev": {
+    "title": "Gekoppelde apparaten",
+    "loading": "Gekoppelde apparaten laden…",
+    "loadFailed": "Kan de gekoppelde apparaten niet laden.",
+    "none": "Er is nog geen telefoon of pc gekoppeld.",
+    "unknown": "Onbekend apparaat",
+    "ps5Browser": "PS5-browser",
+    "thisDevice": "Dit apparaat",
+    "lastSeen": "Laatst gezien: {when}",
+    "notSeen": "Niet gebruikt sinds de update van XENO STORE",
+    "unpair": "Ontkoppelen",
+    "unpairTitle": "{name} ontkoppelen?",
+    "unpairText": "{name} heeft dan een nieuwe code van de PS5 nodig om XENO STORE weer te bedienen.",
+    "unpairSelfText": "Deze browser heeft dan een nieuwe code van de PS5 nodig om XENO STORE weer te bedienen.",
+    "unpaired": "{name} ontkoppeld",
+    "unpairOthers": "Alle andere apparaten ontkoppelen",
+    "unpairOthersHint": "Elke telefoon en pc behalve deze moet opnieuw koppelen",
+    "unpairOthersText": "Alle andere telefoons en pc's hebben dan een nieuwe code van de PS5 nodig om XENO STORE weer te bedienen. De XENO STORE-app en de browser van de console blijven werken.",
+    "unpairOthersGo": "Alles ontkoppelen",
+    "unpairedN": "{n, plural, one{# apparaat ontkoppeld} other{# apparaten ontkoppeld}}",
+    "slots": "Tot {max} telefoons en pc's blijven gekoppeld. Koppel je er nog een, dan vervangt die het apparaat dat het langst niet is gebruikt."
   }
 }

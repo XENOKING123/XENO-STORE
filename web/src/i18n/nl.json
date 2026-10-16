@@ -579,6 +579,7 @@
     "not_found": "Niet gevonden op de console",
     "forbidden": "De host weigerde het verzoek",
     "pin_required": "Deze console heeft de pincode nodig voordat wijzigingen worden geaccepteerd",
+    "not_paired": "Deze browser is niet meer aan de console gekoppeld — laad de pagina opnieuw om hem weer te koppelen.",
     "rate_limited": "De host beperkt onze snelheid — opnieuw proberen met minder verbindingen",
     "transport": "De verbinding viel weg — automatisch opnieuw proberen",
     "fix": {

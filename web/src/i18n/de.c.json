@@ -117,5 +117,27 @@
       "too_large": "Der Download ist größer als erwartet – es wurde nichts installiert.",
       "download_failed": "Der Download ist fehlgeschlagen. Prüfe die Internetverbindung der Konsole und versuch es erneut."
     }
+  },
+  "pairdev": {
+    "title": "Gekoppelte Geräte",
+    "loading": "Gekoppelte Geräte werden geladen…",
+    "loadFailed": "Die gekoppelten Geräte konnten nicht geladen werden.",
+    "none": "Noch kein Handy oder PC gekoppelt.",
+    "unknown": "Unbekanntes Gerät",
+    "ps5Browser": "PS5-Browser",
+    "thisDevice": "Dieses Gerät",
+    "lastSeen": "Zuletzt gesehen: {when}",
+    "notSeen": "Seit dem Update von XENO STORE nicht benutzt",
+    "unpair": "Entkoppeln",
+    "unpairTitle": "{name} entkoppeln?",
+    "unpairText": "{name} braucht dann einen neuen Code von der PS5, um XENO STORE wieder zu steuern.",
+    "unpairSelfText": "Dieser Browser braucht dann einen neuen Code von der PS5, um XENO STORE wieder zu steuern.",
+    "unpaired": "{name} entkoppelt",
+    "unpairOthers": "Alle anderen Geräte entkoppeln",
+    "unpairOthersHint": "Jedes Handy und jeder PC außer diesem muss neu gekoppelt werden",
+    "unpairOthersText": "Alle anderen Handys und PCs brauchen dann einen neuen Code von der PS5, um XENO STORE wieder zu steuern. Die XENO STORE-App und der Browser der Konsole funktionieren weiter.",
+    "unpairOthersGo": "Alle entkoppeln",
+    "unpairedN": "{n, plural, one{# Gerät entkoppelt} other{# Geräte entkoppelt}}",
+    "slots": "Bis zu {max} Handys und PCs bleiben gekoppelt. Wird ein weiteres gekoppelt, ersetzt es das Gerät, das am längsten nicht benutzt wurde."
   }
 }

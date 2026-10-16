@@ -117,5 +117,27 @@
       "too_large": "Pobrany plik jest większy niż oczekiwano — nic nie zainstalowano.",
       "download_failed": "Pobieranie nie powiodło się. Sprawdź połączenie konsoli z internetem i spróbuj ponownie."
     }
+  },
+  "pairdev": {
+    "title": "Sparowane urządzenia",
+    "loading": "Wczytywanie sparowanych urządzeń…",
+    "loadFailed": "Nie udało się wczytać sparowanych urządzeń.",
+    "none": "Żaden telefon ani komputer nie jest jeszcze sparowany.",
+    "unknown": "Nieznane urządzenie",
+    "ps5Browser": "Przeglądarka PS5",
+    "thisDevice": "To urządzenie",
+    "lastSeen": "Ostatnio używane: {when}",
+    "notSeen": "Nieużywane od aktualizacji XENO STORE",
+    "unpair": "Usuń parowanie",
+    "unpairTitle": "Usunąć parowanie urządzenia {name}?",
+    "unpairText": "{name} będzie potrzebować nowego kodu z PS5, aby znów sterować XENO STORE.",
+    "unpairSelfText": "Ta przeglądarka będzie potrzebować nowego kodu z PS5, aby znów sterować XENO STORE.",
+    "unpaired": "Usunięto parowanie: {name}",
+    "unpairOthers": "Usuń parowanie wszystkich innych urządzeń",
+    "unpairOthersHint": "Każdy telefon i komputer oprócz tego trzeba będzie sparować ponownie",
+    "unpairOthersText": "Wszystkie inne telefony i komputery będą potrzebować nowego kodu z PS5, aby znów sterować XENO STORE. Aplikacja XENO STORE i przeglądarka konsoli działają dalej.",
+    "unpairOthersGo": "Usuń wszystkie",
+    "unpairedN": "{n, plural, one{Usunięto parowanie # urządzenia} few{Usunięto parowanie # urządzeń} many{Usunięto parowanie # urządzeń} other{Usunięto parowanie # urządzenia}}",
+    "slots": "Sparowanych może pozostać do {max} telefonów i komputerów. Sparowanie kolejnego zastępuje urządzenie nieużywane najdłużej."
   }
 }

@@ -117,5 +117,27 @@
       "too_large": "İndirilen dosya beklenenden büyük — hiçbir şey yüklenmedi.",
       "download_failed": "İndirme başarısız oldu. Konsolun internet bağlantısını denetle ve tekrar dene."
     }
+  },
+  "pairdev": {
+    "title": "Eşlenen cihazlar",
+    "loading": "Eşlenen cihazlar yükleniyor…",
+    "loadFailed": "Eşlenen cihazlar yüklenemedi.",
+    "none": "Henüz eşlenen telefon veya PC yok.",
+    "unknown": "Bilinmeyen cihaz",
+    "ps5Browser": "PS5 tarayıcısı",
+    "thisDevice": "Bu cihaz",
+    "lastSeen": "Son kullanım: {when}",
+    "notSeen": "XENO STORE güncellendiğinden beri kullanılmadı",
+    "unpair": "Eşlemeyi kaldır",
+    "unpairTitle": "{name} eşlemesi kaldırılsın mı?",
+    "unpairText": "{name}, XENO STORE'u yeniden yönetmek için PS5'ten yeni bir kod almak zorunda kalacak.",
+    "unpairSelfText": "Bu tarayıcı, XENO STORE'u yeniden yönetmek için PS5'ten yeni bir kod almak zorunda kalacak.",
+    "unpaired": "{name} eşlemesi kaldırıldı",
+    "unpairOthers": "Diğer tüm cihazların eşlemesini kaldır",
+    "unpairOthersHint": "Bu cihaz dışındaki tüm telefon ve PC'lerin yeniden eşlenmesi gerekir",
+    "unpairOthersText": "Diğer tüm telefon ve PC'ler, XENO STORE'u yeniden yönetmek için PS5'ten yeni bir kod almak zorunda kalacak. XENO STORE uygulaması ve konsolun tarayıcısı çalışmaya devam eder.",
+    "unpairOthersGo": "Tümünü kaldır",
+    "unpairedN": "{n, plural, one{# cihazın eşlemesi kaldırıldı} other{# cihazın eşlemesi kaldırıldı}}",
+    "slots": "En fazla {max} telefon ve PC eşli kalır. Bir tane daha eşlemek, en uzun süredir kullanılmayan cihazın yerini alır."
   }
 }

@@ -117,5 +117,27 @@
       "too_large": "下载内容比预期大——未安装任何内容。",
       "download_failed": "下载失败。请检查主机的网络连接后重试。"
     }
+  },
+  "pairdev": {
+    "title": "已配对的设备",
+    "loading": "正在加载已配对的设备…",
+    "loadFailed": "无法加载已配对的设备。",
+    "none": "还没有配对任何手机或电脑。",
+    "unknown": "未知设备",
+    "ps5Browser": "PS5 浏览器",
+    "thisDevice": "此设备",
+    "lastSeen": "上次使用：{when}",
+    "notSeen": "自 XENO STORE 更新以来未使用",
+    "unpair": "取消配对",
+    "unpairTitle": "取消配对 {name}？",
+    "unpairText": "{name} 需要 PS5 上的新代码才能再次控制 XENO STORE。",
+    "unpairSelfText": "此浏览器需要 PS5 上的新代码才能再次控制 XENO STORE。",
+    "unpaired": "已取消配对 {name}",
+    "unpairOthers": "取消配对其他所有设备",
+    "unpairOthersHint": "除此设备外的所有手机和电脑都需要重新配对",
+    "unpairOthersText": "其他所有手机和电脑都需要 PS5 上的新代码才能再次控制 XENO STORE。XENO STORE 应用和主机自带的浏览器不受影响。",
+    "unpairOthersGo": "全部取消配对",
+    "unpairedN": "{n, plural, other{已取消配对 # 台设备}}",
+    "slots": "最多可保持 {max} 台手机和电脑配对。再配对一台会替换最久未使用的设备。"
   }
 }

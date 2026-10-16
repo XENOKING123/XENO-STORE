@@ -213,6 +213,7 @@ func (a *app) ps5(c config, method, path string, body any, out any) (int, error)
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
+	req.Header.Set("User-Agent", "XENO-STORE-Desktop/"+version) // the name Settings → Pair a device shows
 	if c.Token != "" {
 		req.Header.Set("Authorization", "Bearer "+c.Token)
 	}

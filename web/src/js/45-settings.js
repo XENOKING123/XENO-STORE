@@ -1,6 +1,6 @@
 /* XENO STORE — 45-settings.js: grouped settings. General (+ open on start, accessibility, safe mode, screensaver,
    controller remap, shortcuts), Downloads (+ prefer format, turbo, install sets, rest mode, ZIP extraction, schedule), Debrid (§17.14),
-   Sources, Catalog, Saves (§17.17), Accounts (§17.18), Setup (§17.6), Pair a device (+ mDNS §17.19), Updates (+ the Games-row app),
+   Sources, Catalog, Saves (§17.17), Accounts (§17.18), Setup (§17.6), Pair a device (+ mDNS §17.19, paired devices), Updates (+ the Games-row app),
    Notifications, Diagnostics, About, Uninstall XENO STORE (§17.16). */
 (function () {
   'use strict';
@@ -516,7 +516,57 @@
     list.appendChild(ui.valueRow({ id: 'pair-local', icon: 'globe', label: t('settings2.localName'), desc: state + (md && md.names && md.names.length ? ' · ' + md.names.join(', ') : ''), valueEl: h('span.mono', { text: localUrl }), hints: 'select', onClick: function () { U.copyText(localUrl).then(function (ok) { ui.toast({ cls: ok ? 'good' : 'bad', title: ok ? t('toast.copied') : t('toast.copyFailed') }); }); } }));
     sec.appendChild(list);
     if (mdOn && !md && Date.now() - mdns.at > 15000) { mdns.at = Date.now(); cb.api.mdns().then(function (r) { mdns.data = r && r.mdns && typeof r.mdns === 'object' ? r.mdns : r; rerenderGroup('pair'); }, function () { /* no mdns endpoint on this build */ }); }
+    /* Paired devices: the phones and PCs linked with the code (the console's own session is never listed) */
+    sec.appendChild(h('h3', { text: t('pairdev.title'), style: { margin: '22px 0 8px', fontSize: '15px' } }));
+    var devBox = h('div');
+    sec.appendChild(devBox);
+    devBox.appendChild(cb.busy(t('pairdev.loading')));
+    api.pairDevices().then(function (r) { paintDevices(devBox, r); }, function (err) { U.clear(devBox); devBox.appendChild(cb.note(t('pairdev.loadFailed') + ' ' + ui.errorText(err), 'warn')); });
   };
+  /* The console names devices in English; its two generic names are translated here. */
+  function deviceName(d) { return !d.name ? t('pairdev.unknown') : d.name === 'PS5 browser' ? t('pairdev.ps5Browser') : d.name; }
+  function deviceIcon(d) { return /^(iPhone|iPad|Android)/.test(d.name || '') ? 'phone' : d.name === 'PS5 browser' ? 'gamepad' : 'globe'; }
+  function paintDevices(box, r) {
+    U.clear(box);
+    var devs = r.devices || [];
+    var list = h('div.list');
+    if (!devs.length) list.appendChild(h('p.dim', { text: t('pairdev.none') }));
+    devs.forEach(function (d) {
+      var row = h('div.lrow.pd-row', { nav: 'pd-' + d.id, data: { hints: 'select' } });
+      row.appendChild(h('span.ic', { html: U.icon(deviceIcon(d)) }));
+      var main = h('div.main', [h('div.name', [deviceName(d), d.current ? h('span.chip.sm.gold', { text: t('pairdev.thisDevice'), style: { marginInlineStart: '8px' } }) : null])]);
+      main.appendChild(h('div.desc', { text: d.lastSeen ? t('pairdev.lastSeen', { when: cb.fmtAgo(d.lastSeen) }) : t('pairdev.notSeen') }));
+      row.appendChild(main);
+      var un = h('button.btn.sm.ghost', { nav: 'pd-' + d.id + '-unpair', text: t('pairdev.unpair') });
+      un.addEventListener('click', function (e) { e.stopPropagation(); unpairDevice(d); });
+      row.appendChild(un);
+      row.addEventListener('click', function (e) { if (e.target.closest('button')) return; unpairDevice(d); });
+      list.appendChild(row);
+    });
+    if (devs.some(function (d) { return !d.current; })) list.appendChild(ui.valueRow({ id: 'pd-others', icon: 'trash', label: t('pairdev.unpairOthers'), desc: t('pairdev.unpairOthersHint'), noChevron: true, danger: true, onClick: unpairOthers }));
+    box.appendChild(list);
+    box.appendChild(cb.note(t('pairdev.slots', { max: r.max || 16 }), '', 'info'));
+  }
+  function unpairDevice(d) {
+    var name = deviceName(d);
+    ui.confirm(t('pairdev.unpairTitle', { name: name }), d.current ? t('pairdev.unpairSelfText') : t('pairdev.unpairText', { name: name }), t('pairdev.unpair'), true).then(function (ok) {
+      if (!ok) return;
+      api.pairUnpair(d.id).then(function () {
+        ui.toast({ cls: 'good', title: t('pairdev.unpaired', { name: name }) });
+        if (d.current) { S.data.token = ''; U.store.set('token', ''); location.reload(); return; }   /* this browser has to link again */
+        rerenderGroup('pair');
+      }, function (err) { ui.errorToast(err, t('pairdev.unpair')); });
+    });
+  }
+  function unpairOthers() {
+    ui.confirm(t('pairdev.unpairOthers'), t('pairdev.unpairOthersText'), t('pairdev.unpairOthersGo'), true).then(function (ok) {
+      if (!ok) return;
+      api.pairUnpairOthers().then(function (r) {
+        ui.toast({ cls: 'good', title: t('pairdev.unpairedN', { n: r.unpaired || 0 }) });
+        rerenderGroup('pair');
+      }, function (err) { ui.errorToast(err, t('pairdev.unpairOthers')); });
+    });
+  }
   function paintPair(box, url, local) {
     U.clear(box);
     box.appendChild(ui.qr(url));

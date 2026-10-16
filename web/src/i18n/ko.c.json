@@ -117,5 +117,27 @@
       "too_large": "다운로드가 예상보다 커서 아무것도 설치하지 않았습니다.",
       "download_failed": "다운로드에 실패했습니다. 본체의 인터넷 연결을 확인하고 다시 시도하세요."
     }
+  },
+  "pairdev": {
+    "title": "페어링된 기기",
+    "loading": "페어링된 기기를 불러오는 중…",
+    "loadFailed": "페어링된 기기를 불러올 수 없습니다.",
+    "none": "아직 페어링된 휴대폰이나 PC가 없습니다.",
+    "unknown": "알 수 없는 기기",
+    "ps5Browser": "PS5 브라우저",
+    "thisDevice": "이 기기",
+    "lastSeen": "마지막 사용: {when}",
+    "notSeen": "XENO STORE 업데이트 이후 사용되지 않음",
+    "unpair": "페어링 해제",
+    "unpairTitle": "{name}의 페어링을 해제할까요?",
+    "unpairText": "{name}에서 XENO STORE를 다시 제어하려면 PS5의 새 코드가 필요합니다.",
+    "unpairSelfText": "이 브라우저에서 XENO STORE를 다시 제어하려면 PS5의 새 코드가 필요합니다.",
+    "unpaired": "{name} 페어링 해제됨",
+    "unpairOthers": "다른 모든 기기 페어링 해제",
+    "unpairOthersHint": "이 기기를 제외한 모든 휴대폰과 PC를 다시 페어링해야 합니다",
+    "unpairOthersText": "다른 모든 휴대폰과 PC에서 XENO STORE를 다시 제어하려면 PS5의 새 코드가 필요합니다. XENO STORE 앱과 콘솔 브라우저는 계속 작동합니다.",
+    "unpairOthersGo": "모두 해제",
+    "unpairedN": "{n, plural, other{기기 #대의 페어링 해제됨}}",
+    "slots": "휴대폰과 PC는 최대 {max}대까지 페어링된 상태로 유지됩니다. 하나를 더 페어링하면 가장 오래 사용하지 않은 기기를 대체합니다."
   }
 }

@@ -231,6 +231,7 @@ static void parse_header_line(http_req *r, char *line, int64_t *content_length) 
   else if (util_strieq(line, "Origin")) { xstrlcpy(r->origin, v, sizeof r->origin); r->origin_count++; }
   else if (util_strieq(line, "Sec-Fetch-Site")) { xstrlcpy(r->sec_fetch_site, v, sizeof r->sec_fetch_site); util_lower(r->sec_fetch_site); r->site_count++; }
   else if (util_strieq(line, "Authorization")) xstrlcpy(r->authorization, v, sizeof r->authorization);
+  else if (util_strieq(line, "User-Agent")) xstrlcpy(r->user_agent, v, sizeof r->user_agent);
 }
 
 /* Returns 0 ok, otherwise an HTTP status to answer with. */
