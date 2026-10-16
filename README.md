@@ -74,8 +74,8 @@
 |:--:|:--|:--|
 | 📺 | **Native TV app** | The Games-row tile opens a **real PS5 app**: GPU-drawn at 1080p, driven with the controller, in the gold-on-dark XENO look. Discover, Browse with filters and search, game pages with every release, Downloads, Library with copy/move between drives, Settings and app updates. It **starts the store by itself** through your ELF loader and never opens a browser over it. [More below](#-the-tv-app). |
 | 🛒 | **One big catalog** | **1,965 PS5 + PS4 games / 2,592 releases** merged from a verified catalog feed, Archive.org, dlpsgame, SuperPSX, pkg.games and more, with cover art, screenshots, Metacritic, genres and a **2-hour auto sync** (no app update needed). |
-| ⚡ | **Fast downloads** | Segmented transfer with **work-stealing chunks**, per-host adaptive windows, resume with sidecars, mirror failover, **Turbo start** (races mirrors and keeps the fastest), bandwidth limit, schedule window, lifetime stats. |
-| 📦 | **PKG auto-install** | Packages install the moment they finish (native AppInstUtil, with DPI / etaHEN DPI fallback). **Install sets**: game → backport → update → DLC, installed in order, one tap. |
+| ⚡ | **Fast downloads** | Segmented transfer with **work-stealing chunks**, per-host adaptive windows, resume with sidecars, mirror failover, **Turbo start** (races mirrors and keeps the fastest), bandwidth limit, schedule window, lifetime stats. Downloads carry on by themselves after an update, a restart, a crash or a power cut. |
+| 📦 | **PKG auto-install** | Packages install the moment they finish (native AppInstUtil, with DPI / etaHEN DPI fallback); each download decides for itself, the setting is the default. **Install sets**: game → backport → update → DLC, installed in order, one tap. Optionally deletes the PKG once the console confirms the install. |
 | 🧩 | **Images just work** | exFAT / FFPFSC / FFPKG dumps land in `homebrew/` and XENO STORE pokes **ShadowMountPlus** to scan them. ZIP archives are **extracted on the console**. |
 | 🔁 | **Backports** | Releases built for lower firmware are tagged with their target firmware; the store offers the right backport for *your* console and lists them in Updates center. |
 | 🚀 | **Debrid support** | Connect **Real-Debrid, AllDebrid, TorBox or Premiumize** with your own key and the store unrestricts supported hosts into direct, range-capable links. Keys never leave the console except to the chosen service. |
@@ -154,7 +154,7 @@ You need a jailbroken PS5 with an ELF loader on **port 9021** (etaHEN, the ps5-p
          The XENO STORE app appears under Games by itself
 ```
 
-<sub>Rather do it by hand? Copy <code>PPSA99500.ffpkg</code> to <code>/data/homebrew/</code> (FTP, USB or XENO TOOL) and ShadowMountPlus mounts it. The app needs kstuff + ShadowMountPlus, like every <code>.ffpkg</code> app. Don't want the browser to open when the store starts? Settings → General → <i>Open XENO STORE when it starts</i>.</sub>
+<sub>Rather do it by hand? Copy <code>PPSA99500.ffpkg</code> to <code>/data/homebrew/</code> (FTP, USB or XENO TOOL) and ShadowMountPlus mounts it. The app needs kstuff + ShadowMountPlus, like every <code>.ffpkg</code> app. Once it is installed, a store started from your ELF loader or Payload Manager opens the XENO STORE app instead of the browser (the browser only when the app is missing or doesn't start). Don't want anything to open when the store starts? Settings → General → <i>Open XENO STORE when it starts</i>.</sub>
 
 ### 2 · After that — the XENO STORE tile
 
@@ -229,13 +229,16 @@ console's GPU at 1920×1080, driven with the controller, and uses the store's go
 **How it installs.** Settings → Updates → *XENO STORE app* → *Install the app* (web UI) downloads `PPSA99500.ffpkg` from the
 latest release, checks its SHA-256 and puts it in `/data/homebrew/`, where ShadowMountPlus mounts it and adds the
 tile. From then on the app keeps itself current: **App settings → Updates → TV app** in the app installs a new version, which opens
-the next time you start it. Copying `PPSA99500.ffpkg` to `/data/homebrew/` by hand works too.
+the next time you start it. The web UI's card says **Update available** when a newer app is published and offers **Update the app**.
+Copying `PPSA99500.ffpkg` to `/data/homebrew/` by hand works too.
 
 **How it starts.** The image carries the store as `xeno/xeno-store.elf`. When you open the app and nothing answers on
 `127.0.0.1:9095`, it sends the store to your ELF loader on port **9021**: the update you downloaded
 (`/data/xeno-store/xeno-store.elf`) when it is newer, otherwise the copy inside the app. The store notices the app
 and **does not open the browser** over it. If a downloaded update fails to come up, the next try uses the copy inside
-the app. **Restart download service** pauses your downloads, restarts the store the same way and lets you resume them.
+the app. **Restart download service** pauses your downloads and restarts the store the same way; they then continue on
+their own (unless *Resume after a restart* is off in the web UI's Settings → Downloads). The other way round, a store
+started from your ELF loader or Payload Manager opens the app when it is installed.
 
 **One store everywhere.** The app talks to the same store as your phone and PC (through its own `/api/v1` dialect,
 see `docs/API.md` §13), so the queue, favourites, drives and settings are shared. Languages: English, German,
@@ -322,10 +325,12 @@ and "Add to home screen" via the PWA manifest.
 ```text
 1.  🔢   The console shows a 6-digit code as a PS5 toast (Pair a device → "Show code" re-shows it, 30 s cooldown)
 2.  📲   On the phone, open the store, enter the code
-3.  🔑   The phone gets a bearer token (up to 16 remembered), and from then on it acts without re-entering
+3.  🔑   The phone gets a bearer token, and from then on it acts without re-entering
 ```
 
-The literal code is only ever returned to the console's own browser (loopback); a phone must read it off the TV, so a device that cannot see the screen cannot pair. An optional 4-digit **PIN** in Settings → Pairing adds a second gate for every mutating request. The console browser itself is trusted automatically via `/api/session`.
+The literal code is only ever returned to the console's own browser (loopback); a phone must read it off the TV, so a device that cannot see the screen cannot pair. An optional 4-digit **PIN** in Settings → Pairing adds a second gate for every mutating request. The console browser and the TV app are trusted automatically via the console's own session (`/api/session`), which is never listed or unpaired.
+
+**Paired devices.** Settings → Pair a device lists every paired phone and PC (its name, when it was last seen, *This device*) with **Unpair** and **Unpair all other devices**. Up to 16 stay paired; pairing one more replaces the device unused the longest and tells you which. An unpaired device is cut off at once and its Link page says why; XENO STORE Desktop opens its own link page.
 
 ---
 

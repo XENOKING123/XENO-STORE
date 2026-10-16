@@ -13,7 +13,14 @@ sizes are bytes. Bodies are JSON (`Content-Type: application/json`), limit 1 MiB
 (`Access-Control-Allow-Origin: *`); `OPTIONS` answers preflights.
 
 **Pairing PIN.** When `settings.pairing.pin` is set, every mutating request must carry
-`X-XENO-PIN: 1234`; otherwise `401 {"error":"pin_required","pinRequired":true}`.
+`X-XENO-PIN: 1234` (or a paired device's `Authorization: Bearer <token>`, §7); otherwise
+`401 {"error":"pin_required","pinRequired":true}`. The `/api/pair*` routes skip this gate.
+
+**Unpaired devices.** A request from the LAN that carries a Bearer token the console no longer knows (unpaired in
+Settings → Pair a device, or replaced when all 16 slots were taken) gets `403 not_paired` "This device is no longer
+paired with the console. Pair it again with the code the PS5 shows." on every route, GET included. This does not
+apply to `/api/pair*`, to the console itself (loopback), to requests without a token or to `/api/v1` (§13.2); those
+still meet the PIN gate when a PIN is set.
 
 Routes with `{id}` style parameters are matched by segment; `id` values are the ones returned by the API.
 
@@ -64,6 +71,7 @@ Routes with `{id}` style parameters are matched by segment; `id` values are the 
 Reads `settings.updates.feed` (`updates/payloads.json`), falling back to the GitHub release API + `SHA256SUMS`.
 
 ### `POST /api/update/apply` → `{"ok":true,"path":"/data/xeno-store/xeno-store.elf","restartRequired":true}` (downloads to `.elf.new`, verifies the sha256, renames). Failure: `502 update_failed` with the reason (no update, hash mismatch, network).
+### `POST /api/update/restart` → `{"ok":true,"restarting":true,"path":"/data/xeno-store/xeno-store.elf","loaderPort":9021}` — Settings → Updates → *Restart now*: after the reply the store stops (downloads checkpointed) and sends the staged ELF to the ELF loader, writing `<data>/handoff.pending` with the reason `restart` when the console's own browser (loopback) asked and `remote` for any other device. The new copy opens the console's browser again only after `restart`; otherwise it opens the XENO STORE app when it is installed (SPEC §3.2). Errors: `409 nothing_staged`, `503 loader_unavailable`.
 
 ---
 
@@ -126,15 +134,23 @@ once a refresh succeeds.
  "connections":8,"segmented":true,"activeSegments":8,"window":8,"segments":[[0,16777216,16777216],[16777216,33554432,8000000]],
  "sha256":"","sha256Expected":"","verified":false,"verify":"size",
  "addedAt":1760000000,"startedAt":1760000010,"finishedAt":0,"attempts":1,"nextRetryAt":0,"priority":0,
- "autoInstall":true,"install":{"state":"idle","message":"","contentId":""},
+ "autoInstall":true,"install":{"state":"idle","message":"","contentId":"","pkgDeleted":false},
  "resumable":true,"etag":"\"abc\"","lastModified":"","synthetic":false,
  "group":"g_9f8e7d","groupOrder":1,"via":"","viaService":"","viaRequested":"auto",
  "turbo":{"done":true,"picked":"https://…","tested":[{"url":"https://…","ms":120,"mbps":48.2,"status":206,"bytes":1048576}]},
  "scheduledFor":"","startNow":false,"srcPath":"","move":false,
  "extract":{"state":"idle","message":"","dir":"","files":0,"archiveDeleted":false},
- "restResumes":0,"restResuming":false,"speedHistory":[…60 samples when ?history=1…]}
+ "restResumes":0,"restart":"","restResuming":false,"speedHistory":[…60 samples when ?history=1…]}
 ```
 States: `queued → connecting → downloading → verifying → done`, side states `paused`, `failed`, `cancelled`, `installing`, `installed`, plus `extracting` / `copying` for the matching job types. `type` is `download`, `copy` (drive transfer), `backup` (saves) or `save-install` / `save-download`. Error codes: `no_space`, `exists`, `bad_release`, `root_unavailable`, `downloads_unavailable`, `source_changed`, `provider_page`, `hash_mismatch`, `drive_missing`, `network`.
+
+`autoInstall` is fixed when the job is added (the request's `autoInstall`, else `settings.downloads.autoInstallPkg` at
+that moment) and alone decides whether a finished PKG / FPKG installs: the setting never installs a package whose
+download said no, and turning it on later does not install packages already queued. `install.pkgDeleted` is true once
+`downloads.deletePkgAfterInstall` removed the installed package (message "Installed · package removed", SPEC §8).
+`restart` is `resumed` or `held` while the message is the note a start left on the job ("Resuming after XENO STORE
+restarted" / "Not resumed: XENO STORE restarted after a problem", SPEC §7.5), else `""`; the web UI shows it in its
+language. `stopPaused` exists only in `queue.json` (FORMATS §5).
 
 ### `GET /api/queue?history=1`
 ```json
@@ -150,7 +166,7 @@ States: `queued → connecting → downloading → verifying → done`, side sta
 {"gameId":"cyberpunk-2077-ps5","releaseId":"ppsa04029-ffpfsc","root":"/data","connections":8,"verify":"auto","autoInstall":true,"overwrite":false,"via":"auto"}
 ```
 or a raw link: `{"url":"https://…/file.pkg","filename":"file.pkg","format":"PKG","title":"…","gameId":"…","root":"/data"}`.
-Checks: release exists, drive writable, free ≥ total + 256 MiB, not already queued, final file absent (or `overwrite`). `via` is `auto`, `direct` or a debrid service id. → `{"ok":true,"job":{…}}`.
+Checks: release exists, drive writable, free ≥ total + 256 MiB, not already queued, final file absent (or `overwrite`). `via` is `auto`, `direct` or a debrid service id. Without `autoInstall` the job takes the setting (see the job object; the TV app's `/api/v1/downloads` always does). → `{"ok":true,"job":{…}}`.
 
 ### `POST /api/queue/set` (`src/ext_downloads.c`, §17.13 install sets)
 ```json
@@ -191,7 +207,7 @@ Orders the items by `settings.downloads.installOrder`, checks space for the whol
 `{"path":"/data/homebrew/X.ffpfsc","toRoot":"/mnt/usb0","move":true,"overwrite":false}` → `{"ok":true,"job":{"type":"copy","srcPath":"…","move":true,…}}`. Errors: `same_drive`, `no_space`, `root_unavailable`, `forbidden` (path not from the last library scan).
 
 ### `POST /api/downloads/rest-mode/simulate` — **host build only**: fires the wake-up handler for tests → `{"ok":true,"simulated":true}`.
-### `POST /api/debug/queue/pause-all` (`src/api.c`) — **host build only**: runs the TV app stop's pause step on its own (every queued and active job paused with "Paused for the XENO STORE restart", queue saved, nothing new starts afterwards) → `{"ok":true,"paused":2,"workersRunning":1,"stateHealthy":true}`; `503 save_failed` when `queue.json` cannot be written (the jobs are left as they were).
+### `POST /api/debug/queue/pause-all` (`src/api.c`) — **host build only**: runs the TV app stop's pause step on its own (every queued and active job paused with "Paused for the XENO STORE restart" and marked `stopPaused`, queue saved, nothing new starts afterwards) → `{"ok":true,"paused":2,"workersRunning":1,"stateHealthy":true}`; `503 save_failed` when `queue.json` cannot be written (the jobs are left as they were).
 
 ---
 
@@ -236,7 +252,7 @@ Orders the items by `settings.downloads.installOrder`, checks space for the whol
 
 ### `GET /api/settings` → `{"ok":true,"settings":{…SPEC §9 object + Phase 2 fields…}}`
 Phase 2 keys: `general.{largeText,highContrast,safeMode,screensaver,screensaverMinutes,controllerSwapConfirm,mdns}`,
-`downloads.{preferFormat,turboStart,autoInstallSets,installOrder,scheduleStart,scheduleEnd,restModeAutoResume,extractZip,deleteArchiveAfterExtract}`,
+`downloads.{preferFormat,turboStart,autoInstallSets,installOrder,scheduleStart,scheduleEnd,restModeAutoResume,extractZip,deleteArchiveAfterExtract,deletePkgAfterInstall,resumeAfterRestart}`,
 `debrid.{realdebrid:{apiKey},alldebrid:{apiKey},torbox:{apiKey},premiumize:{apiKey},preferred}` (keys are returned masked),
 `catalog.{featuredUrl,messagesUrl,companionsUrl,savesBackendUrl}`,
 `saves.{backupRoot,autoBackup,indexUrls[],backend:{kind,url,anonKey,bucket,garlicFunction},uploadHost,uploadEndpoint,submitEndpoint,nickname}`,
@@ -249,16 +265,21 @@ A changed `saves.backend.url` must be `https://host[:port]` (a loopback `http://
 ### `GET /api/collections` → `{"ok":true,"collections":[{"id":"wishlist","name":"Wishlist","icon":"star","ids":[]}]}` · `PUT /api/collections {"collections":[…]}`.
 ### `GET /api/recent` → `{"ok":true,"ids":[…]}` · `POST /api/recent {"id":"…"}` (keeps 30).
 ### `GET /api/export` → one JSON with settings, favorites, collections, recent · `POST /api/import {…}` → `{"ok":true,"imported":true}`.
-### `GET /api/pair` → `{"ok":true,"url":"http://192.168.1.20:9095/","ip":"192.168.1.20","port":9095,"pinRequired":false,"code":"418203","cooldown":0}`
-The UI renders the QR and shows the `xeno.local` address from `/api/mdns`. `code` is the live 6-digit pairing code **only when the caller is the console's own browser (loopback)** — a LAN device gets `"code":""` and must read it off the PS5 toast. `cooldown` is the seconds left before `/api/pair/show` may be called again. `pinRequired` reflects `settings.pairing.pin`.
+### `GET /api/pair` → `{"ok":true,"url":"http://192.168.1.20:9095/","ip":"192.168.1.20","port":9095,"pinRequired":false,"code":"418203","cooldown":0,"local":true,"linked":true}`
+The UI renders the QR and shows the `xeno.local` address from `/api/mdns`. `code` is the live 6-digit pairing code **only when the caller is the console's own browser (loopback)** — a LAN device gets `"code":""` and must read it off the PS5 toast. `cooldown` is the seconds left before `/api/pair/show` may be called again. `pinRequired` reflects `settings.pairing.pin`. `local` is true for the console itself; `linked` is true when the request carries a token the console knows (the Link page and XENO STORE Desktop use it to tell a forgotten token).
 ### `POST /api/pair/show` → `{"ok":true,"shown":true,"retryAfter":30}` — re-shows the current code as a console toast. Within the 30 s cooldown it answers `429 {"error":"cooldown","retryAfter":<s>}`; `-1` from the notifier answers `500`.
-### `POST /api/pair {"code":"418203"}` → `{"ok":true,"token":"<64-hex>","paired":true}` — redeems the code for a bearer token (constant-time compare; up to 16 tokens kept, persisted to `<data>/pairing.json`). Send the token as `Authorization: Bearer <token>` on later mutating requests. Errors: `429 locked_out` (too many wrong tries, `retryAfter` set), `403 bad_code`, `409 slots_full`, `503 save_failed`.
-### `GET /api/session` (loopback only) → `{"ok":true,"address":"192.168.1.20","port":9095,"token":"<64-hex>","pairUrl":"http://192.168.1.20:9095/","code":"418203"}` — the console browser's own trusted token (created on first call). `403 forbidden` for any non-loopback caller.
+### `POST /api/pair {"code":"418203"}` → `{"ok":true,"token":"<64-hex>","paired":true}` — redeems the code for a bearer token for a new device (constant-time compare), persisted to `<data>/pairing.json` (FORMATS §4). Send the token as `Authorization: Bearer <token>` on later requests. The device is named from the request's `User-Agent`: "iPhone Safari", "Windows Chrome", "Android Firefox", "Mac Edge", "XENO STORE Desktop" (`XENO-STORE-Desktop/<version>`, or Go's default User-Agent from older Desktop releases), "PS5 browser", …; `""` when nothing in it is known (shown as "Unknown device"). iPadOS 13+ Safari sends a Mac User-Agent and is listed as "Mac Safari". Up to 16 devices stay paired: with all 16 slots taken, the device unused the longest (the oldest last seen, then the oldest pairing, then the first listed) is unpaired to make room, the reply adds `"replaced":"<its name>"` (`""` when it had none) and the log says "pairing: all 16 slots were in use, replaced <name> (unused the longest)". Errors: `429 locked_out` (too many wrong tries, `retryAfter` set), `403 bad_code`, `503 save_failed`.
+### `GET /api/pair/devices` → `{"ok":true,"devices":[{"id":"3f9a1c0b7e2d4a65","name":"iPhone Safari","firstSeen":1760300000,"lastSeen":1760313600,"current":false}],"max":16}`
+The paired phones and PCs, in pairing order. `id` is the first 16 hex digits of SHA-256(token) (tokens never leave the console); times are Unix seconds, `0` = unknown; `current` marks the caller's own token. A request from the LAN with a device's token moves its `lastSeen` (written at most once a minute) and names a device that has no name yet; requests from the console itself never touch a device. A device carried over from an older `pairing.json` has no name and times `0` (the web UI shows "Not used since XENO STORE was updated") until it is used, and is the first to make room. The console's own session (`GET /api/session`) is not a device: it is never listed, unpaired or replaced.
+### `POST /api/pair/unpair {"id":"3f9a1c0b7e2d4a65"}` → `{"ok":true,"unpaired":true,"devices":[…],"max":16}`. Errors: `400 bad_request` (no `id`), `404 not_found`, `503 save_failed`.
+### `POST /api/pair/unpair-others` → `{"ok":true,"unpaired":3,"devices":[…],"max":16}` — unpairs every device except the caller's; from the console itself (no device token) every listed device. `503 save_failed`.
+`/api/pair/devices`, `/api/pair/unpair` and `/api/pair/unpair-others` answer `403 not_paired` "Pair this device first." unless the caller is the console itself (loopback) or carries a valid Bearer token: the `/api/pair*` routes skip the PIN gate, so they check the caller themselves, and a PIN alone is not enough. An unpaired device's next request is refused with `403 not_paired` (see the top of this file).
+### `GET /api/session` (loopback only) → `{"ok":true,"address":"192.168.1.20","port":9095,"token":"<64-hex>","pairUrl":"http://192.168.1.20:9095/","code":"418203"}` — the console's own session token (created on first call, kept as `local` in `pairing.json`), shared by the console browser and the TV app (`GET /api/v1/session`, §13.4). It is kept apart from the 16 device slots: never listed, unpaired or replaced, and *Unpair all other devices* keeps it. `403 forbidden` for any non-loopback caller; `503 save_failed` when it cannot be saved.
 ### `GET /api/mdns` → `{"ok":true,"mdns":{"enabled":true,"running":true,"names":["xeno.local","xenostore.local"],"ip":"…","port":9095,"url":"http://xeno.local:9095","error":""}}`. `POST /api/mdns/build` exists in the host build only (packet builder test hook).
 
 ---
 
-## 8. Setup, uninstall, ghost icons, companions (`src/ext_console.c`, §17.6 / §17.16)
+## 8. Setup, uninstall, the XENO STORE app, ghost icons, companions (`src/ext_console.c`, §17.6 / §17.16)
 
 ### `GET|POST /api/setup/check`
 ```json
@@ -278,11 +299,28 @@ The UI renders the QR and shows the `xeno.local` address from `/api/mdns`. `code
 `action` is `launch` or `install` with `actionId` = a companion id. The `garlic` check (optional) offers an action only while
 nothing listens on Garlic Save Manager's port; the web UI runs it through `POST /api/saves/garlic/start`.
 
-### `POST /api/uninstall {"data":true,"homebrew":true,"payloadManager":true,"downloads":false}`
+### `POST /api/uninstall {"data":true,"homebrew":true,"downloads":false}`
 → `{"ok":true,"removed":["/data/homebrew/PPSA99500.ffpkg","/user/app/PPSA99500","/user/app/XENO00002","/data/xeno-store"],"kept":[],"failed":[],"removedCount":4,"failedCount":0,"stopping":true}` then the server exits. At least one flag must be true.
 `homebrew` first cancels a running app install (waits up to 10 s), then deletes, when present, `/data/homebrew/XENO-STORE/`, `/data/homebrew/PPSA99500/`
 (only with an `eboot.bin`), `/data/homebrew/PPSA99500.ffpkg.part` and `/data/homebrew/PPSA99500.ffpkg`, then unregisters the PPSA99500 and XENO00002 tiles
 that exist under `/user/app` (reported as `/user/app/<id>`; a refused unregister goes in `failed`). Without `homebrew`, the items that exist are listed in `kept`.
+`payloadManager:true` is still accepted: it deletes the ELF recorded in `<data>/payload-manager.json`, which this store never writes
+(Payload Manager downloads and keeps its own copy, removed in Payload Manager), so the web UI no longer offers it.
+
+### `GET /api/app/status` (`src/app_install.c`)
+```json
+{"ok":true,"installed":true,"path":"/data/homebrew/PPSA99500.ffpkg","size":17825792,"version":"01.003.001","job":"","lastJob":"cx_…",
+ "titleId":"PPSA99500","file":true,"registered":true,"copy":"orbit","latestVersion":"1.4.0","updateAvailable":true,"checking":false}
+```
+Settings → Updates → *XENO STORE app*. `installed`: the image is in `/data/homebrew` (`file`) or the title is registered
+(`/user/app/PPSA99500`, `registered`); `version` is the installed app's `param.json` `contentVersion` (`01.003.001` compares as
+1.3.1); `job` is the running install job, `lastJob` the last one. `copy` is `none`, `orbit` (installed by the store), `manual`,
+`folder` or `blocked`, as `/api/v1/tv-app` names it (§13.9). `latestVersion` is the release `updates/tv-app.json` names
+(FORMATS §8; `""` before the first read). `updateAvailable` is true when the app is installed, is not a folder copy or
+blocked, has a known version and that version is older than `latestVersion`. `checking` is true while the feed is read: on
+a thread of its own, cached in `<data>/feeds/tv-app.json`, at most every 6 h while `updates.autoCheck` is on and the store is
+not in safe mode, and at once with `?check=1` (Settings → Updates → *Check for updates* sends it). The reply never waits for it.
+### `POST /api/app/install` → `{"ok":true,"job":{"id":"cx_…","type":"app-install",…}}` — downloads the latest release's `PPSA99500.ffpkg`, checks it against the release's `SHA256SUMS`, swaps it into `/data/homebrew/` and asks ShadowMountPlus to rescan; progress through `GET /api/saves/jobs/{id}`. The card's *Install the app*, *Reinstall / update* and *Update the app* all send it. `409 in_progress` while an app install (from here or the TV app) runs.
 
 ### `GET /api/homebrew-dirs` → `{"ok":true,"dirs":[{"name":"XENO-STORE","path":"/data/homebrew/XENO-STORE","title":"XENO STORE","size":5478000,"hasEboot":true,"hasIcon":true,"isXenoStore":true,"mtime":…}],"root":"/data/homebrew","note":"…"}`.
 ### `POST /api/homebrew-dirs/delete {"name":"OldApp","confirm":"OldApp"}` → `{"ok":true,"deleted":"OldApp"}` (name must be repeated; `confirm_required` 428 otherwise).
@@ -440,7 +478,7 @@ Every `/api/v1` route runs the same checks, in this order, before its handler:
 | Step | When | Reply |
 |:--|:--|:--|
 | Stopping (`S`) | the store is stopping (signal, web UI stop/restart, or the TV app's stop drain, §13.9) | `503` "XENO STORE is stopping. It will be back in a moment." |
-| Bearer (`B`) | no `Authorization: Bearer <64 hex>` with a paired token | `401` "Pair this device with your PS5 to continue." |
+| Bearer (`B`) | no `Authorization: Bearer <64 hex>` with a paired token (from the console itself: the console's own session, §13.4) | `401` "Pair this device with your PS5 to continue." |
 | Body (`O`, POST only) | `Content-Type` present but not `application/json` | `415` "Use application/json." |
 | | the body is not a JSON object (empty, `[]`, `"x"`, `1`, `null`) | `400` "Expected a JSON object." |
 
@@ -490,25 +528,32 @@ snapshot) and the queue's health under `"queue":{"stateHealthy","workersRunning"
 ### 13.4 Session and system
 
 - `GET /api/v1/session` answers loopback callers only (the TV app on the console):
-  `{"token":"<64 hex>","pairCode":"418203","address":"192.168.1.20"}`. The token is the same `tokens[0]` the
-  console browser gets from `GET /api/session` (persisted in `<data>/pairing.json`); `address` is `""` when the
-  console has no LAN address (never `127.0.0.1`). Other callers get `403` "Pair this device using the code shown
-  on your PS5."; a failed save of the pairing state gives `503` "Could not save pairing.".
+  `{"token":"<64 hex>","pairCode":"418203","address":"192.168.1.20"}`. The token is the console's own session, the
+  same the console browser gets from `GET /api/session` (`local` in `<data>/pairing.json`, FORMATS §4): it is kept
+  apart from the 16 device slots, so Settings → Pair a device never lists, unpairs or replaces it, and *Unpair all
+  other devices* keeps it. `address` is `""` when the console has no LAN address (never `127.0.0.1`). Other callers
+  get `403` "Pair this device using the code shown on your PS5."; a failed save of the pairing state gives `503`
+  "Could not save pairing.".
 - A web page in the PS5 browser cannot read the token: its request carries a foreign `Origin`, which the request
   gate refuses (403) before any route runs, and DNS rebinding is refused by the Host check. Any native process on
-  the console can obtain it, the same trust boundary as `/api/session`. Forgetting paired devices in the web UI
-  revokes the token; the app then gets `401`, drops it and asks `/session` again.
+  the console can obtain it, the same trust boundary as `/api/session`.
+- From the console itself (loopback) only that session counts as paired: a device's token gets `paired:false` from
+  `/system` and `401` on the token-gated routes. A 1.3.x TV app still holds the first token of the older
+  `pairing.json`, which is listed as a device now; it then asks `/session` again and moves to the console's session.
+  From the LAN any paired token works as before. Requests from the console never move a device's last seen.
 - `GET /api/v1/system` is answered from memory in well under 1 ms (no network, drive or catalogue walk; the app
   polls it every 0.5–3 s):
   `{"name":"XENO STORE","version":"1.2.1","instanceId":"<32 hex, new every start>","stopping":false,"platform":"ps5",
   "paired":true,"localSessionAvailable":true,"stateHealthy":true,"catalogueRevision":10485760123,
   "preferredStorage":"usb0","deleteArchives":true,"concurrentDownloads":1,"httpPort":9095,"safeMode":false}`.
-  `paired` is true when the request carried a valid Bearer, `localSessionAvailable` when the caller is loopback,
+  `paired` is true when the request carried a valid Bearer (from the console itself, its own session),
+  `localSessionAvailable` when the caller is loopback,
   `stateHealthy` false after `queue.json` could not be written (the app shows a banner). `platform` is `"ps5"`
   or `"host"`. `catalogueRevision` is `(catalog revision << 20) | (hash of the featured hero ids & 0xFFFFF)`, so a
   feed change also makes the app reload the catalogue. `preferredStorage` is `""` while "Choose automatically" is on.
 - The first `/api/v1` request also tells the store that the TV app is in front: when it arrives within 2 s of
-  start-up, the store does not open the PS5 browser or show its "ready" notification (the TV app is the screen).
+  start-up, the store opens neither the XENO STORE app nor the PS5 browser and shows neither its "ready" nor its
+  pairing notification (the TV app is the screen).
 
 ### 13.5 Catalogue, sources and favourites
 
@@ -684,8 +729,8 @@ drive.
 - **Stop** — `POST /updates {"action":"stop","confirmed":true}` (Settings → Restart download service, and the
   hand-over after an update):
   1. under the queue lock, every queued, retry-waiting and active job is paused ("Paused for the XENO STORE
-     restart") and `queue.json` is saved synchronously; a failed save puts the jobs back and answers `503` "Could not
-     save the queue. XENO STORE has not been stopped.";
+     restart"), marked `stopPaused`, and `queue.json` is saved synchronously; a failed save puts the jobs back and
+     answers `503` "Could not save the queue. XENO STORE has not been stopped.";
   2. the reply is `202` with the status above (`phase:"stopping"`, `instanceId`, `runningVersion`, `savedVersion`);
      from now on `/system` says `stopping:true` and the gate answers `503` "XENO STORE is stopping. It will be back
      in a moment." (a second stop gets the same `503`);
@@ -693,7 +738,8 @@ drive.
      byte counts and stops the process; the port closes;
   4. the store **never relaunches itself** after a TV stop: the TV app sees the port close and sends the next copy
      to the ELF loader itself (the saved update when there is one, else its bundled copy; SPEC §19). It then waits
-     for a new `instanceId` (and the promised `savedVersion`, when one was promised).
+     for a new `instanceId` (and the promised `savedVersion`, when one was promised). The new copy queues the
+     stop-paused jobs again by itself while `downloads.resumeAfterRestart` is on (SPEC §7.5).
   `400` "Confirm stopping XENO STORE and pausing downloads first." without `confirmed:true`; `409` "A game is still
   installing from XENO STORE. Wait for it to finish, then restart." while a finished download is still being
   installed (stopping then would cut the install short; nothing is paused).
@@ -728,6 +774,7 @@ drive.
 |:--|:--|
 | `bad_request` | missing/invalid field; message says which |
 | `pin_required` | pairing PIN set and header missing/wrong |
+| `not_paired` | the request's Bearer token is no longer paired (unpaired or replaced), or a pairing route was called by a stranger |
 | `not_found` / `bad_release` / `no_release` / `not_installed` | unknown id / release / title |
 | `exists` | file already queued or present (use `overwrite`) |
 | `no_space` / `root_unavailable` / `same_drive` | destination problems |
