@@ -62,7 +62,8 @@ void tvsys_h_system(api_ctx *c) {
 }
 
 /* GET /api/v1/session: the console's own TV app gets the same token the
- * console browser gets from /api/session (tokens[0] of <data>/pairing.json).
+ * console browser gets from /api/session (the console's own session, "local"
+ * in <data>/pairing.json: never listed or unpaired under Pair a device).
  * A web page in the PS5 browser cannot read it (foreign Origin, no CORS for
  * it), and other LAN callers must pair with the code. */
 void tvsys_h_session(api_ctx *c) {

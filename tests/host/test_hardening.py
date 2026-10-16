@@ -411,24 +411,66 @@ class PairedDevicesTests(unittest.TestCase):
         self.assertTrue(b["devices"][-1]["current"])
         self.assertIn("replaced", self.srv.log_text())
 
-    def test_05_an_older_pairing_file_is_kept(self):
-        # pairing.json before names and times: tokens[0] is what /api/session and
-        # /api/v1/session handed out, so it stays the console's own session
+    def write_v1(self, tokens):
         self.srv.stop()
-        a, b = "a1" * 32, "b2" * 32
         with open(os.path.join(self.srv.data_dir, "pairing.json"), "w") as f:
-            json.dump({"v": 1, "tokens": [a, b]}, f)
+            json.dump({"v": 1, "tokens": tokens}, f)
         self.srv = self.start(self.srv.port)
-        self.assertEqual(self.session(), a)
-        self.assertTrue(self.linked(a))
+
+    def test_05_an_older_pairing_file_is_kept(self):
+        # pairing.json before names and times: tokens[0] is a phone's whenever it
+        # paired before the console asked for its session, so every token is
+        # listed and the console's session starts afresh
+        a, b = "a1" * 32, "b2" * 32
+        self.write_v1([a, b])
         devs = self.devices()
-        self.assertEqual([(d["name"], d["firstSeen"], d["lastSeen"]) for d in devs], [("", 0, 0)])
+        self.assertEqual([(d["name"], d["firstSeen"], d["lastSeen"]) for d in devs], [("", 0, 0), ("", 0, 0)])
+        self.assertEqual([d["id"] for d in devs], [hashlib.sha256(t.encode()).hexdigest()[:16] for t in (a, b)])
+        local = self.session()
+        self.assertNotIn(local, (a, b))
+        self.assertEqual(self.srv.api("GET", "/api/v1/session")[1]["token"], local)
         # its first request names it and starts its times
         self.srv.api("GET", "/api/status", headers={**bearer(b), "User-Agent": IPHONE_UA})
-        d = self.devices()[0]
+        self.assertTrue(self.linked(a))
+        self.assertTrue(self.linked(b))
+        d = self.devices()[1]
         self.assertEqual(d["name"], "iPhone Safari")
         self.assertGreater(d["firstSeen"], 0)
         self.assertGreaterEqual(d["lastSeen"], d["firstSeen"])
+        # tokens[0] can be unpaired like any other device
+        st, r = self.srv.api("POST", "/api/pair/unpair", {"id": devs[0]["id"]})
+        self.assertEqual(st, 200, r)
+        self.assertFalse(self.linked(a))
+        self.assertTrue(self.linked(b))
+        self.assertTrue(self.linked(local))
+        self.restart()
+        self.assertEqual([d["name"] for d in self.devices()], ["iPhone Safari"])
+        self.assertEqual(self.session(), local)
+
+    def test_06_a_phone_first_in_an_older_pairing_file_can_be_unpaired(self):
+        # 1.3.x: the phone paired before anything asked for the console's session,
+        # so its token was tokens[0], and the TV app was later handed that same one
+        phone = self.pair(IPHONE_UA)
+        pc = self.pair(WINDOWS_CHROME_UA)
+        self.write_v1([phone, pc])
+        listed = self.devices(phone)
+        self.assertEqual([d["current"] for d in listed], [True, False])
+        self.assertEqual([d["name"] for d in self.devices()], ["", ""])
+        self.srv.api("GET", "/api/status", headers={**bearer(phone), "User-Agent": "XenoStoreTV"})   # the TV app names nothing
+        self.srv.api("GET", "/api/status", headers={**bearer(phone), "User-Agent": IPHONE_UA})
+        self.assertEqual(self.devices()[0]["name"], "iPhone Safari")
+        # the console's "Unpair all other devices" reaches it
+        st, b = self.srv.api("POST", "/api/pair/unpair-others", {})
+        self.assertEqual((st, b["unpaired"], b["devices"]), (200, 2, []), b)
+        self.assertFalse(self.linked(phone))
+        self.assertFalse(self.linked(pc))
+        # and the TV app, once told it is no longer paired, gets a session of its own
+        st, b = self.srv.api("GET", "/api/v1/system", headers=bearer(phone))
+        self.assertIs(b["paired"], False)
+        local = self.srv.api("GET", "/api/v1/session")[1]["token"]
+        self.assertNotIn(local, (phone, pc))
+        self.assertTrue(self.linked(local))
+        self.assertEqual(self.devices(), [])
 
 
 PAIRED_DEVICES_SCRIPT = r"""

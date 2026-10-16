@@ -150,14 +150,14 @@ static void load_locked(void) {
         add_locked(s, jv_get_str(e, "name", ""), (time_t)jv_i64(jv_get(e, "first"), 0), (time_t)jv_i64(jv_get(e, "last"), 0));
     }
   } else {
-    /* A file from before names and times were kept: /api/session and
-     * /api/v1/session handed out its first token, so that one stays the
-     * console's own session. */
+    /* A file from before names and times were kept. Its first token is what
+     * /api/session and /api/v1/session handed out, but that was a phone's
+     * whenever one paired before the console first asked: every token is
+     * listed (and can be unpaired) then, and the console's session is made
+     * afresh (the TV app asks for it again once its token stops working). */
     JV_FOREACH(t, jv_get(root, "tokens")) {
       const char *s = jv_str(t, "");
-      if (!is_hex64(s)) continue;
-      if (!pair_local[0]) xstrlcpy(pair_local, s, sizeof pair_local);
-      else if (pair_ntokens < PAIR_MAX_TOKENS) add_locked(s, "", 0, 0);
+      if (is_hex64(s) && pair_ntokens < PAIR_MAX_TOKENS) add_locked(s, "", 0, 0);
     }
   }
   json_free(d);

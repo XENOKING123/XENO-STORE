@@ -226,7 +226,7 @@ class TvGateTests(unittest.TestCase, EnvelopeMixin):
             self.assertRegex(b["address"], r"^\d+\.\d+\.\d+\.\d+$")
         st, web = self.srv.api("GET", "/api/session")
         self.assertEqual(st, 200)
-        self.assertEqual(b["token"], web["token"], "the TV app and the console browser share tokens[0]")
+        self.assertEqual(b["token"], web["token"], "the TV app and the console browser share the console's session")
         self.assertEqual(b["pairCode"], web["code"])
         st, again = self.srv.api("GET", "/api/v1/session", headers=bearer("f" * 64))
         self.assertEqual(again["token"], b["token"], "an old Bearer is ignored")
