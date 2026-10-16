@@ -37,8 +37,21 @@
 void app_install_pkg_path(char *out, size_t cap);
 
 /* Writes installed, path, size, version, job (running job id or ""),
- * lastJob, titleId, file, registered into the open object. */
+ * lastJob, titleId, file, registered into the open object, and for the web
+ * UI's card latestVersion (tv-app.json's release, "" before a read),
+ * updateAvailable (installed, its version known and older than latestVersion)
+ * and checking (a read of tv-app.json runs). */
 void app_install_status_json(jw *w);
+
+/* updates/tv-app.json next to the store's payloads.json feed (settings
+ * updates.feed, so a test or a fork that moves the feed moves both), else the
+ * project's own. Read by the TV app's release check and the web UI's card. */
+void app_install_feed_url(char *out, size_t cap);
+
+/* Reads tv-app.json on a thread of its own (cached in <data>/feeds/tv-app.json)
+ * for app_install_status_json(): when `force`, or when the last read is more
+ * than 6 h old. Returns at once; nothing runs while a read is under way. */
+void app_install_check_latest(int force);
 
 /* Starts the install job. Returns 0 and the job id, or -1 with code
  * (in_progress | downloads_unavailable | forbidden | io | oom | busy) and err. */

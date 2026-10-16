@@ -90,6 +90,8 @@
     "installing": "インストール中…",
     "install": "アプリをインストール",
     "reinstall": "再インストール / 更新",
+    "update": "アプリをアップデート",
+    "updateAvailable": "アップデートあり: {v}",
     "cancel": "キャンセル",
     "cancelled": "インストールをキャンセルしました",
     "version": "バージョン {v}",

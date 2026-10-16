@@ -90,6 +90,8 @@
     "installing": "Yükleniyor…",
     "install": "Uygulamayı yükle",
     "reinstall": "Yeniden yükle / güncelle",
+    "update": "Uygulamayı güncelle",
+    "updateAvailable": "Güncelleme mevcut: {v}",
     "cancel": "İptal",
     "cancelled": "Yükleme iptal edildi",
     "version": "Sürüm {v}",

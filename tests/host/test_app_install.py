@@ -13,7 +13,9 @@ install while one runs (409), cancel (no .part), uninstall during an install
 (the job is cancelled first) and the free-space check.
 Also: ShadowMountPlus without its HTTP API (before 1.7) — the install and the
 setup check rely on its process, and "launch" is offered only when it surely
-is not running.
+is not running. And "Update available" on the Settings → Updates card: the
+release named by updates/tv-app.json (served next to the updates feed) against
+the installed app's version.
 """
 import hashlib
 import http.server
@@ -37,7 +39,10 @@ OLD = b"old package bytes" * 100
 
 class Release(http.server.BaseHTTPRequestHandler):
     """/<mode>/(PPSA99500.ffpkg|SHA256SUMS) → 302 → /assets/<mode>/... (like
-    releases/latest/download). Modes: ok, badhash, nosha, html, slow."""
+    releases/latest/download). Modes: ok, badhash, nosha, html, slow.
+    /updates/tv-app.json answers `feed` and counts the reads in `feed_hits`."""
+    feed = b""
+    feed_hits = 0
 
     def log_message(self, *a):
         pass
@@ -52,6 +57,10 @@ class Release(http.server.BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
+        if self.path.split("?", 1)[0] == "/updates/tv-app.json":
+            Release.feed_hits += 1
+            self._send(200, "application/json", Release.feed)
+            return
         parts = self.path.split("?", 1)[0].strip("/").split("/")
         if len(parts) == 2:
             mode, name = parts
@@ -113,8 +122,11 @@ class AppInstallTests(unittest.TestCase):
 
     # -- helpers ------------------------------------------------------------
 
-    def start(self, mode, env=None):
+    def start(self, mode, env=None, settings=None):
         data = tempfile.mkdtemp(prefix=f"{mode}-", dir=self.tmp)
+        if settings:
+            with open(os.path.join(data, "settings.json"), "w") as f:
+                json.dump(settings, f)
         e = {"XENO_APP_BASE": f"{self.base}/{mode}"}
         e.update(env or {})
         self.srv = harness.XenoServer(data, env=e).start()
@@ -164,6 +176,7 @@ class AppInstallTests(unittest.TestCase):
         self.assertEqual(s["version"], "")
         self.assertEqual(s["titleId"], "PPSA99500")
         self.assertTrue(s["path"].endswith("/sim/data/homebrew/" + APP), s["path"])
+        self.assertIs(s["updateAvailable"], False)
 
     def test_install_downloads_verifies_and_swaps_in(self):
         self.start("ok")
@@ -203,6 +216,66 @@ class AppInstallTests(unittest.TestCase):
         self.assertTrue(s["registered"])
         self.assertFalse(s["file"])
         self.assertEqual(s["version"], "01.020.000")
+
+    # -- "Update available" on the card: updates/tv-app.json ----------------
+
+    def publish(self, version, filename=APP):
+        Release.feed = json.dumps({"version": version, "filename": filename, "size": len(PKG), "sha256": PKG_SHA,
+                                   "url": f"https://github.com/XENOKING123/XENO-STORE/releases/download/v{version}/{APP}"}).encode()
+
+    def installed_app(self, content_version):
+        param = os.path.join(self.srv.data_dir, "user", "app", "PPSA99500", "sce_sys", "param.json")
+        os.makedirs(os.path.dirname(param), exist_ok=True)
+        with open(param, "w") as f:
+            json.dump({"titleId": "PPSA99500", "contentVersion": content_version}, f)
+
+    def settled(self, path="/api/app/status"):
+        deadline = time.time() + 15
+        while True:
+            st, b = self.srv.api("GET", path)
+            self.assertEqual(st, 200, b)
+            if not b["checking"] or time.time() > deadline:
+                return b
+            path = "/api/app/status"
+            time.sleep(0.1)
+
+    def test_update_available_from_the_tv_app_feed(self):
+        self.publish("1.4.0")
+        self.start("ok", settings={"updates": {"feed": f"{self.base}/updates/payloads.json", "autoCheck": True}})
+        self.installed_app("01.003.001")
+        s = self.settled()
+        self.assertEqual((s["version"], s["latestVersion"]), ("01.003.001", "1.4.0"), s)
+        self.assertIs(s["updateAvailable"], True)
+        # the same version installed: nothing to update (the feed is not read again within 6 h)
+        hits = Release.feed_hits
+        self.installed_app("01.004.000")
+        s = self.settled()
+        self.assertEqual(s["latestVersion"], "1.4.0")
+        self.assertIs(s["updateAvailable"], False)
+        self.assertEqual(Release.feed_hits, hits)
+        # Check for updates (?check=1) reads it again at once
+        self.publish("1.4.1")
+        s = self.settled("/api/app/status?check=1")
+        self.assertEqual(s["latestVersion"], "1.4.1", s)
+        self.assertIs(s["updateAvailable"], True)
+        # a feed for another file is not this app's release: the last one stays
+        self.publish("1.5.0", filename="other.ffpkg")
+        s = self.settled("/api/app/status?check=1")
+        self.assertEqual(s["latestVersion"], "1.4.1", s)
+
+    def test_tv_app_feed_waits_for_check_while_automatic_checks_are_off(self):
+        self.publish("1.4.0")
+        self.start("ok", settings={"updates": {"feed": f"{self.base}/updates/payloads.json", "autoCheck": False}})
+        self.installed_app("01.003.001")
+        hits = Release.feed_hits
+        s = self.settled()
+        time.sleep(0.5)
+        self.assertEqual(Release.feed_hits, hits, "no automatic read while automatic update checks are off")
+        self.assertEqual((s["latestVersion"], s["updateAvailable"]), ("", False))
+        s = self.settled("/api/app/status?check=1")
+        self.assertEqual(s["latestVersion"], "1.4.0", s)
+        self.assertIs(s["updateAvailable"], True)
+        self.assertEqual(Release.feed_hits, hits + 1)
 
     def test_wrong_hash_fails_and_leaves_no_file(self):
         self.start("badhash")

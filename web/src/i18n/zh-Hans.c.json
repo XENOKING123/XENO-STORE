@@ -90,6 +90,8 @@
     "installing": "正在安装…",
     "install": "安装应用",
     "reinstall": "重新安装 / 更新",
+    "update": "更新应用",
+    "updateAvailable": "有可用更新：{v}",
     "cancel": "取消",
     "cancelled": "已取消安装",
     "version": "版本 {v}",

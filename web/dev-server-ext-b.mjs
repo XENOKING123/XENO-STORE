@@ -58,15 +58,20 @@ export function register({ route, state }) {
   }, 250);
   route('GET', /^\/api\/saves\/jobs$/, () => ({ ok: true, jobs: cxJobs.map(pubCx) }));
   route('GET', /^\/api\/saves\/jobs\/([^/]+)$/, (q, body, m) => { const j = cxJobs.find((x) => x.id === m[1]); if (!j) throw new ApiError(404, 'not_found', 'No such job'); return { ok: true, job: pubCx(j) }; });
-  /* The Games-row app (PPSA99500): GET /api/app/status, POST /api/app/install (a cx job). */
-  const gameApp = { installed: false, size: 0, version: '', job: '' };
-  route('GET', /^\/api\/app\/status$/, () => ({ ok: true, titleId: 'PPSA99500', file: 'PPSA99500.ffpkg', path: '/data/homebrew/PPSA99500.ffpkg',
+  /* The Games-row app (PPSA99500): GET /api/app/status (latestVersion = updates/tv-app.json's release; ?check=1 reads it
+   * again), POST /api/app/install (a cx job). POST /api/__mock/app {installed, version, latest} sets the state (verify scripts). */
+  const gameApp = { installed: false, size: 0, version: '', job: '', latest: '' };
+  const verParts = (v) => String(v || '').replace(/^v/, '').split('.').map((x) => parseInt(x, 10));
+  const newerApp = (a, b) => { const x = verParts(a), y = verParts(b); if (x.length !== 3 || y.length !== 3 || x.concat(y).some(isNaN)) return false; for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] > y[i]; return false; };
+  route('GET', /^\/api\/app\/status$/, (q) => (q.check === '1' && log('info', 'app status: tv-app.json read again (?check=1)'), { ok: true, titleId: 'PPSA99500', file: 'PPSA99500.ffpkg', path: '/data/homebrew/PPSA99500.ffpkg',
     installed: gameApp.installed, registered: gameApp.installed, size: gameApp.size, version: gameApp.version,
-    job: gameApp.job && cxJobs.some((j) => j.id === gameApp.job && (j.state === 'running' || j.state === 'queued')) ? gameApp.job : '', lastJob: gameApp.job }));
+    job: gameApp.job && cxJobs.some((j) => j.id === gameApp.job && (j.state === 'running' || j.state === 'queued')) ? gameApp.job : '', lastJob: gameApp.job,
+    latestVersion: gameApp.latest, updateAvailable: gameApp.installed && newerApp(gameApp.latest, gameApp.version), checking: false }));
+  route('POST', /^\/api\/__mock\/app$/, (q, body) => { for (const k of ['installed', 'version', 'latest']) if (body && body[k] !== undefined) gameApp[k] = body[k]; if (gameApp.installed && !gameApp.size) gameApp.size = 17825792; return { ok: true }; });
   route('POST', /^\/api\/app\/install$/, () => {
     if (gameApp.job && cxJobs.some((j) => j.id === gameApp.job && (j.state === 'running' || j.state === 'queued'))) throw new ApiError(409, 'in_progress', 'The XENO STORE app is already being installed');
     const size = 17825792;
-    const job = cxStart('app-install', 'XENO STORE app (Games row)', size, 6 * 1024 * 1024, () => { gameApp.installed = true; gameApp.size = size; gameApp.version = '1.2.1'; },
+    const job = cxStart('app-install', 'XENO STORE app (Games row)', size, 6 * 1024 * 1024, () => { gameApp.installed = true; gameApp.size = size; gameApp.version = gameApp.latest || '1.2.1'; },
       { path: '/data/homebrew/PPSA99500.ffpkg', size, sha256: 'c0ffee'.repeat(10) + 'abcd', scan: 'ShadowMountPlus asked to rescan' });
     gameApp.job = job.id;
     return { ok: true, id: job.id, job: pubCx(job) };

@@ -17,11 +17,13 @@
 #include "app_install.h"
 #include "config.h"
 #include "cx_common.h"
+#include "cx_feeds.h"
 #include "cx_jobs.h"
 #include "cx_savestore.h"
 #include "http_client.h"
 #include "install.h"
 #include "log.h"
+#include "settings.h"
 #include "sha256.h"
 #include "storage.h"
 #include "util.h"
@@ -31,6 +33,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -43,11 +46,18 @@
 #define APP_SPACE_SLACK (16LL << 20)   /* headroom left on /data after the write */
 #define APP_BUF (512u << 10)
 #define APP_RECORD "tv-app.json"        /* <data>/tv-app.json: the install record */
+#define APP_FEED "https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/tv-app.json"
+#define APP_FEED_MAX_AGE (6 * 3600)     /* the card's automatic read of tv-app.json */
 
 static const char *const APP_HOSTS[] = {"github.com", "githubusercontent.com"};
 static pthread_mutex_t app_mu = PTHREAD_MUTEX_INITIALIZER;   /* order: app_mu, then cx_jobs' lock */
 static char app_job[16];   /* last job started (guarded by app_mu) */
 static app_install_info g_info;   /* what the last job is doing (guarded by app_mu) */
+/* tv-app.json's release for the web UI's card (guarded by app_mu) */
+static struct { char version[32]; time_t at; int checking; } g_latest;
+
+static int version_compare(const char *a, const char *b);
+static int version_parts(const char *v, unsigned parts[5]);
 
 /* A job's parameters. The web UI path fills base; the pinned path fills url,
  * sha256, size, version and replace. */
@@ -166,7 +176,7 @@ int app_install_release_url_ok(const char *url) {
 }
 
 void app_install_status_json(jw *w) {
-  char path[700], appdir[700], ver[32] = "", job[16] = "", last[16];
+  char path[700], appdir[700], ver[32] = "", job[16] = "", last[16], latest[32];
   app_install_pkg_path(path, sizeof path);
   xsnprintf(appdir, sizeof appdir, "%s/%s", storage_user_app_dir(), APP_TITLE_ID);
   int64_t size = util_file_size(path);
@@ -175,8 +185,11 @@ void app_install_status_json(jw *w) {
   pthread_mutex_lock(&app_mu);
   xstrlcpy(last, app_job, sizeof last);
   if (app_job[0] && cx_jobs_active(APP_JOB_TYPE) > 0) xstrlcpy(job, app_job, sizeof job);
+  xstrlcpy(latest, g_latest.version, sizeof latest);
+  int checking = g_latest.checking;
   pthread_mutex_unlock(&app_mu);
-  jw_kv_bool(w, "installed", size > 0 || registered);
+  int installed = size > 0 || registered;
+  jw_kv_bool(w, "installed", installed);
   jw_kv_str(w, "path", path);
   jw_kv_i64(w, "size", size > 0 ? size : 0);
   jw_kv_str(w, "version", ver);
@@ -185,6 +198,70 @@ void app_install_status_json(jw *w) {
   jw_kv_str(w, "titleId", APP_TITLE_ID);
   jw_kv_bool(w, "file", size > 0);
   jw_kv_bool(w, "registered", registered);
+  jw_kv_str(w, "latestVersion", latest);
+  /* the installed contentVersion (01.003.001) reads as 1.3.1 */
+  jw_kv_bool(w, "updateAvailable", installed && ver[0] && latest[0] && version_compare(latest, ver) == 1);
+  jw_kv_bool(w, "checking", checking);
+}
+
+void app_install_feed_url(char *out, size_t cap) {
+  xstrlcpy(out, APP_FEED, cap);
+  settings_t *s = malloc(sizeof *s);
+  if (!s) return;
+  settings_get(s);
+  static const char tail[] = "/payloads.json";
+  size_t n = strlen(s->updatesFeed), tl = sizeof tail - 1;
+  if (n > tl && strcmp(s->updatesFeed + n - tl, tail) == 0 && n - tl + sizeof "/tv-app.json" <= cap) {
+    memcpy(out, s->updatesFeed, n - tl);
+    xstrlcpy(out + (n - tl), "/tv-app.json", cap - (n - tl));
+  }
+  free(s);
+}
+
+/* The feed's version when it names this app's image and is a plain N.N.N, else "". */
+static void feed_version(const char *txt, size_t len, char *out, size_t cap) {
+  out[0] = 0;
+  jdoc *d = txt ? json_parse(txt, len, 200, 8) : NULL;
+  if (!d) return;
+  jv r = json_root(d);
+  const char *v = jv_get_str(r, "version", "");
+  if (*v == 'v') v++;
+  unsigned p[5];
+  if (jv_type(r) == JV_OBJ && strcmp(jv_get_str(r, "filename", ""), APP_FILE) == 0 && strlen(v) < cap && version_parts(v, p) && p[3] == 1)
+    xstrlcpy(out, v, cap);
+  json_free(d);
+}
+
+static void *latest_thread(void *arg) {
+  int force = (int)(intptr_t)arg;
+  char url[640], v[32];
+  app_install_feed_url(url, sizeof url);
+  size_t len = 0;
+  char *txt = cx_cached_fetch("tv-app", url, APP_FEED_MAX_AGE, force, 64 << 10, &len, NULL, NULL);
+  feed_version(txt, len, v, sizeof v);
+  free(txt);
+  pthread_mutex_lock(&app_mu);
+  if (v[0]) xstrlcpy(g_latest.version, v, sizeof g_latest.version);   /* unreadable: the last one stays */
+  g_latest.at = util_now();
+  g_latest.checking = 0;
+  pthread_mutex_unlock(&app_mu);
+  if (v[0]) LOGI("app: latest release in tv-app.json: %s", v);
+  else LOGW("app: no release read from %s", url);
+  return NULL;
+}
+
+void app_install_check_latest(int force) {
+  time_t now = util_now();
+  pthread_mutex_lock(&app_mu);
+  int start = !g_latest.checking && (force || !g_latest.at || now - g_latest.at >= APP_FEED_MAX_AGE);
+  if (start) g_latest.checking = 1;
+  pthread_mutex_unlock(&app_mu);
+  if (start && xthread_start(NULL, "app-latest", latest_thread, (void *)(intptr_t)force, 0, 1) != 0) {
+    pthread_mutex_lock(&app_mu);
+    g_latest.checking = 0;
+    pthread_mutex_unlock(&app_mu);
+    LOGW("app: cannot start the tv-app.json read");
+  }
 }
 
 /* Reads the release's SHA256SUMS ("<64 hex>  <file>" per line, sha256sum

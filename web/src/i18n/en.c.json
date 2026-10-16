@@ -90,6 +90,8 @@
     "installing": "Installing…",
     "install": "Install the app",
     "reinstall": "Reinstall / update",
+    "update": "Update the app",
+    "updateAvailable": "Update available: {v}",
     "cancel": "Cancel",
     "cancelled": "Install cancelled",
     "version": "Version {v}",

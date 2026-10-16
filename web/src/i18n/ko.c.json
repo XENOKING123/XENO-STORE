@@ -90,6 +90,8 @@
     "installing": "설치 중…",
     "install": "앱 설치",
     "reinstall": "다시 설치 / 업데이트",
+    "update": "앱 업데이트",
+    "updateAvailable": "업데이트 사용 가능: {v}",
     "cancel": "취소",
     "cancelled": "설치가 취소되었습니다",
     "version": "버전 {v}",

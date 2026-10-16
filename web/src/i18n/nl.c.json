@@ -90,6 +90,8 @@
     "installing": "Bezig met installeren…",
     "install": "App installeren",
     "reinstall": "Opnieuw installeren / bijwerken",
+    "update": "App bijwerken",
+    "updateAvailable": "Update beschikbaar: {v}",
     "cancel": "Annuleren",
     "cancelled": "Installatie geannuleerd",
     "version": "Versie {v}",

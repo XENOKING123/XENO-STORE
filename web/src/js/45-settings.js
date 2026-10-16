@@ -566,6 +566,7 @@
     var list = h('div.list');
     list.appendChild(ui.valueRow({ id: 'upd-check', icon: 'refresh', label: t('set.updCheck'), noChevron: true, onClick: function (row) {
       row.classList.add('busy');
+      if (XS.appInstall) XS.appInstall.check().catch(function () { /* the app card keeps what it showed */ });
       api.updateCheck().then(function (r) { row.classList.remove('busy'); S.data.status = S.data.status || {}; S.data.status.update = { available: r.available, latest: r.latest, current: r.current, notes: r.notes || '', url: r.url }; S.emit('status', S.data.status); ui.toast({ cls: r.available ? 'gold' : 'good', title: r.available ? t('toast.updateAvailable', { v: r.latest }) : t('toast.upToDate') }); render(); }, function (err) { row.classList.remove('busy'); ui.errorToast(err, t('set.updCheck')); });
     } }));
     if (up.available) {

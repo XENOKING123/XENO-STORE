@@ -449,6 +449,21 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await waitToast(page, '00:00 and 08:00');
     await expect(async () => (await api('/api/settings')).downloads.scheduleStart === '00:00', 'schedule window should be saved');
 
+    /* ---------- Settings → Updates: the app card names a newer app (updates/tv-app.json) and updates it ---------- */
+    await api('/api/__mock/app', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ installed: true, version: '01.003.001', latest: '1.4.0' }) });
+    await page.click('[data-nav-id="set-nav-updates"]');
+    await page.waitForSelector('#scr-settings [data-nav-id="upd-check"]');
+    await page.click('#scr-settings [data-nav-id="upd-check"]');   /* Check for updates also reads the app's release again */
+    await page.waitForFunction(() => { const c = document.querySelector('#scr-settings .app-card'); return c && /Update available: 1\.4\.0/.test(c.textContent); }, null, { timeout: 10000 }).catch(() => fail('the app card should say "Update available: 1.4.0" when tv-app.json names a newer app'));
+    await expect(async () => page.evaluate(() => { const b = document.querySelector('#scr-settings .app-card [data-nav-id="app-install"]'); return !!b && /Update the app/.test(b.textContent) && b.classList.contains('primary'); }), 'the app card button should read "Update the app" (primary) when a newer app exists');
+    await expect(async () => serverLog.some((l) => /tv-app\.json read again \(\?check=1\)/.test(l)), 'Check for updates should ask GET /api/app/status?check=1');
+    await page.evaluate(() => { const c = document.querySelector('#scr-settings .app-card'); if (c) c.scrollIntoView({ block: 'center' }); });
+    await sleep(300);
+    await shot(page, 'tv-b-settings-app-update.png');
+    await page.click('#scr-settings .app-card [data-nav-id="app-install"]');
+    await waitToast(page, 'XENO STORE app installed', 20000);
+    await page.waitForFunction(() => { const c = document.querySelector('#scr-settings .app-card'); return c && !/Update available/.test(c.textContent) && /Reinstall/.test(c.textContent); }, null, { timeout: 8000 }).catch(() => fail('after the update the app card should show the installed app (Reinstall / update), not "Update available"'));
+
     /* ---------- Uninstall sheet, keyboard: open from the nav, cancel with Escape ---------- */
     await page.evaluate(() => document.querySelector('[data-nav-id="set-nav-general"]').focus());
     await keyTo(page, 'set-nav-uninstall', 20);

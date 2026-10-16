@@ -90,6 +90,8 @@
     "installing": "جارٍ التثبيت…",
     "install": "تثبيت التطبيق",
     "reinstall": "إعادة التثبيت / التحديث",
+    "update": "تحديث التطبيق",
+    "updateAvailable": "تحديث متاح: {v}",
     "cancel": "إلغاء",
     "cancelled": "تم إلغاء التثبيت",
     "version": "الإصدار {v}",

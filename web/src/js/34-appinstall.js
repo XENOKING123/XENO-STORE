@@ -1,11 +1,12 @@
 /* XENO STORE — 34-appinstall.js: the Games-row app (PPSA99500). GET /api/app/status says whether the package is in
-   /data/homebrew (or the app is registered); POST /api/app/install starts a console job that downloads, verifies and
+   /data/homebrew (or the app is registered) and whether updates/tv-app.json names a newer release (?check=1 reads it
+   again now; "checking" while that runs); POST /api/app/install starts a console job that downloads, verifies and
    swaps in PPSA99500.ffpkg and asks ShadowMountPlus to rescan. Progress comes from /api/saves/jobs/{id}.
    XS.appInstall.card() is the Settings → Updates card, XS.appInstall.hint() the one-time Discover hint (PS5 only). */
 (function () {
   'use strict';
   var XS = window.XS, U = XS.util, S = XS.state, ui = XS.ui, cb = XS.cb, h = U.h, t = XS.t;
-  var A = { status: null, at: 0, loading: null, job: null, watch: null };
+  var A = { status: null, at: 0, loading: null, job: null, watch: null, polls: 0 };
   var subs = [];
   var HINT_KEY = 'appHint.dismissed';
   var ERRORS = ['sha256_mismatch', 'sha256_unavailable', 'no_space', 'not_package', 'too_large', 'download_failed'];
@@ -24,12 +25,16 @@
   function running() { return !!(A.job && (A.job.state === 'queued' || A.job.state === 'running')); }
   function noop() { /* offline or not answered: the views keep their last state */ }
 
-  function load(force) {
-    if (A.loading) return A.loading;
+  /* check: read tv-app.json again now (Settings → Updates → Check for updates) */
+  function load(force, check) {
+    if (A.loading) return check ? A.loading.then(function () { return load(true, true); }, function () { return load(true, true); }) : A.loading;
     if (!force && A.status && Date.now() - A.at < 15000) return Promise.resolve(A.status);
-    A.loading = cb.api.get('/api/app/status', { timeout: 10000, quiet: true }).then(function (r) {
+    A.loading = cb.api.get('/api/app/status' + (check ? '?check=1' : ''), { timeout: 10000, quiet: true }).then(function (r) {
       A.loading = null; A.status = r; A.at = Date.now();
       if (r.job && !running()) follow(r.job);   /* an install started earlier, here or on another device */
+      /* the console is reading tv-app.json: ask again shortly for its answer */
+      if (!r.checking) A.polls = 0;
+      else if (A.polls++ < 20) setTimeout(function () { load(true).catch(noop); }, 1500);
       emit();
       return r;
     }, function (err) { A.loading = null; throw err; });
@@ -128,11 +133,13 @@
     var el = h('div.panel.app-card', { data: { navRegion: '' } });
     var paint = view(el, function () {
       var st = A.status;
-      return [running(), A.job && A.job.id, st ? [st.installed, st.version, st.size, st.path].join('|') : '-'].join('#');
+      return [running(), A.job && A.job.id, st ? [st.installed, st.version, st.size, st.path, st.updateAvailable, st.latestVersion].join('|') : '-'].join('#');
     }, function () {
       var st = A.status, busy = running(), installed = !!(st && st.installed);
+      var newer = installed && !!st.updateAvailable && !!st.latestVersion;   /* tv-app.json names a newer release */
       var chip = busy ? h('span.chip.sm.gold', { text: t('gameapp.installing') })
         : !st ? h('span.chip.sm', { text: '…' })
+        : newer ? h('span.chip.sm.gold', { html: U.icon('download') + '<span>' + U.escapeHtml(t('gameapp.updateAvailable', { v: st.latestVersion })) + '</span>' })
         : installed ? h('span.chip.sm.good', { html: U.icon('check') + '<span>' + U.escapeHtml(t('gameapp.installed')) + '</span>' })
         : h('span.chip.sm', { text: t('gameapp.notInstalled') });
       var facts = [];
@@ -150,7 +157,8 @@
         if (!A.job || !A.job.id) c.setAttribute('aria-disabled', 'true');
         acts.appendChild(c);
       } else {
-        acts.appendChild(btn('button.btn.sm' + (installed ? '' : '.primary'), 'app-install', installed ? 'refresh' : 'download', installed ? t('gameapp.reinstall') : t('gameapp.install'), function () { install(); }));
+        if (newer) acts.appendChild(btn('button.btn.sm.primary', 'app-install', 'download', t('gameapp.update'), function () { install(); }));
+        else acts.appendChild(btn('button.btn.sm' + (installed ? '' : '.primary'), 'app-install', installed ? 'refresh' : 'download', installed ? t('gameapp.reinstall') : t('gameapp.install'), function () { install(); }));
       }
       if (st && st.path) acts.appendChild(h('span.mute.small.app-path', { text: st.path }));
       el.appendChild(acts);
@@ -193,5 +201,5 @@
     return host;
   }
 
-  XS.appInstall = { card: card, hint: hint, install: install, status: load };
+  XS.appInstall = { card: card, hint: hint, install: install, status: load, check: function () { return load(true, true); } };
 })();
