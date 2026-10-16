@@ -83,6 +83,17 @@ static void device_id(const char *token, char out[PAIR_ID_HEX + 1]) {
   out[PAIR_ID_HEX] = 0;
 }
 
+/* Caller holds pair_mu. The device unused the longest: the oldest last seen,
+ * then the oldest pairing, then the first listed. */
+static int oldest_locked(void) {
+  int o = 0;
+  for (int i = 1; i < pair_ntokens; i++) {
+    const pair_dev *a = &pair_devs[i], *b = &pair_devs[o];
+    if (a->last < b->last || (a->last == b->last && a->first < b->first)) o = i;
+  }
+  return o;
+}
+
 /* Caller holds pair_mu. Writes <data>/pairing.json atomically. 0 or -1. */
 static int persist_locked(void) {
   jw w;
@@ -102,12 +113,15 @@ static int persist_locked(void) {
     jw_obj_end(&w);
   }
   jw_arr_end(&w);
-  /* An older store reads only this list and hands its first entry out as the
-   * console's session. */
+  /* An older store reads only this list, keeps its first 16 and hands its
+   * first entry out as the console's session: next to the console's session
+   * the device unused the longest is left out, not the newest. */
+  int skip = pair_local[0] && pair_ntokens >= PAIR_MAX_TOKENS ? oldest_locked() : -1;
   jw_key(&w, "tokens");
   jw_arr_begin(&w);
   if (pair_local[0]) jw_str(&w, pair_local);
-  for (int i = 0; i < pair_ntokens; i++) jw_str(&w, pair_devs[i].token);
+  for (int i = 0; i < pair_ntokens; i++)
+    if (i != skip) jw_str(&w, pair_devs[i].token);
   jw_arr_end(&w);
   jw_obj_end(&w);
   size_t len = 0;
@@ -167,17 +181,6 @@ static void load_locked(void) {
 static void remove_locked(int i) {
   memmove(&pair_devs[i], &pair_devs[i + 1], (size_t)(pair_ntokens - i - 1) * sizeof pair_devs[0]);
   pair_ntokens--;
-}
-
-/* Caller holds pair_mu. The device unused the longest: the oldest last seen,
- * then the oldest pairing, then the first listed. */
-static int oldest_locked(void) {
-  int o = 0;
-  for (int i = 1; i < pair_ntokens; i++) {
-    const pair_dev *a = &pair_devs[i], *b = &pair_devs[o];
-    if (a->last < b->last || (a->last == b->last && a->first < b->first)) o = i;
-  }
-  return o;
 }
 
 static int has(const char *s, const char *needle) { return strstr(s, needle) != NULL; }

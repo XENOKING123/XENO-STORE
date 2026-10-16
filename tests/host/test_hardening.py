@@ -399,6 +399,11 @@ class PairedDevicesTests(unittest.TestCase):
         time.sleep(1.2)
         self.srv.api("GET", "/api/status", headers=bearer(toks[0]))   # the first one paired is in use
         newest = self.pair(IPHONE_UA)                                    # no "All pairing slots are in use"
+        # an older store (a downgrade) reads only the first 16 of the "tokens" list and
+        # hands out the first as the console's session: the device left out is the one
+        # unused the longest (toks[2] now), never the newest
+        with open(os.path.join(self.srv.data_dir, "pairing.json")) as f:
+            self.assertEqual(json.load(f)["tokens"], [local, toks[0]] + toks[3:] + [newest])
         self.assertTrue(self.linked(newest))
         self.assertFalse(self.linked(toks[1]), "the device unused the longest makes room")
         self.assertTrue(self.linked(toks[0]), "a device in use stays paired")
