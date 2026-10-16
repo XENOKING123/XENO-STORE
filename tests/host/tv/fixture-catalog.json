@@ -631,7 +631,7 @@
    "slug": "fx-copper-coast",
    "title": "Copper Coast",
    "platform": "PS4",
-   "_case": "releaseDate \"2026-7-1\" -> \"\"; date-only addedAt -> T00:00:00Z; popularity a string -> 0 (jv_dbl); cheats 2.7 -> 2 (jv_i64)",
+   "_case": "releaseDate \"2026-7-1\" -> \"\"; date-only addedAt -> T00:00:00Z; popularity a string and cheats 2.7 (the catalogue schema, tools/catalog/schema.py, allows only a number and an integer) read as C reads them, not coerced like the web UI: popularity 0 (jv_dbl), cheats 2 (jv_i64)",
    "artworkLayout": "wide",
    "titleIds": [
     "CUSA90012"

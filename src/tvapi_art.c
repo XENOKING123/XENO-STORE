@@ -25,7 +25,10 @@
  *    worker takes the newest queued key, fetches its candidates in order,
  *    probes each body without decoding it and keeps the first one the app
  *    can draw. Later requests answer 200 with a copy of the bytes, 502 for
- *    120 s after a failed fetch, and 404 when no candidate is usable.
+ *    120 s after a failed fetch, and 404 when no candidate is usable. Each
+ *    key is fetched and cached on its own: a screenshot with the same URL as
+ *    the game's hero (many games list their hero first among them) costs a
+ *    second fetch and a second copy.
  *
  * Ported from Orbit Store backend/art.c (GPL-3.0-or-later): the 202-then-200
  * protocol, the two workers, the 256-entry cache with least-recently-used

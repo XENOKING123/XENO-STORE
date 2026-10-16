@@ -25,8 +25,8 @@ native TV app talks to (PORT-SPEC 1.5.1, 1.5.2, 1.5.5 "Stop", 1.6.1, 1.9, 1.10):
                      changes nothing); /catalog/updates; the TV_SHOW_ZIP variant;
                      popularRank, cheats, screenshotCount and kind as the backend
                      sends them (the source filter never renumbers popularRank).
-  TvCatalogRealData  the embedded revision-10 catalogue with updates/featured.json:
-                     == tv_golden.build() (4292 options, 2593 games, 2,364,377 bytes),
+  TvCatalogRealData  the embedded catalogue with updates/featured.json: == tv_golden.build()
+                     (revision 12: 4291 options, 2594 games, about 2.6 MB),
                      strict JSON, every item meets the contract, /catalog < 500 ms
                      and the index walk (the only catalog_mu hold) < 100 ms; every
                      game a distinct popularRank, the web UI's popular order.
@@ -649,7 +649,7 @@ class TvCatalogRealData(unittest.TestCase):
         t0 = time.monotonic()
         r = self.c.get("/api/v1/catalog")
         cold = time.monotonic() - t0
-        body = tc.strict_json(r.body)                        # the app's parser rules on 2.36 MB
+        body = tc.strict_json(r.body)                        # the app's parser rules on about 2.6 MB
         r.check()                                            # transport + every item against the contract
         want = self.w.golden_catalog()
         # Counts come from the catalogue the binary embeds (revision 10 had 4292 options, 2593 games,
@@ -677,7 +677,7 @@ class TvCatalogRealData(unittest.TestCase):
     def test_2_budget_and_lock_hold(self):
         self.c.get("/api/v1/catalog").check(transport=False, profile="app")
         times = timed(lambda: self.c.get("/api/v1/catalog"), 4)
-        assert_budget(self, times, 0.5, "GET /catalog (2.36 MB)")
+        assert_budget(self, times, 0.5, "GET /catalog (about 2.6 MB)")
         walks = [int(m) for m in re.findall(r"TV catalogue index: .* \(walk (\d+) ms", self.w.log_text())]
         self.assertTrue(walks, "the index build is logged")
         self.assertLess(max(walks), 100, f"catalog_mu held {max(walks)} ms by the index walk")

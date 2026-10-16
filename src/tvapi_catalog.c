@@ -821,9 +821,11 @@ static int64_t compose_revision(int64_t revision, uint32_t hero_hash) {
 typedef struct pop_key { double popularity; int ps4; uint32_t game; } pop_key;
 
 /* popularRank order: the catalogue popularity the web UI ranks its Top PS5
- * and Trending rows and its showcase by (web/src/js/10-state.js, 40-discover.js),
- * highest first; at equal popularity PS5 before PS4 (Trending), then
- * catalogue order. */
+ * and Trending rows (web/src/js/10-state.js) and its showcase (40-discover.js)
+ * by, highest first; at equal popularity PS5 before PS4, then catalogue
+ * order: the tie rule of Trending and Top PS5. The showcase breaks ties by
+ * featured, metacritic and title instead, so tied games may come out in
+ * another order there. */
 static int pop_cmp(const void *a, const void *b) {
   const pop_key *x = a, *y = b;
   if (x->popularity != y->popularity) return x->popularity > y->popularity ? -1 : 1;

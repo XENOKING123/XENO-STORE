@@ -59,9 +59,10 @@ Ranks (newOnOrbitRank, 1..100): the featured feed's hero[] ids in feed order, sk
 Popular ranks (popularRank, 1..gameCount): every TV-visible game id once, ordered by the
   catalogue popularity the web UI ranks its Top PS5 / Trending rows and its showcase by
   (a number as jv_dbl reads it: a bool is 0/1, anything else 0), highest first; at equal
-  popularity PS5 before PS4, then catalogue order. A repeated game id takes its first
-  TV-visible entry's popularity, platform and place. Like newOnOrbitRank, computed over
-  every exposed source (the enabled filter leaves gaps, it never renumbers).
+  popularity PS5 before PS4, then catalogue order, the tie rule of Trending and Top PS5
+  (the web showcase breaks ties by featured, metacritic, title instead). A repeated game id
+  takes its first TV-visible entry's popularity, platform and place. Like newOnOrbitRank,
+  computed over every exposed source (the enabled filter leaves gaps, it never renumbers).
 
 Fields, in this exact key order (CATALOG_KEYS; [..] = only when present):
   id            release id

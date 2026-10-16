@@ -27,8 +27,8 @@ and check:
   TvContractProbeUpdates       POST /updates and /tv-app with the host updates
                                switch on (XENO_TVAPI_UPDATES=1): the 202 replies
                                the app parses without checking.
-  TvContractProbeRealCatalogue the binary's embedded revision-10 catalogue
-                               (2.36 MB) through the app's strict parser, inside
+  TvContractProbeRealCatalogue the binary's embedded catalogue
+                               (about 2.6 MB) through the app's strict parser, inside
                                the client's 16 MiB limit, equal to tv_golden.
 
 Skipped unless XENO_TV_PROBE points at the built probe (CI's tv-app job sets
