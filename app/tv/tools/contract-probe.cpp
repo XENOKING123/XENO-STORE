@@ -31,8 +31,8 @@
 //   --release ID      the option whose download walks pause, resume, retry,
 //                     cancel, archive-password, refresh-link and forget
 //                     (default: the first option with a direct download)
-//   --complete ID     an option followed to "complete", then delete and remove
-//                     (default: none; those two calls are skipped)
+//   --complete ID     an option followed to "complete", then install, delete and
+//                     remove (default: none; those three calls are skipped)
 //   --browser ID      a browser-only option for start_browser (default: the first one)
 //   --game ID         the game for art and favourites (default: --release's game)
 //   --storage ID      the drive for downloads and the preferred drive (default: the first)
@@ -416,6 +416,7 @@ class Probe
                 .str("format", target->format)
                 .str("status", target->status)
                 .str("error", target->error)
+                .str("installState", target->install_state)
                 .str("delivery", target->delivery)
                 .num("total", target->total)
                 .num("received", target->received)
@@ -786,7 +787,8 @@ int Probe::run()
             .num("catalogueRevision", static_cast<double>(s.catalogue_revision))
             .str("preferredStorage", s.preferred_storage)
             .num("concurrentDownloads", s.concurrent_downloads)
-            .boolean("deleteArchives", s.delete_archives);
+            .boolean("deleteArchives", s.delete_archives)
+            .boolean("autoInstallPkg", s.auto_install_pkg);
         emit("system", result, Obj(), values);
     }
 
@@ -1051,7 +1053,7 @@ int Probe::run()
     }
 
     // Downloads: the list, one download walked through every action, and (with
-    // --complete) a finished one for delete and remove.
+    // --complete) a finished one for install (not a PKG), delete and remove.
     if (wanted("downloads"))
     {
         const auto result = client_.downloads();
@@ -1093,6 +1095,7 @@ int Probe::run()
         if (!done.empty())
         {
             wait_for(done, {"complete", "error", "cancelled"});
+            action(done, "install");
             action(done, "delete");
             action(done, "remove");
         }

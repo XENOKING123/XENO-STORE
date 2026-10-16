@@ -59,7 +59,7 @@ CLOSED = "http://127.0.0.1:9"
 
 # The probe's choices in the fixture world.
 SLOW_RELEASE = "fx-long-haul-ffpfsc"      # 64 MiB at 1 MiB/s: walks pause, resume, retry, cancel ...
-DONE_RELEASE = "fx-tidewater-ffpfsc"      # 8 MiB at full speed: complete, then delete and remove
+DONE_RELEASE = "fx-tidewater-ffpfsc"      # 8 MiB at full speed: complete, then install, delete and remove
 BROWSER_RELEASE = "fx-neon-courier-vf"    # browser-only (Vikingfile)
 GAME = "fx-tidewater-ps5"                 # art and favourites
 SLOW_SAVE = "xk-probe-slow"               # 64 MiB at 1 MiB/s: installed, followed, cancelled
@@ -73,6 +73,7 @@ S_CANNOT_RESUME = "This job cannot be resumed in its current state."
 S_PASSWORD_STATE = "Pause extraction or wait for it to finish before entering a password."
 S_NO_LINK = "This download has no link to refresh."
 S_ONLY_CANCELLED = "Only cancelled downloads can be deleted."
+S_INSTALL_PKG_ONLY = "Only a finished PKG download can be installed."
 S_BROWSER = ("Vikingfile asks for a human check, so XENO STORE cannot fetch it by itself. "
              "Download it with TorBox, or open this game in the browser version.")
 S_BROWSER_GONE = "This verification session is no longer active."
@@ -110,6 +111,7 @@ EXPECTED = (
     ("job_action:refresh-link", 409, S_NO_LINK),
     ("job_action:forget", 200, None),
     ("create_download:complete", 201, None),
+    ("job_action:install", 409, S_INSTALL_PKG_ONLY),
     ("job_action:delete", 409, S_ONLY_CANCELLED),
     ("job_action:remove", 200, None),
     ("library", 200, None),
@@ -387,7 +389,8 @@ class TvContractProbe(ProbeAsserts, unittest.TestCase):
         self.assertEqual((v["tokenLength"], v["pairCodeLength"]), (64, 6), "GET /api/v1/session: token, pairCode")
         s, want = got["system"]["values"], self.wire["system"]
         for key in ("name", "version", "instanceId", "platform", "stopping", "stateHealthy", "catalogueRevision",
-                    "localSessionAvailable", "preferredStorage", "concurrentDownloads", "deleteArchives"):
+                    "localSessionAvailable", "preferredStorage", "concurrentDownloads", "deleteArchives",
+                    "autoInstallPkg"):
             self.assertEqual(s[key], want[key], f"GET /api/v1/system field {key}: the app read {s[key]!r}, "
                                                 f"the backend sent {want[key]!r}")
         self.assertIs(s["paired"], True, "GET /api/v1/system field paired: with the session's Bearer")
@@ -458,7 +461,7 @@ class TvContractProbe(ProbeAsserts, unittest.TestCase):
         want = {"id": job, "releaseId": SLOW_RELEASE, "gameId": opt["gameId"], "titleId": opt["titleId"],
                 "storageId": got["set_preferred_storage"]["values"]["preferredStorage"], "filename": opt["filename"],
                 "format": opt["format"], "status": "paused", "error": "", "delivery": "direct",
-                "total": opt["sizeBytes"]}
+                "total": opt["sizeBytes"], "installState": "idle"}
         for key, value in want.items():
             self.assertEqual(row[key], value, f"POST /api/v1/downloads/{job}/pause job field {key}: "
                                               f"expected {value!r}, the app read {row[key]!r}")

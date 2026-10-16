@@ -33,6 +33,9 @@ struct System
     std::string preferred_storage;
     int concurrent_downloads = 1;
     bool delete_archives = true; // Remove a ZIP/7z/RAR download once its files are in place.
+    // XENO STORE: a finished PKG installs by itself (false from a store that
+    // does not say).
+    bool auto_install_pkg = false;
 };
 
 struct SourceOption
@@ -154,6 +157,9 @@ struct Job
     std::string verification;
     std::string delivery;
     std::string delivery_phase;
+    // XENO STORE: a complete row's install, as the store reports it: idle,
+    // pending, installing, installed or failed (empty from an older store).
+    std::string install_state;
     double received = 0.0;
     double total = 0.0;
     double speed = 0.0;
@@ -553,6 +559,23 @@ enum class JobView : std::uint8_t
 };
 JobView job_view(const Job &job);
 const char *job_view_label(JobView view);
+
+// XENO STORE: where a finished PKG's install stands on the Downloads screen
+// (an install set waiting for its other files shows as none). A failed
+// install shows under Failed.
+enum class JobInstall : std::uint8_t
+{
+    none,
+    installing,
+    installed,
+    failed,
+};
+JobInstall job_install(const Job &job);
+// The store's reason for a failed install: its row text after "Install failed: ".
+std::string install_failure(const Job &job);
+// The store installs this option by itself once it is downloaded: a PKG,
+// while the store's automatic PKG install is on.
+bool installs_by_itself(const Release &release, const System &system);
 
 // ---- the Save Data Store's rules (as the browser version's 47-saves.js) ----
 

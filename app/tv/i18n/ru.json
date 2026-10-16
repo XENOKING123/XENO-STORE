@@ -725,5 +725,7 @@
   "Removed from favourites": "Удалено из избранного",
   "Only a finished PKG download can be installed.": "Установить можно только завершённую загрузку PKG.",
   "This download is already installing.": "Эта загрузка уже устанавливается.",
-  "The PKG file is no longer on the drive. Remove this download and download it again.": "Файла PKG больше нет на накопителе. Удалите эту загрузку и скачайте его снова."
+  "The PKG file is no longer on the drive. Remove this download and download it again.": "Файла PKG больше нет на накопителе. Удалите эту загрузку и скачайте его снова.",
+  "Installing": "Установка",
+  "Retry install": "Повторить установку"
 }

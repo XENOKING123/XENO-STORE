@@ -415,7 +415,9 @@ GamePage::Layout GamePage::compose(hui::gfx::DrawList *list, Sheet sheet, bool f
             }
             y=bottom+35;
         }
-        paragraph(tr("Saves a file to your console. Installation and launching are separate."),116,y,1690,20);
+        // XENO STORE: a PKG the store installs by itself is not a separate step.
+        if(!installs_by_itself(release,state.system))
+            paragraph(tr("Saves a file to your console. Installation and launching are separate."),116,y,1690,20);
     }
     out.end=y+20;
     return out;
@@ -668,7 +670,8 @@ void GamePage::draw(Frame &frame,bool focused) const
             ui::text_fit(list,type.regular,now.plan.planned?tr("After your queue"):tr("After queue + this download"),1252,808,21,370,ui::color::text2);
             ui::text(list,type.medium,now.plan.after<0?tr("{size} short",{{"size",format_bytes(-now.plan.after)}}):format_bytes(now.plan.after),1806,808,22,ui::color::text,ui::Align::right);
         }
-        ui::paragraph(list,type.regular,tr("Saves a file to your console. Installation and launching are separate."),1252,958,17,554,24,ui::color::text3,3);
+        if(!installs_by_itself(release,ctx_.store.state().system))
+            ui::paragraph(list,type.regular,tr("Saves a file to your console. Installation and launching are separate."),1252,958,17,554,24,ui::color::text3,3);
     }
     for(std::size_t i=0;i<where.controls.size();++i)
     {

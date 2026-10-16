@@ -709,5 +709,7 @@
   "Removed from favourites": "Favorilerden kaldırıldı",
   "Only a finished PKG download can be installed.": "Yalnızca tamamlanmış bir PKG indirmesi yüklenebilir.",
   "This download is already installing.": "Bu indirme zaten yükleniyor.",
-  "The PKG file is no longer on the drive. Remove this download and download it again.": "PKG dosyası artık sürücüde değil. Bu indirmeyi kaldırıp yeniden indirin."
+  "The PKG file is no longer on the drive. Remove this download and download it again.": "PKG dosyası artık sürücüde değil. Bu indirmeyi kaldırıp yeniden indirin.",
+  "Installing": "Yükleniyor",
+  "Retry install": "Yüklemeyi yeniden dene"
 }

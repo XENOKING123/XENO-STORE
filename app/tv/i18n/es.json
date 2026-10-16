@@ -717,5 +717,7 @@
   "Removed from favourites": "Quitado de favoritos",
   "Only a finished PKG download can be installed.": "Solo se puede instalar una descarga PKG terminada.",
   "This download is already installing.": "Esta descarga ya se está instalando.",
-  "The PKG file is no longer on the drive. Remove this download and download it again.": "El archivo PKG ya no está en la unidad. Quita esta descarga y vuelve a descargarlo."
+  "The PKG file is no longer on the drive. Remove this download and download it again.": "El archivo PKG ya no está en la unidad. Quita esta descarga y vuelve a descargarlo.",
+  "Installing": "Instalando",
+  "Retry install": "Reintentar instalación"
 }

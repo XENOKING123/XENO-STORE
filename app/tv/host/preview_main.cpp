@@ -478,6 +478,15 @@ bool job_running(const orbit::Job &job)
 {
     return orbit::job_active(job);
 }
+// XENO STORE: a finished PKG's install.
+bool job_installed(const orbit::Job &job)
+{
+    return orbit::job_install(job) == orbit::JobInstall::installed;
+}
+bool job_install_failed(const orbit::Job &job)
+{
+    return orbit::job_install(job) == orbit::JobInstall::failed;
+}
 
 // The same for jobs; the pick is kept in g_job for later steps.
 std::string pick_job(const char *fixture_id, bool (*fits)(const orbit::Job &),
@@ -506,6 +515,14 @@ std::string job_status(const std::string &id)
     for (const orbit::Job &job : now().jobs)
         if (job.id == id)
             return job.status;
+    return {};
+}
+
+std::string job_install_state(const std::string &id)
+{
+    for (const orbit::Job &job : now().jobs)
+        if (job.id == id)
+            return job.install_state;
     return {};
 }
 
@@ -840,6 +857,16 @@ std::vector<Scenario> scenarios()
     list.push_back({"downloads-finished", Mode::normal, true,
         {run(1.5f, [](orbit::App &app) { show_job(app, "job104", job_complete); }),
          pause(1.0f, "downloads-finished")}});
+    // XENO STORE: PKGs the store installs once they are downloaded: Installed (a
+    // badge) under Finished; Install failed under Failed, then Retry install.
+    list.push_back({"downloads-installs", Mode::installs, false,
+        {run(1.5f, [](orbit::App &app) { show_job(app, "job106", job_installed); }),
+         pause(1.0f, "downloads-installed"),
+         run(0.5f, [](orbit::App &app) { show_job(app, "job107", job_install_failed); }),
+         pause(1.0f, "downloads-install-failed"), tap(Action::confirm),
+         until(10.0f, [] { return settled() && job_install_state(g_job) == "installing"; }),
+         run(0.5f, [](orbit::App &app) { app.downloads().show_job(g_job); }),
+         pause(1.0f, "downloads-installing")}});
     list.push_back(
         {"browse",
          Mode::normal,

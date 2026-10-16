@@ -146,6 +146,7 @@ System parse_system(const json::Value &value)
     system.delete_archives = value.flag("deleteArchives", true);
     const auto limit = value["concurrentDownloads"].as_int();
     system.concurrent_downloads = limit >= 1 && limit <= 8 ? static_cast<int>(limit) : 1;
+    system.auto_install_pkg = value.flag("autoInstallPkg", false);
     return system;
 }
 
@@ -290,6 +291,7 @@ std::vector<Job> parse_jobs(const json::Value &value)
         job.can_refresh_link = item.flag("canRefreshLink");
         job.can_enter_archive_password = item.flag("canEnterArchivePassword");
         job.delivery_phase = item.text("deliveryPhase");
+        job.install_state = item.text("installState");
         job.received = item.number("received");
         job.total = item.number("total");
         job.speed = item.number("speed");
@@ -1052,7 +1054,7 @@ std::string format_label(const Release &release)
 JobView job_view(const Job &job)
 {
     if (job.status == "complete")
-        return JobView::finished;
+        return job_install(job) == JobInstall::failed ? JobView::failed : JobView::finished;
     if (job.status == "cancelled")
         return JobView::cancelled;
     if (job.status == "error")
@@ -1073,6 +1075,33 @@ const char *job_view_label(JobView view)
     default:
         return tr("Active");
     }
+}
+
+JobInstall job_install(const Job &job)
+{
+    if (job.status != "complete")
+        return JobInstall::none;
+    if (job.install_state == "installing")
+        return JobInstall::installing;
+    if (job.install_state == "installed")
+        return JobInstall::installed;
+    if (job.install_state == "failed")
+        return JobInstall::failed;
+    return JobInstall::none;
+}
+
+std::string install_failure(const Job &job)
+{
+    constexpr std::string_view prefix = "Install failed: ";
+    if (job_install(job) != JobInstall::failed)
+        return {};
+    return job.error.rfind(prefix, 0) == 0 ? job.error.substr(prefix.size()) : job.error;
+}
+
+bool installs_by_itself(const Release &release, const System &system)
+{
+    return system.auto_install_pkg && release.compression.empty() &&
+           (compare_folded(release.format, "pkg") == 0 || compare_folded(release.format, "fpkg") == 0);
 }
 
 SaveCompat save_compat(const SaveRow &save)

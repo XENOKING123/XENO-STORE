@@ -85,6 +85,64 @@ TEST(Model, GridJumpKeepsTheColumnAndStopsAtTheEnds)
     EXPECT_EQ(grid_jump(0, 0, 6, 16), 0);
 }
 
+// XENO STORE: a finished PKG's install, as the store reports it on a
+// complete row. A failed install needs attention: it shows under Failed.
+TEST(Model, AFinishedDownloadsInstallState)
+{
+    json::Value value;
+    ASSERT_TRUE(json::parse(R"([
+        {"id":"a","status":"complete","installState":"installing","order":1},
+        {"id":"b","status":"complete","installState":"installed","order":2},
+        {"id":"c","status":"complete","installState":"failed","error":"Install failed: Not a PS4/PS5 package.","order":3},
+        {"id":"d","status":"complete","installState":"pending","order":4},
+        {"id":"e","status":"complete","order":5},
+        {"id":"f","status":"error","installState":"failed","error":"Download failed.","order":6}])",
+                            &value));
+    const auto jobs = parse_jobs(value);
+    ASSERT_EQ(jobs.size(), 6u);
+    EXPECT_EQ(jobs[0].install_state, "installing");
+    EXPECT_EQ(jobs[4].install_state, ""); // an older store says nothing
+    EXPECT_EQ(job_install(jobs[0]), JobInstall::installing);
+    EXPECT_EQ(job_install(jobs[1]), JobInstall::installed);
+    EXPECT_EQ(job_install(jobs[2]), JobInstall::failed);
+    EXPECT_EQ(job_install(jobs[3]), JobInstall::none); // an install set waits for its other files
+    EXPECT_EQ(job_install(jobs[4]), JobInstall::none);
+    EXPECT_EQ(job_install(jobs[5]), JobInstall::none); // only a complete row has one
+    EXPECT_EQ(job_view(jobs[0]), JobView::finished);
+    EXPECT_EQ(job_view(jobs[1]), JobView::finished);
+    EXPECT_EQ(job_view(jobs[2]), JobView::failed);
+    EXPECT_EQ(job_view(jobs[4]), JobView::finished);
+    // The row says "Install failed"; the line under it gives the store's reason.
+    EXPECT_EQ(install_failure(jobs[2]), "Not a PS4/PS5 package.");
+    EXPECT_EQ(install_failure(jobs[5]), "");
+}
+
+// XENO STORE: the download sheet leaves out "installation is separate" for a
+// PKG the store installs by itself.
+TEST(Model, APkgInstallsByItselfWhileTheStoreSaysSo)
+{
+    json::Value value;
+    ASSERT_TRUE(json::parse("{}", &value));
+    const System older = parse_system(value);
+    EXPECT_FALSE(older.auto_install_pkg);
+    ASSERT_TRUE(json::parse(R"({"autoInstallPkg":true})", &value));
+    const System system = parse_system(value);
+    EXPECT_TRUE(system.auto_install_pkg);
+    Release pkg;
+    pkg.format = "PKG";
+    Release fpkg;
+    fpkg.format = "FPKG";
+    Release image;
+    image.format = "FFPFSC";
+    Release zipped = pkg;
+    zipped.compression = "zip"; // extracted, not installed
+    EXPECT_TRUE(installs_by_itself(pkg, system));
+    EXPECT_TRUE(installs_by_itself(fpkg, system));
+    EXPECT_FALSE(installs_by_itself(image, system));
+    EXPECT_FALSE(installs_by_itself(zipped, system));
+    EXPECT_FALSE(installs_by_itself(pkg, older));
+}
+
 TEST(Model, DownloadLimitDefaultsAndReadsSharedConsoleSetting)
 {
     json::Value value;

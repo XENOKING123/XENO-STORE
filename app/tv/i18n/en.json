@@ -709,5 +709,7 @@
   "Removed from favourites": "Removed from favourites",
   "Only a finished PKG download can be installed.": "Only a finished PKG download can be installed.",
   "This download is already installing.": "This download is already installing.",
-  "The PKG file is no longer on the drive. Remove this download and download it again.": "The PKG file is no longer on the drive. Remove this download and download it again."
+  "The PKG file is no longer on the drive. Remove this download and download it again.": "The PKG file is no longer on the drive. Remove this download and download it again.",
+  "Installing": "Installing",
+  "Retry install": "Retry install"
 }

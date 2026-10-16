@@ -709,5 +709,7 @@
   "Removed from favourites": "Eltávolítva a kedvencekből",
   "Only a finished PKG download can be installed.": "Csak befejezett PKG-letöltés telepíthető.",
   "This download is already installing.": "Ez a letöltés már telepítés alatt áll.",
-  "The PKG file is no longer on the drive. Remove this download and download it again.": "A PKG-fájl már nincs a meghajtón. Távolítsd el ezt a letöltést, és töltsd le újra."
+  "The PKG file is no longer on the drive. Remove this download and download it again.": "A PKG-fájl már nincs a meghajtón. Távolítsd el ezt a letöltést, és töltsd le újra.",
+  "Installing": "Telepítés folyamatban",
+  "Retry install": "Telepítés újrapróbálása"
 }

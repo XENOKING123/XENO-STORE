@@ -418,6 +418,15 @@ Fixture::Fixture(FixtureMode mode, Dialect dialect)
         "The provider stopped responding. Retry later.");
     add("quiet-harbour", 0, "usb0", "complete", 1.0, 0.0, "");
     add("paper-lanterns", 0, "usb0", "cancelled", 0.4, 0.0, "");
+    if (mode_ == FixtureMode::installs)
+    {
+        jobs_.clear();
+        add("copper-circuit-ps4", 0, "usb0", "complete", 1.0, 0.0, "");
+        jobs_.back().install = "installed";
+        add("copper-circuit-ps4", 0, "internal", "complete", 1.0, 0.0,
+            "Install failed: The console did not accept the package (0x80990085).");
+        jobs_.back().install = "failed";
+    }
     if (mode_ != FixtureMode::setup)
     {
         enabled_ = {"archive"};
@@ -449,6 +458,7 @@ std::string Fixture::jobs_json() const
             ",\"path\":" + json::quote(job.status == "complete" ?
                 "/mnt/usb0/homebrew/" + job.filename : "") + ",\"status\":" + json::quote(job.status) +
             ",\"error\":" + json::quote(job.error) +
+            (job.install.empty() ? std::string() : ",\"installState\":" + json::quote(job.install)) +
             ",\"verification\":" + json::quote(job.status == "complete" ? "sha256" : "") + numbers +
             "}";
     }
@@ -836,7 +846,8 @@ http::Response Fixture::send(const http::Request &request)
             "\"preferredStorage\":" +
             json::quote(preferred_) + ",\"deleteArchives\":" +
             (delete_archives_ ? "true" : "false") +
-            ",\"concurrentDownloads\":" + std::to_string(concurrent_) + ",\"httpPort\":9095}";
+            ",\"concurrentDownloads\":" + std::to_string(concurrent_) +
+            (dialect_ == Dialect::xeno ? ",\"autoInstallPkg\":true" : "") + ",\"httpPort\":9095}";
         return response;
     }
     if (get && path == "/api/v1/sources")
@@ -1228,6 +1239,24 @@ http::Response Fixture::send(const http::Request &request)
             }
             else if (action == "remove")
                 jobs_.erase(it);
+            else if (action == "install")
+            {
+                // XENO STORE: Retry install, as the store rules it.
+                if (it->install == "installing")
+                {
+                    response.status = 409;
+                    response.body = error_body("This download is already installing.");
+                    return response;
+                }
+                if (it->status != "complete" || (it->format != "PKG" && it->format != "FPKG"))
+                {
+                    response.status = 409;
+                    response.body = error_body("Only a finished PKG download can be installed.");
+                    return response;
+                }
+                it->install = "installing";
+                it->error.clear();
+            }
             response.body = jobs_json();
             return response;
         }

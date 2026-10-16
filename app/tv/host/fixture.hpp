@@ -31,6 +31,10 @@ enum class FixtureMode
     saves_failed, // the list answers 503 (the first answer after 1.2 s, so it shows loading)
     saves_partial, // the XenoKing site cannot be reached, then (after a reload) the
                    // Settings backend is not usable: the GitHub index only
+    // XENO STORE: the queue holds a PKG on each drive, the store installs it once
+    // downloaded: installed on USB, failed on the internal drive (Retry install
+    // starts it again).
+    installs,
 };
 
 // Whose answers the fixture gives where the two backends differ.
@@ -73,6 +77,7 @@ class Fixture final : public http::Transport
         double speed = 0.0;
         double retry_at = 0.0;
         std::string delivery = "direct";
+        std::string install; // XENO STORE's installState, when the row has one
     };
     // A save install the fixture runs (POST /api/saves/store/{id}/install).
     struct SaveJob
