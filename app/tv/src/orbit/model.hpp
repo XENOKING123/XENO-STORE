@@ -596,8 +596,10 @@ struct SaveFilters
 std::vector<int> filter_saves(const std::vector<SaveRow> &saves, const SaveFilters &filters);
 
 // What a finished install shows: done, cancelled, or why it failed. game
-// names the game for the running-game sentence.
-std::string save_install_outcome(const SaveJob &job, const std::string &game);
+// names the game for the running-game sentence, profile (when known) the
+// profile the save was installed for.
+std::string save_install_outcome(const SaveJob &job, const std::string &game,
+                                 const std::string &profile = {});
 
 // ---- versions ----
 

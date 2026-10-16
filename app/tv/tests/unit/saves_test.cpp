@@ -206,6 +206,9 @@ TEST(SavesModel, AnEndedInstallSaysWhatHappened)
     SaveJob job;
     job.state = "done";
     EXPECT_EQ(save_install_outcome(job, "Ember Hollow"), "Installed. Start the game to use it.");
+    // For whom, when the profile is known.
+    EXPECT_EQ(save_install_outcome(job, "Ember Hollow", "Guest"),
+              "Installed for Guest. Start the game to use it.");
     job.state = "cancelled";
     job.error_code = "cancelled";
     EXPECT_EQ(save_install_outcome(job, "Ember Hollow"), "Install cancelled.");
@@ -314,7 +317,7 @@ struct SavesWorker
     SavesWorker()
     {
         transport.reply = [this](const http::Request &request) { return reply(request); };
-        saves.set_delays(0.0, 0.0, 0.0);
+        saves.set_delays(0.0, 0.0, 0.0, 0.0);
     }
     // Every step that is due, then the frame that applies them.
     void step(int steps = 1)
@@ -396,12 +399,13 @@ TEST(SaveStore, AnOlderStoreIsUnsupportedAndAFailureIsRetried)
     SavesWorker older;
     older.reply = [](const http::Request &)
     { return test::json_reply(404, R"({"ok":false,"error":"not_found","message":"Unknown API route"})"); };
+    older.saves.set_delays(0.0, 0.0, 0.0, 60.0);
     older.saves.set_token("tok");
     older.saves.want();
     older.step();
     EXPECT_EQ(older.saves.state().load, SavesLoad::unsupported);
     older.saves.want();
-    EXPECT_FALSE(older.saves.work_once()); // it is not asked again
+    EXPECT_FALSE(older.saves.work_once()); // not asked again for a while
 
     SavesWorker w;
     bool up = false;
@@ -427,6 +431,79 @@ TEST(SaveStore, AnOlderStoreIsUnsupportedAndAFailureIsRetried)
     w.step();
     EXPECT_EQ(w.saves.state().load, SavesLoad::ready);
     EXPECT_TRUE(w.saves.state().error.empty());
+}
+
+// An older store is updated (from App settings): it restarts with the Save
+// Data Store, and the tab finds it without restarting the app.
+TEST(SaveStore, AnUpdatedStoreIsAskedAgain)
+{
+    SavesWorker w;
+    bool updated = false;
+    w.reply = [&updated](const http::Request &request)
+    {
+        if (!updated)
+            return test::json_reply(404, R"({"ok":false,"error":"not_found","message":"Unknown API route"})");
+        if (request.path == "/api/saves/users")
+            return test::json_reply(200, R"({"ok":true,"users":[]})");
+        return list_reply(false, R"({"id":"a","titleId":"PPSA00001"})");
+    };
+    w.saves.set_delays(0.0, 0.0, 0.0, 60.0);
+    w.saves.set_token("tok");
+    w.saves.set_instance("first");
+    w.saves.want();
+    w.step();
+    ASSERT_EQ(w.saves.state().load, SavesLoad::unsupported);
+    updated = true;
+    // The same store: not asked again yet.
+    w.saves.set_instance("first");
+    w.saves.want();
+    EXPECT_FALSE(w.saves.work_once());
+    // It restarted (a new instance): asked at once.
+    w.saves.set_instance("second");
+    w.saves.want();
+    w.step();
+    EXPECT_EQ(w.saves.state().load, SavesLoad::ready);
+    EXPECT_EQ(w.saves.state().listing.saves.size(), 1u);
+
+    // Another session token, too.
+    SavesWorker token;
+    bool older = true;
+    token.reply = [&older](const http::Request &request)
+    {
+        if (older)
+            return test::json_reply(404, R"({"ok":false,"error":"not_found","message":"Unknown API route"})");
+        if (request.path == "/api/saves/users")
+            return test::json_reply(200, R"({"ok":true,"users":[]})");
+        return list_reply(false);
+    };
+    token.saves.set_delays(0.0, 0.0, 0.0, 60.0);
+    token.saves.set_token("tok");
+    token.saves.want();
+    token.step();
+    ASSERT_EQ(token.saves.state().load, SavesLoad::unsupported);
+    older = false;
+    token.saves.set_token("tok2");
+    token.saves.want();
+    token.step();
+    EXPECT_EQ(token.saves.state().load, SavesLoad::ready);
+
+    // And, left alone, after a while (here at once).
+    SavesWorker later;
+    int lists = 0;
+    later.reply = [&lists](const http::Request &request)
+    {
+        if (request.path == "/api/saves/users")
+            return test::json_reply(200, R"({"ok":true,"users":[]})");
+        return ++lists == 1 ? test::json_reply(404, R"({"ok":false,"error":"not_found","message":"x"})")
+                            : list_reply(false);
+    };
+    later.saves.set_token("tok");
+    later.saves.want();
+    later.step();
+    ASSERT_EQ(later.saves.state().load, SavesLoad::unsupported);
+    later.saves.want();
+    later.step();
+    EXPECT_EQ(later.saves.state().load, SavesLoad::ready);
 }
 
 TEST(SaveStore, InstallsForTheProfileAndFollowsTheJobToItsEnd)
@@ -493,6 +570,99 @@ TEST(SaveStore, CancelsARunningInstall)
     EXPECT_EQ(save_install_outcome(w.saves.install().job, w.saves.install().game), "Install cancelled.");
 }
 
+// The player presses Cancel as the job ends: the store no longer cancels it
+// (404 "No such running job"), and the job's own state says how it ended.
+TEST(SaveStore, ACancelThatMeetsTheEndReadsHowTheJobEnded)
+{
+    SavesWorker w;
+    bool ended = false;
+    w.reply = [&ended](const http::Request &request)
+    {
+        if (request.method == "POST" && request.path == "/api/saves/jobs/s_5/cancel")
+        {
+            ended = true; // it finished just before the cancel arrived
+            return test::json_reply(404, R"({"ok":false,"error":"not_found","message":"No such running job"})");
+        }
+        if (request.method == "POST")
+            return test::json_reply(200, R"({"ok":true,"job":{"id":"s_5","state":"queued"}})");
+        return test::json_reply(200, std::string(R"({"ok":true,"job":{"id":"s_5","state":")") +
+                                         (ended ? "done" : "running") + R"(","done":5,"total":10}})");
+    };
+    w.saves.set_token("tok");
+    w.saves.install_save(row("match"), 0);
+    w.step(); // started
+    w.step(); // running
+    ASSERT_TRUE(w.saves.install().active);
+    ASSERT_EQ(w.saves.install().job.state, "running");
+    const int reads = w.transport.count("/api/saves/jobs/s_5");
+    w.saves.cancel_install();
+    w.step();
+    EXPECT_EQ(w.transport.count("/api/saves/jobs/s_5"), reads + 1); // read at once
+    const SaveInstall &install = w.saves.install();
+    EXPECT_FALSE(install.active);
+    EXPECT_TRUE(install.succeeded());
+    EXPECT_TRUE(install.error.empty()) << install.error;
+    EXPECT_EQ(install.outcome(), "Installed. Start the game to use it.");
+    EXPECT_FALSE(w.saves.work_once()); // nothing left to follow
+
+    // The store lost the job altogether (it restarted): the install ends, and says so.
+    SavesWorker lost;
+    bool gone = false;
+    lost.reply = [&gone](const http::Request &request)
+    {
+        if (request.path == "/api/saves/jobs/s_6/cancel")
+            gone = true;
+        if (gone)
+            return test::json_reply(404, R"({"ok":false,"error":"not_found","message":"No such job"})");
+        return test::json_reply(200, R"({"ok":true,"job":{"id":"s_6","state":"running"}})");
+    };
+    lost.saves.set_token("tok");
+    lost.saves.install_save(row("match"), 0);
+    lost.step();
+    lost.saves.cancel_install();
+    lost.step();
+    EXPECT_FALSE(lost.saves.install().active);
+    EXPECT_TRUE(lost.saves.install().ended());
+    EXPECT_FALSE(lost.saves.install().succeeded());
+    EXPECT_NE(lost.saves.install().outcome().find("lost track"), std::string::npos)
+        << lost.saves.install().outcome();
+}
+
+// A cancel that gets no reply leaves the job running: Cancel can be pressed again.
+TEST(SaveStore, ACancelWithoutAReplyCanBeTriedAgain)
+{
+    SavesWorker w;
+    int cancels = 0;
+    bool cancelled = false;
+    w.reply = [&cancels, &cancelled](const http::Request &request)
+    {
+        if (request.path == "/api/saves/jobs/s_4/cancel" && ++cancels == 1)
+        {
+            http::Response reset;
+            reset.error = "connection reset";
+            return reset;
+        }
+        if (request.path == "/api/saves/jobs/s_4/cancel")
+            cancelled = true;
+        return test::json_reply(200, std::string(R"({"ok":true,"job":{"id":"s_4","state":")") +
+                                         (cancelled ? "cancelled" : "running") + R"("}})");
+    };
+    w.saves.set_token("tok");
+    w.saves.install_save(row("match"), 0);
+    w.step();
+    w.saves.cancel_install();
+    EXPECT_TRUE(w.saves.install().cancelling);
+    w.step();
+    EXPECT_TRUE(w.saves.install().active);
+    EXPECT_FALSE(w.saves.install().cancelling); // Cancel works again
+    w.saves.cancel_install();
+    EXPECT_TRUE(w.saves.install().cancelling);
+    w.step();
+    EXPECT_EQ(cancels, 2);
+    EXPECT_FALSE(w.saves.install().active);
+    EXPECT_TRUE(w.saves.install().cancelled());
+}
+
 TEST(SaveStore, ARefusedInstallEndsWithTheStoresSentence)
 {
     SavesWorker w;
@@ -537,6 +707,8 @@ struct SavesApp
         };
         context.today = "2026-10-04";
         context.app_version = "01.000.000";
+        // A running install is read at every worker step (the app: every second).
+        store.saves().set_delays(4.0, 10.0, 0.0, 60.0);
         store.poll_once();
         frame();
     }
@@ -689,6 +861,223 @@ TEST(SavesTab, ARunningGameEndsTheInstallWithCloseTheGameFirst)
     // Closing the details forgets the outcome; the next look starts afresh.
     h.press(Action::back);
     EXPECT_FALSE(h.store.saves().install().ended());
+}
+
+// Install, then Circle at once: the player keeps browsing, and a toast says
+// how the install ended (the details are closed); the card marks it meanwhile.
+TEST(SavesTab, AnInstallThatEndsOutOfSightSaysSoInAToast)
+{
+    SavesApp h;
+    bool done = false;
+    h.intercept = [&done](const http::Request &request)
+    {
+        if (request.method == "POST" && request.path.find("/install") != std::string::npos)
+            return test::json_reply(200, R"({"ok":true,"job":{"id":"s_8","state":"running","message":"Downloading",
+                "done":1000,"total":2412544}})");
+        if (request.path == "/api/saves/jobs/s_8")
+            return test::json_reply(200, std::string(R"({"ok":true,"job":{"id":"s_8","state":")") +
+                                             (done ? R"(done","result":{"preBackup":"/data/xeno-store/saves/XENO/PPSA90003_ps5_20261016-0402.pre-restore.zip"}}})"
+                                                   : R"(running","message":"Downloading","done":2000,"total":2412544}})"));
+        return http::Response{};
+    };
+    h.app.show_tab(tab::saves);
+    h.frame();
+    h.work();
+    h.app.saves().open_save("xk-ember-forge");
+    h.frame();
+    h.press(Action::confirm); // Install has the focus: for the signed-in profile
+    h.work();
+    ASSERT_TRUE(h.store.saves().install().active);
+    EXPECT_EQ(h.store.saves().install().profile, "XENO");
+    h.press(Action::back);
+    EXPECT_FALSE(h.app.saves().details_open());
+    // On to another tab; the install ends there.
+    h.press(Action::page_next);
+    EXPECT_EQ(h.app.current_tab(), tab::library);
+    done = true;
+    h.work();
+    ASSERT_TRUE(h.store.saves().install().succeeded());
+    EXPECT_EQ(h.app.toast(), "Chapter 4 \xE2\x80\x94 every forge unlocked");
+    EXPECT_EQ(h.app.toast_detail(), "Installed for XENO. Start the game to use it.");
+    EXPECT_GT(h.app.toast_left(), 0.0f);
+    // Once only.
+    const float left = h.app.toast_left();
+    h.work();
+    EXPECT_LT(h.app.toast_left(), left);
+
+    // A failure out of sight names the save and says why.
+    SavesApp running;
+    running.intercept = [](const http::Request &request)
+    {
+        if (request.method == "POST" && request.path.find("/install") != std::string::npos)
+            return test::json_reply(200, R"({"ok":true,"job":{"id":"s_9","state":"queued"}})");
+        if (request.path == "/api/saves/jobs/s_9")
+            return test::json_reply(200, R"({"ok":true,"job":{"id":"s_9","state":"failed","errorCode":"title_running",
+                "error":"PPSA90004 is running"}})");
+        return http::Response{};
+    };
+    running.app.show_tab(tab::saves);
+    running.frame();
+    running.work();
+    running.app.saves().open_save("xk-orchard-bloom");
+    running.frame();
+    running.press(Action::confirm);
+    running.store.saves().work_once(); // the job starts
+    running.store.saves().tick();
+    running.press(Action::back);
+    running.work(); // and fails with the details closed
+    ASSERT_TRUE(running.store.saves().install().ended());
+    EXPECT_EQ(running.app.toast(), "Every garden in bloom");
+    EXPECT_NE(running.app.toast_detail().find("Glass Orchard is running"), std::string::npos)
+        << running.app.toast_detail();
+}
+
+// The details show an install that ends while they are open: no toast.
+TEST(SavesTab, AnInstallThatEndsInItsDetailsNeedsNoToast)
+{
+    SavesApp h;
+    h.intercept = [](const http::Request &request)
+    {
+        if (request.method == "POST" && request.path.find("/install") != std::string::npos)
+            return test::json_reply(200, R"({"ok":true,"job":{"id":"s_2","state":"done"}})");
+        return http::Response{};
+    };
+    h.app.show_tab(tab::saves);
+    h.frame();
+    h.work();
+    h.app.saves().open_save("xk-ember-forge");
+    h.frame();
+    h.press(Action::confirm);
+    h.work();
+    ASSERT_TRUE(h.store.saves().install().succeeded());
+    EXPECT_TRUE(h.app.toast_detail().empty()) << h.app.toast_detail();
+}
+
+// Each save opens for the signed-in profile, whoever the last one was for.
+TEST(SavesTab, EverySaveOpensForTheSignedInProfile)
+{
+    SavesApp h;
+    h.intercept = [](const http::Request &request)
+    {
+        if (request.method == "POST" && request.path.find("/install") != std::string::npos)
+            return test::json_reply(200, R"({"ok":true,"job":{"id":"s_3","state":"done"}})");
+        return http::Response{};
+    };
+    h.app.show_tab(tab::saves);
+    h.frame();
+    h.work();
+    h.app.saves().open_save("xk-ember-forge");
+    h.frame();
+    // Guest, then Back without installing.
+    h.frame(Direction::left);
+    h.press(Action::confirm);
+    h.frame(Direction::down);
+    h.press(Action::confirm);
+    h.press(Action::back);
+    ASSERT_FALSE(h.app.saves().details_open());
+    h.app.saves().open_save("xk-ember-ngplus");
+    h.frame();
+    h.press(Action::confirm); // Install
+    h.work();
+    ASSERT_EQ(h.posts("/api/saves/store/xk-ember-ngplus/install"), 1);
+    for (const http::Request &request : h.transport.seen)
+    {
+        if (request.method == "POST" && request.path == "/api/saves/store/xk-ember-ngplus/install")
+            EXPECT_NE(request.body.find("\"user\":268435456"), std::string::npos) << request.body;
+    }
+}
+
+// While one save installs, another's details start on Back: Cross does not
+// land on its Install, which waits.
+TEST(SavesTab, AnotherSavesDetailsWaitForTheRunningInstall)
+{
+    SavesApp h;
+    h.intercept = [](const http::Request &request)
+    {
+        if (request.method == "POST" && request.path.find("/install") != std::string::npos)
+            return test::json_reply(200, R"({"ok":true,"job":{"id":"s_1","state":"running"}})");
+        if (request.path == "/api/saves/jobs/s_1")
+            return test::json_reply(200, R"({"ok":true,"job":{"id":"s_1","state":"running"}})");
+        return http::Response{};
+    };
+    h.app.show_tab(tab::saves);
+    h.frame();
+    h.work();
+    h.app.saves().open_save("xk-ember-forge");
+    h.frame();
+    h.press(Action::confirm);
+    h.work();
+    h.press(Action::back);
+    h.app.saves().open_save("xk-orchard-bloom");
+    h.frame();
+    h.press(Action::confirm); // Back: the details close, nothing is installed
+    EXPECT_FALSE(h.app.saves().details_open());
+    EXPECT_EQ(h.posts("/api/saves/store/xk-orchard-bloom/install"), 0);
+}
+
+// A search leaves some filters with no saves: they are passed over.
+TEST(SavesTab, FiltersWithNoSavesForTheSearchArePassedOver)
+{
+    SavesApp h;
+    h.app.show_tab(tab::saves);
+    h.frame();
+    h.work();
+    h.app.saves().set_query("ember");
+    // All 2, For my games 2, Maxed starter 1, then three categories with
+    // none (100% Platinum, Trophy checkpoint, Modded or glitched), Chapter 1.
+    h.frame(Direction::down);
+    for (int i = 0; i < 3; ++i)
+        h.frame(Direction::right);
+    h.press(Action::confirm);
+    ASSERT_EQ(h.app.saves().results().size(), 1u);
+    const SaveRow &save =
+        h.store.saves().state().listing.saves[static_cast<std::size_t>(h.app.saves().results()[0])];
+    EXPECT_EQ(save.id, "xk-ember-forge");
+    EXPECT_EQ(save_category(save), SaveCategory::chapter);
+}
+
+// An older store: Try again has the focus, and finds the store once updated.
+TEST(SavesTab, TryAgainFindsAnUpdatedStore)
+{
+    SavesApp h;
+    bool older = true;
+    h.intercept = [&older](const http::Request &request)
+    {
+        if (older && request.path.rfind("/api/saves", 0) == 0)
+            return test::json_reply(404, R"({"ok":false,"error":"not_found","message":"Unknown API route"})");
+        return http::Response{};
+    };
+    h.app.show_tab(tab::saves);
+    h.frame();
+    h.work();
+    ASSERT_EQ(h.store.saves().state().load, SavesLoad::unsupported);
+    const std::vector<hui::ui::Hint> hints = h.app.saves().hints();
+    ASSERT_FALSE(hints.empty());
+    EXPECT_STREQ(hints.front().label, "Try again");
+    older = false;
+    h.press(Action::confirm);
+    h.work();
+    EXPECT_EQ(h.store.saves().state().load, SavesLoad::ready);
+    EXPECT_EQ(h.app.saves().results().size(), 7u);
+
+    // A store that answers with an error: the same.
+    SavesApp failed;
+    bool down = true;
+    failed.intercept = [&down](const http::Request &request)
+    {
+        if (down && request.path.rfind("/api/saves/store", 0) == 0)
+            return test::json_reply(503, R"({"ok":false,"error":"unavailable","message":"The saves index could not be read"})");
+        return http::Response{};
+    };
+    failed.app.show_tab(tab::saves);
+    failed.frame();
+    failed.work();
+    ASSERT_EQ(failed.store.saves().state().load, SavesLoad::failed);
+    EXPECT_EQ(failed.store.saves().state().error, "The saves index could not be read");
+    down = false;
+    failed.press(Action::confirm);
+    failed.work();
+    EXPECT_EQ(failed.store.saves().state().load, SavesLoad::ready);
 }
 
 TEST(SavesTab, AnOlderStoreAndABuildingStoreSaySo)

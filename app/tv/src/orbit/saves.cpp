@@ -50,6 +50,12 @@ constexpr float kSheetPad = 56.0f;
 constexpr float kSheetCover = 300.0f;
 constexpr float kButtonsY = kSheetY + kSheetH - kSheetPad - ui::kButtonHeight;
 constexpr float kProfileWidth = 420.0f;
+// The facts row sits under the cover; long notes push it down this far at
+// most (the compatibility sentence under it stays clear of the install's
+// progress), and keep this much room above its labels.
+constexpr float kFactsY = kSheetY + kSheetPad + kSheetCover + 46.0f;
+constexpr float kFactsLowest = kFactsY + 62.0f;
+constexpr float kFactsGap = 52.0f;
 
 ui::Color compat_ink(SaveCompat compat)
 {
@@ -98,6 +104,30 @@ std::string profile_label(const SaveProfile &profile)
 {
     const std::string name = profile.name.empty() ? std::to_string(profile.id) : profile.name;
     return profile.foreground ? tr("{name} (signed in)", {{"name", name}}) : name;
+}
+
+// The profile a save installs for: the one chosen, or (0) the signed-in one.
+const SaveProfile *find_profile(const std::vector<SaveProfile> &profiles, std::uint32_t user)
+{
+    for (const SaveProfile &profile : profiles)
+    {
+        if (profile.id == user || (user == 0 && profile.foreground))
+            return &profile;
+    }
+    return nullptr;
+}
+
+// A step with no size (installing, Garlic Save Manager's steps): a stretch
+// of gold that sweeps across the track instead of a fraction.
+void busy_bar(hui::gfx::DrawList &list, const ui::Rect &r, float clock)
+{
+    ui::progress_bar(list, r, 0.0f, ui::color::action);
+    const float stretch = r.w * 0.28f;
+    const float x = r.x - stretch + (r.w + stretch) * std::fmod(clock / 1.6f, 1.0f);
+    const float left = std::max(r.x, x);
+    const float right = std::min(r.x + r.w, x + stretch);
+    if (right - left > r.h)
+        list.rounded_rect({left, r.y, right - left, r.h}, r.h * 0.5f, ui::color::action);
 }
 
 // A save's cover: its game's catalogue art, or a plate with the game's initial.
@@ -183,26 +213,32 @@ void SavesScreen::start_search()
     keyboard_.set_length(static_cast<int>(query_.size()));
 }
 
-// The catalogue game each save belongs to, the saves that match, and the chips.
+// The catalogue game each save belongs to (looked up again only when the
+// saves or the catalogue change, not for every key typed), the saves that
+// match, and the chips.
 void SavesScreen::refilter()
 {
     const SavesState &saves = ctx_.store.saves().state();
     const Snapshot &state = ctx_.store.state();
-    saves_serial_ = saves.serial;
-    catalog_serial_ = state.catalog_serial;
     const std::vector<SaveRow> &rows = saves.listing.saves;
-    games_.assign(rows.size(), -1);
-    for (std::size_t i = 0; i < rows.size(); ++i)
+    if (saves_serial_ != saves.serial || catalog_serial_ != state.catalog_serial ||
+        games_.size() != rows.size())
     {
-        for (std::size_t g = 0; g < state.games.size() && games_[i] < 0; ++g)
+        saves_serial_ = saves.serial;
+        catalog_serial_ = state.catalog_serial;
+        games_.assign(rows.size(), -1);
+        for (std::size_t i = 0; i < rows.size(); ++i)
         {
-            if (!rows[i].game_id.empty() && state.games[g].id == rows[i].game_id)
-                games_[i] = static_cast<int>(g);
-        }
-        for (std::size_t g = 0; g < state.games.size() && games_[i] < 0; ++g)
-        {
-            if (save_for_game(rows[i], state.games[g]))
-                games_[i] = static_cast<int>(g);
+            for (std::size_t g = 0; g < state.games.size() && games_[i] < 0; ++g)
+            {
+                if (!rows[i].game_id.empty() && state.games[g].id == rows[i].game_id)
+                    games_[i] = static_cast<int>(g);
+            }
+            for (std::size_t g = 0; g < state.games.size() && games_[i] < 0; ++g)
+            {
+                if (save_for_game(rows[i], state.games[g]))
+                    games_[i] = static_cast<int>(g);
+            }
         }
     }
     if (!game_id_.empty())
@@ -264,6 +300,24 @@ int SavesScreen::current_chip() const
             return i;
     }
     return 0;
+}
+
+// A chip with no saves for this search is dimmed and passed over, unless it
+// is the filter in use; the game shown and All always stay.
+bool SavesScreen::chip_usable(int index) const
+{
+    if (index < 0 || index >= static_cast<int>(chips_.size()))
+        return false;
+    const Chip &chip = chips_[static_cast<std::size_t>(index)];
+    return chip.kind == Chip::Kind::game || chip.kind == Chip::Kind::all || chip.count > 0 ||
+           index == current_chip();
+}
+
+// Try again: the saves could not be loaded, or the store said it has none.
+bool SavesScreen::can_retry() const
+{
+    const SavesLoad load = ctx_.store.saves().state().load;
+    return load == SavesLoad::failed || load == SavesLoad::unsupported;
 }
 
 // One filter at a time, as the Downloads views: All clears the others.
@@ -332,20 +386,17 @@ void SavesScreen::open_details(int save)
     if (save < 0 || save >= static_cast<int>(saves.listing.saves.size()))
         return;
     open_ = saves.listing.saves[static_cast<std::size_t>(save)].id;
-    // The signed-in profile, until the player picks another.
-    if (std::none_of(saves.profiles.begin(), saves.profiles.end(),
-                     [this](const SaveProfile &p) { return p.id == user_; }))
+    // The signed-in profile for every save opened, until the player picks another.
+    user_ = saves.profiles.empty() ? 0 : saves.profiles.front().id;
+    for (const SaveProfile &profile : saves.profiles)
     {
-        user_ = saves.profiles.empty() ? 0 : saves.profiles.front().id;
-        for (const SaveProfile &profile : saves.profiles)
-        {
-            if (profile.foreground)
-                user_ = profile.id;
-        }
+        if (profile.foreground)
+            user_ = profile.id;
     }
+    // Install, unless this save's install runs or ended, or another one runs.
     const SaveInstall &install = ctx_.store.saves().install();
-    control_ = install.save_id == open_ && (install.active || install.ended()) ? Control::back
-                                                                                 : Control::install;
+    control_ = (install.save_id == open_ && install.ended()) || install.active ? Control::back
+                                                                                : Control::install;
     sheet_in_.snap(0.0f);
 }
 
@@ -553,7 +604,10 @@ Intent SavesScreen::update(const InputFrame &input, float dt, Feedback &feedback
         const bool shown = list_shown();
         if (!shown && (area_ == Area::chips || area_ == Area::grid))
             area_ = Area::field;
-        if (saves.load != SavesLoad::failed && area_ == Area::retry)
+        // Nothing to search: Try again has the focus where there is one.
+        if (can_retry())
+            area_ = Area::retry;
+        else if (area_ == Area::retry)
             area_ = Area::field;
         switch (area_)
         {
@@ -568,11 +622,9 @@ Intent SavesScreen::update(const InputFrame &input, float dt, Feedback &feedback
                 move_to(Area::chips);
                 chip_ = current_chip();
             }
-            else if (input.nav == Direction::down && saves.load == SavesLoad::failed)
-                move_to(Area::retry);
             else if (input.nav != Direction::none)
                 refuse(feedback, input);
-            if (input.is_pressed(Action::confirm))
+            if (input.is_pressed(Action::confirm) && shown)
             {
                 feedback.play(hui::audio::Cue::modal_open);
                 start_search();
@@ -587,8 +639,11 @@ Intent SavesScreen::update(const InputFrame &input, float dt, Feedback &feedback
             break;
         case Area::retry:
             if (input.nav == Direction::up)
-                move_to(Area::field);
-            else if (input.nav != Direction::none)
+            {
+                intent.kind = Intent::Kind::top_bar;
+                return intent;
+            }
+            if (input.nav != Direction::none)
                 refuse(feedback, input);
             if (input.is_pressed(Action::confirm))
             {
@@ -614,7 +669,10 @@ Intent SavesScreen::update(const InputFrame &input, float dt, Feedback &feedback
             }
             else if (input.nav == Direction::left || input.nav == Direction::right)
             {
-                const int next = chip_ + (input.nav == Direction::right ? 1 : -1);
+                const int step = input.nav == Direction::right ? 1 : -1;
+                int next = chip_ + step;
+                while (next >= 0 && next < count && !chip_usable(next))
+                    next += step;
                 if (next >= 0 && next < count)
                 {
                     chip_ = next;
@@ -623,7 +681,7 @@ Intent SavesScreen::update(const InputFrame &input, float dt, Feedback &feedback
                 else
                     refuse(feedback, input);
             }
-            if (input.is_pressed(Action::confirm) && chip_ >= 0 && chip_ < count)
+            if (input.is_pressed(Action::confirm) && chip_usable(chip_))
             {
                 choose_chip(chip_);
                 feedback.play(hui::audio::Cue::toggle);
@@ -736,13 +794,41 @@ void SavesScreen::draw_card(hui::gfx::DrawList &list, const SaveRow &save, const
     if (!shared.empty())
         ui::text_fit(list, type.regular, shared, tx, r.y + 114.0f, 18.0f, width, quiet);
     const float badge = compat_badge(list, type, tx, r.y + 154.0f, save, 15.0f);
+    // Its size and date, or where its install is: running (with how far it
+    // got), installed, or failed, until its details have shown the outcome.
+    const SaveInstall &install = ctx_.store.saves().install();
+    const bool installing = install.save_id == save.id;
     std::string facts;
-    if (save.size > 0.0)
-        facts = format_save_size(save.size);
-    if (save.created_at.size() >= 10)
-        facts += (facts.empty() ? "" : " \xC2\xB7 ") + format_date(save.created_at.substr(0, 10));
-    ui::text_fit(list, type.regular, facts, r.x + r.w - 24.0f, r.y + 160.0f, 17.0f,
-                 width - badge - 20.0f, quiet, ui::Align::right);
+    ui::Color ink = quiet;
+    bool marked = true;
+    if (installing && install.active)
+    {
+        const SaveJob &job = install.job;
+        facts = install.cancelling ? tr("Cancelling\xE2\x80\xA6") : tr("Installing\xE2\x80\xA6");
+        if (!install.cancelling && install.have_job && job.total > 0.0 && job.done > 0.0)
+            facts += " " + i18n::percent(std::clamp(job.done / job.total, 0.0, 1.0) * 100.0);
+        ink = ui::color::action;
+    }
+    else if (installing && install.succeeded())
+    {
+        facts = tr("Installed");
+        ink = ui::color::ok;
+    }
+    else if (installing && install.ended() && !install.cancelled())
+    {
+        facts = tr("Install failed");
+        ink = ui::color::bad;
+    }
+    else
+    {
+        marked = false;
+        if (save.size > 0.0)
+            facts = format_save_size(save.size);
+        if (save.created_at.size() >= 10)
+            facts += (facts.empty() ? "" : " \xC2\xB7 ") + format_date(save.created_at.substr(0, 10));
+    }
+    ui::text_fit(list, marked ? type.medium : type.regular, facts, r.x + r.w - 24.0f, r.y + 160.0f,
+                 17.0f, width - badge - 20.0f, ink, ui::Align::right);
 }
 
 void SavesScreen::draw(Frame &frame, bool focused) const
@@ -827,7 +913,10 @@ void SavesScreen::draw(Frame &frame, bool focused) const
             else
                 list.bordered_rect(pill, pill.h * 0.5f, ui::color::white.with_alpha(0.05f), 1.0f,
                                    ui::color::white.with_alpha(0.14f));
-            const ui::Color ink = on ? ui::color::focus_ink : ui::color::text;
+            // A filter with nothing for this search is dimmed (and passed over).
+            const ui::Color ink = on                ? ui::color::focus_ink
+                                  : chip_usable(i) ? ui::color::text
+                                                   : ui::color::text3.with_alpha(0.7f);
             char number[16];
             std::snprintf(number, sizeof(number), "%d", chip.count);
             const float label = ui::text_fit(list, type.medium, chip.label, pill.x + 18.0f,
@@ -855,6 +944,10 @@ void SavesScreen::draw(Frame &frame, bool focused) const
                 if ((pass == 0) == (amount > 0.5f))
                     continue; // the focused card is drawn last, over its neighbours
                 const int save = results_[static_cast<std::size_t>(i)];
+                // update() refilters after a new list; until then (a panel over
+                // the tab keeps it from running) an index may be past the end.
+                if (save < 0 || save >= static_cast<int>(saves.listing.saves.size()))
+                    continue;
                 draw_card(list, saves.listing.saves[static_cast<std::size_t>(save)], game_of(save), r,
                           amount);
             }
@@ -911,7 +1004,7 @@ void SavesScreen::draw(Frame &frame, bool focused) const
         if (!body.empty())
             ui::paragraph(list, type.regular, body, 960.0f, 594.0f, 21.0f, 1100.0f, 31.0f,
                           ui::color::text2, 3, ui::Align::center);
-        if (saves.load == SavesLoad::failed)
+        if (can_retry())
         {
             const char *label = tr("Try again");
             const float width = ui::button_width(type, label);
@@ -993,12 +1086,19 @@ void SavesScreen::draw_details(Frame &frame, bool focused) const
                        ui::color::text2, 16.0f) +
               10.0f;
     y = cy + 34.0f;
+    // The notes, in the room left above the facts (a long name leaves less);
+    // a long note pushes the facts down a little.
+    float facts_y = kFactsY;
     if (!save->description.empty() && save->description != save->name)
-        ui::paragraph(list, type.regular, save->description, x, y + 20.0f, 21.0f, width, 31.0f,
-                      ui::color::text2, 4);
+    {
+        const float first = y + 20.0f;
+        const int room = static_cast<int>(std::floor((kFactsLowest - kFactsGap - first) / 31.0f)) + 1;
+        const float after = ui::paragraph(list, type.regular, save->description, x, first, 21.0f, width,
+                                          31.0f, ui::color::text2, std::clamp(room, 1, 4));
+        facts_y = std::max(kFactsY, after - 31.0f + kFactsGap);
+    }
 
     // The facts, under the cover.
-    const float facts_y = kSheetY + kSheetPad + kSheetCover + 46.0f;
     const std::pair<std::string, std::string> facts[] = {
         {tr("Game version"), save->game_version.empty() ? std::string(tr("Not given")) : save->game_version},
         {tr("Your version"), save->installed_version.empty()
@@ -1036,28 +1136,36 @@ void SavesScreen::draw_details(Frame &frame, bool focused) const
     const float status_y = kButtonsY - 44.0f;
     if (mine && install.active)
     {
+        // A step without a size (installing, Garlic Save Manager's steps)
+        // sweeps instead of falling back to 0%.
         const SaveJob &job = install.job;
-        const float fraction = job.total > 0.0 ? static_cast<float>(std::clamp(job.done / job.total, 0.0, 1.0))
-                                               : static_cast<float>(job.percent) / 100.0f;
+        const bool measured = job.total > 0.0;
+        const float fraction =
+            measured ? static_cast<float>(std::clamp(job.done / job.total, 0.0, 1.0)) : 0.0f;
         std::string step = install.cancelling ? std::string(tr("Cancelling\xE2\x80\xA6"))
                            : job.message.empty() ? std::string(tr("Starting the install\xE2\x80\xA6"))
                                                  : std::string(tr(std::string_view(job.message)));
         ui::text_fit(list, type.medium, step, left, status_y - 66.0f, 22.0f, right - left - 200.0f,
                      ui::color::text);
-        ui::text(list, type.regular, i18n::percent(fraction * 100.0f), right, status_y - 66.0f, 20.0f,
-                 ui::color::text2, ui::Align::right);
-        ui::progress_bar(list, {left, status_y - 46.0f, right - left, 10.0f}, fraction, ui::color::action);
-        if (job.total > 0.0)
+        const ui::Rect bar{left, status_y - 46.0f, right - left, 10.0f};
+        if (measured)
+        {
+            ui::text(list, type.regular, i18n::percent(fraction * 100.0f), right, status_y - 66.0f, 20.0f,
+                     ui::color::text2, ui::Align::right);
+            ui::progress_bar(list, bar, fraction, ui::color::action);
             ui::text(list, type.regular, format_save_size(job.done) + " / " + format_save_size(job.total), left,
                      status_y - 6.0f, 18.0f, ui::color::text2);
+        }
+        else
+        {
+            busy_bar(list, bar, ctx_.clock);
+        }
     }
     else if (mine && install.ended())
     {
-        const bool done = install.have_job && install.job.state == "done";
-        const std::string outcome = install.have_job ? save_install_outcome(install.job, install.game)
-                                                     : install.error;
-        const ui::Color tone = done ? ui::color::ok : install.job.state == "cancelled" ? ui::color::text2
-                                                                                        : ui::color::bad;
+        const bool done = install.succeeded();
+        const std::string outcome = install.outcome();
+        const ui::Color tone = done ? ui::color::ok : install.cancelled() ? ui::color::text2 : ui::color::bad;
         list.circle(left + 16.0f, status_y - 52.0f, 16.0f, tone);
         if (done)
             ui::icon_check(list, left + 16.0f, status_y - 52.0f, 16.0f, ui::color::night1, 3.0f);
@@ -1066,34 +1174,49 @@ void SavesScreen::draw_details(Frame &frame, bool focused) const
                      ui::Align::center);
         const float after = ui::paragraph(list, type.medium, outcome, left + 46.0f, status_y - 44.0f, 22.0f,
                                           right - left - 46.0f, 30.0f, done ? ui::color::text : tone, 2);
-        // Where the save it replaced went, and what the engine noted.
+        // Where the save it replaced went (its file; the folder is the
+        // profile's), and what the engine noted.
         std::string detail;
         if (done && !install.job.pre_backup.empty())
-            detail = tr("Your previous save is backed up in {path}", {{"path", install.job.pre_backup}});
+        {
+            const std::string &path = install.job.pre_backup;
+            const std::size_t slash = path.find_last_of('/');
+            detail = tr("Your previous save was backed up as {file}",
+                        {{"file", slash == std::string::npos ? path : path.substr(slash + 1)}});
+        }
         if (done && !install.job.note.empty())
             detail += (detail.empty() ? "" : " \xC2\xB7 ") + install.job.note;
         if (!detail.empty())
             ui::text_fit(list, type.regular, detail, left + 46.0f, after + 2.0f, 18.0f,
                          right - left - 46.0f, ui::color::text2);
     }
-    else
-    {
-        const bool other = install.active && !mine;
-        std::string line;
-        if (other)
-            line = tr("Another save is installing. Wait for it to finish.");
-        else if (saves.profiles.size() == 1)
-            line = tr("Installs for {profile}. Your current save of this game is backed up first.",
-                      {{"profile", profile_label(saves.profiles.front())}});
-        else
-            line = tr("Your current save of this game is backed up first.");
-        // Above the profile's label.
-        ui::text_fit(list, type.regular, line, left, kButtonsY - 66.0f, 20.0f, right - left,
-                     ui::color::text2);
-    }
 
     const std::vector<Control> buttons = controls();
     const bool other = install.active && !mine;
+    // Beside the buttons, clear of the profile list that opens above them:
+    // the backup (and for whom, when no profile field says it), or the
+    // install that has to finish first.
+    if (std::find(buttons.begin(), buttons.end(), Control::install) != buttons.end())
+    {
+        const bool field = buttons.front() == Control::profile;
+        const SaveProfile *profile = find_profile(saves.profiles, user_);
+        std::string line;
+        if (other)
+            line = tr("Another save is installing ({save}). Wait for it to finish.",
+                      {{"save", install.name.empty() ? install.game : install.name}});
+        else if (!field && profile != nullptr)
+            line = tr("Installs for {profile}. Your current save of this game is backed up first.",
+                      {{"profile", profile_label(*profile)}});
+        else
+            line = tr("Your current save of this game is backed up first.");
+        const ui::Rect last = control_rect(static_cast<int>(buttons.size()) - 1);
+        const float note_x = last.x + last.w + 36.0f;
+        const float note_w = right - note_x;
+        const int lines = std::min(2, static_cast<int>(type.regular.font->wrap(line, 20.0f, note_w).size()));
+        const float middle = kButtonsY + ui::kButtonHeight * 0.5f;
+        ui::paragraph(list, type.regular, line, note_x, lines > 1 ? middle - 7.0f : middle + 7.0f, 20.0f,
+                      note_w, 28.0f, ui::color::text2, 2);
+    }
     for (int i = 0; i < static_cast<int>(buttons.size()); ++i)
     {
         const Control control = buttons[static_cast<std::size_t>(i)];
@@ -1142,8 +1265,12 @@ void SavesScreen::draw_details(Frame &frame, bool focused) const
             options.push_back(profile_label(saves.profiles[static_cast<std::size_t>(i)]));
             selected = saves.profiles[static_cast<std::size_t>(i)].id == user_ ? i : selected;
         }
+        // It opens above the field's label, which stays in view.
+        ui::Rect trigger = control_rect(0);
+        trigger.y -= 30.0f;
+        trigger.h += 30.0f;
         frame.glass = true;
-        ui::select_menu(list, type, control_rect(0), options, selected, picker_.active, picker_.in.value,
+        ui::select_menu(list, type, trigger, options, selected, picker_.active, picker_.in.value,
                         frame.glass_texture);
     }
 }
@@ -1168,6 +1295,9 @@ std::vector<hui::ui::Hint> SavesScreen::hints() const
     if (area_ == Area::retry)
         return {{hui::ui::Button::cross, tr("Try again")},
                 {hui::ui::Button::l1, tr("Tabs"), hui::ui::Button::r1}};
+    // No saves to search yet (loading, building, none).
+    if (!list_shown())
+        return {{hui::ui::Button::l1, tr("Tabs"), hui::ui::Button::r1}};
     if (!query_.empty())
         return {{hui::ui::Button::cross, tr("Type")},
                 {hui::ui::Button::square, tr("Clear")},

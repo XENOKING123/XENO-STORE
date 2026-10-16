@@ -111,6 +111,7 @@ void Store::tick()
 {
     inbox_.drain();
     saves_.set_token(state_.token);
+    saves_.set_instance(state_.system.instance_id);
     saves_.tick();
 }
 

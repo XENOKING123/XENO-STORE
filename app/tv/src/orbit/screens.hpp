@@ -461,6 +461,11 @@ class SavesScreen final : public Screen
     {
         return !open_.empty();
     }
+    // The details of this save are open (they show its install themselves).
+    bool showing(const std::string &save_id) const
+    {
+        return !open_.empty() && open_ == save_id;
+    }
     const std::vector<int> &results() const
     {
         return results_;
@@ -472,7 +477,7 @@ class SavesScreen final : public Screen
         field,
         chips, // the game shown, All, For my games, then the categories
         grid,
-        retry, // Try again, when the saves could not be loaded
+        retry, // Try again, when the saves could not be loaded or the store has none
     };
     struct Chip
     {
@@ -499,6 +504,8 @@ class SavesScreen final : public Screen
     void refilter();
     int current_chip() const;
     void choose_chip(int chip);
+    bool chip_usable(int chip) const; // it shows saves, or is the filter in use
+    bool can_retry() const;
     ui::Rect card_rect(int index) const;
     ui::Rect chip_rect(int chip) const;
     const Game *game_of(int save) const;
@@ -758,6 +765,11 @@ class App
     {
         return toast_;
     }
+    // XENO STORE: the sentence under the toast's line (a save install's outcome).
+    const std::string &toast_detail() const
+    {
+        return toast_detail_;
+    }
     float toast_left() const
     {
         return toast_time_;
@@ -810,11 +822,26 @@ class App
     int provider_focus_ = 1; // Back first, so returning cannot cancel by accident
     std::string provider_seen_;
     bool update_told_ = false; // the update toast shows once per launch
-    void show_toast(std::string text, float seconds = 2.8f, bool update = false);
+    // The toast's mark: a confirmation, an update notice, or (XENO STORE) a
+    // save install that failed or was cancelled.
+    enum class ToastKind : std::uint8_t
+    {
+        done,
+        update,
+        problem,
+        note,
+    };
+    // detail: a sentence under the line, wrapped (the toast grows upward).
+    void show_toast(std::string text, float seconds = 2.8f, ToastKind kind = ToastKind::done,
+                    std::string detail = {});
     std::string toast_;
+    std::string toast_detail_;
     float toast_time_ = 0.0f;
     float toast_length_ = 2.8f;
-    bool toast_update_ = false; // an update notice, not a confirmation
+    ToastKind toast_kind_ = ToastKind::done;
+    // XENO STORE: a save install that ends out of sight says how in a toast.
+    void tell_save_install();
+    std::uint64_t save_told_ = 0; // the last install (SaveInstall::run) told
     std::string backdrop_;
     std::string previous_backdrop_;
     std::string settling_; // the art Discover wants, while the focus rests

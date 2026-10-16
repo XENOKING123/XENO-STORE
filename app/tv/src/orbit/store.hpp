@@ -190,7 +190,8 @@ class Store
         return action_;
     }
     // XENO STORE: the Save Data Store (orbit/save_store.hpp). start(), stop()
-    // and tick() run it too, and tick() hands it the console session's token.
+    // and tick() run it too, and tick() hands it the console session's token
+    // and the running store's instance.
     SaveStore &saves()
     {
         return saves_;

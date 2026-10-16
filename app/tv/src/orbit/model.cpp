@@ -1234,10 +1234,13 @@ std::vector<int> filter_saves(const std::vector<SaveRow> &saves, const SaveFilte
     return matches;
 }
 
-std::string save_install_outcome(const SaveJob &job, const std::string &game)
+std::string save_install_outcome(const SaveJob &job, const std::string &game,
+                                 const std::string &profile)
 {
     if (job.state == "done")
-        return tr("Installed. Start the game to use it.");
+        return profile.empty() ? std::string(tr("Installed. Start the game to use it."))
+                               : tr("Installed for {profile}. Start the game to use it.",
+                                    {{"profile", profile}});
     if (job.state == "cancelled" || job.error_code == "cancelled")
         return tr("Install cancelled.");
     if (job.error_code == "title_running")
