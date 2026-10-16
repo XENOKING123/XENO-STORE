@@ -69,6 +69,7 @@
     "locked": "Te veel pogingen — wacht {n} s",
     "done": "Gekoppeld! XENO STORE wordt geopend…",
     "replaced": "{name} is ontkoppeld om ruimte te maken — het was het apparaat dat het langst niet is gebruikt.",
+    "forgotten": "De PS5 kent deze browser niet meer: hij is ontkoppeld, of een ander apparaat heeft zijn plek ingenomen toen alle koppelplaatsen bezet waren. Koppel hem opnieuw om XENO STORE te blijven gebruiken.",
     "note": "Alleen gekoppelde apparaten kunnen je store bedienen. Je doet dit één keer per browser."
   },
   "discover4": {

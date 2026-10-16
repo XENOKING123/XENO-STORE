@@ -69,6 +69,7 @@
     "locked": "Troppi tentativi — attendi {n} s",
     "done": "Collegato! Apro XENO STORE…",
     "replaced": "{name} è stato dissociato per fare spazio: era il dispositivo inutilizzato da più tempo.",
+    "forgotten": "La PS5 non riconosce più questo browser: è stato dissociato, oppure un altro dispositivo ne ha preso il posto quando tutti gli slot di associazione erano occupati. Collegalo di nuovo per continuare a usare XENO STORE.",
     "note": "Solo i dispositivi collegati possono controllare lo store. Si fa una volta per browser."
   },
   "discover4": {

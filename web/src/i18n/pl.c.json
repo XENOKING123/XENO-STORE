@@ -69,6 +69,7 @@
     "locked": "Za dużo prób — poczekaj {n} s",
     "done": "Połączono! Otwieram XENO STORE…",
     "replaced": "Usunięto parowanie urządzenia {name}, aby zrobić miejsce — było nieużywane najdłużej.",
+    "forgotten": "PS5 nie rozpoznaje już tej przeglądarki: została odłączona albo jej miejsce zajęło inne urządzenie, gdy wszystkie miejsca parowania były zajęte. Połącz ją ponownie, aby dalej korzystać z XENO STORE.",
     "note": "Tylko połączone urządzenia mogą sterować sklepem. Robisz to raz na przeglądarkę."
   },
   "discover4": {

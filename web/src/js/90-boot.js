@@ -76,13 +76,17 @@
      notification, the code typed here buys this browser a device token (sent as a Bearer header on
      every call). The console's own browser (loopback) never sees this page. Also run while the store
      is open once this browser is unpaired (Settings → Pair a device, a call refused with not_paired):
-     one Link page at a time, saying why (note, cls). */
+     one Link page at a time, saying why (note, cls). A token the PS5 forgot while the store was closed
+     here (unpaired, or replaced when every slot was taken) is told so too, not shown the first-time page. */
   var gating = null;
   function linkGate(note, cls) {
     if (gating) return gating;
     gating = api.pair({ quiet: true, timeout: 6000 }).then(function (r) {
       if (!r || r.local || r.linked) return;
-      if (S.data.token) { S.data.token = ''; U.store.set('token', ''); }   /* forgotten by the PS5 */
+      if (S.data.token) {   /* forgotten by the PS5 */
+        S.data.token = ''; U.store.set('token', '');
+        if (!note) { note = t('link.forgotten'); cls = 'bad'; }
+      }
       return linkPage(r, note, cls);
     }, function () { /* offline or an older store: boot as before */ }).then(function () { gating = null; });
     return gating;

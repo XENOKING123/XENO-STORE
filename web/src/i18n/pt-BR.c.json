@@ -69,6 +69,7 @@
     "locked": "Tentativas demais — aguarde {n} s",
     "done": "Vinculado! Abrindo a XENO STORE…",
     "replaced": "{name} foi despareado para liberar espaço — era o dispositivo sem uso há mais tempo.",
+    "forgotten": "O PS5 não reconhece mais este navegador: ele foi despareado, ou outro dispositivo ocupou o lugar dele quando todas as vagas de pareamento estavam em uso. Vincule de novo para continuar usando a XENO STORE.",
     "note": "Só dispositivos vinculados controlam sua loja. Isso é feito uma vez por navegador."
   },
   "discover4": {

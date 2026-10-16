@@ -213,6 +213,10 @@ MAC_EDGE_UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.
                "Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0")
 
 
+FORGOTTEN = ("The PS5 no longer knows this browser: it was unpaired, or another device took its place when every pairing "
+             "slot was in use. Link it again to keep using XENO STORE.")
+
+
 def bearer(token):
     return {"Authorization": "Bearer " + token}
 
@@ -691,6 +695,27 @@ try {
 """
 
 
+FORGOTTEN_SCRIPT = r"""
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.XENO_PLAYWRIGHT);
+const [lanBase, token] = process.argv.slice(2);
+const browser = await chromium.launch();
+try {
+  // a phone on the LAN opens the store again with the token it was given before
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await page.addInitScript((tok) => { localStorage.setItem('xs.wizardDone', 'true'); localStorage.setItem('xs.token', JSON.stringify(tok)); }, token);
+  await page.goto(lanBase + '/');
+  await page.waitForSelector('.link-page .link-status', { timeout: 30000 });
+  await page.waitForTimeout(300);
+  console.log(JSON.stringify(await page.evaluate(() => ({ status: document.querySelector('.link-page .link-status').innerText,
+                                                          token: localStorage.getItem('xs.token') }))));
+} finally {
+  await browser.close();
+}
+"""
+
+
 class PairedDevicesUiTests(unittest.TestCase):
     """Settings → Pair a device in the UI the console serves: every paired
     device with its name, last seen, "This device" and an Unpair button, the
@@ -758,8 +783,19 @@ class PairedDevicesUiTests(unittest.TestCase):
         self.assertNotEqual(again, phone)
         # unpaired from the console while open: the next calls are refused and one Link page says why
         self.assertEqual(out["unpairedOthers"], 1, out)
-        self.assertEqual(out["revoked"], {"pages": 1, "same": True, "token": '""',
-                                          "status": "This browser was unpaired from the PS5. Link it again to keep using XENO STORE."}, out)
+        self.assertEqual(out["revoked"], {"pages": 1, "same": True, "token": '""', "status": FORGOTTEN}, out)
+
+    def test_a_forgotten_browser_is_told_why_when_it_comes_back(self):
+        # unpaired (or replaced when every slot was taken) while the store was closed on it:
+        # the next load says why it has to link again, not the first-time page as if never linked
+        ip = self.srv.api("GET", "/api/status")[1].get("ip", "127.0.0.1")
+        if not ip or ip.startswith("127."):
+            self.skipTest("no non-loopback IPv4 on this machine")
+        phone = self.pair(IPHONE_UA)
+        st, b = self.srv.api("POST", "/api/pair/unpair-others", {})
+        self.assertEqual((st, b["unpaired"]), (200, 1), b)
+        out = harness.run_ui_script(self, self.pw, self.tmp, FORGOTTEN_SCRIPT, f"http://{ip}:{self.srv.port}", phone)
+        self.assertEqual(out, {"status": FORGOTTEN, "token": '""'})
 
 
 class ListenerTests(unittest.TestCase):

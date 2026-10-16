@@ -69,6 +69,7 @@
     "locked": "Trop d'essais — attends {n} s",
     "done": "Associé ! Ouverture de XENO STORE…",
     "replaced": "{name} a été dissocié pour faire de la place — c'était l'appareil inutilisé depuis le plus longtemps.",
+    "forgotten": "La PS5 ne reconnaît plus ce navigateur : il a été dissocié, ou un autre appareil a pris sa place quand tous les emplacements d'association étaient occupés. Associez-le à nouveau pour continuer à utiliser XENO STORE.",
     "note": "Seuls les appareils associés peuvent contrôler ta boutique. À faire une fois par navigateur."
   },
   "discover4": {

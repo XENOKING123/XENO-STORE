@@ -69,6 +69,7 @@
     "locked": "Too many tries — wait {n} s",
     "done": "Linked! Opening XENO STORE…",
     "replaced": "{name} was unpaired to make room — it was the device unused the longest.",
+    "forgotten": "The PS5 no longer knows this browser: it was unpaired, or another device took its place when every pairing slot was in use. Link it again to keep using XENO STORE.",
     "note": "Only devices you link can control your store. You do this once per browser."
   },
   "discover4": {
