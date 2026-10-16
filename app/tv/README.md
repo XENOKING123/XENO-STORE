@@ -65,8 +65,9 @@ screen for screen:
   Storage with each drive's games and Measure game sizes; Scan for games.
 - **Downloads**: Active, Finished, Failed and Cancelled, with pause, resume,
   retry, cancel (keep or delete the partial file) and remove from history.
-  A PKG that XENO STORE installs once it is downloaded reads Installing, then
-  Installed (a badge); a failed install is under Failed with Retry install.
+  A PKG that XENO STORE installs once it is downloaded reads Installing (with
+  nothing to press until it ends), then Installed (a badge); a failed install
+  is under Failed with Retry install, and the focus follows the row to Finished.
 - **Game page**: full-width artwork, the tagline and description, a primary
   download button, Favourite and About. The primary opens Download options;
   Source, Download using and Save to each open a choice panel. Back restores

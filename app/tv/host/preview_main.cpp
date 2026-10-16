@@ -858,14 +858,14 @@ std::vector<Scenario> scenarios()
         {run(1.5f, [](orbit::App &app) { show_job(app, "job104", job_complete); }),
          pause(1.0f, "downloads-finished")}});
     // XENO STORE: PKGs the store installs once they are downloaded: Installed (a
-    // badge) under Finished; Install failed under Failed, then Retry install.
+    // badge) under Finished; Install failed under Failed, then Retry install,
+    // whose row the screen follows to Finished: Installing, nothing to press.
     list.push_back({"downloads-installs", Mode::installs, false,
         {run(1.5f, [](orbit::App &app) { show_job(app, "job106", job_installed); }),
          pause(1.0f, "downloads-installed"),
          run(0.5f, [](orbit::App &app) { show_job(app, "job107", job_install_failed); }),
          pause(1.0f, "downloads-install-failed"), tap(Action::confirm),
          until(10.0f, [] { return settled() && job_install_state(g_job) == "installing"; }),
-         run(0.5f, [](orbit::App &app) { app.downloads().show_job(g_job); }),
          pause(1.0f, "downloads-installing")}});
     list.push_back(
         {"browse",

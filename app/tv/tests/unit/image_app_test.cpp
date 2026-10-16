@@ -757,8 +757,10 @@ TEST(App, CancelledDeletionFailureStaysVisibleAndHistoryOnlyNeedsAnotherConfirma
 
 // XENO STORE: a PKG the store installs once it is downloaded. A failed
 // install is under Failed with Retry install first, which asks the store to
-// install it again; the row then reads Installing, under Finished. An
-// installed one offers only Remove from history.
+// install it again; the row then reads Installing, under Finished, and the
+// focus follows it there. While it installs it has nothing to press (the store
+// keeps it in history until the install ends). An installed one offers only
+// Remove from history.
 TEST(App, DownloadsRetryAFailedInstall)
 {
     AppHarness h(host::FixtureMode::installs);
@@ -786,6 +788,27 @@ TEST(App, DownloadsRetryAFailedInstall)
     EXPECT_EQ(h.transport.count("/api/v1/downloads/" + failed + "/install"), 1);
     EXPECT_EQ(job(failed).install_state, "installing");
     EXPECT_EQ(job_view(job(failed)), JobView::finished);
+    const auto hinted = [&](const char *label)
+    {
+        for (const hui::ui::Hint &hint : h.app.downloads().hints())
+            if (std::string_view(hint.label) == label)
+                return true;
+        return false;
+    };
+    // On the Installing row (not the view switcher): no Select, and Cross is refused.
+    EXPECT_FALSE(hinted("Switch view"));
+    EXPECT_FALSE(hinted("Select"));
+    h.press(Action::confirm);
+    EXPECT_FALSE(h.store.action().busy);
+    ASSERT_EQ(h.feedback.cues.size(), 1u);
+    EXPECT_EQ(h.feedback.cues[0].cue, hui::audio::Cue::error);
+    h.app.downloads().show_job(failed);
+    h.settle();
+    h.frame(Direction::right);
+    h.press(Action::confirm);
+    EXPECT_FALSE(h.store.action().busy);
+    EXPECT_EQ(h.transport.count("/api/v1/downloads/" + failed + "/remove"), 0);
+    EXPECT_EQ(h.transport.count("/api/v1/downloads/" + failed + "/install"), 1);
 
     h.app.downloads().show_job(installed);
     h.settle();

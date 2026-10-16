@@ -420,6 +420,7 @@ class DownloadsScreen final : public Screen
     int row_ = 0;
     int button_ = 0;
     std::string pending_job_; // show_job() before the queue arrived
+    std::string install_job_; // XENO STORE: a Retry install sent, to follow to Finished
     bool dialog_open_ = false;
     bool dialog_cancelled_ = false;
     bool dialog_forget_ = false;

@@ -5,8 +5,8 @@
 // Views, labels and actions follow the browser storefront (src/Downloads.tsx):
 // Active / Finished / Failed / Cancelled; Pause, Resume, Retry download;
 // Cancel asks whether to keep or delete the partial file. XENO STORE installs
-// a finished PKG by itself: its row says Installing, Installed (a badge) or
-// Install failed, under Failed with Retry install.
+// a finished PKG by itself: its row says Installing (nothing to press until it
+// ends), Installed (a badge) or Install failed, under Failed with Retry install.
 
 #include "orbit/screens.hpp"
 #include "orbit/i18n.hpp"
@@ -140,6 +140,9 @@ std::vector<DownloadsScreen::RowAction> DownloadsScreen::actions_for(const Job &
 {
     if (job.status == "complete")
     {
+        // The store keeps an installing row in history until the install ends.
+        if (job_install(job) == JobInstall::installing)
+            return {};
         if (job_install(job) == JobInstall::failed)
             return {{tr("Retry install"), "install"}, {tr("Remove from history"), "remove"}};
         return {{tr("Remove from history"), "remove"}};
@@ -190,6 +193,13 @@ void DownloadsScreen::show_job(const std::string &job_id)
 Intent DownloadsScreen::update(const InputFrame &input, float dt, Feedback &feedback, bool focused)
 {
     Intent intent;
+    // Retry install moves its row from Failed to Finished: follow it there.
+    if (!install_job_.empty() && !ctx_.store.action().busy)
+    {
+        if (ctx_.store.action().error.empty())
+            show_job(install_job_);
+        install_job_.clear();
+    }
     // A job created a moment ago appears with the next queue refresh.
     if (!pending_job_.empty())
         show_job(pending_job_);
@@ -326,7 +336,7 @@ Intent DownloadsScreen::update(const InputFrame &input, float dt, Feedback &feed
         {
             const Job &job = *jobs[static_cast<std::size_t>(row_)];
             const std::vector<RowAction> actions = actions_for(job);
-            button_ = std::clamp(button_, 0, static_cast<int>(actions.size()) - 1);
+            button_ = std::clamp(button_, 0, std::max(0, static_cast<int>(actions.size()) - 1));
             if (input.nav == Direction::up)
             {
                 if (row_ == 0)
@@ -364,18 +374,18 @@ Intent DownloadsScreen::update(const InputFrame &input, float dt, Feedback &feed
             }
             if (input.is_pressed(Action::confirm))
             {
-                const RowAction &action = actions[static_cast<std::size_t>(button_)];
-                if (busy)
+                const RowAction *action = actions.empty() ? nullptr : &actions[static_cast<std::size_t>(button_)];
+                if (busy || action == nullptr)
                 {
                     refuse(feedback, input);
                 }
-                else if (std::string_view(action.action) == "archive-password")
+                else if (std::string_view(action->action) == "archive-password")
                 {
                     password_.clear(); password_job_ = job.id; password_open_ = true;
                     password_keyboard_.enter(); password_keyboard_.set_length(0);
                     feedback.play(hui::audio::Cue::modal_open);
                 }
-                else if (std::string_view(action.action) == "dialog")
+                else if (std::string_view(action->action) == "dialog")
                 {
                     dialog_open_ = true;
                     dialog_cancelled_ = job.status == "cancelled";
@@ -389,7 +399,9 @@ Intent DownloadsScreen::update(const InputFrame &input, float dt, Feedback &feed
                 }
                 else
                 {
-                    ctx_.store.job_action(job.id, action.action, false);
+                    ctx_.store.job_action(job.id, action->action, false);
+                    if (std::string_view(action->action) == "install")
+                        install_job_ = job.id;
                     feedback.play(hui::audio::Cue::select);
                 }
             }
@@ -719,6 +731,9 @@ std::vector<hui::ui::Hint> DownloadsScreen::hints() const
     if (on_views_)
         return {{hui::ui::Button::dpad, tr("Switch view")},
                 {hui::ui::Button::l1, tr("Tabs"), hui::ui::Button::r1}};
+    const std::vector<const Job *> jobs = visible();
+    if (row_ < static_cast<int>(jobs.size()) && actions_for(*jobs[static_cast<std::size_t>(row_)]).empty())
+        return {{hui::ui::Button::l1, tr("Tabs"), hui::ui::Button::r1}}; // an installing row
     return {{hui::ui::Button::cross, tr("Select")},
             {hui::ui::Button::dpad, tr("Actions")},
             {hui::ui::Button::l1, tr("Tabs"), hui::ui::Button::r1}};
