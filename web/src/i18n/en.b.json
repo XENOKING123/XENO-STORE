@@ -239,6 +239,8 @@
     "installOrderHint": "Order in which the packages of a set are installed",
     "restResume": "Resume after rest mode",
     "restResumeHint": "After a sleep/wake cycle, reconnect and continue every segment from its checkpoint",
+    "restartResume": "Resume after a restart",
+    "restartResumeHint": "Downloads that were running when XENO STORE stopped (an update, a restart, a crash or a power cut) continue on their own when it starts again. Downloads you paused stay paused.",
     "extractZip": "Extract ZIP archives",
     "extractZipHint": "Unpack ZIP game archives on the console after the download (RAR/7z stay download-only)",
     "deleteArchive": "Delete the ZIP after extracting",

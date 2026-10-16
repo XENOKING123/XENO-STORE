@@ -526,7 +526,7 @@ export function register({ route, state }) {
   function seedSettings() {
     const st = state.settings;
     Object.assign(st.general, { largeText: false, highContrast: false, safeMode: false, screensaver: true, screensaverMinutes: 3, controllerSwapConfirm: false, mdns: true });
-    Object.assign(st.downloads, { preferFormat: 'auto', turboStart: true, autoInstallSets: true, installOrder: 'game,backport,update,dlc', restModeAutoResume: true, extractZip: true, deleteArchiveAfterExtract: true, deletePkgAfterInstall: false, scheduleStart: st.downloads.scheduleStart || '', scheduleEnd: st.downloads.scheduleEnd || '' });
+    Object.assign(st.downloads, { preferFormat: 'auto', turboStart: true, autoInstallSets: true, installOrder: 'game,backport,update,dlc', restModeAutoResume: true, extractZip: true, deleteArchiveAfterExtract: true, deletePkgAfterInstall: false, resumeAfterRestart: true, scheduleStart: st.downloads.scheduleStart || '', scheduleEnd: st.downloads.scheduleEnd || '' });
     st.debrid = st.debrid || { realdebrid: { apiKey: 'rd-mock-key-7f3a9c2e' }, alldebrid: { apiKey: '' }, torbox: { apiKey: '' }, premiumize: { apiKey: '' }, preferred: 'auto' };
     st.catalog.featuredUrl = st.catalog.featuredUrl || ''; st.catalog.messagesUrl = st.catalog.messagesUrl || ''; st.catalog.companionsUrl = st.catalog.companionsUrl || ''; st.catalog.savesBackendUrl = st.catalog.savesBackendUrl || '';
     st.saves = st.saves || { backupRoot: '', autoBackup: true, indexUrls: ['https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/saves.json'], backend: { kind: 'github', url: '', anonKey: '', bucket: 'ps5-saves', garlicFunction: 'garlic-savedb' }, uploadHost: 'site', uploadEndpoint: '', submitEndpoint: '', nickname: '' };

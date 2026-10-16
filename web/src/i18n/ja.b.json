@@ -239,6 +239,8 @@
     "installOrderHint": "セットのパッケージをインストールする順番",
     "restResume": "レストモード後に再開",
     "restResumeHint": "スリープ／復帰のあと、再接続して各セグメントをチェックポイントから続けます",
+    "restartResume": "再起動後に再開",
+    "restartResumeHint": "XENO STORE が停止したとき（アップデート、再起動、クラッシュ、停電）に実行中だったダウンロードは、次の起動時に自動で再開します。一時停止したダウンロードは一時停止のままです。",
     "extractZip": "ZIP アーカイブを展開",
     "extractZipHint": "ダウンロード後に本体で ZIP のゲームアーカイブを展開します（RAR/7z はダウンロードのみ）",
     "deleteArchive": "展開後に ZIP を削除",

@@ -239,6 +239,8 @@
     "installOrderHint": "Kolejność, w jakiej instalowane są pakiety zestawu",
     "restResume": "Wznów po trybie spoczynku",
     "restResumeHint": "Po cyklu uśpienia/wybudzenia połącz ponownie i kontynuuj każdy segment od punktu kontrolnego",
+    "restartResume": "Wznów po ponownym uruchomieniu",
+    "restartResumeHint": "Pobierania trwające w chwili zatrzymania XENO STORE (aktualizacja, ponowne uruchomienie, awaria lub zanik zasilania) wznowią się same przy następnym uruchomieniu. Pobierania wstrzymane przez Ciebie pozostają wstrzymane.",
     "extractZip": "Wypakuj archiwa ZIP",
     "extractZipHint": "Rozpakuj archiwa gier ZIP na konsoli po pobraniu (RAR/7z zostają tylko do pobrania)",
     "deleteArchive": "Usuń ZIP po wypakowaniu",

@@ -239,6 +239,8 @@
     "installOrderHint": "Bir setin paketlerinin kurulma sırası",
     "restResume": "Dinlenme modundan sonra sürdür",
     "restResumeHint": "Bir uyku/uyanma döngüsünden sonra yeniden bağlan ve her segmenti kontrol noktasından sürdür",
+    "restartResume": "Yeniden başlatmadan sonra sürdür",
+    "restartResumeHint": "XENO STORE durduğunda (güncelleme, yeniden başlatma, çökme veya elektrik kesintisi) süren indirmeler, yeniden başladığında kendiliğinden devam eder. Duraklattığın indirmeler duraklatılmış kalır.",
     "extractZip": "ZIP arşivlerini çıkar",
     "extractZipHint": "İndirmeden sonra ZIP oyun arşivlerini konsolda aç (RAR/7z yalnızca indirme olarak kalır)",
     "deleteArchive": "Çıkardıktan sonra ZIP'i sil",

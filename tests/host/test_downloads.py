@@ -305,6 +305,10 @@ class DownloadTests(unittest.TestCase):
         self.assert_clean_final(j, self.sha["mid.bin"])
 
     def test_15_queue_persistence_across_restart(self):
+        # Settings → Downloads → Resume after a restart off: the download comes back paused
+        # (test_22 covers the default)
+        self.addCleanup(lambda: self.srv.api("PUT", "/api/settings", {"downloads": {"resumeAfterRestart": True}}))
+        self.srv.api("PUT", "/api/settings", {"downloads": {"resumeAfterRestart": False}})
         job = self.srv.add(gameId="persist-ps5", releaseId="r")
         jid = job["id"]
         self.wait_written(jid, 2 * MiB)
@@ -450,6 +454,42 @@ class DownloadTests(unittest.TestCase):
         j = self.srv.job(bad["id"])
         self.assertFalse(j["install"].get("pkgDeleted"))
         self.assertTrue(os.path.exists(j["path"]), "a failed install never deletes the package")
+
+    def test_22_running_downloads_resume_after_restart(self):
+        # The store stops (an update, a restart, a crash): what was running or queued comes
+        # back by itself, one at a time under the concurrent-jobs limit; what the user paused
+        # stays paused.
+        st, s = self.srv.api("GET", "/api/settings")
+        self.assertIs(s["settings"]["downloads"]["resumeAfterRestart"], True, "on by default")
+        a = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="resume-a.bin", format="BIN", connections=1, size=8 * MiB)
+        b = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="resume-b.bin", format="BIN", connections=1, size=8 * MiB)
+        c = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="resume-c.bin", format="BIN", connections=1, size=8 * MiB)
+        self.wait_written(a["id"], 1 * MiB)
+        self.assertEqual(self.srv.action(c["id"], "pause")[0], 200)
+        self.srv.stop()
+        DownloadTests.srv = harness.XenoServer(self.data, port=self.srv.port).start()
+        self.assertEqual(self.srv.job(c["id"])["state"], "paused")
+        seen_active = 0
+        deadline = time.time() + 90
+        while time.time() < deadline:
+            st, q = self.srv.api("GET", "/api/queue")
+            mine = {x["id"]: x for x in q["jobs"] if x["id"] in (a["id"], b["id"])}
+            active = [x for x in mine.values() if x["state"] in ("connecting", "downloading", "verifying")]
+            self.assertLessEqual(len(active), 1, "concurrentJobs is 1: one download at a time")
+            seen_active += len(active)
+            if len(mine) == 2 and all(x["state"] == "done" for x in mine.values()):
+                break
+            time.sleep(0.1)
+        ja, jb, jc = self.srv.job(a["id"]), self.srv.job(b["id"]), self.srv.job(c["id"])
+        self.assertEqual((ja["state"], jb["state"]), ("done", "done"), (ja["message"], jb["message"]))
+        self.assertGreater(seen_active, 0)
+        self.assert_clean_final(ja, self.sha["small.bin"])
+        self.assert_clean_final(jb, self.sha["small.bin"])
+        self.assertEqual(jc["state"], "paused", "a download the user paused stays paused")
+        self.assertEqual(jc["message"], "Paused")
+        st, lg = self.srv.api("GET", f"/api/queue/{a['id']}/log")
+        self.assertTrue(any("resumed after XENO STORE restarted" in ln for ln in lg["lines"]), lg["lines"])
+        self.srv.action(c["id"], "remove", {"deleteFiles": True})
 
 
 if __name__ == "__main__":

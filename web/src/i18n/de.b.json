@@ -239,6 +239,8 @@
     "installOrderHint": "Reihenfolge, in der die Pakete eines Sets installiert werden",
     "restResume": "Nach dem Ruhemodus fortsetzen",
     "restResumeHint": "Nach einem Schlaf-/Aufwach-Zyklus neu verbinden und jedes Segment vom Checkpoint fortsetzen",
+    "restartResume": "Nach einem Neustart fortsetzen",
+    "restartResumeHint": "Downloads, die liefen, als XENO STORE angehalten wurde (Update, Neustart, Absturz oder Stromausfall), laufen beim nächsten Start von selbst weiter. Von dir pausierte Downloads bleiben pausiert.",
     "extractZip": "ZIP-Archive entpacken",
     "extractZipHint": "ZIP-Spielearchive nach dem Download auf der Konsole entpacken (RAR/7z bleiben nur zum Download)",
     "deleteArchive": "ZIP nach dem Entpacken löschen",

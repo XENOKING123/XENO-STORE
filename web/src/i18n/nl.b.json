@@ -239,6 +239,8 @@
     "installOrderHint": "Volgorde waarin de pakketten van een set worden geïnstalleerd",
     "restResume": "Hervatten na rustmodus",
     "restResumeHint": "Na een slaap/ontwaak-cyclus opnieuw verbinden en elk segment vanaf zijn controlepunt voortzetten",
+    "restartResume": "Hervatten na een herstart",
+    "restartResumeHint": "Downloads die liepen toen XENO STORE stopte (een update, een herstart, een crash of een stroomstoring) gaan bij de volgende start vanzelf verder. Downloads die je hebt gepauzeerd, blijven gepauzeerd.",
     "extractZip": "ZIP-archieven uitpakken",
     "extractZipHint": "Pak ZIP-spelarchieven op de console uit na de download (RAR/7z blijven alleen-downloaden)",
     "deleteArchive": "De ZIP na het uitpakken verwijderen",

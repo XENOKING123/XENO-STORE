@@ -386,6 +386,7 @@ static void job_write_json(jw *w, const dl_job *j, int history) {
   jw_obj_end(w);
   jw_kv_i64(w, "peakSpeed", (int64_t)j->peakSpeed);
   jw_kv_int(w, "restResumes", j->restResumes);
+  if (persist_mode && j->stopPaused) jw_kv_bool(w, "stopPaused", 1);
   jw_kv_bool(w, "restResuming", j->state == DL_CONNECTING && j->rest_hit);
   if (history) {
     jw_key(w, "speedHistory"); jw_arr_begin(w);
@@ -481,6 +482,7 @@ static dl_job *job_from_json(jv o) {
   j->extract.archiveDeleted = jv_get_bool(ex, "archiveDeleted", 0);
   j->peakSpeed = jv_get_dbl(o, "peakSpeed", 0);
   j->restResumes = (int)jv_get_i64(o, "restResumes", 0);
+  j->stopPaused = jv_get_bool(o, "stopPaused", 0);
   if (!j->id[0] || !j->path[0]) { free(j); return NULL; }
   if (is_copy_job(j) && !j->srcPath[0]) { free(j); return NULL; }
   derive_paths_locked(j);
@@ -2531,7 +2533,8 @@ int dl_any_downloading(void) {
 
 /* ---- init / shutdown ---------------------------------------------------- */
 
-static void load_queue(void) {
+/* `resume`: downloads.resumeAfterRestart (read before queue_mu, SPEC §5). */
+static void load_queue(int resume) {
   char path[600];
   xsnprintf(path, sizeof path, "%s/queue.json", data_dir);
   size_t len;
@@ -2540,15 +2543,19 @@ static void load_queue(void) {
   jdoc *d = json_parse(txt, len, 400000, 16);
   free(txt);
   if (!d) { LOGW("queue.json is not valid JSON — starting with an empty queue"); return; }
-  int recovered = 0;
+  int recovered = 0, resumed = 0;
   JV_FOREACH(o, jv_get(json_root(d), "jobs")) {
     if (n_jobs >= DL_MAX_JOBS) break;
     dl_job *j = job_from_json(o);
     if (!j) continue;
+    /* running when the store stopped, or paused by the TV app's stop (never one the user paused) */
+    int was_running = state_is_active(j->state) || (j->state == DL_PAUSED && j->stopPaused);
+    /* an interrupted Verify of a finished file has nothing left to download */
+    int verify_only = j->state == DL_VERIFYING && !util_file_exists(j->xpart) && util_file_exists(j->path);
+    j->stopPaused = 0;
     if (state_is_active(j->state)) {
       j->state = DL_PAUSED;
       xstrlcpy(j->message, "Stopped when XENO STORE closed", sizeof j->message);
-      recovered++;
     }
     if (j->state == DL_PAUSED || j->state == DL_QUEUED) {
       sidecar sc;
@@ -2572,10 +2579,21 @@ static void load_queue(void) {
       j->written = j->total > 0 ? j->total : 0;
     }
     if (is_copy_job(j) && j->state == DL_PAUSED) { int64_t have = util_file_size(j->xpart); j->written = have > 0 ? have : 0; }
+    if (resume && was_running && !verify_only && j->state == DL_PAUSED) {
+      /* the scheduler starts it again under the concurrent-jobs limit, in queue order */
+      j->state = DL_QUEUED;
+      j->nextRetryAt = 0;
+      j->errorCode[0] = j->error[0] = 0;
+      xstrlcpy(j->message, "Resuming after XENO STORE restarted", sizeof j->message);
+      jlog_locked(j, "resumed after XENO STORE restarted");
+      resumed++;
+    } else if (was_running && j->state == DL_PAUSED) {
+      recovered++;
+    }
     jobs[n_jobs++] = j;
   }
   json_free(d);
-  LOGI("queue: %d job(s) loaded, %d marked paused", n_jobs, recovered);
+  LOGI("queue: %d job(s) loaded, %d marked paused, %d queued again", n_jobs, recovered, resumed);
 }
 
 int dl_init(const char *dir, int port) {
@@ -2583,8 +2601,10 @@ int dl_init(const char *dir, int port) {
   g_port = port;
   dlx_stats_init(dir);
   dlx_debrid_init(dir);
+  settings_t s;
+  settings_get(&s);
   pthread_mutex_lock(&queue_mu);
-  load_queue();
+  load_queue(s.resumeAfterRestart);
   pthread_mutex_unlock(&queue_mu);
   storage_set_job_lookup(dl_find_job_by_path);
   return 0;
@@ -2802,6 +2822,7 @@ int dl_pause_all_for_stop(const char *msg) {
     xstrlcpy(p->error, j->error, sizeof p->error);
     xstrlcpy(p->errorCode, j->errorCode, sizeof p->errorCode);
     act_stop_locked(j, DL_STOP_PAUSE, DL_PAUSED, msg);
+    j->stopPaused = 1;
     jlog_locked(j, "paused: XENO STORE is stopping");
   }
   stop_hold = 1;
@@ -2820,6 +2841,7 @@ int dl_pause_all_for_stop(const char *msg) {
     for (int k = 0; k < n; k++) {
       dl_job *j = find_locked(prev[k].id);
       if (!j || j->state != DL_PAUSED) continue;   /* changed meanwhile: leave it */
+      j->stopPaused = 0;
       if (!prev[k].signalled) { j->state = prev[k].state; j->nextRetryAt = prev[k].nextRetryAt; }
       else { j->state = prev[k].state == DL_EXTRACTING ? DL_DONE : DL_QUEUED; j->nextRetryAt = 0; }
       xstrlcpy(j->message, prev[k].message, sizeof j->message);
@@ -3363,6 +3385,7 @@ int dl_action(const char *id, const char *action, jv body, char *code, size_t cc
   if (!j) { pthread_mutex_unlock(&queue_mu); xstrlcpy(code, "not_found", ccap); xsnprintf(msg, mcap, "No such job"); return -1; }
   dl_state st = j->state;
   int busy = j->running && !state_is_active(st);   /* install/verify thread owns it */
+  j->stopPaused = 0;   /* from now on the job is where the user puts it */
   if (strcmp(action, "pause") == 0) {
     if (st == DL_QUEUED || state_is_active(st)) act_stop_locked(j, DL_STOP_PAUSE, DL_PAUSED, "Paused");
     else rc = -1;

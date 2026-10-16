@@ -118,6 +118,7 @@ typedef struct dl_job {
   dl_extract extract;
   double peakSpeed;                    /* best 1 s sample of this job (stats) */
   int restResumes;                     /* sleep/wake cycles survived (no attempts consumed) */
+  int stopPaused;                      /* paused by dl_pause_all_for_stop(), not by the user: queued again on the next start */
   /* runtime (never persisted) */
   volatile int rest_hit;               /* a wake-up event interrupted the transfer */
   int last_err_class;                  /* XHTTP_ERR_* of the last network error */
@@ -212,6 +213,11 @@ typedef struct dl_brief {
   int verified, synthetic, running, cancel, removePending, restHit, move, priority, index;
 } dl_brief;
 
+/* Loads queue.json. A download that was running when the store stopped (an
+ * update, a restart, a crash) or that the TV app's stop paused is queued again
+ * while downloads.resumeAfterRestart is on (the scheduler starts it under the
+ * concurrent-jobs limit), else it comes back paused; one the user paused stays
+ * paused. */
 int dl_init(const char *data_dir, int port);
 /* Stops every running job (at most ~5 s), holds the scheduler and saves
  * queue.json a last time. */
@@ -235,6 +241,7 @@ int dl_state_healthy(void);
  * Returns the number of jobs paused (>= 0) once the queue is saved, or -1 when
  * it could not be saved: then every job is put back as it was (a job whose
  * worker was already told to stop goes back to queued) and nothing is held.
+ * The paused jobs are marked stopPaused, so the next start queues them again.
  * Returns DL_PAUSE_INSTALLING, changing nothing, while a package install is
  * being started or reads its package from /pkgsrv/ (etaHEN DPI :12800): the
  * token lives only in this process, so a stop would break that install. */

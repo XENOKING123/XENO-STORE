@@ -68,6 +68,7 @@ typedef struct settings {
   char installOrder[48];             /* comma list of game|backport|update|dlc */
   int restModeAutoResume, extractZip, deleteArchiveAfterExtract;
   int deletePkgAfterInstall;         /* default 0: remove a download's .pkg once it installed */
+  int resumeAfterRestart;            /* default 1: what was downloading when the store stopped is queued again at start */
   /* debrid: keys stay on the console; "" = not connected */
   struct {
     struct { char apiKey[SET_DEBRID_KEY_LEN]; } realdebrid, alldebrid, torbox, premiumize;

@@ -430,13 +430,18 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     /* downloads group: Phase 2 rows */
     await page.click('[data-nav-id="set-nav-downloads"]');
     await sleep(300);
-    for (const id of ['set-prefer', 'set-turbo', 'set-autosets', 'set-order', 'set-delpkg', 'set-restresume', 'set-extract', 'set-delarchive', 'set-schedule']) await expect(async () => !!(await page.$('#scr-settings [data-nav-id="' + id + '"]')), 'Settings → Downloads row missing: ' + id);
+    for (const id of ['set-prefer', 'set-turbo', 'set-autosets', 'set-order', 'set-delpkg', 'set-restresume', 'set-restartresume', 'set-extract', 'set-delarchive', 'set-schedule']) await expect(async () => !!(await page.$('#scr-settings [data-nav-id="' + id + '"]')), 'Settings → Downloads row missing: ' + id);
     const dlSetting = (key, want) => page.waitForFunction(([k, w]) => fetch('/api/settings').then((r) => r.json()).then((b) => (b.settings || b).downloads[k] === w), [key, want], { timeout: 4000, polling: 200 }).then(() => true, () => false);
     await expect(async () => !(await page.evaluate(() => document.querySelector('#scr-settings [data-nav-id="set-delpkg"]').getAttribute('aria-checked') === 'true')), '"Delete the PKG after installing" should be off by default');
     await page.click('#scr-settings [data-nav-id="set-delpkg"]');
     await expect(() => dlSetting('deletePkgAfterInstall', true), 'the "Delete the PKG after installing" toggle should save downloads.deletePkgAfterInstall');
     await page.click('#scr-settings [data-nav-id="set-delpkg"]');
     await expect(() => dlSetting('deletePkgAfterInstall', false), 'turning "Delete the PKG after installing" off again should save it');
+    await expect(async () => page.evaluate(() => document.querySelector('#scr-settings [data-nav-id="set-restartresume"]').getAttribute('aria-checked') === 'true'), '"Resume after a restart" should be on by default');
+    await page.click('#scr-settings [data-nav-id="set-restartresume"]');
+    await expect(() => dlSetting('resumeAfterRestart', false), 'the "Resume after a restart" toggle should save downloads.resumeAfterRestart');
+    await page.click('#scr-settings [data-nav-id="set-restartresume"]');
+    await expect(() => dlSetting('resumeAfterRestart', true), 'turning "Resume after a restart" on again should save it');
     await page.click('[data-nav-id="set-schedule"]');
     await page.waitForSelector('.sheet [data-nav-id="sch-save"]');
     await page.click('.sheet [data-nav-id="sch-preset-1"]');

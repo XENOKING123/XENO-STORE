@@ -239,6 +239,8 @@
     "installOrderHint": "세트의 패키지가 설치되는 순서",
     "restResume": "대기 모드 후 재개",
     "restResumeHint": "절전/깨움 주기 후 다시 연결하여 모든 세그먼트를 체크포인트부터 이어갑니다",
+    "restartResume": "다시 시작 후 재개",
+    "restartResumeHint": "XENO STORE가 멈췄을 때(업데이트, 다시 시작, 충돌, 정전) 진행 중이던 다운로드는 다시 시작하면 자동으로 이어집니다. 일시 정지한 다운로드는 그대로 일시 정지됩니다.",
     "extractZip": "ZIP 압축 해제",
     "extractZipHint": "다운로드 후 콘솔에서 ZIP 게임 압축 파일을 풉니다(RAR/7z는 다운로드만)",
     "deleteArchive": "압축 해제 후 ZIP 삭제",

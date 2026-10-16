@@ -239,6 +239,8 @@
     "installOrderHint": "一组中各包的安装顺序",
     "restResume": "休眠模式后恢复",
     "restResumeHint": "在睡眠/唤醒周期后，重新连接并从检查点继续每个分段",
+    "restartResume": "重启后继续",
+    "restartResumeHint": "XENO STORE 停止时（更新、重启、崩溃或断电）正在进行的下载，会在它再次启动时自动继续。你暂停的下载保持暂停。",
     "extractZip": "解压 ZIP 压缩包",
     "extractZipHint": "下载后在主机上解压 ZIP 游戏压缩包（RAR/7z 仍仅下载）",
     "deleteArchive": "解压后删除 ZIP",

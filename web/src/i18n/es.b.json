@@ -239,6 +239,8 @@
     "installOrderHint": "Orden en que se instalan los paquetes de un conjunto",
     "restResume": "Reanudar tras el modo reposo",
     "restResumeHint": "Tras un ciclo de reposo/despertar, reconecta y continúa cada segmento desde su punto de control",
+    "restartResume": "Reanudar tras un reinicio",
+    "restartResumeHint": "Las descargas que estaban en curso cuando XENO STORE se detuvo (una actualización, un reinicio, un fallo o un corte de luz) continúan solas cuando vuelve a iniciarse. Las descargas que pausaste siguen en pausa.",
     "extractZip": "Extraer archivos ZIP",
     "extractZipHint": "Descomprime los archivos ZIP de juego en la consola tras la descarga (RAR/7z siguen siendo solo descarga)",
     "deleteArchive": "Eliminar el ZIP tras extraer",
