@@ -106,6 +106,7 @@ small { color: var(--dim); }
     if (linked && !$('files').childNodes.length) files(state.shareDir || '');
   }
   function refresh() { return call('state').then(function (s) { state = s; paint(); }); }
+  if (/[?&]unpaired=1/.test(location.search)) say($('linkStatus'), 'This PC was unpaired on the PS5. Link it again to open the store.', 'bad');
   $('scan').onclick = function () {
     var b = this; b.disabled = true; say($('findStatus'), 'Searching your network…'); $('found').innerHTML = '';
     call('discover').then(function (r) {
