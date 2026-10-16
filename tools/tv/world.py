@@ -15,7 +15,10 @@ RunServers (one per preview_live.py run, shared by every world of the run)
           update ELF, a copy of the host binary served as the next version),
           the TV app feed (updates/tv-app.json and a PPSA99500.ffpkg image
           with the UFS2 magic), catalog/revision.json (answered after 2 s, so
-          Settings shows the refresh as busy) and a GitHub API stand-in (404)
+          Settings shows the refresh as busy), a GitHub API stand-in (404)
+          and each world's Save Data Store files under /w/<world>/: the
+          GitHub saves index (saves.json), its zips and the published
+          saves-backend.json
 
 World (one per scenario group of scenarios.json)
   <tmp>/data            the backend's --data: catalog.json (the TV fixture
@@ -24,15 +27,25 @@ World (one per scenario group of scenarios.json)
                         feeds/featured.json, settings.json (sources
                         acknowledged or not, 1 connection per job, the
                         local feeds), the TV app image and install record of
-                        the tvApp state, and the saved update the updater writes
+                        the tvApp state, and the saved update the updater writes;
+                        for the Save Data Store (spec "saves", SAVES_MODES):
+                        sim/users.json (two profiles), the installed games
+                        (user/app/<titleId> and their appmeta versions) and a
+                        profile's save to back up
+  site                  the XenoKing site's stand-in (tests/host/supabase_mock.py)
+                        for the saves worlds, named by the published
+                        saves-backend.json
   <tmp>/R1, <tmp>/R2    extra --root dirs with the Library files
                         (tvworld.LIBRARY_FILES; <data>/user/app/PPSA05555)
   <tmp>/app0/xeno       the starter's bundled copy (the host binary) and version.txt
   backend               build/host/xeno-store --port B --data D --root R1 --root R2
                         --no-browser, with XENO_HOST_ART_FIXTURE,
                         XENO_HOST_RESOLVE_HOST, XENO_TVAPI_UPDATES=1,
-                        XENO_APP_BASE, XENO_GITHUB_API_BASE and
-                        XENO_PORT_LOADER (the sentinel below)
+                        XENO_APP_BASE, XENO_GITHUB_API_BASE,
+                        XENO_SAVES_INDEX_BASE (this world's saves index) and
+                        XENO_PORT_LOADER (the sentinel below); the saves worlds
+                        add XENO_HOST_RUNNING_TITLE, and "garlic" turns the
+                        native save engine off with Garlic and the loader closed
   fake loader           fake_loader.py on L, starting the host binary on B
                         (loader "fake"); "closed" is a port nobody listens on
   sentinel              a record-only fake loader on the backend's own
@@ -47,8 +60,9 @@ World (one per scenario group of scenarios.json)
 Dependencies: tests/host/tvworld.py (fixture loading, LIBRARY_FILES, the app's
 HTTP client), tests/host/harness.py (RangeServerProcess, free_port),
 tests/host/range_server.py and tests/host/tv/fixture-catalog.json /
-fixture-featured.json. They are imported lazily, on the first World or
-RunServers; when they are missing, WorldDependencyError says which file.
+fixture-featured.json, and tests/host/supabase_mock.py for the saves worlds.
+They are imported lazily, on the first World or RunServers; when they are
+missing, WorldDependencyError says which file.
 
 Python 3 standard library + PIL (through art_server). Run under python3 -I.
 """
@@ -56,6 +70,7 @@ import hashlib
 import importlib
 import json
 import os
+import random
 import re
 import shutil
 import signal
@@ -98,11 +113,83 @@ JOB_ROUTES = {
     "fx-velvet-static-ffpfsc": "slow/small.bin",     # cancelled with the partial kept
 }
 
+# The Save Data Store of a world (spec "saves"). The IDs, games and sharers
+# are those of the preview's fixture (app/tv/host/fixture.cpp), so its
+# scenarios open the same saves against either backend.
+#   none       every other world: an empty GitHub index and no site, so the
+#              store never reaches the network for saves
+#   community  seven saves: four in the GitHub index, three on the XenoKing
+#              site; two profiles; Ember Hollow, Glass Orchard, Starfall Rally
+#              and Echo Valley installed (Echo Valley without a version), Glass
+#              Orchard running; the native save engine (the host simulation)
+#   garlic     as community, but no native engine, no Garlic Save Manager and
+#              no ELF loader: an install fails with garlic_unavailable
+#   building   an empty site that answers after SAVES_BUILD_DELAY seconds, so
+#              the store's first list (it waits 15 s) says it is still building
+SAVES_MODES = ("none", "community", "garlic", "building")
+SAVES_ANON = "xeno-tv-preview-anon-key"
+SAVES_BUILD_DELAY = 18.0     # past the store's 15 s wait, inside its 20 s request timeout
+SAVES_RUNNING = "PPSA90004"
+SAVES_PROFILES = ({"id": 0x10000000, "name": "XENO", "foreground": True},
+                  {"id": 0x10000001, "name": "Guest", "foreground": False})
+SAVES_INSTALLED = {"PPSA90003": "01.050.000", "PPSA90004": "01.000.000", "PPSA90005": "01.020.000",
+                   "PPSA90010": ""}
+# GitHub index rows; "slow" downloads from range_server's slow/big.bin (64 MiB at
+# 1 MiB/s, long enough to show the progress and cancel), the others are real
+# decrypted saves the host simulation installs, with "data" kB of save data
+# (as real saves: a few dozen kilobytes to a few megabytes).
+SAVES_INDEX = (
+    {"id": "xk-ember-forge", "titleId": "PPSA90003", "title": "Ember Hollow",
+     "name": "Chapter 4 \u2014 every forge unlocked",
+     "description": "Saved at the mountain pass with every forge in the village relit and the smith's quests done.",
+     "author": "ashwright", "category": "chapter", "gameVersion": "01.050.000", "region": "EUR",
+     "createdAt": "2026-10-12T18:20:00Z", "data": 2400},
+    {"id": "xk-ember-ngplus", "titleId": "PPSA90003", "title": "Ember Hollow",
+     "name": "New game+ with the maxed starter kit",
+     "description": "A fresh new game+ start with every tool maxed and 50,000 coins.",
+     "author": "lumen", "category": "starter", "gameVersion": "01.060.000", "region": "EUR",
+     "createdAt": "2026-10-08T09:00:00Z", "data": 1100},
+    {"id": "xk-orchard-bloom", "titleId": "PPSA90004", "title": "Glass Orchard", "name": "Every garden in bloom",
+     "description": "100% complete: all 60 gardens grown and every beam path solved.",
+     "author": "petalfall", "category": "platinum", "gameVersion": "01.000.000", "region": "USA",
+     "createdAt": "2026-10-10T12:00:00Z", "data": 600},
+    {"id": "xk-starfall-season", "titleId": "PPSA90005", "title": "Starfall Rally",
+     "name": "Season two \u2014 every car unlocked",
+     "description": "All 40 cars unlocked and maxed, season two ready to start.",
+     "author": "gridline", "category": "starter", "gameVersion": "01.010.000", "region": "USA",
+     "createdAt": "2026-10-05T20:00:00Z", "slow": True},
+)
+# The site's rows (its own columns, and "data" as above); the store names them from the notes.
+SAVES_SITE = (
+    {"title_id": "PPSA90001", "game": "Tidewater", "shared_by": "tidesinger",
+     "notes": "100% platinum route. Every chart and wreck found, ready for the last trophy.",
+     "file_path": "PPSA90001/tidewater-platinum.zip", "created_at": "2026-10-14T08:30:00.000000+00:00",
+     "data": 3100},
+    {"title_id": "PPSA90002", "game": "Neon Courier", "shared_by": "nightshift",
+     "notes": "Boss rush checkpoint. Saved before the final delivery.",
+     "file_path": "PPSA90002/neon-courier-boss-rush.zip", "created_at": "2026-10-13T22:10:00.000000+00:00",
+     "data": 800},
+    {"title_id": "PPSA90010", "game": "Echo Valley", "shared_by": "undertow",
+     "notes": "Glitched endless night. Use at your own risk.",
+     "file_path": "PPSA90010/echo-valley-endless-night.zip", "created_at": "2026-10-01T10:00:00.000000+00:00",
+     "data": 34},
+)
+
 _DEPS = {}
 
 
 class WorldDependencyError(RuntimeError):
     pass
+
+
+def saves_site_module():
+    """tests/host/supabase_mock.py, for the worlds with the XenoKing site."""
+    deps()
+    try:
+        return importlib.import_module("supabase_mock")
+    except Exception as e:  # noqa: BLE001
+        raise WorldDependencyError(f"the saves worlds need tests/host/supabase_mock.py: "
+                                   f"{e.__class__.__name__}: {e}") from e
 
 
 def deps():
@@ -120,6 +207,12 @@ def deps():
             _DEPS.clear()
             raise WorldDependencyError(f"the preview world needs {why}: {e.__class__.__name__}: {e}") from e
     return _DEPS
+
+
+def save_data(key, kb):
+    """kb kilobytes of save data that does not compress (a zip about that size),
+    the same for the same key on every run."""
+    return random.Random(key).randbytes(kb * 1000)
 
 
 def free_port():
@@ -457,15 +550,29 @@ class FeedServer:
         with self.mu:
             return [p for p in self.requests if p.startswith(prefix)]
 
+    def add_world(self, name, files):
+        """Serves a world's files ({relative path: (content type, bytes)}) under /w/<name>/."""
+        prefix = f"/w/{name}/"
+        with self.mu:
+            for rel, entry in files.items():
+                self.files[prefix + rel] = entry
+
+    def drop_world(self, name):
+        prefix = f"/w/{name}/"
+        with self.mu:
+            for path in [p for p in self.files if p.startswith(prefix)]:
+                del self.files[path]
+
     def _serve(self, h, head=False):
         path = h.path.split("?", 1)[0]
         with self.mu:
             self.requests.append(path)
+            entry = self.files.get(path)
         if path == "/catalog/revision.json":
             time.sleep(self.revision_delay)
             body, ctype, code = json.dumps({"revision": self.revision}).encode(), "application/json", 200
-        elif path in self.files:
-            ctype, src = self.files[path]
+        elif entry is not None:
+            ctype, src = entry
             if isinstance(src, bytes):
                 body, code = src, 200
             else:
@@ -610,6 +717,10 @@ class World:
         self.marks = []
         self.retry_keeper = None
         self.instances = 0
+        self.tag = re.sub(r"[^A-Za-z0-9_-]", "_", name)
+        self.site = None                        # the XenoKing site's stand-in (saves worlds)
+        self.saves_base = None                  # this world's files on the feed server
+        self.closed_port = None                 # nobody listens: Garlic and the loader of "garlic"
         os.makedirs(self.logs, exist_ok=True)
 
     # ---- paths and environment -------------------------------------------
@@ -631,6 +742,13 @@ class World:
     def saved_version(self):
         return self.saved_elf + ".version"
 
+    @property
+    def saves_mode(self):
+        mode = self.spec.get("saves") or "none"
+        if mode not in SAVES_MODES:
+            raise ValueError(f"world {self.name}: saves must be one of {', '.join(SAVES_MODES)}, not {mode!r}")
+        return mode
+
     def backend_env(self):
         env = dict(os.environ)
         for k in list(env):
@@ -643,9 +761,19 @@ class World:
             "XENO_APP_BASE": feed + "/releases/download/",
             "XENO_GITHUB_API_BASE": feed + "/github",
             "XENO_PORT_LOADER": str(self.sentinel_port),
+            "XENO_SAVES_INDEX_BASE": self.saves_base,
         })
         if self.spec.get("updates", True):
             env["XENO_TVAPI_UPDATES"] = "1"
+        mode = self.saves_mode
+        if mode in ("community", "garlic"):
+            env["XENO_HOST_RUNNING_TITLE"] = SAVES_RUNNING
+        if mode == "garlic":
+            # No native engine, so an install needs Garlic Save Manager: it is not
+            # running and cannot be started, as nothing answers on the loader's
+            # port either (the sentinel is not asked, so it still sees nothing).
+            env.update({"XENO_SIM_NATIVE": "0", "XENO_PORT_GARLIC": str(self.closed_port),
+                        "XENO_PORT_LOADER": str(self.closed_port)})
         return env
 
     def preview_env(self, lang, scenarios, direct=False):
@@ -692,7 +820,8 @@ class World:
             "sources": {"enabled": {k: True for k in tvw.EXPOSED_SOURCES},
                         "acknowledged": bool(self.spec.get("acknowledged", True))},
             "catalog": {"autoRefresh": False, "revisionUrl": feed.base + "/catalog/revision.json",
-                        "url": feed.base + "/catalog/catalog.json"},
+                        "url": feed.base + "/catalog/catalog.json",
+                        "savesBackendUrl": self.saves_base + "/saves-backend.json"},
             "updates": {"autoCheck": False, "feed": feed.payloads_url},
             "downloads": {"connections": 1, "concurrentJobs": int(self.spec.get("concurrentDownloads", 2))},
         }
@@ -732,10 +861,62 @@ class World:
             with open(self.saved_version, "w", encoding="ascii") as f:
                 f.write("9.9.9")          # newer than the bundled copy: the starter tries it first
 
+    def _saves(self):
+        """The Save Data Store of the world's "saves" mode (SAVES_MODES): its
+        GitHub index and published saves-backend.json on the feed server, the
+        site, and the console's profiles, installed games and a save to back up."""
+        mode = self.saves_mode
+        tvw = deps()["tvworld"]
+        self.saves_base = f"{self.run.feed.base}/w/{self.tag}"
+        files, index = {}, []
+        if mode in ("community", "garlic"):
+            for row in SAVES_INDEX:
+                r = {k: v for k, v in row.items() if k not in ("slow", "data")}
+                r.update(dirName="SAVEDATA00", status="published", format="xeno-save-zip")
+                if row.get("slow"):
+                    r.update(url=self.run.files.base + "/slow/big.bin", size=64 * MiB)
+                else:
+                    z = tvw.save_zip(row["titleId"], row["title"], save_data(row["id"], row["data"]))
+                    rel = f"saves/{row['id']}.zip"
+                    files[rel] = ("application/zip", z)
+                    r.update(url=f"{self.saves_base}/{rel}", size=len(z), sha256=hashlib.sha256(z).hexdigest())
+                index.append(r)
+        files["saves.json"] = ("application/json", json.dumps({"schemaVersion": 1, "saves": index}).encode())
+        if mode != "none":
+            self.site = saves_site_module().SupabaseMock(SAVES_ANON).start()
+            if mode == "building":
+                self.site.list_delay = SAVES_BUILD_DELAY
+            else:
+                for row in SAVES_SITE:
+                    z = tvw.save_zip(row["title_id"], row["game"], save_data(row["file_path"], row["data"]))
+                    self.site.put_object(row["file_path"], z)
+                    self.site.add_row(file_name=f"{row['title_id']}_{row['game'].replace(' ', '_')}.zip",
+                                      file_size=len(z), **{k: v for k, v in row.items() if k != "data"})
+            files["saves-backend.json"] = ("application/json", json.dumps({
+                "kind": "supabase", "name": "XenoKing", "url": self.site.base, "anonKey": SAVES_ANON,
+                "bucket": "ps5-saves", "garlicFunction": "garlic-savedb"}).encode())
+        self.run.feed.add_world(self.tag, files)
+        if mode in ("community", "garlic"):
+            sim = os.path.join(self.data, "sim")
+            write_json(os.path.join(sim, "users.json"), {"users": list(SAVES_PROFILES)})
+            for tid, version in SAVES_INSTALLED.items():
+                os.makedirs(os.path.join(self.data, "user", "app", tid), exist_ok=True)
+                if version:
+                    write_json(os.path.join(sim, "system_data", "priv", "appmeta", tid, "param.json"),
+                               {"contentVersion": version})
+            # The second profile's own Ember Hollow save: an install for it backs this up first.
+            home = os.path.join(sim, "user", "home", "%x" % SAVES_PROFILES[1]["id"], "savedata_prospero", "PPSA90003")
+            os.makedirs(os.path.join(home, "sce_sys", "SAVEDATA00"), exist_ok=True)
+            with open(os.path.join(home, "sdimg_SAVEDATA00"), "wb") as f:
+                f.write(b"IMG" + b"Z" * 4096)
+            with open(os.path.join(home, "sce_sys", "SAVEDATA00", "param.sfo"), "wb") as f:
+                f.write(tvw.save_sfo("PPSA90003", "Ember Hollow", 0x1122334455667788))
+
     def build(self):
         os.makedirs(self.data, exist_ok=True)
         for r in self.roots:
             os.makedirs(r, exist_ok=True)
+        self._saves()
         self.catalog = self._catalog()
         write_json(os.path.join(self.data, "catalog.json"), self.catalog)
         self.featured = deps()["tvworld"].load_fixture_featured()
@@ -751,6 +932,7 @@ class World:
     def start(self):
         """Builds, then starts the sentinel, the proxy, the fake loader and the
         backend as the spec says. Returns self."""
+        self.closed_port = free_port()
         self.build()
         self.sentinel_port = free_port()
         self.sentinel = self._spawn_loader("sentinel", self.sentinel_port, record_only=True)
@@ -880,6 +1062,10 @@ class World:
                 p._xeno_out.close()
         if self.proxy:
             self.proxy.stop()
+        if self.site:
+            self.site.stop()
+            self.site = None
+        self.run.feed.drop_world(self.tag)
         for n in ("log.1.txt", "log.txt"):
             src = os.path.join(self.data, n)
             if os.path.exists(src):
