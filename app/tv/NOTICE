@@ -85,7 +85,8 @@ Components
 
 Stored in this directory:
 
-  Orbit Store TV app 1.5.0 (Orbit Store 1.2.0), GPL-3.0-or-later.
+  Orbit Store TV app 1.5.0 (Orbit Store 1.2.0), GPL-3.0-or-later, with
+  changes from Orbit Store 1.3.5 (TV app 1.7.0; see Origin).
     src/main.cpp, src/orbit/, host/ (except platform_host.cpp), tests/unit/,
     tools/preview.sh, sce_sys/param.json, i18n/, and Orbit's changes to the
     kit files listed in README.md ("Provenance and licences"), less the

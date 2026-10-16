@@ -135,12 +135,15 @@ right (Right or Cross to enter it, Circle or Left to leave).
     reconnects by itself. A toast names the version that came back.
 - **More settings**: Open browser version; **Sounds**, which turns the
   app's interface sounds off or on (kept on this console, in
-  `/download0/xeno-store/settings.json` of the app's storage); the versions.
-- **About**: XENO STORE's version; that the app is based on Orbit Store's
-  TV app and BlackBearReloaded's ps5-homebrew-ui; the GPL-3.0 notice (no
-  warranty); where its source is (`XENO-STORE-<version>-tv-sources.tar.gz`
-  on the GitHub releases); and the third-party components of `NOTICE`.
-- **More settings**: Open browser version, and both versions side by side.
+  `/download0/xeno-store/settings.json` of the app's storage; if that file
+  can't be written, the choice holds until the app closes and the section
+  says so); both versions side by side.
+- **About**: XENO STORE's version (the running download service) and the TV
+  app's; that the app is based on Orbit Store's TV app and BlackBearReloaded's
+  ps5-homebrew-ui; the GPL-3.0 notice (no warranty); where its source is
+  (`XENO-STORE-<TV app version>-tv-sources.tar.gz` on
+  github.com/XENOKING123/XENO-STORE/releases); and the third-party components
+  of `NOTICE`, which names each one's licence and where its text is.
 
 When the app opens it asks Orbit to look for updates of both parts (the
 same automatic check the browser makes, with a shared six-hour cooldown).
@@ -206,7 +209,8 @@ Keep `downloadDataSize` in `sce_sys/param.json` at 256, the kit's package value.
 
 The app writes only its own log (`/download0/hui/dev/app.log` inside its
 sandbox; `/mnt/sandbox/PPSA99177_000/download0/hui/dev/app.log` over FTP
-while it runs). Close it with the PS button and Close Application.
+while it runs) and its own settings file (`/download0/xeno-store/settings.json`,
+also inside its sandbox). Close it with the PS button and Close Application.
 
 ## Interface language
 
