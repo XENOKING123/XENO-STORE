@@ -264,7 +264,7 @@ attaches <code>XENO-STORE-&lt;version&gt;-tv-sources.tar.gz</code> with the comp
 
 Keyboard (phone / desktop): arrows, Enter, Esc, `F` favorite, `Q`/`E` tabs, `/` search, `?` shortcuts, `Ctrl/Cmd+K` command palette. Mouse and touch work everywhere.
 
-In the **TV app** the same buttons apply (D-pad, **✕** select, **○** back, **L1 / R1** tabs: Discover · Browse · Library · Downloads); the bottom bar always shows what each button does on the current screen.
+In the **TV app** the same buttons apply (D-pad, **✕** select, **○** back, **L1 / R1** tabs: Discover · Browse · Saves · Library · Downloads); the bottom bar always shows what each button does on the current screen.
 
 ---
 
