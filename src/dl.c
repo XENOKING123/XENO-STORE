@@ -342,6 +342,7 @@ static void job_write_json(jw *w, const dl_job *j, int history) {
   jw_kv_str(w, "titleId", j->install.titleId);
   jw_kv_str(w, "via", j->install.via);
   jw_kv_i64(w, "startedAt", (int64_t)j->install.startedAt);
+  jw_kv_bool(w, "pkgDeleted", j->install.pkgDeleted);
   jw_obj_end(w);
   jw_kv_bool(w, "resumable", j->resumable);
   jw_kv_str(w, "etag", j->etag);
@@ -443,6 +444,7 @@ static dl_job *job_from_json(jv o) {
   xstrlcpy(j->install.titleId, jv_get_str(in, "titleId", ""), sizeof j->install.titleId);
   xstrlcpy(j->install.via, jv_get_str(in, "via", ""), sizeof j->install.via);
   j->install.startedAt = (time_t)jv_get_i64(in, "startedAt", 0);
+  j->install.pkgDeleted = jv_get_bool(in, "pkgDeleted", 0);
   /* Phase 2 */
   xstrlcpy(j->type, jv_get_str(o, "type", "download"), sizeof j->type);
   if (strcmp(j->type, "copy") != 0) xstrlcpy(j->type, "download", sizeof j->type);
@@ -2152,8 +2154,10 @@ static void begin_install(dl_job *j) {
 }
 
 /* Caller holds queue_mu and passes its settings snapshot (SPEC §5: no second
- * lock under queue_mu). Tokens to release are returned to the caller. */
-static int poll_installs(const settings_t *sp, char (*toks)[24], int tokcap) {
+ * lock under queue_mu). Tokens to release are returned to the caller, and the
+ * ids of the downloads whose package is to be removed now that it installed
+ * (downloads.deletePkgAfterInstall) in del[]. */
+static int poll_installs(const settings_t *sp, char (*toks)[24], int tokcap, char (*del)[16], int delcap, int *ndel) {
   const settings_t s = *sp;
   int ntok = 0;
   for (int i = 0; i < n_jobs; i++) {
@@ -2170,6 +2174,8 @@ static int poll_installs(const settings_t *sp, char (*toks)[24], int tokcap) {
       j->finishedAt = util_now();
       jlog_locked(j, "installed");
       if (s.toasts && s.onInstall) sys_toast("✓ %s installed", j->title);
+      /* a download's own package only: never a Library install (synthetic) of a file found on a drive */
+      if (s.deletePkgAfterInstall && !j->synthetic && !is_copy_job(j) && *ndel < delcap) xstrlcpy(del[(*ndel)++], j->id, 16);
     } else {
       xstrlcpy(j->install.state, "failed", sizeof j->install.state);
       xstrlcpy(j->install.message, msg, sizeof j->install.message);
@@ -2186,6 +2192,31 @@ static int poll_installs(const settings_t *sp, char (*toks)[24], int tokcap) {
 
 static void release_tokens(char (*toks)[24], int n) {
   for (int i = 0; i < n; i++) install_release_token(toks[i]);
+}
+
+/* downloads.deletePkgAfterInstall: removes the installed download's .pkg (that
+ * file only). Called without queue_mu: unlinking a big file on exFAT takes a while. */
+static void delete_installed_pkg(const char *id) {
+  char path[1024];
+  pthread_mutex_lock(&queue_mu);
+  dl_job *j = find_locked(id);
+  int ok = j && j->state == DL_INSTALLED && !j->running && !j->remove_pending && !j->install.pkgDeleted;
+  if (ok) xstrlcpy(path, j->path, sizeof path);
+  pthread_mutex_unlock(&queue_mu);
+  if (!ok) return;
+  int rc = unlink(path), err = errno;
+  if (rc == 0) util_fsync_dir(path);
+  pthread_mutex_lock(&queue_mu);
+  j = find_locked(id);
+  if (j && rc == 0) {
+    j->install.pkgDeleted = 1;
+    xstrlcpy(j->message, "Installed · package removed", sizeof j->message);
+    jlog_locked(j, "package removed after the install");
+    queue_dirty = 1;
+  } else if (j) {
+    jlog_locked(j, "the package was kept: %s", strerror(err));
+  }
+  pthread_mutex_unlock(&queue_mu);
 }
 
 /* ---- verify action -------------------------------------------------------- */
@@ -2452,12 +2483,15 @@ void dl_housekeeping_tick(void) {
     if (start_worker_locked(jobs[best]) == 0) running++;
     else break;
   }
-  if (now_ms - last_install_poll_ms >= 2000) { last_install_poll_ms = now_ms; ntok += poll_installs(&s, toks + ntok, 16 - ntok); }
+  char del[8][16];
+  int ndel = 0;
+  if (now_ms - last_install_poll_ms >= 2000) { last_install_poll_ms = now_ms; ntok += poll_installs(&s, toks + ntok, 16 - ntok, del, 8, &ndel); }
   int n_inst = stop_hold ? 0 : group_tick_locked(&s, to_install, 8, &want_scan);
   int dirty = queue_dirty;
   int any_running = running > 0;
   pthread_mutex_unlock(&queue_mu);
   release_tokens(toks, ntok);
+  for (int i = 0; i < ndel; i++) delete_installed_pkg(del[i]);
   for (int i = 0; i < n_inst; i++) { jlog(to_install[i], "install set: installing %s step", to_install[i]->kind); begin_install(to_install[i]); }
   if (want_scan) {
     if (xthread_start(NULL, "shadowmount-scan", scan_thread, NULL, 0, 1) != 0) LOGW("install set: cannot start the ShadowMount scan thread");

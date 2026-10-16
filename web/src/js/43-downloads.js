@@ -333,6 +333,7 @@
         if (j.platform && j.platform !== 'HOMEBREW') meta.appendChild(ui.platChip(j.platform, true));
         if (j.verified) meta.appendChild(ui.tick(t('dl.hashVerified')));
         if (j.install && j.install.state === 'installed') meta.appendChild(h('span.chip.sm.good', { text: t('dl.state.installed') }));
+        if (j.install && j.install.pkgDeleted) meta.appendChild(h('span.chip.sm', { text: t('dl2.pkgDeleted') }));
         var tc = turboChip(j); if (tc) meta.appendChild(tc);
         if (ex.state === 'extracted') meta.appendChild(h('span.chip.sm.good', { html: U.icon('box') + '<span>' + U.escapeHtml(t('dl2.extracted', { n: ex.files || 0 })) + '</span>', title: ex.dir || '' }));
         if (ex.archiveDeleted) meta.appendChild(h('span.chip.sm', { text: t('dl2.archiveDeleted') }));
@@ -470,8 +471,9 @@
     if (['paused', 'failed', 'cancelled'].indexOf(st) >= 0 && typeOf(j) === 'download') { can('restart'); can('url'); }
     if (['paused', 'failed', 'cancelled'].indexOf(st) >= 0 && typeOf(j) !== 'download') can('restart');
     if (st === 'queued') { can('top'); can('up'); can('down'); can('bottom'); }
-    if ((st === 'done' || st === 'installed') && j.sha256Expected) can('verify');
-    if (st === 'done' || st === 'installed' || st === 'extracted') can('open');
+    var gone = !!(j.install && j.install.pkgDeleted);   /* the package was removed after it installed */
+    if ((st === 'done' || st === 'installed') && j.sha256Expected && !gone) can('verify');
+    if ((st === 'done' || st === 'installed' || st === 'extracted') && !gone) can('open');
     if (j.gameId && S.game(j.gameId)) items.push({ label: t('lib.openGame'), icon: 'external', onSelect: function () { XS.router.go('game', { id: j.gameId }); } });
     if (j.turbo && j.turbo.tested && j.turbo.tested.length) items.push({ label: t('dl2.turboDetails'), icon: 'zap', onSelect: function () { turboSheet(j); } });
     items.push('sep');

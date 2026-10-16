@@ -422,6 +422,35 @@ class DownloadTests(unittest.TestCase):
         time.sleep(1.5)
         self.assertEqual(self.srv.job(dflt["id"])["state"], "done")
 
+    def test_21_delete_pkg_after_install(self):
+        st, s = self.srv.api("GET", "/api/settings")
+        self.assertIs(s["settings"]["downloads"]["deletePkgAfterInstall"], False, "off by default")
+        self.addCleanup(self.srv.api, "PUT", "/api/settings", {"downloads": {"deletePkgAfterInstall": False}})
+        st, s = self.srv.api("PUT", "/api/settings", {"downloads": {"deletePkgAfterInstall": True}})
+        self.assertEqual(st, 200)
+        self.assertIs(s["settings"]["downloads"]["deletePkgAfterInstall"], True)
+        # a file of the same folder that is not this job's stays
+        other = os.path.join(self.root, "xeno-store", "pkg", "PPSA01234 Neighbour.pkg")
+        os.makedirs(os.path.dirname(other), exist_ok=True)
+        with open(other, "wb") as f:
+            f.write(b"\x7fCNT" + bytes(252))
+        job = self.srv.add(url=f"{self.rs}/ok/tiny.pkg", filename="PPSA01234 Remove.pkg", format="PKG", autoInstall=True, size=2 * MiB)
+        j = self.srv.wait_job(job["id"], None, timeout=60,
+                              until=lambda x: x["state"] == "installed" and x["install"].get("pkgDeleted"))
+        self.assertEqual(j["install"]["state"], "installed")
+        self.assertEqual(j["message"], "Installed · package removed")
+        self.assertFalse(os.path.exists(j["path"]), "the installed package is removed")
+        self.assertTrue(os.path.exists(other), "only the job's own file is removed")
+        st, lg = self.srv.api("GET", f"/api/queue/{job['id']}/log")
+        self.assertTrue(any("package removed" in ln for ln in lg["lines"]), lg["lines"])
+        # a failed install keeps its file: not a package at all
+        bad = self.srv.add(url=f"{self.rs}/ok/small.bin", filename="PPSA01234 Broken.pkg", format="PKG", autoInstall=True, size=8 * MiB)
+        j = self.srv.wait_job(bad["id"], None, timeout=60, until=lambda x: x["install"]["state"] == "failed")
+        time.sleep(2.5)
+        j = self.srv.job(bad["id"])
+        self.assertFalse(j["install"].get("pkgDeleted"))
+        self.assertTrue(os.path.exists(j["path"]), "a failed install never deletes the package")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

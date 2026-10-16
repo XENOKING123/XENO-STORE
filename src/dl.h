@@ -49,6 +49,7 @@ typedef struct dl_install {
   char via[24];
   time_t startedAt;
   int rc;
+  int pkgDeleted;       /* downloads.deletePkgAfterInstall removed the .pkg once it installed */
 } dl_install;
 
 /* Turbo start (SPEC §17.5): the first 1 MiB of up to 3 mirrors is raced. */

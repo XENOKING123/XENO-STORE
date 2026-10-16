@@ -18,7 +18,8 @@
  *   GET  /api/queue (summary.restMode/schedule/groups/lifetime as dl.c + a virtual scheduled job) · POST /api/queue/{id}/startNow
  *   fallbacks for /api/debrid, /api/saves/users and /api/saves?user= when part A's mock is absent
  * Seeds: an install set paused at its update step, a downloading install set, turbo results on the running job,
- * a debrid job, a copy job, a backup job, a ZIP being extracted, a scheduled job, Phase 2 settings defaults.
+ * a debrid job, a copy job, a backup job, a ZIP being extracted, an installed PKG whose package was removed,
+ * a scheduled job, Phase 2 settings defaults.
  */
 import { randomBytes } from 'node:crypto';
 
@@ -525,7 +526,7 @@ export function register({ route, state }) {
   function seedSettings() {
     const st = state.settings;
     Object.assign(st.general, { largeText: false, highContrast: false, safeMode: false, screensaver: true, screensaverMinutes: 3, controllerSwapConfirm: false, mdns: true });
-    Object.assign(st.downloads, { preferFormat: 'auto', turboStart: true, autoInstallSets: true, installOrder: 'game,backport,update,dlc', restModeAutoResume: true, extractZip: true, deleteArchiveAfterExtract: true, scheduleStart: st.downloads.scheduleStart || '', scheduleEnd: st.downloads.scheduleEnd || '' });
+    Object.assign(st.downloads, { preferFormat: 'auto', turboStart: true, autoInstallSets: true, installOrder: 'game,backport,update,dlc', restModeAutoResume: true, extractZip: true, deleteArchiveAfterExtract: true, deletePkgAfterInstall: false, scheduleStart: st.downloads.scheduleStart || '', scheduleEnd: st.downloads.scheduleEnd || '' });
     st.debrid = st.debrid || { realdebrid: { apiKey: 'rd-mock-key-7f3a9c2e' }, alldebrid: { apiKey: '' }, torbox: { apiKey: '' }, premiumize: { apiKey: '' }, preferred: 'auto' };
     st.catalog.featuredUrl = st.catalog.featuredUrl || ''; st.catalog.messagesUrl = st.catalog.messagesUrl || ''; st.catalog.companionsUrl = st.catalog.companionsUrl || ''; st.catalog.savesBackendUrl = st.catalog.savesBackendUrl || '';
     st.saves = st.saves || { backupRoot: '', autoBackup: true, indexUrls: ['https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/saves.json'], backend: { kind: 'github', url: '', anonKey: '', bucket: 'ps5-saves', garlicFunction: 'garlic-savedb' }, uploadHost: 'site', uploadEndpoint: '', submitEndpoint: '', nickname: '' };
@@ -614,7 +615,16 @@ export function register({ route, state }) {
       zj._extractStart = Date.now() - 2000; zj._extractUntil = Date.now() + 14000;
       jobs.push(zj); state.jlog(zj, 'download complete → extracting on the console');
     }
-    /* 8. scheduled download (virtual: never enters the simulation until Start now) */
+    /* 8. an installed PKG whose package was removed after the install (downloads.deletePkgAfterInstall) */
+    g = take((x) => direct(x));
+    if (g) {
+      const r = direct(g);
+      const pj = state.makeJob(g, { ...r, format: 'PKG', filename: `${(g.titleIds || [])[0] || 'PPSA00000'} ${g.title}.pkg` }, { root: '/data', autoInstall: true });
+      pj.state = 'installed'; pj.written = pj.total; pj.segments.forEach((s) => { s[2] = s[1]; }); pj.finishedAt = now() - 7200; pj.message = 'Installed · package removed';
+      pj.install = { state: 'installed', message: 'Installed', contentId: `EP0001-${pj.titleId || 'PPSA00000'}_00-XENOSTOREMOCK000`, pkgDeleted: true };
+      jobs.push(pj); state.jlog(pj, 'package removed after the install');
+    }
+    /* 9. scheduled download (virtual: never enters the simulation until Start now) */
     g = take((x) => direct(x));
     if (g) {
       const r = direct(g);

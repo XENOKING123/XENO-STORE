@@ -130,6 +130,7 @@
     list.appendChild(ui.valueRow({ id: 'set-order', icon: 'sort', label: t('settings2.installOrder'), desc: t('settings2.installOrderHint'), value: orderLabel(order), onClick: function (row) {
       ui.menu(row, ORDERS.map(function (o) { return { label: orderLabel(o), checked: order === o, onSelect: function () { sset('downloads.installOrder', o, function () { rerenderGroup('downloads'); }); } }; }), { title: t('settings2.installOrder') });
     } }));
+    list.appendChild(ui.toggleRow({ id: 'set-delpkg', icon: 'trash', label: t('settings2.deletePkg'), desc: t('settings2.deletePkgHint'), value: sget('downloads.deletePkgAfterInstall', false), onChange: function (v) { sset('downloads.deletePkgAfterInstall', v); } }));
     list.appendChild(ui.toggleRow({ id: 'set-shadow', icon: 'zap', label: t('set.shadowScan'), desc: t('set.shadowScanHint'), value: sget('downloads.shadowMountScan', true), onChange: function (v) { sset('downloads.shadowMountScan', v); } }));
     list.appendChild(ui.toggleRow({ id: 'set-awake', icon: 'power', label: t('set.keepAwake'), desc: t('set.keepAwakeHint'), value: sget('downloads.keepAwake', true), onChange: function (v) { sset('downloads.keepAwake', v); } }));
     list.appendChild(ui.toggleRow({ id: 'set-restresume', icon: 'moon', label: t('settings2.restResume'), desc: t('settings2.restResumeHint'), value: sget('downloads.restModeAutoResume', true), onChange: function (v) { sset('downloads.restModeAutoResume', v); } }));

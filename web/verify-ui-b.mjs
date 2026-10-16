@@ -172,6 +172,15 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await page.waitForSelector('#scr-downloads .job.type-backup', { timeout: 6000 }).catch(() => fail('save backup job row missing in Finished'));
     await page.waitForSelector('#scr-downloads .job.st-extracted', { timeout: 25000 }).catch(() => fail('ZIP should reach the "extracted" state'));
     await expect(async () => page.evaluate(() => { const r = document.querySelector('#scr-downloads .job.st-extracted'); return r && /Extracted/.test(r.textContent); }), 'extracted row should show the "Extracted · n files" chip');
+    /* an installed PKG whose package was removed (downloads.deletePkgAfterInstall): says so, and offers no Verify / Open location */
+    const pkgGone = await page.evaluate(() => { const r = Array.from(document.querySelectorAll('#scr-downloads .job.st-installed')).find((x) => /Installed/.test(x.textContent) && /Package removed/.test(x.textContent)); if (!r) return false; r.querySelector('[data-nav-id$="-more"]').click(); return true; });
+    if (!pkgGone) fail('an installed PKG whose package was removed should show "Installed" and "Package removed" (install.pkgDeleted)');
+    else {
+      await page.waitForSelector('.menu .mi');
+      await expect(async () => page.evaluate(() => { const tx = Array.from(document.querySelectorAll('.menu .mi')).map((m) => m.textContent).join('|'); return !/Verify hash|Open location/.test(tx) && /Log/i.test(tx); }), 'the menu of a removed package should not offer Verify hash or Open location');
+      await page.keyboard.press('Escape');
+      await page.waitForSelector('.menu', { state: 'detached', timeout: 4000 }).catch(() => fail('the job menu should close on Escape'));
+    }
     await sleep(300);
     await shot(page, 'tv-b-downloads-finished.png');
     /* turbo details sheet from the row menu */
@@ -421,7 +430,13 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     /* downloads group: Phase 2 rows */
     await page.click('[data-nav-id="set-nav-downloads"]');
     await sleep(300);
-    for (const id of ['set-prefer', 'set-turbo', 'set-autosets', 'set-order', 'set-restresume', 'set-extract', 'set-delarchive', 'set-schedule']) await expect(async () => !!(await page.$('#scr-settings [data-nav-id="' + id + '"]')), 'Settings → Downloads row missing: ' + id);
+    for (const id of ['set-prefer', 'set-turbo', 'set-autosets', 'set-order', 'set-delpkg', 'set-restresume', 'set-extract', 'set-delarchive', 'set-schedule']) await expect(async () => !!(await page.$('#scr-settings [data-nav-id="' + id + '"]')), 'Settings → Downloads row missing: ' + id);
+    const dlSetting = (key, want) => page.waitForFunction(([k, w]) => fetch('/api/settings').then((r) => r.json()).then((b) => (b.settings || b).downloads[k] === w), [key, want], { timeout: 4000, polling: 200 }).then(() => true, () => false);
+    await expect(async () => !(await page.evaluate(() => document.querySelector('#scr-settings [data-nav-id="set-delpkg"]').getAttribute('aria-checked') === 'true')), '"Delete the PKG after installing" should be off by default');
+    await page.click('#scr-settings [data-nav-id="set-delpkg"]');
+    await expect(() => dlSetting('deletePkgAfterInstall', true), 'the "Delete the PKG after installing" toggle should save downloads.deletePkgAfterInstall');
+    await page.click('#scr-settings [data-nav-id="set-delpkg"]');
+    await expect(() => dlSetting('deletePkgAfterInstall', false), 'turning "Delete the PKG after installing" off again should save it');
     await page.click('[data-nav-id="set-schedule"]');
     await page.waitForSelector('.sheet [data-nav-id="sch-save"]');
     await page.click('.sheet [data-nav-id="sch-preset-1"]');

@@ -67,6 +67,7 @@ typedef struct settings {
   int turboStart, autoInstallSets;
   char installOrder[48];             /* comma list of game|backport|update|dlc */
   int restModeAutoResume, extractZip, deleteArchiveAfterExtract;
+  int deletePkgAfterInstall;         /* default 0: remove a download's .pkg once it installed */
   /* debrid: keys stay on the console; "" = not connected */
   struct {
     struct { char apiKey[SET_DEBRID_KEY_LEN]; } realdebrid, alldebrid, torbox, premiumize;
