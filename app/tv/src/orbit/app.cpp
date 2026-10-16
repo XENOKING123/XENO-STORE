@@ -328,6 +328,23 @@ void App::update(const InputFrame &input, float dt, Feedback &feedback)
                    4.5f);
         ctx_.store.dismiss_restart();
     }
+    // A favourite confirms itself wherever it was saved (the browser version
+    // does too); the count before the request and after it says whether it was
+    // added or removed. The count is held while the request is out, so a
+    // refresh that brings the new list first doesn't hide the notice.
+    if (ctx_.store.favourite_action().busy)
+        favourite_waiting_ = true;
+    if (ctx_.store.favourite_action().serial != favourite_serial_)
+    {
+        favourite_serial_ = ctx_.store.favourite_action().serial;
+        if (ctx_.store.favourite_action().error.empty() && state.favourites.size() != favourite_count_)
+            show_toast(state.favourites.size() > favourite_count_ ? tr("Added to favourites")
+                                                                  : tr("Removed from favourites"),
+                       2.8f, ToastKind::favourite);
+        favourite_waiting_ = false;
+    }
+    if (!favourite_waiting_)
+        favourite_count_ = state.favourites.size();
     // An update for either part shows once, then waits under App settings.
     if (!update_told_ && update_badge() && !settings_open_)
     {
@@ -896,6 +913,12 @@ void App::draw(Frame &frame) const
         {
             overlay.circle(pill.x + 40.0f, mark_y, 16.0f, ui::color::action);
             ui::icon_download(overlay, pill.x + 40.0f, mark_y, 18.0f, ui::color::action_ink);
+        }
+        else if (toast_kind_ == ToastKind::favourite)
+        {
+            // A favourite added or removed: a heart on gold.
+            overlay.circle(pill.x + 40.0f, mark_y, 16.0f, ui::color::action);
+            ui::icon_heart(overlay, pill.x + 40.0f, mark_y, 18.0f, ui::color::action_ink);
         }
         else if (toast_kind_ == ToastKind::done)
         {

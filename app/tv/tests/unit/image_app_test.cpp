@@ -519,6 +519,43 @@ TEST(App, DiscoverFavouriteTogglesFromTheHeroWithoutOpeningAGame)
     EXPECT_EQ(h.store.state().favourite("tidewater"), before);
 }
 
+// A favourite saved here says so in a toast, added or removed; one saved on a
+// paired phone arrives with a poll and shows nothing.
+TEST(App, AFavouriteSavedHereShowsAToastAndOneFromElsewhereDoesNot)
+{
+    AppHarness h;
+    h.app.show_tab(orbit::tab::discover);
+    h.settle();
+    EXPECT_EQ(h.app.toast_left(), 0.0f); // nothing at start-up
+    const bool before = h.store.state().favourite("tidewater");
+    h.frame(Direction::right); // Heart beside View game
+    h.press(Action::confirm);
+    ASSERT_TRUE(h.store.favourite_action().busy);
+    h.store.run_next_action();
+    h.settle(3);
+    EXPECT_EQ(h.app.toast(), before ? "Removed from favourites" : "Added to favourites");
+    EXPECT_GT(h.app.toast_left(), 0.0f);
+    h.press(Action::confirm);
+    ASSERT_TRUE(h.store.favourite_action().busy);
+    h.store.run_next_action();
+    h.settle(3);
+    EXPECT_EQ(h.app.toast(), before ? "Added to favourites" : "Removed from favourites");
+    h.settle(200); // the toast has gone
+    ASSERT_EQ(h.app.toast_left(), 0.0f);
+    http::Request phone;
+    phone.method = "POST";
+    phone.path = "/api/v1/favorites";
+    phone.bearer = h.store.state().token;
+    phone.body = "{\"gameId\":\"neon-courier\",\"favorite\":" +
+                 std::string(h.store.state().favourite("neon-courier") ? "false" : "true") + "}";
+    ASSERT_EQ(h.backend.send(phone).status, 200);
+    const auto earlier = h.store.state().favourites;
+    h.store.poll_once();
+    h.settle(3);
+    EXPECT_NE(h.store.state().favourites, earlier);
+    EXPECT_EQ(h.app.toast_left(), 0.0f);
+}
+
 TEST(App, BrowsePlatformPickerOpensOnlyTheMatchingEdition)
 {
     AppHarness h;

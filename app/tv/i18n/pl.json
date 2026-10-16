@@ -720,5 +720,7 @@
   "Garlic: checking the save": "Garlic: sprawdzanie zapisu",
   "Garlic: re-signing and installing": "Garlic: ponowne podpisywanie i instalacja",
   "Garlic: save installed": "Garlic: zapis zainstalowany",
-  "Jump": "Przeskocz"
+  "Jump": "Przeskocz",
+  "Added to favourites": "Dodano do ulubionych",
+  "Removed from favourites": "Usunięto z ulubionych"
 }

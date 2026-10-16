@@ -704,5 +704,7 @@
   "Garlic: checking the save": "Garlic: a mentés ellenőrzése",
   "Garlic: re-signing and installing": "Garlic: újraaláírás és telepítés",
   "Garlic: save installed": "Garlic: mentés telepítve",
-  "Jump": "Ugrás"
+  "Jump": "Ugrás",
+  "Added to favourites": "Hozzáadva a kedvencekhez",
+  "Removed from favourites": "Eltávolítva a kedvencekből"
 }

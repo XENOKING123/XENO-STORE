@@ -704,5 +704,7 @@
   "Garlic: checking the save": "Garlic: save controleren",
   "Garlic: re-signing and installing": "Garlic: opnieuw ondertekenen en installeren",
   "Garlic: save installed": "Garlic: save geïnstalleerd",
-  "Jump": "Springen"
+  "Jump": "Springen",
+  "Added to favourites": "Toegevoegd aan favorieten",
+  "Removed from favourites": "Verwijderd uit favorieten"
 }

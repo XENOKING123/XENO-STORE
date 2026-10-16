@@ -720,5 +720,7 @@
   "Garlic: checking the save": "Garlic: проверка сохранения",
   "Garlic: re-signing and installing": "Garlic: повторная подпись и установка",
   "Garlic: save installed": "Garlic: сохранение установлено",
-  "Jump": "Пролистать"
+  "Jump": "Пролистать",
+  "Added to favourites": "Добавлено в избранное",
+  "Removed from favourites": "Удалено из избранного"
 }

@@ -816,14 +816,15 @@ class App
     int provider_focus_ = 1; // Back first, so returning cannot cancel by accident
     std::string provider_seen_;
     bool update_told_ = false; // the update toast shows once per launch
-    // The toast's mark: a confirmation, an update notice, or (XENO STORE) a
-    // save install that failed or was cancelled.
+    // The toast's mark: a confirmation, an update notice, a favourite added
+    // or removed, or (XENO STORE) a save install that failed or was cancelled.
     enum class ToastKind : std::uint8_t
     {
         done,
         update,
         problem,
         note,
+        favourite,
     };
     // detail: a sentence under the line, wrapped (the toast grows upward).
     void show_toast(std::string text, float seconds = 2.8f, ToastKind kind = ToastKind::done,
@@ -836,6 +837,9 @@ class App
     // XENO STORE: a save install that ends out of sight says how in a toast.
     void tell_save_install();
     std::uint64_t save_told_ = 0; // the last install (SaveInstall::run) told
+    std::uint64_t favourite_serial_ = 0;
+    std::size_t favourite_count_ = 0;
+    bool favourite_waiting_ = false; // a favourite request is out; favourite_count_ is from before it
     std::string backdrop_;
     std::string previous_backdrop_;
     std::string settling_; // the art Discover wants, while the focus rests

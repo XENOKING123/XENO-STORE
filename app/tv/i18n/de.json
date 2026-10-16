@@ -704,5 +704,7 @@
   "Garlic: checking the save": "Garlic: Save wird geprüft",
   "Garlic: re-signing and installing": "Garlic: wird neu signiert und installiert",
   "Garlic: save installed": "Garlic: Save installiert",
-  "Jump": "Springen"
+  "Jump": "Springen",
+  "Added to favourites": "Zu Favoriten hinzugefügt",
+  "Removed from favourites": "Aus Favoriten entfernt"
 }

@@ -712,5 +712,7 @@
   "Garlic: checking the save": "Garlic : vérification de la sauvegarde",
   "Garlic: re-signing and installing": "Garlic : nouvelle signature et installation",
   "Garlic: save installed": "Garlic : sauvegarde installée",
-  "Jump": "Sauter"
+  "Jump": "Sauter",
+  "Added to favourites": "Ajouté aux favoris",
+  "Removed from favourites": "Retiré des favoris"
 }

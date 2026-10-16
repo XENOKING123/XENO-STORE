@@ -712,5 +712,7 @@
   "Garlic: checking the save": "Garlic: comprobando la partida",
   "Garlic: re-signing and installing": "Garlic: volviendo a firmar e instalando",
   "Garlic: save installed": "Garlic: partida instalada",
-  "Jump": "Saltar"
+  "Jump": "Saltar",
+  "Added to favourites": "Añadido a favoritos",
+  "Removed from favourites": "Quitado de favoritos"
 }

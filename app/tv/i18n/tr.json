@@ -704,5 +704,7 @@
   "Garlic: checking the save": "Garlic: kayıt denetleniyor",
   "Garlic: re-signing and installing": "Garlic: yeniden imzalanıyor ve yükleniyor",
   "Garlic: save installed": "Garlic: kayıt yüklendi",
-  "Jump": "Atla"
+  "Jump": "Atla",
+  "Added to favourites": "Favorilere eklendi",
+  "Removed from favourites": "Favorilerden kaldırıldı"
 }

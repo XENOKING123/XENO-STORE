@@ -712,5 +712,7 @@
   "Garlic: checking the save": "Garlic: verificando o save",
   "Garlic: re-signing and installing": "Garlic: assinando novamente e instalando",
   "Garlic: save installed": "Garlic: save instalado",
-  "Jump": "Pular"
+  "Jump": "Pular",
+  "Added to favourites": "Adicionado aos favoritos",
+  "Removed from favourites": "Removido dos favoritos"
 }

@@ -704,5 +704,7 @@
   "Garlic: checking the save": "Garlic: checking the save",
   "Garlic: re-signing and installing": "Garlic: re-signing and installing",
   "Garlic: save installed": "Garlic: save installed",
-  "Jump": "Jump"
+  "Jump": "Jump",
+  "Added to favourites": "Added to favourites",
+  "Removed from favourites": "Removed from favourites"
 }
