@@ -1,10 +1,11 @@
-// XENO STORE TV app - Settings: the simultaneous downloads stepper.
+// XENO STORE TV app - Settings: the simultaneous downloads stepper, and source chips.
 // Copyright (C) 2026 XENO STORE contributors
 // SPDX-License-Identifier: GPL-3.0-or-later
 //
 // XENO STORE runs 1 to 4 downloads at once. The stepper in Settings, Storage
 // stops at 4, the API client refuses anything outside 1..4, and a larger
-// limit reported by an older backend steps down into that range.
+// limit reported by an older backend steps down into that range. Download
+// sources wrap onto more rows rather than running off the page.
 
 #include "fixture.hpp"
 #include "orbit/api.hpp"
@@ -13,6 +14,7 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cmath>
 #include <string>
 #include <vector>
@@ -31,6 +33,7 @@ struct SettingsHarness
     test::FakeSink sink;
     test::ScriptedTransport transport;
     int limit;
+    std::string sources;             // GET /api/v1/sources, when set
     std::vector<std::string> posted; // bodies of POST /api/v1/settings/downloads
     Store store{transport};
     ArtCache art{backend, sink};
@@ -38,12 +41,15 @@ struct SettingsHarness
     App app{context};
     Feedback feedback;
 
-    explicit SettingsHarness(int start) : limit(start)
+    explicit SettingsHarness(int start, std::string source_list = {})
+        : limit(start), sources(std::move(source_list))
     {
         transport.reply = [this](const http::Request &request)
         {
             if (request.path == "/api/v1/storage")
                 return test::json_reply(200, "[]");
+            if (request.path == "/api/v1/sources" && request.method == "GET" && !sources.empty())
+                return test::json_reply(200, sources);
             if (request.path == "/api/v1/settings/downloads" && request.method == "POST")
             {
                 posted.push_back(request.body);
@@ -152,6 +158,26 @@ TEST(SettingsStepper, ALargerLimitFromAnOlderBackendStepsDownIntoRange)
     h.settle(3);
     EXPECT_EQ(h.posted, std::vector<std::string>({R"({"concurrentDownloads":4})"}));
     EXPECT_EQ(h.store.state().system.concurrent_downloads, 4);
+}
+
+// Download sources: a chip that would cross the 940 px pane starts a new row
+// (from Orbit Store 1.3.5), so four sources with long names stay on the page.
+TEST(SettingsSources, ChipsWrapInsideThePane)
+{
+    SettingsHarness h(1, R"({"enabled":["archive"],"acknowledged":true,"noticeVersion":1,"options":[
+        {"id":"mirrors","label":"XENO mirrors","releaseCount":40,"downloadReady":true},
+        {"id":"feed","label":"Verified catalog feed","releaseCount":900,"downloadReady":true},
+        {"id":"archive","label":"Archive.org","releaseCount":15,"downloadReady":true},
+        {"id":"vikingfile","label":"Vikingfile","releaseCount":2,"downloadReady":true}]})");
+    ASSERT_EQ(h.store.state().sources.options.size(), 4u);
+    h.app.open_settings(SettingsScreen::Section::sources, true);
+    h.settle();
+    Frame drawn;
+    h.app.settings().draw(drawn, true);
+    float right = 0.0f;
+    for (const auto &instance : drawn.scene.instances())
+        right = std::max(right, instance.rect[0] + instance.rect[2]);
+    EXPECT_LE(right, 600.0f + 940.0f + 24.0f); // the pane, and a focus ring's glow
 }
 
 TEST(SettingsStepper, TheClientAcceptsOnlyOneToFour)

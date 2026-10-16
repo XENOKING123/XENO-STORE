@@ -329,7 +329,7 @@ void SettingsScreen::build_sources(Pane &pane) const
 
     // .source-card: a check and the source's name.
     float cx = pane.x;
-    const float cy = pane.y;
+    float cy = pane.y;
     bool browser_only_source = false;
     for (int i = 0; i < static_cast<int>(state.sources.options.size()); ++i)
     {
@@ -337,6 +337,8 @@ void SettingsScreen::build_sources(Pane &pane) const
         const bool on = contains(draft_, option.id);
         browser_only_source = browser_only_source || option.id == "vikingfile";
         const float w = type.medium.measure(option.label, 21.0f) + 104.0f;
+        // A source that would cross the pane's edge starts the next row.
+        if (cx > pane.x && cx + w > pane.x + pane.width) { cx = pane.x; cy += 74.0f; ++pane.row; }
         const ui::Rect r{cx, cy, w, 60.0f};
         if (pane.list != nullptr)
         {
