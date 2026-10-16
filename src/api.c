@@ -596,15 +596,16 @@ static void h_pair_show(api_ctx *c) {
 
 static void h_pair_redeem(api_ctx *c) {
   const char *code = body_str(c, "code", "");
-  char token[72], name[48];
+  char token[72], name[48], replaced[48];
   int retry = 0;
   pairing_device_name(c->req->user_agent, name, sizeof name);
-  int rc = pairing_redeem(code, name, token, sizeof token, &retry);
-  if (rc == 0) {
+  int rc = pairing_redeem(code, name, token, sizeof token, replaced, sizeof replaced, &retry);
+  if (rc >= 0) {
     jw w;
     api_begin(&w);
     jw_kv_str(&w, "token", token);
     jw_kv_bool(&w, "paired", 1);
+    if (rc == 1) jw_kv_str(&w, "replaced", replaced);   /* all slots were taken: the device that made room ("" = no name) */
     api_send(c, &w);
     return;
   }

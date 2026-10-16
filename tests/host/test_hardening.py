@@ -400,10 +400,17 @@ class PairedDevicesTests(unittest.TestCase):
 
     def test_04_full_slots_replace_the_device_unused_longest(self):
         local = self.session()
-        toks = [self.pair(WINDOWS_CHROME_UA) for _ in range(16)]
+        code = self.srv.api("GET", "/api/pair")[1]["code"]
+        st, b = self.srv.api("POST", "/api/pair", {"code": code}, headers={"User-Agent": WINDOWS_CHROME_UA})
+        self.assertNotIn("replaced", b, "a free slot replaces nothing")
+        toks = [b["token"]] + [self.pair(WINDOWS_CHROME_UA) for _ in range(15)]
         time.sleep(1.2)
         self.srv.api("GET", "/api/status", headers=bearer(toks[0]))   # the first one paired is in use
-        newest = self.pair(IPHONE_UA)                                    # no "All pairing slots are in use"
+        code = self.srv.api("GET", "/api/pair")[1]["code"]
+        st, b = self.srv.api("POST", "/api/pair", {"code": code}, headers={"User-Agent": IPHONE_UA})
+        self.assertEqual(st, 200, b)                                     # no "All pairing slots are in use"
+        self.assertEqual(b["replaced"], "Windows Chrome", "the new device is told which one made room")
+        newest = b["token"]
         # an older store (a downgrade) reads only the first 16 of the "tokens" list and
         # hands out the first as the console's session: the device left out is the one
         # unused the longest (toks[2] now), never the newest
@@ -614,6 +621,29 @@ try {
 """
 
 
+LINK_REPLACES_SCRIPT = r"""
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.XENO_PLAYWRIGHT);
+const [lanBase, consoleBase] = process.argv.slice(2);
+const browser = await chromium.launch();
+try {
+  // a new phone on the LAN links while all 16 slots are taken
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await page.addInitScript(() => { localStorage.setItem('xs.wizardDone', 'true'); });
+  await page.goto(lanBase + '/');
+  await page.waitForSelector('.link-page .link-code', { timeout: 30000 });
+  const code = (await (await fetch(consoleBase + '/api/pair')).json()).code;
+  await page.fill('.link-page .link-code', code);
+  await page.waitForFunction(() => !document.querySelector('.link-page'), null, { timeout: 15000 });
+  await page.waitForSelector('#toasts .toast', { timeout: 15000 });
+  console.log(JSON.stringify({ toasts: await page.evaluate(() => Array.from(document.querySelectorAll('#toasts .toast')).map((t) => t.innerText)) }));
+} finally {
+  await browser.close();
+}
+"""
+
+
 class PairedDevicesUiTests(unittest.TestCase):
     """Settings → Pair a device in the UI the console serves: every paired
     device with its name, last seen, "This device" and an Unpair button, the
@@ -654,6 +684,16 @@ class PairedDevicesUiTests(unittest.TestCase):
         self.assertEqual([r["name"] for r in out["after"]["rows"]], ["iPhone Safari", "PS5 browser", "Unknown device"])
         self.assertFalse(self.srv.api("GET", "/api/pair", headers=bearer(pc))[1]["linked"])
         self.assertTrue(self.srv.api("GET", "/api/pair", headers=bearer(phone))[1]["linked"])
+
+    def test_link_page_names_the_device_it_replaced(self):
+        ip = self.srv.api("GET", "/api/status")[1].get("ip", "127.0.0.1")
+        if not ip or ip.startswith("127."):
+            self.skipTest("no non-loopback IPv4 on this machine")
+        self.pair(PS5_UA)                                   # paired first, unused the longest
+        for _ in range(15):
+            self.pair(WINDOWS_CHROME_UA)
+        out = harness.run_ui_script(self, self.pw, self.tmp, LINK_REPLACES_SCRIPT, f"http://{ip}:{self.srv.port}", self.srv.base)
+        self.assertIn("PS5 browser was unpaired to make room — it was the device unused the longest.", out["toasts"], out)
 
     def test_unpaired_while_open_goes_back_to_the_link_page(self):
         ip = self.srv.api("GET", "/api/status")[1].get("ip", "127.0.0.1")

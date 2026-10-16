@@ -68,6 +68,7 @@
     "bad": "That code isn't right — check the notification on your PS5",
     "locked": "Too many tries — wait {n} s",
     "done": "Linked! Opening XENO STORE…",
+    "replaced": "{name} was unpaired to make room — it was the device unused the longest.",
     "note": "Only devices you link can control your store. You do this once per browser."
   },
   "discover4": {

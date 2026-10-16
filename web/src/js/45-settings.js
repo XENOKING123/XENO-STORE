@@ -525,6 +525,7 @@
   };
   /* The console names devices in English; its two generic names are translated here. */
   function deviceName(d) { return !d.name ? t('pairdev.unknown') : d.name === 'PS5 browser' ? t('pairdev.ps5Browser') : d.name; }
+  XS.pairDeviceName = deviceName;   /* also the Link page's (90-boot.js) */
   function deviceIcon(d) { return /^(iPhone|iPad|Android)/.test(d.name || '') ? 'phone' : d.name === 'PS5 browser' ? 'gamepad' : 'globe'; }
   function paintDevices(box, r) {
     U.clear(box);

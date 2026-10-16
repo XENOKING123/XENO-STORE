@@ -68,6 +68,7 @@
     "bad": "Ese código no es correcto — revisa la notificación de tu PS5",
     "locked": "Demasiados intentos — espera {n} s",
     "done": "¡Vinculado! Abriendo XENO STORE…",
+    "replaced": "{name} se desvinculó para hacer sitio: era el dispositivo que llevaba más tiempo sin usarse.",
     "note": "Solo los dispositivos que vincules pueden controlar tu tienda. Se hace una vez por navegador."
   },
   "discover4": {

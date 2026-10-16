@@ -68,6 +68,7 @@
     "bad": "Kod yanlış — PS5'indeki bildirimi kontrol et",
     "locked": "Çok fazla deneme — {n} sn bekle",
     "done": "Bağlandı! XENO STORE açılıyor…",
+    "replaced": "Yer açmak için {name} eşlemesi kaldırıldı — en uzun süredir kullanılmayan cihazdı.",
     "note": "Mağazanı yalnızca bağladığın cihazlar yönetebilir. Bunu her tarayıcı için bir kez yaparsın."
   },
   "discover4": {

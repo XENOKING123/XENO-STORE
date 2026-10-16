@@ -68,6 +68,7 @@
     "bad": "Codice errato — controlla la notifica sulla PS5",
     "locked": "Troppi tentativi — attendi {n} s",
     "done": "Collegato! Apro XENO STORE…",
+    "replaced": "{name} è stato dissociato per fare spazio: era il dispositivo inutilizzato da più tempo.",
     "note": "Solo i dispositivi collegati possono controllare lo store. Si fa una volta per browser."
   },
   "discover4": {

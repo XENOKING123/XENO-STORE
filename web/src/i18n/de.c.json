@@ -68,6 +68,7 @@
     "bad": "Der Code stimmt nicht — prüfe die Benachrichtigung auf deiner PS5",
     "locked": "Zu viele Versuche — warte {n} s",
     "done": "Verbunden! XENO STORE wird geöffnet…",
+    "replaced": "{name} wurde entkoppelt, um Platz zu machen – es war das Gerät, das am längsten nicht benutzt wurde.",
     "note": "Nur verbundene Geräte können deinen Store steuern. Das machst du einmal pro Browser."
   },
   "discover4": {

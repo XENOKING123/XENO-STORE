@@ -136,6 +136,8 @@
           S.data.token = r.token || '';
           U.store.set('token', S.data.token);
           say(t('link.done'), 'good');
+          /* all slots were taken: which device made room (the toast outlasts this page) */
+          if (typeof r.replaced === 'string' && XS.pairDeviceName) ui.toast({ title: t('link.replaced', { name: XS.pairDeviceName({ name: r.replaced }) }), timeout: 9000 });
           page.classList.add('done');
           setTimeout(function () { if (page.parentNode) page.parentNode.removeChild(page); html.classList.remove('linking'); resolve(); }, 600);
         }, function (err) {

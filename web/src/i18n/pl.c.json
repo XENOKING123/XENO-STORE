@@ -68,6 +68,7 @@
     "bad": "Zły kod — sprawdź powiadomienie na PS5",
     "locked": "Za dużo prób — poczekaj {n} s",
     "done": "Połączono! Otwieram XENO STORE…",
+    "replaced": "Usunięto parowanie urządzenia {name}, aby zrobić miejsce — było nieużywane najdłużej.",
     "note": "Tylko połączone urządzenia mogą sterować sklepem. Robisz to raz na przeglądarkę."
   },
   "discover4": {

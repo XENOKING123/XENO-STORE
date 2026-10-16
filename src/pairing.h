@@ -38,10 +38,11 @@ int pairing_show_cooldown(void);
 /* POST /api/pair: redeem a code for a bearer token (constant-time compare)
  * for a device called `name` (pairing_device_name). With all 16 slots taken
  * the device unused the longest (oldest last seen) is unpaired to make room.
- * 0 and a 64-hex token in token_out (cap >= 65) on success; otherwise a
- * negated HTTP status: 429 locked out (sets *retry_after), 403 wrong code,
- * 503 could not persist. */
-int pairing_redeem(const char *code, const char *name, char *token_out, size_t cap, int *retry_after);
+ * 0 and a 64-hex token in token_out (cap >= 65) on success, 1 likewise when
+ * a device made room (its name, "" when it has none, in `replaced`, which
+ * may be NULL); otherwise a negated HTTP status: 429 locked out (sets
+ * *retry_after), 403 wrong code, 503 could not persist. */
+int pairing_redeem(const char *code, const char *name, char *token_out, size_t cap, char *replaced, size_t rcap, int *retry_after);
 
 /* 1 when `token` (64 hex) matches a paired token or the console's own
  * session (constant-time). */

@@ -252,8 +252,9 @@ int pairing_show(int *retry_after) {
   return 0;
 }
 
-int pairing_redeem(const char *code, const char *name, char *token_out, size_t cap, int *retry_after) {
+int pairing_redeem(const char *code, const char *name, char *token_out, size_t cap, char *replaced, size_t rcap, int *retry_after) {
   if (token_out && cap) token_out[0] = 0;
+  if (replaced && rcap) replaced[0] = 0;
   pthread_mutex_lock(&pair_mu);
   time_t now = util_now();
   if (pair_locked_until > now) {
@@ -270,9 +271,10 @@ int pairing_redeem(const char *code, const char *name, char *token_out, size_t c
   int keep_n = pair_ntokens;
   memcpy(keep, pair_devs, sizeof keep);
   char gone[PAIR_NAME_MAX] = "";
-  if (pair_ntokens >= PAIR_MAX_TOKENS) {   /* all slots taken: the device unused the longest makes room */
+  int full = pair_ntokens >= PAIR_MAX_TOKENS;
+  if (full) {   /* all slots taken: the device unused the longest makes room */
     int o = oldest_locked();
-    xstrlcpy(gone, pair_devs[o].name[0] ? pair_devs[o].name : "a device without a name", sizeof gone);
+    xstrlcpy(gone, pair_devs[o].name, sizeof gone);
     remove_locked(o);
   }
   char token[PAIR_TOKEN_HEX + 1];
@@ -281,9 +283,10 @@ int pairing_redeem(const char *code, const char *name, char *token_out, size_t c
   pair_strikes = 0;
   if (persist_locked() != 0) { memcpy(pair_devs, keep, sizeof keep); pair_ntokens = keep_n; pthread_mutex_unlock(&pair_mu); return -503; }
   pthread_mutex_unlock(&pair_mu);
-  if (gone[0]) LOGI("pairing: all %d slots were in use, replaced %s (unused the longest)", PAIR_MAX_TOKENS, gone);
+  if (full) LOGI("pairing: all %d slots were in use, replaced %s (unused the longest)", PAIR_MAX_TOKENS, gone[0] ? gone : "a device without a name");
   if (token_out && cap) xstrlcpy(token_out, token, cap);
-  return 0;
+  if (full && replaced && rcap) xstrlcpy(replaced, gone, rcap);
+  return full;
 }
 
 int pairing_token_valid(const char *token) {

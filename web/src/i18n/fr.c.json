@@ -68,6 +68,7 @@
     "bad": "Ce code n'est pas bon — vérifie la notification sur ta PS5",
     "locked": "Trop d'essais — attends {n} s",
     "done": "Associé ! Ouverture de XENO STORE…",
+    "replaced": "{name} a été dissocié pour faire de la place — c'était l'appareil inutilisé depuis le plus longtemps.",
     "note": "Seuls les appareils associés peuvent contrôler ta boutique. À faire une fois par navigateur."
   },
   "discover4": {
