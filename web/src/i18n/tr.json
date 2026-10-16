@@ -396,7 +396,7 @@
     "verifyHashes": "Hash'leri doğrula",
     "verifyHashesHint": "Katalog biliyorsa indirmeden sonra SHA-256'yı denetle",
     "autoInstall": "PKG'yi otomatik kur",
-    "autoInstallHint": "Paketleri biter bitmez kur",
+    "autoInstallHint": "Paketleri biter bitmez kur. Yeni indirmeler için varsayılandır; her indirme kendi seçimini yapabilir.",
     "shadowScan": "ShadowMount taraması",
     "shadowScanHint": "İmaj indirmesinden sonra ShadowMountPlus'tan yeniden taramasını iste",
     "keepAwake": "Konsolu uyanık tut",

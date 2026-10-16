@@ -396,7 +396,7 @@
     "verifyHashes": "ハッシュを検証",
     "verifyHashesHint": "カタログに登録がある場合、ダウンロード後に SHA-256 を確認します",
     "autoInstall": "PKG を自動インストール",
-    "autoInstallHint": "完了したパッケージをすぐにインストールします",
+    "autoInstallHint": "完了したパッケージをすぐにインストールします。新しいダウンロードの既定値で、ダウンロードごとに個別に選べます。",
     "shadowScan": "ShadowMount スキャン",
     "shadowScanHint": "イメージのダウンロード後に ShadowMountPlus へ再スキャンを依頼します",
     "keepAwake": "本体をスリープさせない",

@@ -396,7 +396,7 @@
     "verifyHashes": "验证哈希",
     "verifyHashesHint": "当目录已知时，下载后校验 SHA-256",
     "autoInstall": "自动安装 PKG",
-    "autoInstallHint": "包下载完成后立即安装",
+    "autoInstallHint": "包下载完成后立即安装。这是新下载的默认设置，每个下载都可以单独选择。",
     "shadowScan": "ShadowMount 扫描",
     "shadowScanHint": "镜像下载后让 ShadowMountPlus 重新扫描",
     "keepAwake": "保持主机唤醒",

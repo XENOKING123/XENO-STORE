@@ -396,7 +396,7 @@
     "verifyHashes": "Verificar hashes",
     "verifyHashesHint": "Confere o SHA-256 após o download quando o catálogo o conhece",
     "autoInstall": "Instalar PKG automaticamente",
-    "autoInstallHint": "Instala os pacotes assim que terminam",
+    "autoInstallHint": "Instala os pacotes assim que terminam. É o padrão para novos downloads; cada download pode escolher por conta própria.",
     "shadowScan": "Escaneamento do ShadowMount",
     "shadowScanHint": "Pede ao ShadowMountPlus para reescanear após baixar uma imagem",
     "keepAwake": "Manter o console acordado",

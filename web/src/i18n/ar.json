@@ -396,7 +396,7 @@
     "verifyHashes": "التحقّق من البصمات",
     "verifyHashesHint": "افحص SHA-256 بعد التنزيل عندما يعرفها الكتالوج",
     "autoInstall": "تثبيت PKG تلقائيًا",
-    "autoInstallHint": "ثبّت الحزم فور انتهائها",
+    "autoInstallHint": "ثبّت الحزم فور انتهائها. هذا هو الافتراضي للتنزيلات الجديدة، ويمكن لكل تنزيل أن يختار بنفسه.",
     "shadowScan": "فحص ShadowMount",
     "shadowScanHint": "اطلب من ShadowMountPlus إعادة الفحص بعد تنزيل صورة",
     "keepAwake": "إبقاء الجهاز مستيقظًا",

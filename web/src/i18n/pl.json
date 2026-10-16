@@ -396,7 +396,7 @@
     "verifyHashes": "Weryfikuj hashe",
     "verifyHashesHint": "Sprawdzaj SHA-256 po pobraniu, gdy katalog go zna",
     "autoInstall": "Automatycznie instaluj PKG",
-    "autoInstallHint": "Instaluj pakiety, gdy tylko się zakończą",
+    "autoInstallHint": "Instaluj pakiety, gdy tylko się zakończą. Domyślne dla nowych pobrań; każde pobieranie może wybrać samo.",
     "shadowScan": "Skan ShadowMount",
     "shadowScanHint": "Poproś ShadowMountPlus o ponowny skan po pobraniu obrazu",
     "keepAwake": "Nie usypiaj konsoli",

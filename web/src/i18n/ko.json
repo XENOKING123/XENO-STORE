@@ -396,7 +396,7 @@
     "verifyHashes": "해시 검증",
     "verifyHashesHint": "카탈로그가 알고 있을 때 다운로드 후 SHA-256을 확인합니다",
     "autoInstall": "PKG 자동 설치",
-    "autoInstallHint": "다운로드가 끝나는 즉시 패키지를 설치합니다",
+    "autoInstallHint": "다운로드가 끝나는 즉시 패키지를 설치합니다. 새 다운로드의 기본값이며, 다운로드마다 따로 선택할 수 있습니다.",
     "shadowScan": "ShadowMount 검색",
     "shadowScanHint": "이미지 다운로드 후 ShadowMountPlus가 다시 검색하도록 요청합니다",
     "keepAwake": "콘솔 깨움 유지",
