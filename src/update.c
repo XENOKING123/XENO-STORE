@@ -583,8 +583,9 @@ static void marker_path(char *out, size_t cap) { xsnprintf(out, cap, "%s/handoff
 
 /* The hand-off marker, "<time> <version that handed off> <why>" (why: "start"
  * when a copy handed over at its start, "restart" for Settings → Updates →
- * Restart now; an older build writes none): 1 with its age, version and why,
- * 0 when there is none. */
+ * Restart now in the console's own browser, "remote" for Restart now from
+ * another device; an older build writes none): 1 with its age, version and
+ * why, 0 when there is none. */
 static int marker_read(long long *age, char *from, size_t fcap, char *why, size_t wcap) {
   char mpath[600];
   marker_path(mpath, sizeof mpath);
@@ -678,7 +679,7 @@ int update_restarted(void) {
   long long age = 0;
   char from[32], why[16];
   return marker_read(&age, from, sizeof from, why, sizeof why) && age < HANDOFF_WINDOW_S && strcmp(from, XENO_VERSION) != 0 &&
-         strcmp(why, "start") != 0;
+         strcmp(why, "restart") == 0;
 }
 
 void update_handoff_done(void) {

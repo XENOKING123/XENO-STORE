@@ -235,7 +235,8 @@ int main(int argc, char **argv) {
    * this copy running), otherwise, or when the app does not start, the
    * browser. Skipped when the Games-row app already asked for the browser,
    * and when the TV app started this copy (it is open already); the browser
-   * again when Settings → Updates → Restart now started this copy. */
+   * again when Settings → Updates → Restart now in the console's own browser
+   * started this copy. */
   int open = app_install_open_choice(tv_app, !g_cfg.no_browser && settings_open_on_start(), sys_browser_opened_ago_ms() <= 15000,
                                      restarted, app_install_launchable());
   if (open == APP_OPEN_APP) {
@@ -275,7 +276,9 @@ int main(int argc, char **argv) {
   pthread_join(hk, NULL);
   if (g_cfg.restart_requested) {
     char err[256];
-    if (update_relaunch(cx_local_port("LOADER", 9021), "restart", err, sizeof err) != 0) sys_toast("XENO STORE update: %s — send the payload again", err);
+    /* "restart" reopens the console's browser it came from; from a phone or a PC, the app */
+    if (update_relaunch(cx_local_port("LOADER", 9021), g_cfg.restart_local ? "restart" : "remote", err, sizeof err) != 0)
+      sys_toast("XENO STORE update: %s — send the payload again", err);
   }
   LOGI("bye");
   log_shutdown();

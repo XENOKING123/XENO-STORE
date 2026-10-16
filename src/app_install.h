@@ -85,7 +85,8 @@ int app_install_launchable(void);
  * and is open already; wanted: the setting is on (and no --no-browser);
  * recent: the browser was opened for the Games-row app moments ago;
  * restarted: update_restarted(), Settings → Updates → Restart now started
- * this copy from a browser, which it opens again rather than the app over it;
+ * this copy from the console's own browser, which it opens again rather than
+ * the app over it;
  * launchable: app_install_launchable(). NONE when any of the first three
  * says so, else APP when launchable and not restarted, else BROWSER (main.c
  * also falls back to the browser when the app does not start). */

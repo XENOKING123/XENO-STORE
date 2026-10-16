@@ -19,7 +19,7 @@ the installed app's version, never for a folder copy. And what a store that
 starts on its own opens on the TV: the app when it is installed and registered,
 else (or when it does not start) the browser, nothing when the TV app started it
 or the setting is off, and the browser again when Settings → Updates → Restart
-now started it.
+now in the console's own browser started it.
 """
 import hashlib
 import http.server
@@ -457,10 +457,10 @@ class StartupOpenTests(unittest.TestCase):
     <data>/user/app/PPSA99500; the simulated launch writes <data>/sim/launched.json),
     the browser otherwise or when the app does not start (XENO_HOST_LAUNCH_FAIL),
     and neither when the TV app started the store or the setting is off. A copy
-    that Settings → Updates → Restart now started (its hand-off marker, written
-    by another build, does not say "start") opens the browser it was restarted
-    from again, never the app over it. The app shows the pairing code itself, so
-    the start-up toasts stay away when it opens."""
+    that Restart now started from the console's own browser (its hand-off marker,
+    written by another build, says "restart") opens that browser again, never the
+    app over it. The app shows the pairing code itself, so the start-up toasts
+    stay away when it opens."""
 
     def start(self, image=False, folder=False, registered=False, poll_tv=False, open_on_start=True, env=None, marker=None):
         tmp = tempfile.mkdtemp(prefix="xeno-startopen.")
@@ -556,10 +556,13 @@ class StartupOpenTests(unittest.TestCase):
     def test_the_browser_again_after_restart_now(self):
         now = int(time.time())
         self.assert_browser_opened(self.start(image=True, registered=True, marker=f"{now - 3} 0.0.1 restart\n"))
-        # an older build's marker does not say why: as before, the browser
-        self.assert_browser_opened(self.start(image=True, registered=True, marker=f"{now - 3} 0.0.1\n"))
+        # Restart now from a phone or a PC: nobody is at the console's browser, so the app
+        self.assert_app_opened(self.start(image=True, registered=True, marker=f"{now - 3} 0.0.1 remote\n"))
         # a store that started on its own and handed over to a downloaded update: the app
         self.assert_app_opened(self.start(image=True, registered=True, marker=f"{now - 3} 0.0.1 start\n"))
+        # an older build's marker does not say why: it hands over at every start (Payload
+        # Manager's copy is never updated), but restarts only once, so the app
+        self.assert_app_opened(self.start(image=True, registered=True, marker=f"{now - 3} 0.0.1\n"))
         # a marker from long ago is no restart of this copy
         self.assert_app_opened(self.start(image=True, registered=True, marker=f"{now - 600} 0.0.1 restart\n"))
 

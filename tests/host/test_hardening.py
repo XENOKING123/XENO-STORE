@@ -217,6 +217,29 @@ def bearer(token):
     return {"Authorization": "Bearer " + token}
 
 
+def lan_api(test, srv, method, path, body=None, token=None, pin=None, ua=None):
+    """The request from this machine's LAN address: the store sees a phone, not the console."""
+    ip = srv.api("GET", "/api/status")[1].get("ip", "127.0.0.1")
+    if not ip or ip.startswith("127."):
+        test.skipTest("no non-loopback IPv4 on this machine")
+    hdrs = {"Content-Type": "application/json"} if body is not None else {}
+    if token:
+        hdrs.update(bearer(token))
+    if pin:
+        hdrs["X-XENO-PIN"] = pin
+    if ua:
+        hdrs["User-Agent"] = ua
+    req = urllib.request.Request(f"http://{ip}:{srv.port}{path}", method=method, headers=hdrs,
+                                 data=json.dumps(body).encode() if body is not None else None)
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return r.status, json.loads(r.read())
+    except urllib.error.HTTPError as e:
+        return e.code, json.loads(e.read())
+    except OSError as e:
+        test.skipTest(f"cannot reach {ip}: {e}")
+
+
 class PairedDevicesTests(unittest.TestCase):
     """Settings → Pair a device: the paired list (a friendly name from the
     User-Agent, first and last seen, "this device"), unpair one, unpair all
@@ -351,25 +374,8 @@ class PairedDevicesTests(unittest.TestCase):
         self.assertFalse(self.linked(phone))
         self.assertEqual(self.session(), local)
 
-    def lan(self, method, path, body=None, token=None, pin=None):
-        """The request from this machine's LAN address: the store sees a phone, not the console."""
-        ip = self.srv.api("GET", "/api/status")[1].get("ip", "127.0.0.1")
-        if not ip or ip.startswith("127."):
-            self.skipTest("no non-loopback IPv4 on this machine")
-        hdrs = {"Content-Type": "application/json"} if body is not None else {}
-        if token:
-            hdrs.update(bearer(token))
-        if pin:
-            hdrs["X-XENO-PIN"] = pin
-        req = urllib.request.Request(f"http://{ip}:{self.srv.port}{path}", method=method, headers=hdrs,
-                                     data=json.dumps(body).encode() if body is not None else None)
-        try:
-            with urllib.request.urlopen(req, timeout=10) as r:
-                return r.status, json.loads(r.read())
-        except urllib.error.HTTPError as e:
-            return e.code, json.loads(e.read())
-        except OSError as e:
-            self.skipTest(f"cannot reach {ip}: {e}")
+    def lan(self, method, path, body=None, token=None, pin=None, ua=None):
+        return lan_api(self, self.srv, method, path, body, token, pin, ua)
 
     def test_03_unpaired_client_cannot_list_or_unpair(self):
         lan = self.lan
@@ -946,6 +952,25 @@ class UpdateRestartTests(unittest.TestCase):
         finally:
             srv.stop()
             sink.close()
+
+    def test_restart_from_a_phone_is_no_browser_restart(self):
+        # Restart now from a phone or a PC: nobody is at the console's browser, so the
+        # marker does not say "restart" and the next copy opens the app when it can
+        sink = LoaderSink()
+        self.addCleanup(sink.close)
+        tmp = tempfile.mkdtemp(prefix="xeno-restart-lan.")
+        self.addCleanup(shutil.rmtree, tmp, True)
+        srv = XenoServer(os.path.join(tmp, "data"), env={"XENO_PORT_LOADER": str(sink.port)}).start()
+        self.addCleanup(srv.stop)
+        with open(os.path.join(srv.data_dir, "xeno-store.elf"), "wb") as f:
+            f.write(b"\x7fELF" + bytes(range(256)) * 64)
+        with open(os.path.join(srv.data_dir, "xeno-store.elf.version"), "w") as f:
+            f.write("99.0.0\n")
+        st, b = lan_api(self, srv, "POST", "/api/update/restart", {})
+        self.assertEqual(st, 200, b)
+        srv.proc.wait(timeout=30)
+        with open(os.path.join(srv.data_dir, "handoff.pending")) as f:
+            self.assertEqual(f.read().split()[2], "remote")
 
 
 class LoaderSink:

@@ -220,6 +220,7 @@ static void h_update_restart(api_ctx *c) {
   int port = cx_local_port("LOADER", 9021);
   if (!cx_tcp_probe(port, 800)) { api_error(c, 503, "loader_unavailable", "The ELF loader is not answering on 127.0.0.1:9021 — load etaHEN or elfldr, then try again"); return; }
   LOGI("update: restart requested (staged %s, loader :%d)", path, port);
+  g_cfg.restart_local = c->req->client_is_loopback;
   g_cfg.restart_requested = 1;
   g_cfg.stop_requested = 1;
   jw w;

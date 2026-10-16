@@ -90,7 +90,8 @@ int update_staged(char *path, size_t cap);
 
 /* Called after the server and the downloads have shut down: writes
  * <data>/handoff.pending ("<time> <this version> <why>"; why: "restart" for
- * Settings → Updates → Restart now, "start" for update_handoff_newer) and
+ * Settings → Updates → Restart now in the console's own browser, "remote"
+ * for Restart now from a phone or a PC, "start" for update_handoff_newer) and
  * sends the staged ELF to the local ELF loader so the new version starts on
  * the freed port. 0 sent, -1 nothing staged or the loader did not take it
  * (err filled, marker removed). */
@@ -105,9 +106,11 @@ int update_relaunch(int loader_port, const char *why, char *err, size_t errcap);
  * renamed to *.failed and the built-in version keeps the console usable. */
 int update_handoff_newer(int loader_port);
 
-/* 1 when another build handed over to this copy moments ago for any reason
- * but its own start: Settings → Updates → Restart now, or an older build,
- * whose marker does not say why. Read before update_handoff_done(). */
+/* 1 when another build handed over to this copy moments ago for Settings →
+ * Updates → Restart now in the console's own browser (why "restart"). Not
+ * for "remote", "start", or an older build's marker, which says no why: an
+ * older copy (Payload Manager's is never updated) hands over at every start
+ * but restarts only once. Read before update_handoff_done(). */
 int update_restarted(void);
 
 /* Clears the hand-off marker once this copy's server is up. */
