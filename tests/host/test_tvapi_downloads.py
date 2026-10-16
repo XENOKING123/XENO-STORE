@@ -19,7 +19,10 @@ TV app talks to (PORT-SPEC 1.5.3, 1.9; map-downloads §2-§9, §12, §14):
                       (a 128-byte password included), a PKG install with its
                       installState, and (XENO STORE) a failed install retried
                       with the "install" action.
-  TvDownloadsZip      §14 item 9 with TV_SHOW_ZIP: a ZIP option created from the
+  TvDownloadsInstallRace  XENO STORE: Retry install pressed twice at once
+                      (XENO_HOST_TV_INSTALL_HOLD_MS): the second hears that the
+                      download is already installing.
+  TvDownloadsZip     §14 item 9 with TV_SHOW_ZIP: a ZIP option created from the
                       TV app extracts to its image.
   TvDownloadsTorBox   §14 item 11 against a TorBox fixture (XENO_TB_BASE): host
                       limits from /webdl/hosters (E11), "Preparing with TorBox",
@@ -792,6 +795,46 @@ def storable_password_bytes():
             m = re.search(rx, f.read())
         sizes.append(int(m.group(1)) if m else 0)
     return min(sizes) - 1
+
+
+class TvDownloadsInstallRace(unittest.TestCase):
+    """XENO STORE: Retry install pressed twice at once (two TVs, or a TV and the
+    web UI). The TV's request waits after its checks (XENO_HOST_TV_INSTALL_HOLD_MS)
+    while the web UI starts the install: the queue then refuses the TV's, which
+    hears that the download is already installing, not that its file has gone."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.w = tvworld.World("dl-install-race", env={"XENO_HOST_TV_INSTALL_HOLD_MS": "1500"}).start()
+        cls.c = cls.w.client()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.w.close()
+
+    def test_01_the_second_press_hears_already_installing(self):
+        # a package: the store installs it once downloaded (a simulated install
+        # takes 3 s), and Retry install installs it again
+        jid = queue_add(self.w, url=self.w.file_url("tiny.pkg"), filename="Two Presses.pkg", format="PKG",
+                        root=self.w.default_root)
+        wait_row(self.c, jid, lambda j: j and j["installState"] == "installed", timeout=90, what="installed")
+        deadline = time.time() + 10
+        while True:
+            answer = []
+            tv = threading.Thread(target=lambda: answer.append(
+                self.c.post(f"/api/v1/downloads/{jid}/install", {})))
+            tv.start()
+            tv.join(0.5)
+            if tv.is_alive():
+                # the TV's request passed its checks and waits: the web UI is first
+                self.assertEqual(self.w.srv.action(jid, "install")[0], 200)
+                tv.join()
+                answer[0].error(409, S["install_busy"])
+                break
+            # the worker of the first install has not let go of the job yet
+            answer[0].error(409, S["install_busy"])
+            self.assertLess(time.time(), deadline, "the first install's worker never let go of the job")
+            time.sleep(0.1)
 
 
 class TvDownloadsZip(unittest.TestCase):

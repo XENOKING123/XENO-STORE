@@ -793,7 +793,14 @@ static int act_install(const dl_brief *b, act_result *res) {
   if (!b->path[0] || !util_file_exists(b->path)) REFUSE(409, S_INSTALL_GONE);
   /* the worker of the last install has not let go of the job yet */
   if (b->running) REFUSE(409, S_INSTALL_BUSY);
-  return run_xeno(b, "install", BODY_EMPTY, S_INSTALL_GONE, res);
+#ifdef XENO_HOST
+  /* XENO_HOST_TV_INSTALL_HOLD_MS: the request waits that long here, so a test
+   * can start the same install elsewhere first (two presses at once). */
+  const char *hold = getenv("XENO_HOST_TV_INSTALL_HOLD_MS");
+  if (hold && *hold) util_sleep_ms(atoi(hold));
+#endif
+  /* past the checks, only an install started meanwhile makes the queue refuse */
+  return run_xeno(b, "install", BODY_EMPTY, S_INSTALL_BUSY, res);
 }
 
 /* Ported from Orbit Store backend/queue.c job_password_locked (GPL-3.0-or-later):
