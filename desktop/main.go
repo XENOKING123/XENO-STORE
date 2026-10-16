@@ -352,7 +352,11 @@ func (a *app) api(w http.ResponseWriter, r *http.Request, name string) {
 			a.cfg.Token = tok
 			a.save()
 			a.mu.Unlock()
-			writeJSON(w, 200, map[string]any{"ok": true, "linked": true})
+			res := map[string]any{"ok": true, "linked": true}
+			if gone, ok := out["replaced"].(string); ok { // all slots were taken: the device that made room ("" = no name)
+				res["replaced"] = gone
+			}
+			writeJSON(w, 200, res)
 			return
 		}
 		writeJSON(w, st, out)

@@ -13,12 +13,14 @@ import (
 )
 
 // fakePS5 answers the store routes the Desktop relies on, like the store does: GET /api/pair says
-// whether the Bearer token is paired, POST /api/pair redeems code 123456 for the token "fresh",
-// and anything else needs a paired token (403 not_paired otherwise).
+// whether the Bearer token is paired, POST /api/pair redeems code 123456 for the token "fresh"
+// (naming the device that made room when replaced is set), and anything else needs a paired
+// token (403 not_paired otherwise).
 type fakePS5 struct {
-	mu     sync.Mutex
-	tokens map[string]bool
-	seen   []string // "<method> <path> <token> <user agent>" per request
+	mu       sync.Mutex
+	tokens   map[string]bool
+	replaced *string  // all slots taken: the device unpaired to make room
+	seen     []string // "<method> <path> <token> <user agent>" per request
 }
 
 func (f *fakePS5) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +44,11 @@ func (f *fakePS5) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		f.mu.Lock()
 		f.tokens["fresh"] = true
 		f.mu.Unlock()
-		writeJSON(w, 200, map[string]any{"ok": true, "token": "fresh", "paired": true})
+		out := map[string]any{"ok": true, "token": "fresh", "paired": true}
+		if f.replaced != nil {
+			out["replaced"] = *f.replaced
+		}
+		writeJSON(w, 200, out)
 	case !paired:
 		writeJSON(w, 403, map[string]any{"ok": false, "error": "not_paired"})
 	default:
@@ -163,5 +169,30 @@ func TestStoreLinkPageTokenBecomesThisPCs(t *testing.T) {
 	}
 	if got, want := f.last(), "GET /api/status fresh XENO-STORE-Desktop/"+version; got != want {
 		t.Fatalf("the PS5 saw %q, want %q", got, want)
+	}
+}
+
+// All slots taken: the PS5 unpairs the device unused the longest, and the shell is told which.
+func TestLinkSaysWhichDeviceMadeRoom(t *testing.T) {
+	for _, tc := range []struct {
+		replaced *string
+		want     string
+	}{{nil, `{"linked":true,"ok":true}`}, {new(string), `{"linked":true,"ok":true,"replaced":""}`}} {
+		f := &fakePS5{tokens: map[string]bool{}, replaced: tc.replaced}
+		ps5 := httptest.NewServer(f)
+		a := newDesktop(t, ps5.URL, "")
+		w := do(a, "POST", "/__desktop/api/link", `{"code":"123456"}`)
+		ps5.Close()
+		if got := strings.TrimSpace(w.Body.String()); w.Code != 200 || got != tc.want {
+			t.Fatalf("link: %d %s, want %s", w.Code, got, tc.want)
+		}
+	}
+	name := "iPhone Safari"
+	f := &fakePS5{tokens: map[string]bool{}, replaced: &name}
+	ps5 := httptest.NewServer(f)
+	defer ps5.Close()
+	a := newDesktop(t, ps5.URL, "")
+	if w := do(a, "POST", "/__desktop/api/link", `{"code":"123456"}`); !strings.Contains(w.Body.String(), `"replaced":"iPhone Safari"`) {
+		t.Fatalf("link: %d %s", w.Code, w.Body.String())
 	}
 }
