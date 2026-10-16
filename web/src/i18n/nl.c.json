@@ -92,6 +92,7 @@
     "reinstall": "Opnieuw installeren / bijwerken",
     "update": "App bijwerken",
     "updateAvailable": "Update beschikbaar: {v}",
+    "folderCopy": "Geïnstalleerd als de map /data/homebrew/PPSA99500, die XENO STORE niet bijwerkt. Verwijder die map om de versie hier te installeren, of werk hem zelf bij.",
     "cancel": "Annuleren",
     "cancelled": "Installatie geannuleerd",
     "version": "Versie {v}",

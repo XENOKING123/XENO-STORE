@@ -92,6 +92,7 @@
     "reinstall": "再インストール / 更新",
     "update": "アプリをアップデート",
     "updateAvailable": "アップデートあり: {v}",
+    "folderCopy": "/data/homebrew/PPSA99500 フォルダーとしてインストールされているため、XENO STORE は更新しません。ここにこのバージョンをインストールするにはそのフォルダーを削除するか、引き続きご自身で更新してください。",
     "cancel": "キャンセル",
     "cancelled": "インストールをキャンセルしました",
     "version": "バージョン {v}",

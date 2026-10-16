@@ -92,6 +92,7 @@
     "reinstall": "Zainstaluj ponownie / zaktualizuj",
     "update": "Zaktualizuj aplikację",
     "updateAvailable": "Dostępna aktualizacja: {v}",
+    "folderCopy": "Zainstalowano jako folder /data/homebrew/PPSA99500, którego XENO STORE nie aktualizuje. Usuń ten folder, aby zainstalować tu tę wersję, albo aktualizuj go dalej samodzielnie.",
     "cancel": "Anuluj",
     "cancelled": "Instalacja anulowana",
     "version": "Wersja {v}",

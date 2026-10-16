@@ -182,6 +182,7 @@ void app_install_status_json(jw *w) {
   int64_t size = util_file_size(path);
   int registered = util_dir_exists(appdir);
   cx_installed_version(APP_TITLE_ID, ver, sizeof ver, NULL, 0);
+  int copy = app_install_state(NULL, 0);
   pthread_mutex_lock(&app_mu);
   xstrlcpy(last, app_job, sizeof last);
   if (app_job[0] && cx_jobs_active(APP_JOB_TYPE) > 0) xstrlcpy(job, app_job, sizeof job);
@@ -198,9 +199,13 @@ void app_install_status_json(jw *w) {
   jw_kv_str(w, "titleId", APP_TITLE_ID);
   jw_kv_bool(w, "file", size > 0);
   jw_kv_bool(w, "registered", registered);
+  jw_kv_str(w, "copy", app_install_state_name(copy));
   jw_kv_str(w, "latestVersion", latest);
-  /* the installed contentVersion (01.003.001) reads as 1.3.1 */
-  jw_kv_bool(w, "updateAvailable", installed && ver[0] && latest[0] && version_compare(latest, ver) == 1);
+  /* the installed contentVersion (01.003.001) reads as 1.3.1. Not for a folder
+   * copy or something else at the image's path: like the TV app's install
+   * (tvapi_update.c), the card's install never adds a second copy. */
+  jw_kv_bool(w, "updateAvailable", installed && copy != APP_STATE_FOLDER && copy != APP_STATE_BLOCKED && ver[0] && latest[0] &&
+                                       version_compare(latest, ver) == 1);
   jw_kv_bool(w, "checking", checking);
 }
 

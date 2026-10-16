@@ -92,6 +92,7 @@
     "reinstall": "إعادة التثبيت / التحديث",
     "update": "تحديث التطبيق",
     "updateAvailable": "تحديث متاح: {v}",
+    "folderCopy": "مثبّت كمجلد /data/homebrew/PPSA99500، ولا يحدّثه XENO STORE. احذف هذا المجلد لتثبيت الإصدار هنا، أو واصل تحديثه بنفسك.",
     "cancel": "إلغاء",
     "cancelled": "تم إلغاء التثبيت",
     "version": "الإصدار {v}",

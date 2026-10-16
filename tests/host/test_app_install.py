@@ -15,7 +15,7 @@ Also: ShadowMountPlus without its HTTP API (before 1.7) — the install and the
 setup check rely on its process, and "launch" is offered only when it surely
 is not running. And "Update available" on the Settings → Updates card: the
 release named by updates/tv-app.json (served next to the updates feed) against
-the installed app's version.
+the installed app's version, never for a folder copy.
 """
 import hashlib
 import http.server
@@ -246,6 +246,7 @@ class AppInstallTests(unittest.TestCase):
         s = self.settled()
         self.assertEqual((s["version"], s["latestVersion"]), ("01.003.001", "1.4.0"), s)
         self.assertIs(s["updateAvailable"], True)
+        self.assertEqual(s["copy"], "none")
         # the same version installed: nothing to update (the feed is not read again within 6 h)
         hits = Release.feed_hits
         self.installed_app("01.004.000")
@@ -262,6 +263,22 @@ class AppInstallTests(unittest.TestCase):
         self.publish("1.5.0", filename="other.ffpkg")
         s = self.settled("/api/app/status?check=1")
         self.assertEqual(s["latestVersion"], "1.4.1", s)
+
+    def test_no_update_offered_for_a_folder_copy(self):
+        # The app as the folder /data/homebrew/PPSA99500 (the TV app refuses to update it too):
+        # the card's install would add PPSA99500.ffpkg beside it, a second copy.
+        self.publish("1.4.0")
+        self.start("ok", settings={"updates": {"feed": f"{self.base}/updates/payloads.json", "autoCheck": True}})
+        self.installed_app("01.003.001")
+        s = self.settled()
+        self.assertIs(s["updateAvailable"], True, s)
+        folder = os.path.join(os.path.dirname(s["path"]), "PPSA99500")
+        os.makedirs(folder)
+        with open(os.path.join(folder, "eboot.bin"), "wb") as f:
+            f.write(b"\x7fELF")
+        s = self.settled()
+        self.assertIs(s["updateAvailable"], False, s)
+        self.assertEqual((s["copy"], s["latestVersion"]), ("folder", "1.4.0"))
 
     def test_tv_app_feed_waits_for_check_while_automatic_checks_are_off(self):
         self.publish("1.4.0")

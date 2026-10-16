@@ -92,6 +92,7 @@
     "reinstall": "Yeniden yükle / güncelle",
     "update": "Uygulamayı güncelle",
     "updateAvailable": "Güncelleme mevcut: {v}",
+    "folderCopy": "/data/homebrew/PPSA99500 klasörü olarak kurulu; XENO STORE bunu güncellemez. Bu sürümü buraya kurmak için o klasörü kaldırın ya da güncellemeye kendiniz devam edin.",
     "cancel": "İptal",
     "cancelled": "Yükleme iptal edildi",
     "version": "Sürüm {v}",

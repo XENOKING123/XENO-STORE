@@ -133,10 +133,11 @@
     var el = h('div.panel.app-card', { data: { navRegion: '' } });
     var paint = view(el, function () {
       var st = A.status;
-      return [running(), A.job && A.job.id, st ? [st.installed, st.version, st.size, st.path, st.updateAvailable, st.latestVersion].join('|') : '-'].join('#');
+      return [running(), A.job && A.job.id, st ? [st.installed, st.version, st.size, st.path, st.updateAvailable, st.latestVersion, st.copy].join('|') : '-'].join('#');
     }, function () {
       var st = A.status, busy = running(), installed = !!(st && st.installed);
       var newer = installed && !!st.updateAvailable && !!st.latestVersion;   /* tv-app.json names a newer release */
+      var folder = !!(st && st.copy === 'folder');   /* /data/homebrew/PPSA99500: an install here would add a second copy */
       var chip = busy ? h('span.chip.sm.gold', { text: t('gameapp.installing') })
         : !st ? h('span.chip.sm', { text: '…' })
         : newer ? h('span.chip.sm.gold', { html: U.icon('download') + '<span>' + U.escapeHtml(t('gameapp.updateAvailable', { v: st.latestVersion })) + '</span>' })
@@ -156,6 +157,8 @@
         var c = btn('button.btn.sm.ghost', 'app-cancel', 'x', t('gameapp.cancel'), cancel);
         if (!A.job || !A.job.id) c.setAttribute('aria-disabled', 'true');
         acts.appendChild(c);
+      } else if (folder) {
+        acts.appendChild(h('p.dim.small.app-folder', { text: t('gameapp.folderCopy') }));
       } else {
         if (newer) acts.appendChild(btn('button.btn.sm.primary', 'app-install', 'download', t('gameapp.update'), function () { install(); }));
         else acts.appendChild(btn('button.btn.sm' + (installed ? '' : '.primary'), 'app-install', installed ? 'refresh' : 'download', installed ? t('gameapp.reinstall') : t('gameapp.install'), function () { install(); }));

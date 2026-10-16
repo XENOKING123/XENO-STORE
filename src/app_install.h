@@ -38,9 +38,10 @@ void app_install_pkg_path(char *out, size_t cap);
 
 /* Writes installed, path, size, version, job (running job id or ""),
  * lastJob, titleId, file, registered into the open object, and for the web
- * UI's card latestVersion (tv-app.json's release, "" before a read),
- * updateAvailable (installed, its version known and older than latestVersion)
- * and checking (a read of tv-app.json runs). */
+ * UI's card copy (app_install_state_name(): none | orbit | manual | folder |
+ * blocked), latestVersion (tv-app.json's release, "" before a read),
+ * updateAvailable (installed, not a folder copy nor blocked, its version known
+ * and older than latestVersion) and checking (a read of tv-app.json runs). */
 void app_install_status_json(jw *w);
 
 /* updates/tv-app.json next to the store's payloads.json feed (settings

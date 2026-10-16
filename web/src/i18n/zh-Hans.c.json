@@ -92,6 +92,7 @@
     "reinstall": "重新安装 / 更新",
     "update": "更新应用",
     "updateAvailable": "有可用更新：{v}",
+    "folderCopy": "以文件夹 /data/homebrew/PPSA99500 安装，XENO STORE 不会更新它。删除该文件夹即可在此安装该版本，或继续自行更新。",
     "cancel": "取消",
     "cancelled": "已取消安装",
     "version": "版本 {v}",

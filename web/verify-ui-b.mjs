@@ -464,6 +464,12 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await page.click('#scr-settings .app-card [data-nav-id="app-install"]');
     await waitToast(page, 'XENO STORE app installed', 20000);
     await page.waitForFunction(() => { const c = document.querySelector('#scr-settings .app-card'); return c && !/Update available/.test(c.textContent) && /Reinstall/.test(c.textContent); }, null, { timeout: 8000 }).catch(() => fail('after the update the app card should show the installed app (Reinstall / update), not "Update available"'));
+    /* the app as the folder /data/homebrew/PPSA99500: no update offered, a hint instead of the button (an install would add a second copy) */
+    await api('/api/__mock/app', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ version: '01.003.001', latest: '1.4.0', copy: 'folder' }) });
+    await page.click('#scr-settings [data-nav-id="upd-check"]');
+    await page.waitForFunction(() => { const c = document.querySelector('#scr-settings .app-card'); return c && /XENO STORE does not update/.test(c.textContent); }, null, { timeout: 10000 }).catch(() => fail('a folder copy of the app should get the "does not update" hint on the app card'));
+    await expect(async () => page.evaluate(() => { const c = document.querySelector('#scr-settings .app-card'); return !c.querySelector('[data-nav-id="app-install"]') && !/Update available/.test(c.textContent); }), 'a folder copy of the app should get no install button and no "Update available"');
+    await api('/api/__mock/app', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ copy: '' }) });
 
     /* ---------- Uninstall sheet, keyboard: open from the nav, cancel with Escape ---------- */
     await page.evaluate(() => document.querySelector('[data-nav-id="set-nav-general"]').focus());
