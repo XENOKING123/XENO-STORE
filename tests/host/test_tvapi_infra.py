@@ -695,6 +695,26 @@ class ArtGenTests(unittest.TestCase):
                     self.assertTrue(u.startswith("{{ART}}/"), f"{g['id']}.screenshots: {u}")
                     self.assertIn(u.rsplit("/", 1)[-1], artgen.ART_SET, f"{g['id']}.screenshots")
 
+    def test_preview_art_server_knows_the_fixture_art(self):
+        """tools/tv/art_server.py, the live preview's art host for the same fixture, has every {{ART}}
+        name: a good picture (accepted for its kind) wherever the backend tests serve artgen's."""
+        sys.path.insert(0, os.path.join(tvworld.PROJECT, "tools", "tv"))
+        import art_server  # noqa: E402
+        raw = tv_golden.load_json(tvworld.FIXTURE_CATALOG)
+        names = set()
+        for g in raw["games"]:
+            shots = g.get("screenshots", [])
+            urls = [g.get(k, "") for k in ("cover", "hero", "coverFallback", "heroFallback")]
+            for u in urls + (shots if isinstance(shots, list) else list(shots.values())):
+                if isinstance(u, str) and u.startswith("{{ART}}/"):
+                    names.add(u.rsplit("/", 1)[-1])
+        for name in sorted(names):
+            with self.subTest(name=name):
+                self.assertIn(name, set(art_server.GOOD) | set(art_server.BAD))
+                if artgen.ART_SET[name][1] == "served":
+                    self.assertIn(name, art_server.GOOD)
+                    self.assertEqual(art_server.check(art_server.make(name, "T", seed="t"), art_server.GOOD[name][0]), [])
+
     def test_server(self):
         with artgen.ArtServer() as srv:
             c = tvworld.TvClient(srv.port)

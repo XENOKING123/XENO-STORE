@@ -14,7 +14,8 @@ XENO_HOST_ART_FIXTURE only):
                and a small format tag. Covers are 512x512 (WebP lossy, lossless
                and with alpha, PNG, baseline and greyscale JPEG), heroes 1920x1080
                WebP (also PNG and progressive JPEG for the fixture's PNG/JPEG
-               games), plus the exact-cap sizes of PORT-SPEC 1.7.
+               games), screenshots (1920x1080 WebP, 1280x720 JPEG and a tall
+               720x1280 WebP), plus the exact-cap sizes of PORT-SPEC 1.7.
   bad names    the refused and skipped images of PORT-SPEC 1.7/1.10 (animated
                WebP, a 9000 px side, a 2000x2000 PNG cover, CMYK JPEG, square
                heroes, text behind an image name, empty and truncated files, a
@@ -63,7 +64,7 @@ FONT_FILES = ("Inter-SemiBold.ttf", "DejaVuSans-Bold.ttf")
 
 # PORT-SPEC 1.7 (what the backend accepts and passes through unchanged)
 COVER_PIXEL_CAP = 1048576           # PNG/JPEG covers
-HERO_PIXEL_CAP = 3686400            # PNG/JPEG heroes (2560x1440)
+HERO_PIXEL_CAP = 3686400            # PNG/JPEG heroes and screenshots (2560x1440)
 MAX_SIDE = 8192                     # any side (the app refuses more)
 MAX_FETCH_BYTES = 12 * 1024 * 1024  # cx_fetch maximum
 HERO_MIN_RATIO = 1.4                # a hero must be at least 1.4 times as wide as high
@@ -90,6 +91,9 @@ GOOD = {
     "hero.jpg": ("hero", 1920, 1080, "JPEG", {"quality": 85, "progressive": True}, "1920x1080 progressive JPEG"),
     "hero-2560.png": ("hero", 2560, 1440, "PNG", {}, "2560x1440 PNG, exactly the hero cap"),
     "hero-ratio-140.webp": ("hero", 1400, 1000, "WEBP", {"quality": 80}, "1400x1000 WebP, ratio exactly 1.4"),
+    "shot.webp": ("shot", 1920, 1080, "WEBP", {"quality": 80}, "1920x1080 lossy WebP screenshot"),
+    "shot.jpg": ("shot", 1280, 720, "JPEG", {"quality": 85}, "1280x720 baseline JPEG screenshot"),
+    "shot-tall.webp": ("shot", 720, 1280, "WEBP", {"quality": 80}, "720x1280 WebP screenshot (any shape)"),
 }
 
 # name -> (kind the catalogue uses it as, description). Built by artgen when present.
@@ -351,7 +355,7 @@ def sniff(data):
 
 
 def check(data, kind):
-    """The reasons the backend would refuse `data` as a `kind` ("cover" or "hero");
+    """The reasons the backend would refuse `data` as a `kind` ("cover", "hero" or "shot");
     [] when it is served. Also decodes the picture fully, as the app would."""
     why = []
     if len(data) > MAX_FETCH_BYTES:
