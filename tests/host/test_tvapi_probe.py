@@ -19,7 +19,11 @@ and check:
                                world, the catalogue the app builds equals
                                tv_golden.build() on the fixture (count, ids in
                                order, games, sizes), and the values the app's
-                               model holds equal what the backend sent.
+                               model holds equal what the backend sent; with
+                               the Save Data Store's calls (/api/saves: the
+                               list from a local GitHub index, the profiles,
+                               an install followed and cancelled, an unknown
+                               save's refusal).
   TvContractProbeUpdates       POST /updates and /tv-app with the host updates
                                switch on (XENO_TVAPI_UPDATES=1): the 202 replies
                                the app parses without checking.
@@ -58,6 +62,7 @@ SLOW_RELEASE = "fx-long-haul-ffpfsc"      # 64 MiB at 1 MiB/s: walks pause, resu
 DONE_RELEASE = "fx-tidewater-ffpfsc"      # 8 MiB at full speed: complete, then delete and remove
 BROWSER_RELEASE = "fx-neon-courier-vf"    # browser-only (Vikingfile)
 GAME = "fx-tidewater-ps5"                 # art and favourites
+SLOW_SAVE = "xk-probe-slow"               # 64 MiB at 1 MiB/s: installed, followed, cancelled
 
 # Wording of the client's parse-failure sentences (APPO/api.cpp) and of a refusal
 # whose {"error"} envelope could not be read.
@@ -116,6 +121,12 @@ EXPECTED = (
     ("service_action", 409, S_UPDATES_HOST),
     ("tv_app", 200, None),
     ("tv_app_action", 409, S_TVAPP_HOST),
+    ("save_store", 200, None),
+    ("save_users", 200, None),
+    ("install_save", 200, None),
+    ("save_job", 200, None),
+    ("cancel_save_job", 200, None),
+    ("install_save:unknown", 404, "unknown save id"),
 )
 
 
@@ -190,6 +201,10 @@ LIBRARY_GAME = {"titleId": "s", "title": "s", "platform": "s", "format": "s", "p
                 "canManageSource": "b", "installedSizeBytes": "o", "sizeBytes": "o", "sizeStatus": "s"}
 LIBRARY_DRIVE = {"id": "s", "path": "s", "label": "s", "filesystem": "s", "readOnly": "b", "totalBytes": "v",
                  "freeBytes": "v", "usedBytes": "v"}
+SAVE_ROW = {"id": "s", "titleId": "s", "gameId": "s", "title": "s", "name": "s", "description": "s", "author": "s",
+            "category": "s", "gameVersion": "s", "region": "s", "createdAt": "s", "source": "s", "size": "n",
+            "installed": "b", "installedVersion": "s", "versionCompare": "n", "compat": "s", "compatText": "s"}
+SAVE_USER = {"id": "n", "name": "s", "foreground": "b"}
 
 
 def first_seen(values):
@@ -294,8 +309,16 @@ class ProbeAsserts:
 class TvContractProbe(ProbeAsserts, unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        files = tvworld.shared_files()
         cls.w = tvworld.World("probe", library=True, settings={"catalog": {
-            "url": CLOSED + "/catalog.json", "revisionUrl": CLOSED + "/revision.json"}}).start()
+            "url": CLOSED + "/catalog.json", "revisionUrl": CLOSED + "/revision.json"}}, saves=[
+            {"id": "xk-probe-chapter", "titleId": "PPSA90003", "title": "Ember Hollow", "name": "Chapter 4",
+             "description": "Every forge unlocked.", "author": "ashwright", "category": "chapter",
+             "gameVersion": "01.050.000", "region": "EUR", "createdAt": "2026-10-12T18:20:00Z",
+             "zip": tvworld.save_zip("PPSA90003", "Ember Hollow", b"PROBE" * 400)},
+            {"id": SLOW_SAVE, "titleId": "PPSA90005", "title": "Starfall Rally", "name": "Season two",
+             "author": "gridline", "url": files.base + "/slow/big.bin", "size": 64 * tvworld.MiB},
+        ]).start()
         try:
             c = cls.w.client()
             # The Library's first read runs in the background: let it settle, so the
@@ -310,11 +333,13 @@ class TvContractProbe(ProbeAsserts, unittest.TestCase):
                 "debrid": c.get("/api/v1/debrid").check(),
                 "library": c.get("/api/v1/library").check(),
                 "library_storage": c.get("/api/v1/library/storage").check(),
+                "saves": c.get("/api/saves/store").json,
+                "save_users": c.get("/api/saves/users").json,
             }
             cls.golden = cls.w.golden_catalog()
             cls.rc, cls.calls, cls.waits, cls.summary, cls.stderr = run_probe(
                 cls.w, "--release", SLOW_RELEASE, "--complete", DONE_RELEASE, "--browser", BROWSER_RELEASE,
-                "--game", GAME, "--wait", "60")
+                "--game", GAME, "--save", SLOW_SAVE, "--wait", "60")
             cls.after = {"favorites": c.get("/api/v1/favorites").check(),
                          "system": c.get("/api/v1/system").check(),
                          "downloads": c.get("/api/v1/downloads").check()}
@@ -477,6 +502,31 @@ class TvContractProbe(ProbeAsserts, unittest.TestCase):
                          (False, self.wire["system"]["version"], self.wire["system"]["instanceId"]))
         t = got["tv_app"]["values"]
         self.assertEqual((t["available"], t["installed"], t["phase"]), (False, "none", "idle"))
+
+    def test_12_save_data_store(self):
+        got = self.by_call()
+        lst, want = got["save_store"], self.wire["saves"]
+        self.assertEqual((lst["counts"]["saves"], lst["counts"]["raw"]), (len(want["saves"]), len(want["saves"])),
+                         "GET /api/saves/store: saves the app keeps, saves sent")
+        self.assertEqual([r["id"] for r in want["saves"]], ["xk-probe-chapter", SLOW_SAVE])
+        self.assert_items("GET /api/saves/store saves[]", lst["values"]["saves"], want["saves"], SAVE_ROW)
+        self.assertEqual((lst["values"]["backend"], lst["values"]["backendName"], lst["values"]["building"]),
+                         (want["backend"], want["backendName"], want["building"]))
+        users = got["save_users"]
+        self.assert_items("GET /api/saves/users users[]", users["values"]["users"], self.wire["save_users"]["users"],
+                          SAVE_USER)
+        self.assertEqual(sum(1 for u in users["values"]["users"] if u["foreground"]), 1, "the signed-in profile")
+        inst = got["install_save"]["values"]
+        self.assertEqual((inst["save"], inst["type"]), (SLOW_SAVE, "save-install"))
+        self.assertIn(inst["state"], ("queued", "running"))
+        job = got["save_job"]["values"]
+        self.assertEqual((job["id"], job["state"], job["total"]), (inst["id"], "running", 64 * tvworld.MiB))
+        self.assertGreater(job["done"], 0, "the job's progress as the app reads it")
+        self.assertEqual(got["cancel_save_job"]["values"]["id"], inst["id"])
+        st, b = self.w.srv.api("GET", f"/api/saves/jobs/{inst['id']}")
+        self.assertEqual((st, b["job"]["state"], b["job"]["errorCode"]), (200, "cancelled", "cancelled"))
+        self.assertEqual(got["install_save:unknown"]["values"]["code"], "not_found",
+                         "a refusal outside /api/v1: the code of {\"error\": code, \"message\": sentence}")
 
 
 # --------------------------------------------------------------------------- #

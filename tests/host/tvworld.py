@@ -52,10 +52,15 @@ World(name, **options)  (nothing runs until start(); close() undoes everything)
   env=None              more environment for the backend (os.environ is passed through by harness)
   sync_zip_sizes=True   ZIP releases served from {{FILES}} get the real file size
   port=None             fixed port (default: a free one)
+  saves=None            the Save Data Store's GitHub index, served by a local SavesIndex
+                        (XENO_SAVES_INDEX_BASE): a list of index rows; a row's "zip" (bytes) is
+                        served and fills its url, size and sha256. The published saves-backend.json
+                        answers 404, so no site is listed and nothing reaches the network
 
 World members
   w.port, w.base, w.tmp, w.data, w.roots (extra roots), w.all_roots ([default root] + roots)
-  w.srv (harness.XenoServer: w.srv.api("GET", "/api/queue") for core routes), w.files, w.art
+  w.srv (harness.XenoServer: w.srv.api("GET", "/api/queue") for core routes), w.files, w.art,
+  w.saves_index (the SavesIndex of saves=, or None)
   w.catalog, w.featured  the exact dicts written (w.catalog is the parsed real one for "real")
   w.client(paired=True) -> TvClient;  w.token (the first pair())
   w.golden_catalog(enabled=..., acknowledged=...) / w.golden_sources(...)   tv_golden on w.catalog
@@ -87,6 +92,10 @@ Reply
   r.image(kind=None)                     a 200 art reply: sniffed bytes, Content-Type, no-store
   r.transport_errors() -> list[str]
 
+SavesIndex()   a local HTTP server: s.add(path, body, content_type), s.base, s.requests, s.stop()
+save_sfo(title_id, title, account=0, dirname="SAVEDATA00")   a save's param.sfo
+save_zip(title_id, title, data)   a decrypted community save (sce_sys/param.sfo + savedata.bin)
+
 Normalizer(roots=(), data=None, tmp=None, version=None, keys=None, paths=None)   (PORT-SPEC 1.10)
   instanceId <hex32>; token <hex64>; pairCode <code6>; checkedAt, updatedAt, checkAfter, retryAt,
   automaticCheckAfter, refreshAfter <unix> (0 stays 0); freeBytes, totalBytes, usedBytes <bytes>;
@@ -114,15 +123,20 @@ Python 3 standard library (+ PIL through artgen); run under python3 -I.
 import atexit
 import copy
 import difflib
+import hashlib
+import http.server
 import json
+import io
 import os
 import re
 import shutil
 import socket
+import struct
 import sys
 import tempfile
 import threading
 import time
+import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TV_DIR = os.path.join(HERE, "tv")
@@ -136,7 +150,7 @@ import range_server  # noqa: E402
 import tv_golden  # noqa: E402
 import tvcontract  # noqa: E402
 
-__all__ = ["World", "TvClient", "Reply", "Normalizer", "assert_golden", "golden_path", "golden_update_mode",
+__all__ = ["World", "TvClient", "Reply", "Normalizer", "SavesIndex", "save_sfo", "save_zip", "assert_golden", "golden_path", "golden_update_mode",
            "load_fixture_catalog", "load_fixture_featured", "fill_placeholders", "shared_files",
            "FIXTURE_CATALOG", "FIXTURE_FEATURED", "GOLDEN_DIR", "EXPOSED_SOURCES", "LIBRARY_FILES",
            "USER_AGENT", "MiB", "RESERVE_GAP"]
@@ -591,10 +605,76 @@ def _sparse_file(path, size, header=None):
         f.truncate(size)
 
 
+def save_sfo(title_id, title, account=0, dirname="SAVEDATA00"):
+    """A save's param.sfo (PSF 1.1): ACCOUNT_ID, MAINTITLE, SAVEDATA_DIRECTORY, TITLE_ID."""
+    entries = [("ACCOUNT_ID", 0x0404, struct.pack("<Q", account), 8),
+               ("MAINTITLE", 0x0204, title.encode("utf-8"), 128),
+               ("SAVEDATA_DIRECTORY", 0x0204, dirname.encode(), 64),
+               ("TITLE_ID", 0x0204, title_id.encode(), 12)]
+    keys, key_offsets, data, data_offsets = b"", [], b"", []
+    for k, _, d, mx in entries:
+        key_offsets.append(len(keys))
+        keys += k.encode() + b"\0"
+        data_offsets.append(len(data))
+        data += d.ljust(mx, b"\0")
+    key_start = 20 + 16 * len(entries)
+    pad = (-(key_start + len(keys))) % 4
+    hdr = b"\0PSF" + struct.pack("<IIII", 0x0101, key_start, key_start + len(keys) + pad, len(entries))
+    idx = b"".join(struct.pack("<HHIII", key_offsets[i], e[1], len(e[2]), e[3], data_offsets[i])
+                   for i, e in enumerate(entries))
+    return hdr + idx + keys + b"\0" * pad + data
+
+
+def save_zip(title_id, title, data):
+    """A decrypted community save as the Save Data Store installs it: sce_sys/param.sfo
+    at the root and the save's data (savedata.bin)."""
+    bio = io.BytesIO()
+    with zipfile.ZipFile(bio, "w", zipfile.ZIP_DEFLATED) as z:
+        z.writestr("sce_sys/param.sfo", save_sfo(title_id, title))
+        z.writestr("savedata.bin", data)
+    return bio.getvalue()
+
+
+class SavesIndex:
+    """The Save Data Store's GitHub index on a local port (World saves=): GET of
+    a path added with add(), else 404. Every request path lands in requests."""
+
+    def __init__(self):
+        self.routes, self.requests = {}, []
+        owner = self
+
+        class Handler(http.server.BaseHTTPRequestHandler):
+            def log_message(self, *a):
+                pass
+
+            def do_GET(self):  # noqa: N802
+                path = self.path.split("?", 1)[0]
+                owner.requests.append(path)
+                ctype, body = owner.routes.get(path, ("application/json", None))
+                self.send_response(200 if body is not None else 404)
+                self.send_header("Content-Type", ctype)
+                body = body if body is not None else b'{"message":"Not Found"}'
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+        self.srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        self.srv.daemon_threads = True
+        self.base = f"http://127.0.0.1:{self.srv.server_address[1]}"
+        threading.Thread(target=self.srv.serve_forever, name="saves-index", daemon=True).start()
+
+    def add(self, path, body, content_type="application/json"):
+        self.routes[path] = (content_type, body if isinstance(body, bytes) else body.encode("utf-8"))
+
+    def stop(self):
+        self.srv.shutdown()
+        self.srv.server_close()
+
+
 class World:
     def __init__(self, name="tv", catalog="fixture", featured="fixture", acknowledged=True, enabled=None,
                  settings=None, roots=("R1", "R2"), library=False, files="shared", art=True, show_zip=False,
-                 tvapi_updates=False, env=None, sync_zip_sizes=True, port=None):
+                 tvapi_updates=False, env=None, sync_zip_sizes=True, port=None, saves=None):
         self.name = name
         self.opt_catalog, self.opt_featured = catalog, featured
         self.acknowledged, self.enabled = acknowledged, enabled
@@ -605,10 +685,12 @@ class World:
         self.extra_env = dict(env or {})
         self.sync_zip_sizes = sync_zip_sizes
         self.fixed_port = port
+        self.opt_saves = saves
         self.tmp = None
         self.srv = None
         self.files = None
         self.art = None
+        self.saves_index = None
         self._own_files = None
         self._catalog = None
         self.featured = None
@@ -630,6 +712,18 @@ class World:
             self.files = self._own_files
         if self.opt_art:
             self.art = artgen.ArtServer().start()
+        if self.opt_saves is not None:
+            self.saves_index = SavesIndex()
+            rows = []
+            for row in self.opt_saves:
+                r = {k: v for k, v in row.items() if k != "zip"}
+                if "zip" in row:
+                    path = f"/saves/{row['id']}.zip"
+                    self.saves_index.add(path, row["zip"], "application/zip")
+                    r.update(url=self.saves_index.base + path, size=len(row["zip"]),
+                             sha256=hashlib.sha256(row["zip"]).hexdigest())
+                rows.append(r)
+            self.saves_index.add("/saves.json", json.dumps({"schemaVersion": 1, "saves": rows}))
 
     def _build_catalog(self):
         files_base = self.files.base if self.files else "http://127.0.0.1:9"
@@ -672,6 +766,8 @@ class World:
         doc = {"sources": {"enabled": en, "acknowledged": bool(self.acknowledged)},
                "catalog": {"autoRefresh": False},
                "updates": {"autoCheck": False}}
+        if self.saves_index:
+            doc["catalog"]["savesBackendUrl"] = self.saves_index.base + "/saves-backend.json"
         return _deep_merge(doc, self.extra_settings)
 
     def _seed_library(self):
@@ -689,6 +785,8 @@ class World:
             e["XENO_TV_SHOW_ZIP"] = "1"
         if self.tvapi_updates:
             e["XENO_TVAPI_UPDATES"] = "1"
+        if self.saves_index:
+            e["XENO_SAVES_INDEX_BASE"] = self.saves_index.base
         e.update(self.extra_env)
         return e
 
@@ -826,6 +924,9 @@ class World:
         if self._own_files:
             self._own_files.kill()
             self._own_files = None
+        if self.saves_index:
+            self.saves_index.stop()
+            self.saves_index = None
         if self.tmp and os.environ.get("XENO_TV_KEEP") != "1":
             shutil.rmtree(self.tmp, ignore_errors=True)
         self._started = False

@@ -9,7 +9,8 @@
 // orbit::api::Client method once, in the order the app meets them: the console
 // session first (its token pairs every later call), then the status, sources,
 // catalogue, art, favourites, drives, settings, downloads and each download
-// action, TorBox, the provider browser, the Library and the updates.
+// action, TorBox, the provider browser, the Library, the updates and (XENO
+// STORE) the Save Data Store's routes outside /api/v1.
 //
 // One JSON line per call on stdout:
 //   {"call", "method", "path", "status", "ok", "error", "retryAfter", "bytes",
@@ -19,7 +20,8 @@
 // parse-failure path: an error on a 2xx reply, a 2xx JSON body the parser
 // rejects (the calls that ignore it silently), or a refusal whose
 // {"error": "..."} envelope could not be read. Lines with "call": "wait"
-// report the queue polls between download actions. The last line is
+// report the queue polls between download actions (and a save install's job
+// polls). The last line is
 // {"call": "summary", ...}; the exit status is 1 when any call hit a parse
 // failure or a transport error, 2 for bad arguments.
 //
@@ -34,6 +36,8 @@
 //   --browser ID      a browser-only option for start_browser (default: the first one)
 //   --game ID         the game for art and favourites (default: --release's game)
 //   --storage ID      the drive for downloads and the preferred drive (default: the first)
+//   --save ID         the community save installed, followed until bytes arrive,
+//                     then cancelled (default: the first one listed)
 //   --wait SECONDS    the longest wait for a job state or art (default 30)
 //   --timeout MS      the transport timeout (default 8000, as the app)
 
@@ -228,6 +232,7 @@ struct Options
     std::string browser;
     std::string game;
     std::string storage;
+    std::string save;
     int wait_seconds = 30;
     int timeout_ms = 8000;
 };
@@ -567,6 +572,54 @@ class Probe
         return values;
     }
 
+    static Obj save_job_values(const SaveJob &job)
+    {
+        Obj values;
+        values.str("id", job.id)
+            .str("type", job.type)
+            .str("state", job.state)
+            .str("message", job.message)
+            .str("error", job.error)
+            .str("errorCode", job.error_code)
+            .num("done", job.done)
+            .num("total", job.total)
+            .num("percent", job.percent)
+            .str("preBackup", job.pre_backup);
+        return values;
+    }
+
+    // Reads a save install's job (as the Saves tab does, every second; here
+    // every 100 ms) until it has one of the states, with bytes when asked.
+    std::string wait_save_job(const std::string &job_id,
+                              std::initializer_list<std::string_view> states, bool bytes)
+    {
+        const auto start = std::chrono::steady_clock::now();
+        const auto deadline = start + std::chrono::seconds(options_.wait_seconds);
+        std::string got = "?";
+        std::string want;
+        for (std::string_view s : states)
+            want += (want.empty() ? "" : "|") + std::string(s);
+        int polls = 0;
+        while (std::chrono::steady_clock::now() < deadline)
+        {
+            ++polls;
+            const api::Result<SaveJob> job = client_.save_job(job_id);
+            got = job.ok() ? job.value.state : "error: " + job.error;
+            bool done = false;
+            for (std::string_view s : states)
+                done = done || (got == s && (!bytes || job.value.done > 0.0));
+            if (done)
+                break;
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+        const long ms = static_cast<long>(std::chrono::duration_cast<std::chrono::milliseconds>(
+                                              std::chrono::steady_clock::now() - start)
+                                              .count());
+        wait_line(job_id, want, got, ms, polls);
+        return got;
+    }
+
+    void saves();
     void art(ArtKind kind);
 
     Options options_;
@@ -602,6 +655,98 @@ void Probe::art(ArtKind kind)
         .boolean("pending", result.value.pending)
         .str("contentType", result.value.content_type);
     emit(call, result, counts, values, true);
+}
+
+// XENO STORE: the Save Data Store (docs/API.md "/api/saves/..."), as the Saves
+// tab calls it: the list, the profiles, one install followed until bytes
+// arrive and then cancelled, and an install of a save the store does not list.
+void Probe::saves()
+{
+    std::string save = options_.save;
+    if (wanted("save_store"))
+    {
+        const auto result = client_.save_store(false);
+        if (save.empty() && !result.value.saves.empty())
+            save = result.value.saves.front().id;
+        std::vector<Obj> rows;
+        for (const SaveRow &row : result.value.saves)
+        {
+            Obj item;
+            item.str("id", row.id)
+                .str("titleId", row.title_id)
+                .str("gameId", row.game_id)
+                .str("title", row.title)
+                .str("name", row.name)
+                .str("description", row.description)
+                .str("author", row.author)
+                .str("category", row.category)
+                .str("gameVersion", row.game_version)
+                .str("region", row.region)
+                .str("createdAt", row.created_at)
+                .str("source", row.source)
+                .num("size", row.size)
+                .boolean("installed", row.installed)
+                .str("installedVersion", row.installed_version)
+                .num("versionCompare", row.version_compare)
+                .str("compat", row.compat)
+                .str("compatText", row.compat_text);
+            rows.push_back(item);
+        }
+        Obj counts;
+        counts.num("saves", static_cast<double>(result.value.saves.size()))
+            .num("raw", raw_count("saves"));
+        Obj values;
+        values.str("backend", result.value.backend)
+            .str("backendName", result.value.backend_name)
+            .boolean("building", result.value.building)
+            .objects("saves", rows);
+        emit("save_store", result, counts, values);
+    }
+    if (wanted("save_users"))
+    {
+        const auto result = client_.save_users();
+        std::vector<Obj> users;
+        for (const SaveProfile &profile : result.value)
+        {
+            Obj item;
+            item.num("id", profile.id).str("name", profile.name).boolean("foreground", profile.foreground);
+            users.push_back(item);
+        }
+        Obj counts;
+        counts.num("users", static_cast<double>(result.value.size())).num("raw", raw_count("users"));
+        Obj values;
+        values.objects("users", users);
+        emit("save_users", result, counts, values);
+    }
+    std::string job;
+    if (wanted("install_save") && !save.empty())
+    {
+        // For the signed-in profile (0), always backing up its save first.
+        const auto result = client_.install_save(save, 0);
+        job = result.value.id;
+        Obj values = save_job_values(result.value);
+        values.str("save", save);
+        emit("install_save", result, Obj(), values);
+    }
+    if (!job.empty() && wanted("save_job"))
+    {
+        wait_save_job(job, {"running"}, true);
+        const auto result = client_.save_job(job);
+        emit("save_job", result, Obj(), save_job_values(result.value));
+    }
+    if (!job.empty() && wanted("cancel_save_job"))
+    {
+        const auto result = client_.cancel_save_job(job);
+        emit("cancel_save_job", result, Obj(), save_job_values(result.value));
+        wait_save_job(job, {"cancelled"}, false);
+    }
+    if (wanted("install_save:unknown"))
+    {
+        const auto result = client_.install_save("probe-unknown-save", 0);
+        Obj values;
+        values.str("code", result.code);
+        emit("install_save:unknown", result, Obj(), values);
+    }
 }
 
 int Probe::run()
@@ -1034,6 +1179,8 @@ int Probe::run()
         emit("tv_app_action", result, Obj(), tv_app_values(result.value));
     }
 
+    saves();
+
     Obj summary;
     summary.str("call", "summary")
         .num("calls", calls_)
@@ -1043,7 +1190,8 @@ int Probe::run()
         .str("complete", options_.complete)
         .str("browser", options_.browser)
         .str("game", options_.game)
-        .str("storage", options_.storage);
+        .str("storage", options_.storage)
+        .str("save", options_.save);
     std::printf("%s\n", summary.text().c_str());
     return parse_failures_ == 0 && transport_failures_ == 0 ? 0 : 1;
 }
@@ -1053,7 +1201,8 @@ int usage()
     std::fprintf(
         stderr,
         "usage: tv-contract-probe <ipv4>:<port> [--only a,b] [--release ID] [--complete ID]\n"
-        "       [--browser ID] [--game ID] [--storage ID] [--wait SECONDS] [--timeout MS]\n");
+        "       [--browser ID] [--game ID] [--storage ID] [--save ID] [--wait SECONDS]\n"
+        "       [--timeout MS]\n");
     return 2;
 }
 
@@ -1104,6 +1253,8 @@ int main(int argc, char **argv)
             options.game = value;
         else if (flag == "--storage")
             options.storage = value;
+        else if (flag == "--save")
+            options.save = value;
         else if (flag == "--wait")
             options.wait_seconds = std::atoi(value.c_str());
         else if (flag == "--timeout")
