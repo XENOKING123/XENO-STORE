@@ -579,10 +579,11 @@
     head.appendChild(up);
     inner.appendChild(head);
     /* the tab is the home of every save feature: the Saves hub (backups, restore, profile transfer) and the
-       Save Store's options, which stay in Settings → Saves */
-    inner.appendChild(h('div.lib-entries.sv-entries', { data: { navRegion: '' } }, [
-      XS.cb.entryTile('sv-entry-backups', 'folder', t('saves3.myBackups'), t('lib2.savesHubDesc'), function () { XS.router.go('saveshub'); }),
-      XS.cb.entryTile('sv-entry-options', 'settings', t('saves3.options'), t('saves3.optionsDesc'), function () { XS.router.go('settings', { group: 'saves' }); })
+       Save Store's options, which stay in Settings → Saves and open above the tab (Back returns here). The row spans
+       the page so Down from Upload reaches it. */
+    inner.appendChild(h('div.lib-entries.sv-entries', [
+      XS.cb.entryTile('sv-entry-backups', 'folder', t('lib2.savesHub'), t('lib2.savesHubDesc'), function () { XS.router.go('saveshub'); }),
+      XS.cb.entryTile('sv-entry-options', 'settings', t('saves3.options'), t('saves3.optionsDesc'), function () { XS.router.go('settings', { group: 'saves' }, { push: true }); })
     ]));
     inner.appendChild(garlicPanel({ nav: 'sv-garlic' }));
     var bar = h('div.browse-bar', { data: { navRegion: '' } });

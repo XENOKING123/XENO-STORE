@@ -298,6 +298,7 @@
       else html.removeAttribute('data-safe-mode');
       if (g.controllerSwapConfirm) html.setAttribute('data-swap-confirm', '1'); else html.removeAttribute('data-swap-confirm');
       cb.remap.fixLegend();
+      if (XS.router.fitChrome) XS.router.fitChrome();   /* large text needs more room on the top bar */
     }
   };
   /* L2 held while the store opens → safe mode for this session (Gamepad API only; the PS5 browser exposes it). */
@@ -409,9 +410,10 @@
   };
 
   /* ---------- Command palette (Ctrl/Cmd+K): screens, settings, recent games, catalog search ---------- */
+  /* in tab order, then the other screens; `also` is a second name the screen is found by (the Saves tab's page title) */
   var SCREENS = [
-    { id: 'discover', icon: 'compass' }, { id: 'browse', icon: 'grid' }, { id: 'saves', icon: 'shield' }, { id: 'homebrew', icon: 'box' }, { id: 'downloads', icon: 'download' },
-    { id: 'library', icon: 'library' }, { id: 'updates', icon: 'refresh' }, { id: 'saveshub', icon: 'folder' }, { id: 'setup', icon: 'check' }, { id: 'settings', icon: 'settings' }
+    { id: 'discover', icon: 'compass' }, { id: 'browse', icon: 'grid' }, { id: 'saves', icon: 'shield', also: 'saves.title' }, { id: 'downloads', icon: 'download' }, { id: 'library', icon: 'library' },
+    { id: 'homebrew', icon: 'box' }, { id: 'updates', icon: 'refresh' }, { id: 'saveshub', icon: 'folder' }, { id: 'setup', icon: 'check' }, { id: 'settings', icon: 'settings' }
   ];
   var SETTING_GROUPS = ['general', 'downloads', 'debrid', 'sources', 'catalog', 'saves', 'accounts', 'setup', 'pair', 'updates', 'notifications', 'diagnostics', 'about', 'uninstall'];
   cb.groupLabel = function (gid) { return XS.i18n.has('set.group.' + gid) ? t('set.group.' + gid) : (XS.i18n.has('settings2.group.' + gid) ? t('settings2.group.' + gid) : gid); };
@@ -421,8 +423,8 @@
     var items = [];
     SCREENS.forEach(function (s) {
       if (!XS.router.defs[s.id]) return;
-      var label = screenLabel(s.id);
-      if (!q || label.toLowerCase().indexOf(q) >= 0 || s.id.indexOf(q) >= 0) items.push({ kind: 'screen', icon: s.icon, label: label, sub: t('palette.kind.screen'), run: function () { XS.router.go(s.id); } });
+      var label = screenLabel(s.id), also = s.also ? t(s.also).toLowerCase() : '';
+      if (!q || label.toLowerCase().indexOf(q) >= 0 || s.id.indexOf(q) >= 0 || (also && also.indexOf(q) >= 0)) items.push({ kind: 'screen', icon: s.icon, label: label, sub: t('palette.kind.screen'), run: function () { XS.router.go(s.id); } });
     });
     SETTING_GROUPS.forEach(function (g) {
       var label = cb.groupLabel(g);

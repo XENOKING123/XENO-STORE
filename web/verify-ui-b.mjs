@@ -8,11 +8,11 @@
  *      backup jobs, ZIP extraction, scheduled row + Start now, paused set + Retry), Library (disk analyzer + clean-up,
  *      Play now, uninstall with the token flow, copy-to-drive sheet, installed homebrew), Updates center (one-tap
  *      download+install), Saves hub (keyboard: Back up → progress → toast; restore; profile transfer), the Saves top
- *      tab (keyboard: My backups → Saves hub → Back, Save Store options → Settings → Saves), Settings
+ *      tab (keyboard from its first focus: Saves hub → Back, Save Store options → Settings → Saves → Back), Settings
  *      (Setup via keyboard + run check + launch companion + start Garlic + unavailable companion + ghost cleaner,
  *      Debrid connect, Accounts activate, Saves, Pair/mDNS, Uninstall sheet open/cancel + the final screen), command
  *      palette, shortcuts overlay, large text + high contrast, controller remap legend
- *   3. at 390×844: Downloads, Settings, the Saves tab from the phone bar and its My backups entry
+ *   3. at 390×844: Downloads, Settings, the Saves tab from the phone bar and its Saves hub entry
  *   4. fails on any console error / uncaught exception, any failed or ≥ 400 request, missing i18n keys
  *
  * Usage: PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers node web/verify-ui-b.mjs [--port 9095] [--no-build] [--out DIR] [--headed] [--verbose]
@@ -61,6 +61,7 @@ function watch(page, label, expected) {
   page.on('response', (res) => { if (res.url().indexOf(BASE) === 0 && res.status() >= 400 && !(expected && expected.test(res.status() + ' ' + res.url()))) fail(`[${label}] HTTP ${res.status()} for ${res.request().method()} ${res.url()}`); });
 }
 const activeInfo = (page) => page.evaluate(() => { const a = document.activeElement; return a ? (a.tagName + ' ' + (a.className || '') + ' #' + (a.getAttribute('data-nav-id') || '')) : 'none'; });
+const activeId = (page) => page.evaluate(() => (document.activeElement && document.activeElement.getAttribute('data-nav-id')) || '');
 async function waitCovers(page, min, ms) { try { await page.waitForFunction((n) => document.querySelectorAll('.cover.loaded').length >= n, min, { timeout: ms || 8000 }); } catch (e) { note('covers still loading (continuing)'); } }
 async function shot(page, name) { await page.screenshot({ path: join(OUT, name), fullPage: false }); note('screenshot ' + name); }
 const VERBOSE = args.includes('--verbose');
@@ -274,7 +275,8 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await page.keyboard.press('Escape');
     await page.waitForSelector('#scr-library.active', { timeout: 6000 });
 
-    /* ---------- Saves tab, keyboard only: My backups → Saves hub → Back, Save Store options → Settings → Saves ---------- */
+    /* ---------- Saves tab, keyboard only from its first focus (Upload my save): Down reaches the Save Store options,
+       Left the Saves hub; both open above the tab and ○ comes back to it ---------- */
     await page.click('[data-nav-id="tab:saves"]');
     await page.waitForSelector('#scr-saves.active [data-nav-id="sv-entry-backups"]', { timeout: 10000 });
     await page.waitForSelector('#scr-saves.active .save-card', { timeout: 10000 });
@@ -282,21 +284,29 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await sleep(300);
     await shot(page, 'tv-b-saves-tab.png');
     await expect(async () => page.evaluate(() => document.querySelector('#tabs .tab.active').getAttribute('data-nav-id') === 'tab:saves' && location.hash === '#saves'), 'the Saves tab should be highlighted with #saves in the address');
-    await page.evaluate(() => document.querySelector('[data-nav-id="sv-entry-backups"]').focus());
+    await page.waitForFunction(() => document.activeElement && document.activeElement.getAttribute('data-nav-id') === 'sv-upload', null, { timeout: 3000 }).catch(async () => fail('the Saves tab should start on Upload my save (got ' + await activeInfo(page) + ')'));
+    await page.keyboard.press('ArrowDown');
+    await expect(async () => (await activeId(page)) === 'sv-entry-options', 'Down from Upload my save should reach the Save Store options (got ' + await activeInfo(page) + ')');
+    await page.keyboard.press('ArrowLeft');
+    await expect(async () => (await activeId(page)) === 'sv-entry-backups', 'Left from the Save Store options should reach the Saves hub (got ' + await activeInfo(page) + ')');
     await page.keyboard.press('Enter');
-    await page.waitForSelector('#scr-saveshub.active .srow', { timeout: 10000 }).catch(() => fail('My backups should open the Saves hub'));
+    await page.waitForSelector('#scr-saveshub.active .srow', { timeout: 10000 }).catch(() => fail('the Saves hub entry should open the Saves hub'));
     await expect(async () => page.evaluate(() => document.querySelector('#scr-saveshub .kicker').textContent === 'Saves'), 'the Saves hub belongs to the Saves section (kicker)');
     await page.keyboard.press('Escape');
     await page.waitForSelector('#scr-saves.active', { timeout: 6000 }).catch(() => fail('Back from the Saves hub should return to the Saves tab'));
     await page.waitForFunction(() => !XS.router.busy(), null, { timeout: 4000 });
-    await page.evaluate(() => document.querySelector('[data-nav-id="sv-entry-options"]').focus());
+    await page.waitForFunction(() => document.activeElement && document.activeElement.getAttribute('data-nav-id') === 'sv-entry-backups', null, { timeout: 3000 }).catch(async () => fail('Back from the Saves hub should land on its entry (got ' + await activeInfo(page) + ')'));
+    await page.keyboard.press('ArrowRight');
+    await expect(async () => (await activeId(page)) === 'sv-entry-options', 'Right from the Saves hub entry should reach the Save Store options (got ' + await activeInfo(page) + ')');
     await page.keyboard.press('Enter');
     await page.waitForSelector('#scr-settings.active [data-nav-id="sv-nick"]', { timeout: 8000 }).catch(() => fail('Save Store options should open Settings → Saves'));
     await page.waitForFunction(() => { const a = document.activeElement; return !!a && !!a.closest('[data-group="saves"]'); }, null, { timeout: 3000 }).catch(async () => fail('Save Store options should focus the first Saves setting (got ' + await activeInfo(page) + ')'));
     await sleep(300);
     await shot(page, 'tv-b-saves-options.png');
     await page.keyboard.press('Escape');
-    await page.waitForSelector('#scr-discover.active', { timeout: 6000 });
+    await page.waitForSelector('#scr-saves.active', { timeout: 6000 }).catch(() => fail('Back from the Save Store options should return to the Saves tab'));
+    await page.waitForFunction(() => !XS.router.busy(), null, { timeout: 4000 });
+    await expect(async () => page.evaluate(() => XS.router.stack.length === 1 && location.hash === '#saves' && document.querySelector('#tabs .tab.active').getAttribute('data-nav-id') === 'tab:saves'), 'after Back from the options the Saves tab should be highlighted with #saves (got ' + await page.evaluate(() => XS.router.stack.map((e) => e.id).join('>') + ' ' + location.hash) + ')');
 
     /* ---------- Settings → Setup (keyboard), run check, launch companion, install companion, ghost cleaner ---------- */
     await page.keyboard.press('o');
@@ -449,6 +459,8 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await page.waitForFunction(() => !XS.router.busy() && !XS.ui.layers.length && !document.querySelector('.layer'), null, { timeout: 5000 });
     await page.keyboard.press('Control+k');
     await page.waitForSelector('.palette [data-nav-id="palette-input"]');
+    await page.fill('.palette [data-nav-id="palette-input"]', 'community');
+    await page.waitForFunction(() => { const it = document.querySelector('.palette .pal-item'); return !!it && /Saves/.test(it.textContent) && /Screen/.test(it.textContent); }, null, { timeout: 4000 }).catch(async () => fail('palette should find the Saves tab by "community" (Community Saves) (' + await page.evaluate(() => Array.from(document.querySelectorAll('.palette .pal-item')).map((e) => e.textContent.trim().slice(0, 40)).join(' | ')) + ')'));
     await page.fill('.palette [data-nav-id="palette-input"]', 'god of');
     await page.waitForFunction(() => Array.from(document.querySelectorAll('.palette .pal-item .kind')).some((k) => /Game/.test(k.textContent)), null, { timeout: 4000 }).catch(async () => fail('palette should find catalog games (' + await page.evaluate(() => JSON.stringify({ active: document.activeElement && (document.activeElement.className + '/' + document.activeElement.value), palettes: document.querySelectorAll('.palette').length, layers: XS.ui.layers.map((l) => l.key).join('+'), busy: XS.router.busy(), items: Array.from(document.querySelectorAll('.palette .pal-item')).map((e) => e.textContent.trim().slice(0, 30)), search: (function () { try { return XS.ca.search('god of', 2).map((x) => x.g.title); } catch (e) { return 'ERR ' + e.message; } })() })) + ')'));
     await page.keyboard.press('Escape'); await noLayer(page);

@@ -153,7 +153,7 @@
 
 /* ---------- Saves ---------- */
 .saves-screen .page-head .chip.engine { height: 32px; }
-.saves-screen .sv-entries { grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); margin-top: 20px; }
+.saves-screen .sv-entries { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); margin-top: 20px; }
 .saves-screen .sv-entries .lib-tile .d { white-space: normal; }
 .sv-head { display: flex; align-items: center; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
 .sv-head .spacer { flex: 1; }
@@ -249,7 +249,12 @@ html[data-motion="reduce"] .ss-wall { animation: none; }
   .page-head { margin-top: 14px; gap: 10px; }
   .page-head h1 { font-size: 24px; }
   .page-head .btn.lg { height: 44px; padding: 0 16px; font-size: 14px; }
-  .saves-screen .sv-entries { grid-template-columns: 1fr; margin-top: 14px; }
+  /* two compact entries side by side (label only) so the community saves stay near the top */
+  .saves-screen .sv-entries { grid-template-columns: 1fr 1fr; margin-top: 14px; }
+  .saves-screen .sv-entries .lib-tile { padding: 10px 12px; gap: 10px; }
+  .saves-screen .sv-entries .lib-tile .ic { width: 34px; height: 34px; border-radius: 10px; }
+  .saves-screen .sv-entries .lib-tile .l { font-size: 14px; }
+  .saves-screen .sv-entries .lib-tile .d, .saves-screen .sv-entries .lib-tile > svg { display: none; }
   .gp-tabs { margin-top: 16px; justify-content: center; }
   .gal-thumb, .gal-skel { width: 240px; }
   .ir { grid-template-columns: 1fr; gap: 2px; padding: 9px 0; }

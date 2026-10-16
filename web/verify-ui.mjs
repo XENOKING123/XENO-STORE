@@ -12,8 +12,11 @@
  *      with ArrowRight, close with Escape; open facets, toggle two facets and assert the counts update;
  *      open the Saves tab and start the Install flow; R1/L1 between Browse and the Saves top tab, Back from it
  *   4. at 390×844 (phone): Discover, Game page (gallery), game Saves tab, the Saves tab from the phone bar, Downloads;
- *      at 360×780: the #saves deep link and a phone bar whose five labels fit
- *   5. fails on any console error / uncaught exception, any failed or ≥ 400 request to the mock, missing i18n keys,
+ *      at 360×780 (English and French, a download running): the #saves deep link, a phone bar whose five labels fit
+ *      whole, and Search + Settings on screen in the top bar
+ *   5. top bar room with a download running: Search and Settings inside the viewport at 1366 and 1536 (English,
+ *      French) and at 1920 in all 14 languages with Large text on
+ *   6. fails on any console error / uncaught exception, any failed or ≥ 400 request to the mock, missing i18n keys,
  *      or more than 150 mounted cards in Browse
  *
  * Usage: PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers node web/verify-ui.mjs [--port 9095] [--no-build] [--out DIR] [--headed] [--verbose]
@@ -70,6 +73,23 @@ async function expect(cond, msg) { if (!(await cond())) fail(msg); }
 async function noLayer(page) { await page.waitForSelector('.layer', { state: 'detached', timeout: 6000 }); }
 async function clickMenuItem(page, text) { await page.waitForSelector('.menu .mi'); const ok = await page.evaluate((tx) => { const it = Array.from(document.querySelectorAll('.menu .mi')).find((m) => m.textContent.indexOf(tx) >= 0); if (it) it.click(); return !!it; }, text); if (!ok) fail('menu item not found: ' + text); }
 const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
+/* a download that keeps running at a fixed 123.4 MB/s and a LAN address (wider than the mock's 127.0.0.1), so the
+   top bar carries its widest status chips whatever the mock's own jobs are doing */
+async function busyBar(page) {
+  await page.route('**/api/queue*', async (route) => {
+    try {
+      if (route.request().method() !== 'GET') { await route.continue(); return; }
+      const res = await route.fetch(); const j = await res.json();
+      j.summary = Object.assign({}, j.summary || {}, { speed: 123.4e6 });
+      if (!(j.jobs || []).some((x) => x.state === 'downloading')) j.jobs = (j.jobs || []).concat([{ id: 'verify-busy', title: 'Verify', state: 'downloading', written: 45e8, total: 1e10, speed: 123.4e6 }]);
+      await route.fulfill({ response: res, json: j });
+    } catch (e) { /* page closed */ }
+  });
+  await page.route('**/api/status', async (route) => { try { const res = await route.fetch(); const j = await res.json(); j.ip = '192.168.100.200'; await route.fulfill({ response: res, json: j }); } catch (e) { /* page closed */ } });
+}
+const topButtonsIn = (page) => page.evaluate(() => ['top-search', 'top-settings'].every((id) => { const r = document.querySelector('[data-nav-id="' + id + '"]').getBoundingClientRect(); return r.width > 0 && r.left >= 0 && r.right <= window.innerWidth; }));
+const topInfo = (page) => page.evaluate(() => ['top-search', 'top-settings'].map((id) => { const r = document.querySelector('[data-nav-id="' + id + '"]').getBoundingClientRect(); return id + ' ' + Math.round(r.left) + '..' + Math.round(r.right); }).join(', ') + ' of ' + window.innerWidth + ' [' + document.querySelector('#topbar').className + ']');
+const settle = (page) => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
 
 (async () => {
   await waitServer();
@@ -108,7 +128,7 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     await expect(async () => !!(await page.$('#scr-discover [data-rail="featured-0"]')), 'owner-curated featured row missing (status.featured.rows)');
     await expect(async () => !!(await page.$('#scr-discover [data-rail="backports"]')), 'Backports rail missing');
     await expect(async () => !!(await page.$('#banners .banner.announce')), 'announcement banner (status.messages) missing');
-    await expect(async () => page.evaluate(() => Array.from(document.querySelectorAll('#tabs .tab > span:first-child')).map((x) => x.textContent.trim()).join(',') === 'Discover,Browse,Saves,Homebrew,Downloads,Library'), 'tab order should be Discover · Browse · Saves · Homebrew · Downloads · Library (got ' + await page.$$eval('#tabs .tab > span:first-child', (a) => a.map((x) => x.textContent.trim()).join(',')) + ')');
+    await expect(async () => page.evaluate(() => Array.from(document.querySelectorAll('#tabs .tab > span:first-child')).map((x) => x.textContent.trim()).join(',') === 'Discover,Browse,Saves,Downloads,Library,Homebrew'), 'tab order should be Discover · Browse · Saves · Downloads · Library · Homebrew (got ' + await page.$$eval('#tabs .tab > span:first-child', (a) => a.map((x) => x.textContent.trim()).join(',')) + ')');
     await expect(async () => !!(await page.$('#legend .hint')), 'legend hints missing');
     await expect(async () => !!(await page.$('#tabs [data-dl-badge]:not([hidden])')), 'Downloads badge should be visible while a job is active');
     await page.waitForSelector('#scr-discover [data-rail="saves"] .save-card', { timeout: 8000 }).catch(() => fail('New community saves rail did not load on Discover'));
@@ -476,9 +496,10 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     await page.click('[data-nav-id="wz-done"]');
     await noLayer(page);
     note('upload wizard GitHub hand-off OK');
-    /* My backups opens the Saves hub above the tab (Back returns to Saves); the options are Settings → Saves */
+    /* the Saves hub and the options (Settings → Saves) both open above the tab, so Back returns to Saves */
     await page.click('[data-nav-id="sv-entry-backups"]');
-    await page.waitForSelector('#scr-saveshub.active .srow', { timeout: 10000 }).catch(() => fail('My backups should open the Saves hub'));
+    await page.waitForSelector('#scr-saveshub.active .srow', { timeout: 10000 }).catch(() => fail('the Saves hub entry should open the Saves hub'));
+    await expect(async () => page.evaluate(() => document.querySelector('#scr-saveshub h1').textContent === document.querySelector('[data-nav-id="sv-entry-backups"] .l').textContent), 'the Saves hub entry and the screen it opens should have the same name');
     await expect(async () => page.evaluate(() => XS.router.stack.map((e) => e.id).join('>') === 'saves>saveshub' && location.hash === '#saveshub'), 'the Saves hub should sit above the Saves tab (stack ' + await page.evaluate(() => XS.router.stack.map((e) => e.id).join('>')) + ')');
     await page.keyboard.press('Escape');
     await page.waitForSelector('#scr-saves.active', { timeout: 6000 }).catch(() => fail('Back from the Saves hub should return to the Saves tab'));
@@ -486,10 +507,12 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     await expect(savesTabOn, 'after Back the Saves tab should be highlighted at depth 0 with #saves');
     await page.click('[data-nav-id="sv-entry-options"]');
     await page.waitForSelector('#scr-settings.active [data-nav-id="sv-root"]', { timeout: 8000 }).catch(() => fail('Save Store options should open Settings → Saves'));
-    await expect(async () => page.evaluate(() => !!document.querySelector('[data-nav-id="set-nav-saves"].on') && location.hash === '#settings'), 'Save Store options should select the Saves group in Settings');
-    await page.click('[data-nav-id="tab:saves"]');
-    await page.waitForSelector('#scr-saves.active', { timeout: 6000 });
+    await expect(async () => page.evaluate(() => !!document.querySelector('[data-nav-id="set-nav-saves"].on') && location.hash === '#settings' && XS.router.stack.map((e) => e.id).join('>') === 'saves>settings'), 'Save Store options should open Settings → Saves above the Saves tab (stack ' + await page.evaluate(() => XS.router.stack.map((e) => e.id).join('>')) + ')');
+    await expect(async () => page.evaluate(() => /Back/.test(document.querySelector('#legend').textContent)), 'Settings opened from the Saves tab should show the Back hint');
+    await page.keyboard.press('Escape');                                              // ○ from the options: back to Saves
+    await page.waitForSelector('#scr-saves.active', { timeout: 6000 }).catch(() => fail('Back from the Save Store options should return to the Saves tab'));
     await page.waitForFunction(() => !XS.router.busy(), null, { timeout: 4000 });
+    await expect(savesTabOn, 'after Back from the options the Saves tab should be highlighted at depth 0 with #saves (got ' + await page.evaluate(() => XS.router.stack.map((e) => e.id).join('>') + ' ' + location.hash) + ')');
     await page.keyboard.press('Escape');                                              // Back from a top tab: Discover
     await page.waitForSelector('#scr-discover.active', { timeout: 6000 }).catch(() => fail('Back from the Saves tab should land on Discover'));
     note('Saves tab: tabs, My backups, options, Back OK');
@@ -721,6 +744,7 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     const small = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, locale: 'en-US' });
     const sp = await small.newPage();
     watch(sp, 'phone-360');
+    await busyBar(sp);
     await sp.goto(BASE + '/#saves', { waitUntil: 'load' });
     await sp.waitForSelector('#scr-saves.active .save-card', { timeout: 20000 }).catch(() => fail('the #saves deep link should open the Saves tab'));
     await waitCovers(sp, 4);
@@ -729,7 +753,54 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     await expect(async () => sp.evaluate(() => document.querySelector('#phonebar [data-nav-id="pb:saves"]').classList.contains('active') && document.querySelector('#tabs .tab.active').getAttribute('data-nav-id') === 'tab:saves'), '#saves deep link: Saves should be the active tab');
     await expect(async () => sp.evaluate(() => Array.from(document.querySelectorAll('#phonebar .pb')).every((b) => { const l = b.querySelector('.ellipsis'), r = b.getBoundingClientRect(); return r.width >= 60 && l.scrollWidth <= l.clientWidth + 1; })), 'at 360 px every phone-bar label should fit its place (' + await sp.evaluate(() => Array.from(document.querySelectorAll('#phonebar .pb')).map((b) => b.textContent.trim() + ' ' + b.querySelector('.ellipsis').scrollWidth + '/' + b.querySelector('.ellipsis').clientWidth).join(', ')) + ')');
     await expect(async () => sp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1 && document.querySelector('#scr-saves').scrollWidth <= window.innerWidth + 1), 'phone 360 Saves tab has horizontal overflow');
+    /* search lives in the top bar on a phone: it and Settings stay on screen while a download runs */
+    await sp.waitForSelector('#status-chips .schip.speed', { timeout: 8000 }).catch(() => fail('phone 360: the speed chip should show while a download runs'));
+    await settle(sp);
+    await expect(() => topButtonsIn(sp), 'phone 360, download running: Search and Settings should be inside the viewport (' + await topInfo(sp) + ')');
+    await sp.unrouteAll({ behavior: 'ignoreErrors' });
     await small.close();
+
+    /* French at 360: whole labels (Téléchargements is the longest), Search and Settings on screen */
+    const smallFr = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, locale: 'fr-FR' });
+    const sf = await smallFr.newPage();
+    watch(sf, 'phone-360-fr');
+    await busyBar(sf);
+    await sf.goto(BASE + '/#saves', { waitUntil: 'load' });
+    await sf.waitForSelector('#scr-saves.active .save-card', { timeout: 20000 }).catch(() => fail('phone 360 fr: the #saves deep link should open the Saves tab'));
+    await sf.waitForSelector('#status-chips .schip.speed', { timeout: 8000 }).catch(() => fail('phone 360 fr: the speed chip should show while a download runs'));
+    await waitCovers(sf, 4);
+    await settle(sf);
+    await sleep(300);
+    await shot(sf, 'phone-360-saves-fr.png');
+    await expect(async () => sf.evaluate(() => document.documentElement.lang === 'fr' && Array.from(document.querySelectorAll('#phonebar .pb')).every((b) => { const l = b.querySelector('.ellipsis'); return l.scrollWidth <= l.clientWidth + 1; }) && !document.querySelector('#phonebar').classList.contains('squeeze')), 'at 360 px in French every phone-bar label should show whole (' + await sf.evaluate(() => Array.from(document.querySelectorAll('#phonebar .pb')).map((b) => b.textContent.trim() + ' ' + b.querySelector('.ellipsis').scrollWidth + '/' + b.querySelector('.ellipsis').clientWidth).join(', ')) + ')');
+    await expect(() => topButtonsIn(sf), 'phone 360 fr, download running: Search and Settings should be inside the viewport (' + await topInfo(sf) + ')');
+    await sf.unrouteAll({ behavior: 'ignoreErrors' });
+    await smallFr.close();
+
+    /* ================= top bar room: Search and Settings never pushed off the bar ================= */
+    async function topBar(w, h, locale, label, shotName) {
+      const c = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1, locale });
+      const p = await c.newPage();
+      watch(p, label);
+      await busyBar(p);
+      await p.goto(BASE + '/#saves', { waitUntil: 'load' });
+      await p.waitForSelector('#scr-saves.active', { timeout: 20000 });
+      await p.waitForSelector('#status-chips .schip.speed', { timeout: 8000 }).catch(() => fail(`[${label}] the speed chip should show while a download runs`));
+      await settle(p);
+      await sleep(250);
+      const lang = { 'pt-BR': 'pt-BR', 'zh-CN': 'zh-Hans' }[locale] || locale.split('-')[0];
+      await expect(async () => p.evaluate((l) => document.documentElement.lang === l, lang), `[${label}] the page should run in ${lang}`);
+      await expect(() => topButtonsIn(p), `[${label}] Search and Settings should be inside the viewport (${await topInfo(p)})`);
+      await expect(async () => p.evaluate(() => document.querySelector('#tabs .tab.active').getAttribute('data-nav-id') === 'tab:saves'), `[${label}] the Saves tab should be highlighted`);
+      if (shotName) await shot(p, shotName);
+      await p.unrouteAll({ behavior: 'ignoreErrors' });
+      await c.close();
+    }
+    for (const w of [1366, 1536]) for (const loc of ['en-US', 'fr-FR']) await topBar(w, w === 1366 ? 768 : 864, loc, `top ${w} ${loc}`, w === 1366 && loc === 'fr-FR' ? 'laptop-1366-saves-fr.png' : '');
+    await api('/api/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ general: { largeText: true } }) });
+    for (const loc of ['en-US', 'ar', 'de-DE', 'es-ES', 'fr-FR', 'it-IT', 'ja-JP', 'ko-KR', 'nl-NL', 'pl-PL', 'pt-BR', 'ru-RU', 'tr-TR', 'zh-CN']) await topBar(1920, 1080, loc, `top 1920 large ${loc}`, loc === 'fr-FR' ? 'tv-saves-large-fr.png' : '');
+    await api('/api/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ general: { largeText: false } }) });
+    note('top bar room OK');
   } finally {
     await browser.close();
     server.kill();
