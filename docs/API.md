@@ -642,8 +642,13 @@ other way round. Library installs and jobs being removed are not listed.
 - `POST /downloads/{id}/{action}` with `pause`, `resume`, `retry` (a failed extraction retries the extraction),
   `cancel` (`{"deletePartial":true}` removes the partial file), `delete` (cancelled jobs only), `forget`, `remove`
   (finished jobs; the file stays), `archive-password` (`{"password":"…"}`, at most 128 bytes, no control characters)
-  and `refresh-link` (always `409` "This download has no link to refresh."). Every success answers the full jobs
-  array. Unknown id `404` "Unknown download.", unknown verb `400` "Unknown download action."; the per-state refusals
+  `refresh-link` (always `409` "This download has no link to refresh.") and `install` (runs the queue's install of a
+  finished PKG again: Retry install; `409` "Only a finished PKG download can be installed.", "This download is already
+  installing.", "The PKG file is no longer on the drive. Remove this download and download it again." or "Reconnect the
+  original destination drive."). Every success answers the full jobs array. A complete row carries `"installState"`:
+  `idle`, `pending`, `installing`, `installed` or `failed` (a failed install also fills `error`, starting "Install
+  failed: "); other rows read `idle`. `GET /system` adds `"autoInstallPkg"` (bool): whether finished PKGs install by
+  themselves, so the app leaves out "Installation and launching are separate." Unknown id `404` "Unknown download.", unknown verb `400` "Unknown download action."; the per-state refusals
   are the reference sentences ("This job is not running.", "This job cannot be resumed in its current state.",
   "Reconnect the original destination drive.", "Only cancelled downloads can be deleted.", …).
 - `GET /storage` → `[{"id":"usb0","label":"USB storage 1","path":"/mnt/usb0/homebrew","freeBytes":…,

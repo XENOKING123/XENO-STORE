@@ -15,6 +15,13 @@ All notable changes to XENO STORE. The version lives in `VERSION`; releases are 
 - **Delete the PKG after installing** (Settings → Downloads, off by default) frees a package's space once the console confirms its install is complete. A package whose install fails or can't be confirmed is kept; Downloads shows *Package removed*.
 - **Downloads continue after a restart** (Settings → Downloads → *Resume after a restart*, on by default): what was downloading when XENO STORE stopped — an update, *Restart download service*, a crash, a power cut or a reboot — carries on by itself when the store starts again, one after another in queue order. Downloads you paused stay paused. When the store crashed right after its last start, nothing starts by itself until the next normal start. A Verify that was cut short no longer downloads the whole file again. The TV app's *Restart download service* now says your downloads continue on their own.
 
+### The TV app
+- **All games scrolls on and on**: Discover's *All games* is one grid with no page buttons, and **L2 / R2** jump through it (and through Browse) a screen at a time.
+- **Downloads shows a package's install**: a finished PKG reads *Installing*, then **Installed** with a badge; a failed install says why and offers **Retry install**. When the store installs packages by itself, the download sheet no longer says installing is a separate step.
+- **About** in App settings names both versions, that the app is based on Orbit Store's TV app and BlackBearReloaded's ps5-homebrew-ui, that it is free software under GPL-3.0, and where to get its source.
+- **Sounds** can be turned off in App settings → More settings.
+- A heart toast confirms adding or removing a favourite, and download source chips wrap onto a new row instead of running off the sheet.
+
 ### Pairing
 - **See and unpair your devices**: Settings → Pair a device lists every paired phone and PC with its name and when it was last used, with **Unpair** and **Unpair all other devices**. The XENO STORE app and the console's own browser are not on the list and keep working.
 - **Pairing no longer stops at 16 devices**: instead of "All pairing slots are in use", pairing one more replaces the device unused the longest, and the new device is told which one made room.
