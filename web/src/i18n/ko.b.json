@@ -46,6 +46,8 @@
     "extracted": "{n, plural, other{압축 해제됨 · 파일 #개}}",
     "archiveDeleted": "압축 파일 삭제됨",
     "pkgDeleted": "패키지 삭제됨",
+    "restartResumed": "XENO STORE가 다시 시작된 후 재개합니다",
+    "restartHeld": "재개하지 않음: 문제가 생겨 XENO STORE가 다시 시작되었습니다. 준비되면 재개하세요.",
     "extracting": "콘솔에서 압축 파일을 푸는 중…",
     "extractFiles": "{n, plural, other{파일 #개}}",
     "extractFailed": "압축 해제 실패",

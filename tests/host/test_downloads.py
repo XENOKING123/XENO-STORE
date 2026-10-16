@@ -6,11 +6,13 @@ provider_page, source_changed (validator and tail-check variants), hash
 mismatch + verified hash, retry on 429/Retry-After, connection drops,
 sequential (no Range) servers, PKG auto-install simulation, queue
 persistence across a restart, bandwidth limit, link replacement, move/clear,
-the PKG removed only after a confirmed install.
+the PKG removed only after a confirmed install, and what a restart resumes
+(not in a safe start, a stop pause of an older store, never a finished file).
 """
 import json
 import os
 import shutil
+import signal
 import sys
 import tempfile
 import time
@@ -531,6 +533,88 @@ class DownloadTests(unittest.TestCase):
             self.assertEqual(x["message"], "Installed")
         st, lg = srv2.api("GET", f"/api/queue/{j2['id']}/log")
         self.assertTrue(any("package kept: this console does not report install progress" in ln for ln in lg["lines"]), lg["lines"])
+
+    def restart_with_queue(self, edit):
+        """Stops the store, lets edit(queue) change queue.json, starts it again."""
+        self.srv.stop()
+        qp = os.path.join(self.data, "queue.json")
+        with open(qp) as f:
+            q = json.load(f)
+        edit(q)
+        with open(qp, "w") as f:
+            json.dump(q, f)
+        DownloadTests.srv = harness.XenoServer(self.data, port=self.srv.port).start()
+
+    def test_25_safe_start_leaves_interrupted_downloads_paused(self):
+        # A crash soon after a start (maybe caused by the download itself) makes the next start
+        # a safe one, which starts no download by itself: a crash loop ends there. A later
+        # normal start resumes them (the user did not pause them).
+        job = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="crash-loop.bin", format="BIN", connections=1, size=8 * MiB)
+        nxt = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="crash-next.bin", format="BIN", connections=1, size=8 * MiB)
+        self.wait_written(job["id"], 1 * MiB)
+        # queue.json is saved every 5 s: it may still say "queued" for the one that runs
+        self.srv.proc.send_signal(signal.SIGSEGV)
+        self.srv.proc.wait(timeout=20)
+        self.srv.stop()
+        DownloadTests.srv = harness.XenoServer(self.data, port=self.srv.port).start()
+        st, s = self.srv.api("GET", "/api/status")
+        self.assertIs(s["safeMode"], True)
+        time.sleep(1.5)
+        for x in (job, nxt):
+            j = self.srv.job(x["id"])
+            self.assertEqual(j["state"], "paused", j["message"])
+            self.assertEqual(j["restart"], "held")
+            self.assertEqual(j["message"], "Not resumed: XENO STORE restarted after a problem")
+            st, lg = self.srv.api("GET", f"/api/queue/{x['id']}/log")
+            self.assertTrue(any("not resumed: safe start" in ln for ln in lg["lines"]), lg["lines"])
+        # the next start is a normal one
+        self.srv.stop()
+        DownloadTests.srv = harness.XenoServer(self.data, port=self.srv.port).start()
+        st, s = self.srv.api("GET", "/api/status")
+        self.assertIs(s["safeMode"], False)
+        for x in (job, nxt):
+            j = self.srv.wait_job(x["id"], "done", timeout=90)
+            self.assert_clean_final(j, self.sha["small.bin"])
+
+    def test_26_a_stop_pause_by_an_older_store_resumes(self):
+        # The first update to this version: the stop of the older store marked its pause only
+        # with the message (no stopPaused, no stopMarks in queue.json).
+        a = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="legacy-stop.bin", format="BIN", connections=1, size=8 * MiB)
+        b = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="legacy-mine.bin", format="BIN", connections=1, size=8 * MiB)
+        self.wait_written(a["id"], 1 * MiB)
+        self.assertEqual(self.srv.action(b["id"], "pause")[0], 200)
+
+        def older(q):
+            q.pop("stopMarks", None)
+            for x in q["jobs"]:
+                x.pop("stopPaused", None)
+                if x["id"] == a["id"]:
+                    x["state"], x["message"] = "paused", "Paused for the XENO STORE restart"
+        self.restart_with_queue(older)
+        j = self.srv.wait_job(a["id"], None, timeout=10, until=lambda x: x["state"] != "paused")
+        self.assertIn(j["state"], ("queued", "connecting", "downloading"), j["message"])
+        j = self.srv.wait_job(a["id"], "done", timeout=60)
+        self.assert_clean_final(j, self.sha["small.bin"])
+        self.assertEqual(self.srv.job(b["id"])["state"], "paused", "a download the user paused stays paused")
+        self.srv.action(b["id"], "remove", {"deleteFiles": True})
+
+    def test_27_a_stopped_verify_of_a_finished_file_is_not_downloaded_again(self):
+        job = self.srv.add(url=f"{self.rs}/ok/small.bin", filename="verify-stop.bin", format="BIN", size=8 * MiB)
+        j = self.srv.wait_job(job["id"], "done", timeout=60)
+        mtime = os.stat(j["path"]).st_mtime_ns
+
+        def stopped_verify(q):
+            # the stop paused a Verify of the finished file, and the drain's last save did not happen
+            for x in q["jobs"]:
+                if x["id"] == job["id"]:
+                    x["state"], x["message"], x["stopPaused"] = "paused", "Paused for the XENO STORE restart", True
+        self.restart_with_queue(stopped_verify)
+        time.sleep(2)
+        j = self.srv.job(job["id"])
+        self.assertEqual((j["state"], j["message"]), ("done", "Verification interrupted"))
+        self.assertEqual(j["written"], 8 * MiB)
+        self.assertEqual(os.stat(j["path"]).st_mtime_ns, mtime, "the finished file is not downloaded again")
+        self.assertFalse(os.path.exists(j["path"] + ".xpart"))
 
 
 if __name__ == "__main__":

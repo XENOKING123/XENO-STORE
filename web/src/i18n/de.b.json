@@ -46,6 +46,8 @@
     "extracted": "{n, plural, one{Entpackt · # Datei} other{Entpackt · # Dateien}}",
     "archiveDeleted": "Archiv gelöscht",
     "pkgDeleted": "Paket gelöscht",
+    "restartResumed": "Wird fortgesetzt, nachdem XENO STORE neu gestartet wurde",
+    "restartHeld": "Nicht fortgesetzt: XENO STORE wurde nach einem Problem neu gestartet. Setze ihn fort, wenn du bereit bist.",
     "extracting": "Das Archiv wird auf der Konsole entpackt…",
     "extractFiles": "{n, plural, one{# Datei} other{# Dateien}}",
     "extractFailed": "Entpacken fehlgeschlagen",

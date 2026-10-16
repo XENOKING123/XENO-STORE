@@ -120,6 +120,10 @@ static int64_t bucket_tokens, bucket_last_ms, bucket_rate;
  * persisted for resume but never written into the /api/queue response. */
 static int persist_mode;
 
+/* load_queue()'s notes on a download that was running when the store stopped */
+#define MSG_RESTART_RESUMED "Resuming after XENO STORE restarted"
+#define MSG_RESTART_HELD "Not resumed: XENO STORE restarted after a problem"
+
 static const int BACKOFF_S[] = {5, 15, 45, 120, 300};
 
 #ifdef XENO_HOST
@@ -387,6 +391,8 @@ static void job_write_json(jw *w, const dl_job *j, int history) {
   jw_kv_i64(w, "peakSpeed", (int64_t)j->peakSpeed);
   jw_kv_int(w, "restResumes", j->restResumes);
   if (persist_mode && j->stopPaused) jw_kv_bool(w, "stopPaused", 1);
+  /* load_queue()'s note while it stands, for the web UI to say in its language */
+  if (!persist_mode) jw_kv_str(w, "restart", strcmp(j->message, MSG_RESTART_RESUMED) == 0 ? "resumed" : strcmp(j->message, MSG_RESTART_HELD) == 0 ? "held" : "");
   jw_kv_bool(w, "restResuming", j->state == DL_CONNECTING && j->rest_hit);
   if (history) {
     jw_key(w, "speedHistory"); jw_arr_begin(w);
@@ -496,6 +502,7 @@ static char *queue_text_locked(size_t *len) {
   jw_init(&w);
   jw_obj_begin(&w);
   jw_kv_int(&w, "v", 1);
+  jw_kv_bool(&w, "stopMarks", 1);   /* a stop pause is marked by stopPaused (load_queue) */
   jw_kv_i64(&w, "savedAt", (int64_t)util_now());
   jw_key(&w, "jobs"); jw_arr_begin(&w);
   persist_mode = 1;
@@ -2573,8 +2580,12 @@ int dl_any_downloading(void) {
 
 /* ---- init / shutdown ---------------------------------------------------- */
 
-/* `resume`: downloads.resumeAfterRestart (read before queue_mu, SPEC §5). */
-static void load_queue(int resume) {
+/* `resume`: downloads.resumeAfterRestart (read before queue_mu, SPEC §5).
+ * `safe`: a safe start (the last run crashed soon after its start) starts no
+ * download by itself, so one that crashes the store cannot do so on every
+ * start: what was running or queued stays paused (MSG_RESTART_HELD), marked
+ * stopPaused so that a later normal start resumes it. */
+static void load_queue(int resume, int safe) {
   char path[600];
   xsnprintf(path, sizeof path, "%s/queue.json", data_dir);
   size_t len;
@@ -2583,15 +2594,17 @@ static void load_queue(int resume) {
   jdoc *d = json_parse(txt, len, 400000, 16);
   free(txt);
   if (!d) { LOGW("queue.json is not valid JSON — starting with an empty queue"); return; }
-  int recovered = 0, resumed = 0;
+  /* written by a store before stopPaused: its stop pause shows only as the message
+   * dl_pause_all_for_stop() was given (api.c, TVSYS_STOP_PAUSE_MESSAGE) */
+  int legacy = !jv_get_bool(json_root(d), "stopMarks", 0);
+  int recovered = 0, resumed = 0, held = 0;
   JV_FOREACH(o, jv_get(json_root(d), "jobs")) {
     if (n_jobs >= DL_MAX_JOBS) break;
     dl_job *j = job_from_json(o);
     if (!j) continue;
-    /* running when the store stopped, or paused by the TV app's stop (never one the user paused) */
-    int was_running = state_is_active(j->state) || (j->state == DL_PAUSED && j->stopPaused);
-    /* an interrupted Verify of a finished file has nothing left to download */
-    int verify_only = j->state == DL_VERIFYING && !util_file_exists(j->xpart) && util_file_exists(j->path);
+    /* running when the store stopped, or paused by a stop (never one the user paused) */
+    int stop_paused = j->stopPaused || (legacy && strcmp(j->message, "Paused for the XENO STORE restart") == 0);
+    int was_running = state_is_active(j->state) || (j->state == DL_PAUSED && stop_paused);
     j->stopPaused = 0;
     if (state_is_active(j->state)) {
       j->state = DL_PAUSED;
@@ -2619,14 +2632,30 @@ static void load_queue(int resume) {
       j->written = j->total > 0 ? j->total : 0;
     }
     if (is_copy_job(j) && j->state == DL_PAUSED) { int64_t have = util_file_size(j->xpart); j->written = have > 0 ? have : 0; }
-    if (resume && was_running && !verify_only && j->state == DL_PAUSED) {
+    if (was_running && j->state == DL_PAUSED && !is_copy_job(j) && j->total > 0 && !util_file_exists(j->xpart) &&
+        util_file_size(j->path) == j->total) {
+      /* the whole file is in place (a Verify of it was stopped): nothing to download again */
+      j->state = strcmp(j->install.state, "installed") == 0 ? DL_INSTALLED : DL_DONE;
+      j->written = j->total;
+      j->phase[0] = 0;
+      j->errorCode[0] = j->error[0] = 0;
+      xstrlcpy(j->message, "Verification interrupted", sizeof j->message);
+    } else if (was_running && j->state == DL_PAUSED && resume && !safe) {
       /* the scheduler starts it again under the concurrent-jobs limit, in queue order */
       j->state = DL_QUEUED;
       j->nextRetryAt = 0;
       j->errorCode[0] = j->error[0] = 0;
-      xstrlcpy(j->message, "Resuming after XENO STORE restarted", sizeof j->message);
+      xstrlcpy(j->message, MSG_RESTART_RESUMED, sizeof j->message);
       jlog_locked(j, "resumed after XENO STORE restarted");
       resumed++;
+    } else if (safe && (j->state == DL_QUEUED || (was_running && j->state == DL_PAUSED))) {
+      /* queued too: queue.json lags up to QUEUE_SAVE_EVERY_MS, so a "queued" job may be the one that ran */
+      j->state = DL_PAUSED;
+      j->stopPaused = 1;
+      j->nextRetryAt = 0;
+      xstrlcpy(j->message, MSG_RESTART_HELD, sizeof j->message);
+      jlog_locked(j, "not resumed: safe start after a crash");
+      held++;
     } else if (was_running && j->state == DL_PAUSED) {
       recovered++;
     }
@@ -2634,6 +2663,7 @@ static void load_queue(int resume) {
   }
   json_free(d);
   LOGI("queue: %d job(s) loaded, %d marked paused, %d queued again", n_jobs, recovered, resumed);
+  if (held) LOGW("safe start: %d download(s) left paused until a normal start or Resume", held);
 }
 
 int dl_init(const char *dir, int port) {
@@ -2644,7 +2674,7 @@ int dl_init(const char *dir, int port) {
   settings_t s;
   settings_get(&s);
   pthread_mutex_lock(&queue_mu);
-  load_queue(s.resumeAfterRestart);
+  load_queue(s.resumeAfterRestart, g_cfg.safe_mode);
   pthread_mutex_unlock(&queue_mu);
   storage_set_job_lookup(dl_find_job_by_path);
   return 0;

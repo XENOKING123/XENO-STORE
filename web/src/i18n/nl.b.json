@@ -46,6 +46,8 @@
     "extracted": "{n, plural, one{Uitgepakt · # bestand} other{Uitgepakt · # bestanden}}",
     "archiveDeleted": "Archief verwijderd",
     "pkgDeleted": "Pakket verwijderd",
+    "restartResumed": "Wordt hervat nadat XENO STORE opnieuw is gestart",
+    "restartHeld": "Niet hervat: XENO STORE is na een probleem opnieuw gestart. Hervat hem wanneer je wilt.",
     "extracting": "Het archief op de console uitpakken…",
     "extractFiles": "{n, plural, one{# bestand} other{# bestanden}}",
     "extractFailed": "Uitpakken mislukt",

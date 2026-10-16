@@ -220,8 +220,11 @@ typedef struct dl_brief {
 /* Loads queue.json. A download that was running when the store stopped (an
  * update, a restart, a crash) or that the TV app's stop paused is queued again
  * while downloads.resumeAfterRestart is on (the scheduler starts it under the
- * concurrent-jobs limit), else it comes back paused; one the user paused stays
- * paused. */
+ * concurrent-jobs limit), else it comes back paused. A safe start
+ * (g_cfg.safe_mode) starts nothing by itself: running and queued downloads
+ * come back paused, and the next normal start resumes them. One the user
+ * paused stays paused; one whose whole file is in place (a stopped Verify)
+ * comes back finished. */
 int dl_init(const char *data_dir, int port);
 /* Stops every running job (at most ~5 s), holds the scheduler and saves
  * queue.json a last time. */

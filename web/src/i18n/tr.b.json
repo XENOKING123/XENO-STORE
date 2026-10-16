@@ -46,6 +46,8 @@
     "extracted": "{n, plural, one{Çıkarıldı · # dosya} other{Çıkarıldı · # dosya}}",
     "archiveDeleted": "Arşiv silindi",
     "pkgDeleted": "Paket silindi",
+    "restartResumed": "XENO STORE yeniden başladıktan sonra sürdürülüyor",
+    "restartHeld": "Sürdürülmedi: XENO STORE bir sorundan sonra yeniden başladı. Hazır olduğunuzda sürdürün.",
     "extracting": "Arşiv konsolda çıkarılıyor…",
     "extractFiles": "{n, plural, one{# dosya} other{# dosya}}",
     "extractFailed": "Çıkarma başarısız",

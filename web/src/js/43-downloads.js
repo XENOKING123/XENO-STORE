@@ -15,6 +15,8 @@
   };
   function tabOf(j) { for (var k in TABS) if (TABS[k].indexOf(j.state) >= 0) return k; return 'active'; }
   function isScheduled(j) { return j.state === 'queued' && !!j.scheduledFor && !j.startNow; }
+  /* the store's note on a download that was running when it stopped (job.restart), in the UI's language */
+  var RESTART_NOTES = { resumed: 'dl2.restartResumed', held: 'dl2.restartHeld' };
   /* Tab counts: a group counts once, in the tab its status maps to. */
   function counts() {
     var c = { active: 0, queued: 0, finished: 0, failed: 0, cancelled: 0 };
@@ -371,7 +373,7 @@
       if (j.total) stats.appendChild(h('span', { text: U.fmtBytes(j.total) }));
     } else if (j.state === 'paused' || j.state === 'queued' || j.state === 'cancelled') {
       stats.appendChild(h('span', [h('b', { text: U.fmtBytes(j.written) }), j.total ? ' / ' + U.fmtBytes(j.total) : '']));
-      if (j.message) stats.appendChild(h('span', { text: j.message }));
+      if (j.message) stats.appendChild(h('span', { text: RESTART_NOTES[j.restart] ? t(RESTART_NOTES[j.restart]) : j.message }));
       if (j.state === 'queued') stats.appendChild(h('span', { text: t('dl.queuedPos', { n: queuePos(j) }) }));
       if (j.state === 'queued' && j.group) stats.appendChild(h('span', { text: t('dl2.setWaits') }));
     } else if (j.state === 'failed') {

@@ -46,6 +46,8 @@
     "extracted": "{n, plural, other{已解压 · # 个文件}}",
     "archiveDeleted": "压缩包已删除",
     "pkgDeleted": "包已删除",
+    "restartResumed": "XENO STORE 重启后继续",
+    "restartHeld": "未继续：XENO STORE 因故障重启。准备好后请继续下载。",
     "extracting": "正在主机上解压压缩包…",
     "extractFiles": "{n, plural, other{# 个文件}}",
     "extractFailed": "解压失败",

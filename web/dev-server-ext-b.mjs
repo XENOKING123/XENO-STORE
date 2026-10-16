@@ -19,7 +19,7 @@
  *   fallbacks for /api/debrid, /api/saves/users and /api/saves?user= when part A's mock is absent
  * Seeds: an install set paused at its update step, a downloading install set, turbo results on the running job,
  * a debrid job, a copy job, a backup job, a ZIP being extracted, an installed PKG whose package was removed,
- * a scheduled job, Phase 2 settings defaults.
+ * a download a safe start left paused, a scheduled job, Phase 2 settings defaults.
  */
 import { randomBytes } from 'node:crypto';
 
@@ -629,7 +629,15 @@ export function register({ route, state }) {
       pj.install = { state: 'installed', message: 'Installed', contentId: `EP0001-${pj.titleId || 'PPSA00000'}_00-XENOSTOREMOCK000`, pkgDeleted: true };
       jobs.push(pj); state.jlog(pj, 'package removed after the install');
     }
-    /* 9. scheduled download (virtual: never enters the simulation until Start now) */
+    /* 9. a download a safe start left paused (the last run crashed soon after its start): job.restart "held" */
+    g = take((x) => direct(x));
+    if (g) {
+      const r = direct(g); const hj = state.makeJob(g, r, { root: '/data' });
+      hj.state = 'paused'; hj.written = Math.floor(hj.total * 0.4); hj.segments.forEach((s) => { s[2] = Math.min(s[1], s[0] + Math.floor((s[1] - s[0]) * 0.4)); }); hj.attempts = 1;
+      hj.message = 'Not resumed: XENO STORE restarted after a problem'; hj.restart = 'held';
+      jobs.push(hj); state.jlog(hj, 'not resumed: safe start after a crash');
+    }
+    /* 10. scheduled download (virtual: never enters the simulation until Start now) */
     g = take((x) => direct(x));
     if (g) {
       const r = direct(g);

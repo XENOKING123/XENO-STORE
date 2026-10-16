@@ -46,6 +46,8 @@
     "extracted": "{n, plural, zero{استُخرج · لا ملفات} one{استُخرج · ملف واحد} two{استُخرج · ملفان} few{استُخرج · # ملفات} many{استُخرج · # ملفًا} other{استُخرج · # ملف}}",
     "archiveDeleted": "حُذف الأرشيف",
     "pkgDeleted": "حُذفت الحزمة",
+    "restartResumed": "يُستأنف بعد إعادة تشغيل XENO STORE",
+    "restartHeld": "لم يُستأنف: أُعيد تشغيل XENO STORE بعد مشكلة. استأنفه عندما تكون جاهزًا.",
     "extracting": "جارٍ استخراج الأرشيف على الجهاز…",
     "extractFiles": "{n, plural, zero{لا ملفات} one{ملف واحد} two{ملفان} few{# ملفات} many{# ملفًا} other{# ملف}}",
     "extractFailed": "فشل الاستخراج",

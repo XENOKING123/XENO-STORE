@@ -46,6 +46,8 @@
     "extracted": "{n, plural, one{Estratto · # file} other{Estratto · # file}}",
     "archiveDeleted": "Archivio eliminato",
     "pkgDeleted": "Pacchetto eliminato",
+    "restartResumed": "Ripresa dopo il riavvio di XENO STORE",
+    "restartHeld": "Non ripreso: XENO STORE si è riavviato dopo un problema. Riprendilo quando vuoi.",
     "extracting": "Estrazione dell'archivio sulla console…",
     "extractFiles": "{n, plural, one{# file} other{# file}}",
     "extractFailed": "Estrazione fallita",

@@ -135,6 +135,7 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await expect(async () => !!(await page.$('#scr-downloads .job .chip.turbo')), 'turbo result chip ("Fastest mirror") missing on the running row');
     await expect(async () => page.evaluate(() => /Fastest mirror/.test(document.querySelector('#scr-downloads .job .chip.turbo').textContent)), 'turbo chip should read "Fastest mirror: …"');
     await expect(async () => !!(await page.$('#scr-downloads .job .chip.via')), '"via Real-Debrid" label missing');
+    await expect(async () => page.evaluate(() => Array.from(document.querySelectorAll('#scr-downloads .job.st-paused .stats')).some((x) => x.textContent.indexOf(XS.t('dl2.restartHeld')) >= 0)), 'a download a safe start left paused should say so (job.restart "held", dl2.restartHeld)');
     await expect(async () => !!(await page.$('#scr-downloads .job.type-copy')), 'copy job row missing');
     await expect(async () => !!(await page.$('#scr-downloads .job.st-extracting')), 'ZIP extracting row missing');
     await expect(async () => !!(await page.$('#scr-downloads .jobgroup .ghead .bar')), 'install-set group progress bar missing');

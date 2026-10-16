@@ -46,6 +46,8 @@
     "extracted": "{n, plural, one{Wypakowano · # plik} few{Wypakowano · # pliki} many{Wypakowano · # plików} other{Wypakowano · # pliku}}",
     "archiveDeleted": "Usunięto archiwum",
     "pkgDeleted": "Usunięto pakiet",
+    "restartResumed": "Wznawianie po ponownym uruchomieniu XENO STORE",
+    "restartHeld": "Nie wznowiono: XENO STORE uruchomił się ponownie po problemie. Wznów je, gdy zechcesz.",
     "extracting": "Wypakowywanie archiwum na konsoli…",
     "extractFiles": "{n, plural, one{# plik} few{# pliki} many{# plików} other{# pliku}}",
     "extractFailed": "Wypakowywanie nie powiodło się",

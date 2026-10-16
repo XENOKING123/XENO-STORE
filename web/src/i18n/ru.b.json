@@ -46,6 +46,8 @@
     "extracted": "{n, plural, one{Распаковано · # файл} few{Распаковано · # файла} many{Распаковано · # файлов} other{Распаковано · # файла}}",
     "archiveDeleted": "Архив удалён",
     "pkgDeleted": "Пакет удалён",
+    "restartResumed": "Возобновляется после перезапуска XENO STORE",
+    "restartHeld": "Не возобновлено: XENO STORE перезапустился после сбоя. Возобновите, когда будете готовы.",
     "extracting": "Распаковка архива на консоли…",
     "extractFiles": "{n, plural, one{# файл} few{# файла} many{# файлов} other{# файла}}",
     "extractFailed": "Распаковка не удалась",
