@@ -579,7 +579,7 @@
     "not_found": "Nie znaleziono na konsoli",
     "forbidden": "Host odrzucił żądanie",
     "pin_required": "Ta konsola potrzebuje PIN-u, zanim przyjmie zmiany",
-    "not_paired": "Ta przeglądarka nie jest już sparowana z konsolą — odśwież stronę, aby sparować ją ponownie.",
+    "not_paired": "Ta przeglądarka została odłączona od PS5. Połącz ją ponownie, aby dalej korzystać z XENO STORE.",
     "rate_limited": "Host nas ogranicza – ponawianie z mniejszą liczbą połączeń",
     "transport": "Połączenie zostało zerwane – automatyczne ponawianie",
     "fix": {

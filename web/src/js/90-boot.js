@@ -74,15 +74,21 @@
 
   /* PC / phone browsers link to the PS5 first: "Show code on my PS5" puts a 6-digit code in a PS5
      notification, the code typed here buys this browser a device token (sent as a Bearer header on
-     every call). The console's own browser (loopback) never sees this page. */
-  function linkGate() {
-    return api.pair({ quiet: true, timeout: 6000 }).then(function (r) {
+     every call). The console's own browser (loopback) never sees this page. Also run while the store
+     is open once this browser is unpaired (Settings → Pair a device, a call refused with not_paired):
+     one Link page at a time, saying why (note, cls). */
+  var gating = null;
+  function linkGate(note, cls) {
+    if (gating) return gating;
+    gating = api.pair({ quiet: true, timeout: 6000 }).then(function (r) {
       if (!r || r.local || r.linked) return;
       if (S.data.token) { S.data.token = ''; U.store.set('token', ''); }   /* forgotten by the PS5 */
-      return linkPage(r);
-    }, function () { /* offline or an older store: boot as before */ });
+      return linkPage(r, note, cls);
+    }, function () { /* offline or an older store: boot as before */ }).then(function () { gating = null; });
+    return gating;
   }
-  function linkPage(info) {
+  XS.linkGate = linkGate;
+  function linkPage(info, note, cls) {
     return new Promise(function (resolve) {
       var html = document.documentElement;
       html.classList.add('linking');
@@ -107,6 +113,7 @@
       card.appendChild(status);
       card.appendChild(h('p.link-note', [ui.svg('shield'), h('span', { text: t('link.note') })]));
       function say(text, cls) { status.className = 'link-status' + (cls ? ' ' + cls : ''); status.textContent = text; }
+      if (note) say(note, cls);
       function digits() { return (input.value || '').replace(/\D/g, '').slice(0, 6); }
       var busy = false;
       show.addEventListener('click', function () {

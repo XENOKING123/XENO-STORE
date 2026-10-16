@@ -579,7 +579,7 @@
     "not_found": "Introuvable sur la console",
     "forbidden": "L'hôte a refusé la requête",
     "pin_required": "Cette console a besoin du code PIN avant d'accepter les modifications",
-    "not_paired": "Ce navigateur n'est plus associé à la console — rechargez la page pour l'associer à nouveau.",
+    "not_paired": "Ce navigateur a été dissocié de la PS5. Associez-le à nouveau pour continuer à utiliser XENO STORE.",
     "rate_limited": "L'hôte limite notre débit — nouvelle tentative avec moins de connexions",
     "transport": "La connexion a été coupée — nouvelle tentative automatique",
     "fix": {

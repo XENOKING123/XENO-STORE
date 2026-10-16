@@ -579,7 +579,7 @@
     "not_found": "Konsolda bulunamadı",
     "forbidden": "Sunucu isteği reddetti",
     "pin_required": "Bu konsol değişiklikleri kabul etmeden önce PIN istiyor",
-    "not_paired": "Bu tarayıcı artık konsolla eşli değil — yeniden eşlemek için sayfayı yenile.",
+    "not_paired": "Bu tarayıcının PS5 ile eşlemesi kaldırıldı. XENO STORE'u kullanmaya devam etmek için yeniden bağla.",
     "rate_limited": "Sunucu hızımızı sınırlıyor — daha az bağlantıyla tekrar deneniyor",
     "transport": "Bağlantı koptu — otomatik tekrar deneniyor",
     "fix": {

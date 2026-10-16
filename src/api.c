@@ -867,14 +867,23 @@ void api_handle(http_req *req) {
     return;
   }
   /* A paired device's last seen (Settings → Pair a device). */
-  if (util_istarts_with(req->authorization, "Bearer ")) pairing_touch(req->authorization + 7, req->user_agent);
+  const char *bearer = util_istarts_with(req->authorization, "Bearer ") ? req->authorization + 7 : NULL;
+  if (bearer) pairing_touch(bearer, req->user_agent);
+  /* A token the console no longer knows was unpaired (Settings → Pair a device):
+   * refused even where no token is needed, so a device that still has the store
+   * open goes back to the Link page instead of carrying on. Pairing itself stays
+   * reachable, the console itself is never cut off, and the TV app's dialect
+   * answers for its own token (paired:false, 401). */
+  if (bearer && !v1 && !req->client_is_loopback && !util_starts_with(req->path, "/api/pair") && !pairing_token_valid(bearer)) {
+    http_send_error(req, 403, "not_paired", "This device is no longer paired with the console. Pair it again with the code the PS5 shows.");
+    return;
+  }
   if (strcmp(req->method, "GET") != 0 && strcmp(req->method, "HEAD") != 0 &&
       !util_starts_with(req->path, "/api/pair") &&   /* pairing itself must stay reachable */
       !(req->client_is_loopback && strcmp(req->path, "/api/launcher/open") == 0)) {   /* the Games-row app */
     settings_t s;
     settings_get(&s);
     if (s.pin[0]) {
-      const char *bearer = util_istarts_with(req->authorization, "Bearer ") ? req->authorization + 7 : NULL;
       int authed = strcmp(s.pin, req->pin) == 0 || (bearer && pairing_token_valid(bearer));
       if (!authed) {
         if (v1) http_send_sentence(req, 401, API_V1_MSG_PAIR_AGAIN);

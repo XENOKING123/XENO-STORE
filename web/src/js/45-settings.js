@@ -553,7 +553,11 @@
       if (!ok) return;
       api.pairUnpair(d.id).then(function () {
         ui.toast({ cls: 'good', title: t('pairdev.unpaired', { name: name }) });
-        if (d.current) { S.data.token = ''; U.store.set('token', ''); location.reload(); return; }   /* this browser has to link again */
+        if (d.current) {   /* this browser has to link again: the Link page says it went (no reload, which would hide it) */
+          S.data.token = ''; U.store.set('token', '');
+          XS.linkGate(t('pairdev.unpaired', { name: name }), 'good').then(function () { rerenderGroup('pair'); });
+          return;
+        }
         rerenderGroup('pair');
       }, function (err) { ui.errorToast(err, t('pairdev.unpair')); });
     });

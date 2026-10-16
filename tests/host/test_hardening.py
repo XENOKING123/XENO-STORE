@@ -351,27 +351,32 @@ class PairedDevicesTests(unittest.TestCase):
         self.assertFalse(self.linked(phone))
         self.assertEqual(self.session(), local)
 
-    def test_03_unpaired_client_cannot_list_or_unpair(self):
+    def lan(self, method, path, body=None, token=None, pin=None):
+        """The request from this machine's LAN address: the store sees a phone, not the console."""
         ip = self.srv.api("GET", "/api/status")[1].get("ip", "127.0.0.1")
         if not ip or ip.startswith("127."):
             self.skipTest("no non-loopback IPv4 on this machine")
+        hdrs = {"Content-Type": "application/json"} if body is not None else {}
+        if token:
+            hdrs.update(bearer(token))
+        if pin:
+            hdrs["X-XENO-PIN"] = pin
+        req = urllib.request.Request(f"http://{ip}:{self.srv.port}{path}", method=method, headers=hdrs,
+                                     data=json.dumps(body).encode() if body is not None else None)
+        try:
+            with urllib.request.urlopen(req, timeout=10) as r:
+                return r.status, json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            return e.code, json.loads(e.read())
+        except OSError as e:
+            self.skipTest(f"cannot reach {ip}: {e}")
+
+    def test_03_unpaired_client_cannot_list_or_unpair(self):
+        lan = self.lan
+        lan("GET", "/api/pair")
         phone = self.pair(IPHONE_UA)
         pc = self.pair(WINDOWS_CHROME_UA)
         pc_id = {d["name"]: d["id"] for d in self.devices(phone)}["Windows Chrome"]
-
-        def lan(method, path, body=None, token=None):
-            hdrs = {"Content-Type": "application/json"} if body is not None else {}
-            if token:
-                hdrs.update(bearer(token))
-            req = urllib.request.Request(f"http://{ip}:{self.srv.port}{path}", method=method, headers=hdrs,
-                                         data=json.dumps(body).encode() if body is not None else None)
-            try:
-                with urllib.request.urlopen(req, timeout=10) as r:
-                    return r.status, json.loads(r.read())
-            except urllib.error.HTTPError as e:
-                return e.code, json.loads(e.read())
-            except OSError as e:
-                self.skipTest(f"cannot reach {ip}: {e}")
 
         # /api/pair/* skips the PIN gate, so the routes check the caller themselves
         self.srv.api("PUT", "/api/settings", {"pairing": {"pin": "2468"}})
@@ -415,6 +420,48 @@ class PairedDevicesTests(unittest.TestCase):
         self.assertEqual(b["devices"][-1]["name"], "iPhone Safari")
         self.assertTrue(b["devices"][-1]["current"])
         self.assertIn("replaced", self.srv.log_text())
+
+    def test_07_an_unpaired_token_is_refused_everywhere(self):
+        # unpairing cuts off a device that has the store open: a token the console no
+        # longer knows is refused even where no token is needed, so the web UI goes
+        # back to the Link page instead of carrying on (or asking for the PIN)
+        lan = self.lan
+        phone = self.pair(IPHONE_UA)
+        st, b = lan("PUT", "/api/settings", {"general": {"openOnStart": False}}, token=phone)
+        self.assertEqual(st, 200, b)
+        phone_id = self.devices(phone)[0]["id"]
+        self.assertEqual(self.srv.api("POST", "/api/pair/unpair", {"id": phone_id})[0], 200)
+        st, b = lan("PUT", "/api/settings", {"general": {"openOnStart": True}}, token=phone)
+        self.assertEqual((st, b.get("error")), (403, "not_paired"), b)
+        self.assertIs(self.srv.api("GET", "/api/settings")[1]["settings"]["general"]["openOnStart"], False, "nothing was changed")
+        st, b = lan("GET", "/api/status", token=phone)
+        self.assertEqual((st, b.get("error")), (403, "not_paired"), b)
+        # pairing stays reachable: it says "not linked" and takes a new code over the old token
+        st, b = lan("GET", "/api/pair", token=phone)
+        self.assertEqual((st, b["linked"]), (200, False), b)
+        code = self.srv.api("GET", "/api/pair")[1]["code"]
+        st, b = lan("POST", "/api/pair", {"code": code}, token=phone)
+        self.assertEqual(st, 200, b)
+        again = b["token"]
+        self.assertEqual(lan("GET", "/api/status", token=again)[0], 200)
+        # no token at all is no change: without a PIN anyone on the LAN may
+        st, b = lan("PUT", "/api/settings", {"general": {"openOnStart": True}})
+        self.assertEqual(st, 200, b)
+        # the TV app's dialect keeps its own answer, and the console itself is never cut off
+        st, b = lan("GET", "/api/v1/system", token=phone)
+        self.assertEqual((st, b["paired"]), (200, False), b)
+        self.assertEqual(self.srv.api("GET", "/api/status", headers=bearer(phone))[0], 200)
+        # with a PIN, an unpaired token is told so rather than asked for the PIN
+        self.srv.api("PUT", "/api/settings", {"pairing": {"pin": "2468"}})
+        try:
+            st, b = lan("PUT", "/api/settings", {"general": {"openOnStart": False}}, token=phone)
+            self.assertEqual((st, b.get("error")), (403, "not_paired"), b)
+            st, b = lan("PUT", "/api/settings", {"general": {"openOnStart": False}})
+            self.assertEqual((st, b.get("error")), (401, "pin_required"), b)
+            st, b = lan("PUT", "/api/settings", {"general": {"openOnStart": False}}, token=again)
+            self.assertEqual(st, 200, b)
+        finally:
+            self.srv.api("PUT", "/api/settings", {"pairing": {"pin": ""}}, headers={"X-XENO-PIN": "2468"})
 
     def write_v1(self, tokens):
         self.srv.stop()
@@ -522,6 +569,51 @@ try {
 """
 
 
+UNPAIRED_WHILE_OPEN_SCRIPT = r"""
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.XENO_PLAYWRIGHT);
+const [lanBase, consoleBase, token] = process.argv.slice(2);
+const browser = await chromium.launch();
+const linkPage = () => {
+  const p = document.querySelectorAll('.link-page');
+  return { pages: p.length, status: p.length ? p[0].querySelector('.link-status').innerText : '', same: window.__same === 1,
+           token: localStorage.getItem('xs.token') };
+};
+try {
+  // a phone on the LAN (not the console itself), linked
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await page.addInitScript((tok) => { if (!localStorage.getItem('xs.token')) { localStorage.setItem('xs.wizardDone', 'true'); localStorage.setItem('xs.token', JSON.stringify(tok)); } }, token);
+  await page.goto(lanBase + '/');
+  await page.waitForFunction(() => window.XS && XS.router && document.querySelector('#scr-discover'), null, { timeout: 30000 });
+  await page.evaluate(() => { window.__same = 1; XS.router.go('settings'); });
+  // 1) it unpairs itself in Settings → Pair a device: the Link page says so (no reload)
+  await page.waitForSelector('#scr-settings .pd-row .chip', { timeout: 30000 });
+  const nav = await page.evaluate(() => document.querySelector('#scr-settings .pd-row .chip').closest('.pd-row').getAttribute('data-nav-id'));
+  await page.click(`#scr-settings [data-nav-id="${nav}-unpair"]`);
+  await page.click('.dialog-wrap [data-nav-id="dlg-1"]');
+  await page.waitForSelector('.link-page', { timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('.link-page .link-status').innerText, null, { timeout: 15000 });
+  const out = { self: await page.evaluate(linkPage) };
+  // linked again with the code the console shows
+  const code = (await (await fetch(consoleBase + '/api/pair')).json()).code;
+  await page.fill('.link-page .link-code', code);
+  await page.waitForFunction(() => !document.querySelector('.link-page'), null, { timeout: 15000 });
+  out.relinked = await page.evaluate(linkPage);
+  // 2) unpaired from elsewhere while it is open: its next calls land on one Link page that says why
+  const r = await fetch(consoleBase + '/api/pair/unpair-others', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+  out.unpairedOthers = (await r.json()).unpaired;
+  await page.evaluate(() => Promise.all([XS.api.status(), XS.api.queue(), XS.api.settings()].map((p) => p.catch(() => null))));
+  await page.waitForFunction(() => { const s = document.querySelector('.link-page .link-status'); return s && s.innerText; }, null, { timeout: 15000 });
+  await page.waitForTimeout(500);
+  out.revoked = await page.evaluate(linkPage);
+  console.log(JSON.stringify(out));
+} finally {
+  await browser.close();
+}
+"""
+
+
 class PairedDevicesUiTests(unittest.TestCase):
     """Settings → Pair a device in the UI the console serves: every paired
     device with its name, last seen, "This device" and an Unpair button, the
@@ -562,6 +654,25 @@ class PairedDevicesUiTests(unittest.TestCase):
         self.assertEqual([r["name"] for r in out["after"]["rows"]], ["iPhone Safari", "PS5 browser", "Unknown device"])
         self.assertFalse(self.srv.api("GET", "/api/pair", headers=bearer(pc))[1]["linked"])
         self.assertTrue(self.srv.api("GET", "/api/pair", headers=bearer(phone))[1]["linked"])
+
+    def test_unpaired_while_open_goes_back_to_the_link_page(self):
+        ip = self.srv.api("GET", "/api/status")[1].get("ip", "127.0.0.1")
+        if not ip or ip.startswith("127."):
+            self.skipTest("no non-loopback IPv4 on this machine")
+        phone = self.pair(IPHONE_UA)
+        out = harness.run_ui_script(self, self.pw, self.tmp, UNPAIRED_WHILE_OPEN_SCRIPT, f"http://{ip}:{self.srv.port}",
+                                    self.srv.base, phone)
+        # its own Unpair: straight to the Link page, which says it was unpaired
+        self.assertEqual(out["self"], {"pages": 1, "status": "iPhone Safari unpaired", "same": True, "token": '""'}, out)
+        self.assertFalse(self.srv.api("GET", "/api/pair", headers=bearer(phone))[1]["linked"])
+        self.assertEqual(out["relinked"]["pages"], 0, out)
+        self.assertTrue(out["relinked"]["same"], out)
+        again = json.loads(out["relinked"]["token"])
+        self.assertNotEqual(again, phone)
+        # unpaired from the console while open: the next calls are refused and one Link page says why
+        self.assertEqual(out["unpairedOthers"], 1, out)
+        self.assertEqual(out["revoked"], {"pages": 1, "same": True, "token": '""',
+                                          "status": "This browser was unpaired from the PS5. Link it again to keep using XENO STORE."}, out)
 
 
 class ListenerTests(unittest.TestCase):

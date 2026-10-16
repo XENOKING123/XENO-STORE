@@ -579,7 +579,7 @@
     "not_found": "Não encontrado no console",
     "forbidden": "O host recusou a requisição",
     "pin_required": "Este console precisa do PIN antes de aceitar mudanças",
-    "not_paired": "Este navegador não está mais pareado com o console — recarregue a página para parear de novo.",
+    "not_paired": "Este navegador foi despareado do PS5. Vincule de novo para continuar usando a XENO STORE.",
     "rate_limited": "O host está limitando nossa velocidade — tentando de novo com menos conexões",
     "transport": "A conexão caiu — tentando de novo automaticamente",
     "fix": {

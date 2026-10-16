@@ -14,6 +14,7 @@
       return r;
     }, function (err) {
       if (err.status === 0 && !opts.quiet) S.set('serverOk', false);
+      if (err.status === 403 && err.error === 'not_paired' && XS.linkGate) XS.linkGate(XS.t('err.not_paired'), 'bad');   /* unpaired: link again */
       if (err.status === 401 && XS.ui && XS.ui.askPin && !opts.noPin) {
         return XS.ui.askPin().then(function (ok) { return ok ? req(method, path, body, { noPin: true }) : Promise.reject(err); });
       }
