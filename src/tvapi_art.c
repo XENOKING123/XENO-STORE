@@ -34,7 +34,7 @@
  * window, the identifier check and the three reply sentences. Our changes:
  * the web UI's candidate rule (_artOk), a 24 MiB budget, a newest-first
  * queue, header probes with the pixel caps and the JPEG frame check, the
- * per-URL refusal memory and the art index.
+ * per-URL-and-kind refusal memory and the art index.
  */
 #include "tvapi.h"
 
@@ -142,7 +142,7 @@ static struct {
   int nqueue;
   size_t bytes;          /* held by READY entries */
   int nready;
-  uint64_t refused[ART_REFUSED_SLOTS];   /* URL hashes refused for their format */
+  uint64_t refused[ART_REFUSED_SLOTS];   /* refusal_key()s of the URLs refused for a kind */
   int nrefused;
   int refused_full_logged;
   unsigned long fetched, refusals, failures, evictions, busy;
@@ -835,6 +835,15 @@ static int queue_room_locked(int64_t now, art_notes *nt) {
   return 0;
 }
 
+/* The refusal memory's key: a URL with the kind it was refused for. The kinds
+ * have their own caps and shape rule (a 1920x1080 PNG is too big for a cover
+ * and a square picture is no hero, yet both make a fine screenshot), so a
+ * refusal holds for that kind only. */
+static uint64_t refusal_key(const char *url, int kind) {
+  uint64_t h = (fnv1a(url) ^ (uint64_t)(kind + 1)) * 1099511628211ULL;
+  return h ? h : 1;   /* 0 marks an empty refusal slot */
+}
+
 static int refused_has_locked(uint64_t h) {
   for (uint32_t s = (uint32_t)h & (ART_REFUSED_SLOTS - 1);; s = (s + 1) & (ART_REFUSED_SLOTS - 1)) {
     if (!A.refused[s]) return 0;
@@ -962,7 +971,7 @@ static int job_take_locked(art_job *j, int64_t now) {
     uint32_t off = cand[k];
     if (!off) continue;
     const char *u = A.idx->pool + off;
-    if (refused_has_locked(fnv1a(u))) continue;
+    if (refused_has_locked(refusal_key(u, j->kind))) continue;
     xstrlcpy(j->url[j->n++], u, ART_URL_MAX);
   }
   if (j->n) return 1;
@@ -985,7 +994,7 @@ static void job_run(const art_job *j, art_result *r) {
       return;
     }
     if (rc == FETCH_REFUSED) {
-      r->refused[r->nrefused++] = fnv1a(j->url[i]);
+      r->refused[r->nrefused++] = refusal_key(j->url[i], j->kind);
       LOGI("tvart: refused for %s: %s: %s", j->key, why, j->url[i]);
     } else {
       failed = 1;
@@ -1129,8 +1138,8 @@ static void art_lookup_locked(const char *id, int kind, int shot, const char *ke
     uint32_t c[2];
     game_cands(A.idx, index_find(A.idx, id), kind, shot, c);
     if (!c[0] && !c[1]) { an->status = 404; return; }
-    int open0 = c[0] && !refused_has_locked(fnv1a(A.idx->pool + c[0]));
-    int open1 = c[1] && !refused_has_locked(fnv1a(A.idx->pool + c[1]));
+    int open0 = c[0] && !refused_has_locked(refusal_key(A.idx->pool + c[0], kind));
+    int open1 = c[1] && !refused_has_locked(refusal_key(A.idx->pool + c[1], kind));
     if (!open0 && !open1) { an->status = 404; return; }   /* every candidate refused for this catalogue */
   }
   art_entry *e = entry_find_locked(key, kh);

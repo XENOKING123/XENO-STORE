@@ -881,13 +881,18 @@
    "slug": "fx-static-bloom",
    "title": "Static Bloom",
    "platform": "PS5",
-   "_case": "a dlpsgame (kind page) PKG file link with a size, and an archive RAR: both hidden, so the game is hidden",
+   "_case": "a dlpsgame (kind page) PKG file link with a size, and an archive RAR: both hidden, so the game is hidden; art (R9): a 1920x1080 PNG cover (over the cover cap) and a square hero, both refused, are also its screenshots 0 and 1, both served (a refusal holds for its kind only)",
    "artworkLayout": "wide",
    "titleIds": [
     "PPSA90020"
    ],
    "addedAt": "2026-04-03",
-   "cover": "{{ART}}/art/fx-static-bloom-ps5/cover.webp",
+   "cover": "{{ART}}/art/fx-static-bloom-ps5/hero.png",
+   "hero": "{{ART}}/art/fx-static-bloom-ps5/hero-square.webp",
+   "screenshots": [
+    "{{ART}}/art/fx-static-bloom-ps5/hero.png",
+    "{{ART}}/art/fx-static-bloom-ps5/hero-square.webp"
+   ],
    "releases": [
     {
      "id": "fx-static-bloom-dlps-pkg",

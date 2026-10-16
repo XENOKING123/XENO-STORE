@@ -435,6 +435,30 @@ class TvArt(unittest.TestCase, ArtMixin):
             if p in shots:
                 self.assertEqual(hdrs.get("Accept"), ACCEPT, p)
 
+    def test_15_refusals_per_kind(self):
+        """A refusal holds for the kind it was made for: fx-static-bloom-ps5's cover (a 1920x1080 PNG,
+        over the cover cap) and hero (square) are also its screenshots 0 and 1, which allow both."""
+        a = self.w.art
+        gid = "fx-static-bloom-ps5"
+        png, square = src(gid, "hero.png"), src(gid, "hero-square.webp")
+        # the screenshot served first, then the same URL refused as the cover: still served
+        self.assert_served(gid, "shot/0", png)
+        self.assert_unknown(self.wait_art(gid, "cover"))
+        self.assertIn(f"tvart: refused for {gid}#cover: image/png 1920x1080 is over the 1048576-pixel cover cap",
+                      self.w.log_text())
+        self.assert_image(self.c.get(art(gid, "shot/0")), png)
+        # the URL refused as the hero first: the screenshot is still fetched, and served
+        self.assert_unknown(self.wait_art(gid, "hero"))
+        self.assertIn(f"tvart: refused for {gid}#hero: hero 1080x1080 is not wide", self.w.log_text())
+        self.assert_served(gid, "shot/1", square)
+        # each refusal is still remembered for its own kind
+        for kind in ("cover", "hero"):
+            with self.subTest(kind=kind):
+                r = self.c.get(art(gid, kind))
+                self.assert_unknown(r)
+                self.assertLess(r.elapsed, NEVER_BLOCKS)
+        self.assertEqual((a.hits(png), a.hits(square)), (2, 2))
+
 
 # --------------------------------------------------------------------------- #
 def limits_catalog():
