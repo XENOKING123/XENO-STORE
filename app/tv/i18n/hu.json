@@ -32,7 +32,7 @@
   "Action": "Akció",
   "Actions": "Műveletek",
   "Active": "Aktív",
-  "Active downloads pause. This app stops XENO STORE and starts it again, then you can resume your downloads from Downloads.": "Az aktív letöltések szünetelnek. Ez az alkalmazás leállítja, majd újraindítja a XENO STORE-t, ezután folytathatod a letöltéseket a Letöltésekből.",
+  "Active downloads pause. This app stops XENO STORE and starts it again, and they then continue on their own (unless Resume after a restart is off in the browser version under Settings → Downloads).": "Az aktív letöltések szünetelnek. Ez az alkalmazás leállítja, majd újraindítja a XENO STORE-t, utána a letöltések maguktól folytatódnak (kivéve, ha a böngészőverzióban a Beállítások → Letöltések alatt ki van kapcsolva a Folytatás újraindítás után).",
   "Add favourites from a game’s page.": "Kedvencek hozzáadása a játék oldaláról.",
   "Add to favourites": "Hozzáadás a kedvencekhez",
   "Added to Downloads": "Hozzáadva a Letöltésekhez",

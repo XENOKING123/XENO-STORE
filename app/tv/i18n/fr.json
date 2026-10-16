@@ -32,7 +32,7 @@
   "Action": "Action",
   "Actions": "Actions",
   "Active": "Actifs",
-  "Active downloads pause. This app stops XENO STORE and starts it again, then you can resume your downloads from Downloads.": "Les téléchargements actifs sont mis en pause. Cette app arrête XENO STORE puis le relance ; vous pourrez ensuite reprendre vos téléchargements depuis Téléchargements.",
+  "Active downloads pause. This app stops XENO STORE and starts it again, and they then continue on their own (unless Resume after a restart is off in the browser version under Settings → Downloads).": "Les téléchargements actifs sont mis en pause. Cette app arrête XENO STORE puis le relance ; ils reprennent ensuite tout seuls (sauf si « Reprendre après un redémarrage » est désactivé dans la version navigateur, sous Paramètres → Téléchargements).",
   "Add favourites from a game’s page.": "Ajoutez des favoris depuis la page d’un jeu.",
   "Add to favourites": "Ajouter aux favoris",
   "Added to Downloads": "Ajouté aux téléchargements",

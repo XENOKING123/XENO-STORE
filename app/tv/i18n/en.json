@@ -68,7 +68,7 @@
   "Action": "Action",
   "Actions": "Actions",
   "Active": "Active",
-  "Active downloads pause. This app stops XENO STORE and starts it again, then you can resume your downloads from Downloads.": "Active downloads pause. This app stops XENO STORE and starts it again, then you can resume your downloads from Downloads.",
+  "Active downloads pause. This app stops XENO STORE and starts it again, and they then continue on their own (unless Resume after a restart is off in the browser version under Settings → Downloads).": "Active downloads pause. This app stops XENO STORE and starts it again, and they then continue on their own (unless Resume after a restart is off in the browser version under Settings → Downloads).",
   "Add favourites from a game’s page.": "Add favourites from a game’s page.",
   "Add to favourites": "Add to favourites",
   "Added to Downloads": "Added to Downloads",

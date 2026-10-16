@@ -32,7 +32,7 @@
   "Action": "Экшен",
   "Actions": "Действия",
   "Active": "Активные",
-  "Active downloads pause. This app stops XENO STORE and starts it again, then you can resume your downloads from Downloads.": "Активные загрузки будут приостановлены. Приложение остановит XENO STORE и запустит его снова, после чего загрузки можно возобновить в разделе «Загрузки».",
+  "Active downloads pause. This app stops XENO STORE and starts it again, and they then continue on their own (unless Resume after a restart is off in the browser version under Settings → Downloads).": "Активные загрузки будут приостановлены. Приложение остановит XENO STORE и запустит его снова, после чего загрузки продолжатся сами (если в версии для браузера в разделе «Настройки → Загрузки» не выключено «Возобновлять после перезапуска»).",
   "Add favourites from a game’s page.": "Добавляйте игры в избранное на их страницах.",
   "Add to favourites": "Добавить в избранное",
   "Added to Downloads": "Добавлено в загрузки",

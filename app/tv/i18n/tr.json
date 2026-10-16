@@ -32,7 +32,7 @@
   "Action": "Aksiyon",
   "Actions": "Eylemler",
   "Active": "Etkin",
-  "Active downloads pause. This app stops XENO STORE and starts it again, then you can resume your downloads from Downloads.": "Etkin indirmeler duraklatılır. Bu uygulama XENO STORE'u durdurup yeniden başlatır; ardından indirmelerinizi İndirmeler'den sürdürebilirsiniz.",
+  "Active downloads pause. This app stops XENO STORE and starts it again, and they then continue on their own (unless Resume after a restart is off in the browser version under Settings → Downloads).": "Etkin indirmeler duraklatılır. Bu uygulama XENO STORE'u durdurup yeniden başlatır; ardından indirmeler kendiliğinden devam eder (tarayıcı sürümünde Ayarlar → İndirmeler altında Yeniden başlatmadan sonra sürdür kapalı değilse).",
   "Add favourites from a game’s page.": "Favorileri bir oyunun sayfasından ekleyin.",
   "Add to favourites": "Favorilere ekle",
   "Added to Downloads": "İndirmelere eklendi",

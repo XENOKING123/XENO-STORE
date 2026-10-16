@@ -32,7 +32,7 @@
   "Action": "Actie",
   "Actions": "Acties",
   "Active": "Actief",
-  "Active downloads pause. This app stops XENO STORE and starts it again, then you can resume your downloads from Downloads.": "Actieve downloads worden gepauzeerd. Deze app stopt XENO STORE en start het opnieuw; daarna kun je je downloads hervatten via Downloads.",
+  "Active downloads pause. This app stops XENO STORE and starts it again, and they then continue on their own (unless Resume after a restart is off in the browser version under Settings → Downloads).": "Actieve downloads worden gepauzeerd. Deze app stopt XENO STORE en start het opnieuw; daarna gaan ze vanzelf verder (tenzij Hervatten na een herstart uit staat in de browserversie via Instellingen → Downloads).",
   "Add favourites from a game’s page.": "Voeg favorieten toe vanaf de pagina van een game.",
   "Add to favourites": "Toevoegen aan favorieten",
   "Added to Downloads": "Toegevoegd aan Downloads",

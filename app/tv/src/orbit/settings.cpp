@@ -847,8 +847,9 @@ void SettingsScreen::build_updates(Pane &pane) const
                                    "payload manager instead.",
                                    {{"next", next}, {"running", running_service}})
                               : std::string(tr("Active downloads pause. This app stops XENO STORE and "
-                                               "starts it again, then you can resume your downloads "
-                                               "from Downloads.")));
+                                               "starts it again, and they then continue on their own "
+                                               "(unless Resume after a restart is off in the browser "
+                                               "version under Settings \xE2\x86\x92 Downloads).")));
             pane.buttons(
                 {{Kind::restart_confirm, tr("Restart now"), ui::ButtonKind::primary, !disabled},
                  {Kind::restart_cancel, tr("Not now")}});
