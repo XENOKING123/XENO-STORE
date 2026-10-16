@@ -1126,7 +1126,10 @@ std::vector<Scenario> scenarios()
                pause(1.0f, "settings-tv-app-checked")}})});
     list.push_back({"settings-more", Mode::normal, true,
         {run(0.5f, [](orbit::App &app) { app.open_settings(Section::more); }),
-         pause(1.0f, "settings-more-page")}});
+         pause(1.0f, "settings-more-page"),
+         // XENO STORE: Sounds, turned off (in memory only here).
+         run(0.3f, [](orbit::App &app) { app.open_settings(Section::more, true); }),
+         move(Direction::down), tap(Action::confirm), pause(0.8f, "settings-sounds-off")}});
     // Newer releases of both parts: the badge, guided installs and a restart.
     list.push_back(
         {"updates",

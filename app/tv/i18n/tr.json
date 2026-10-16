@@ -711,5 +711,10 @@
   "This download is already installing.": "Bu indirme zaten yükleniyor.",
   "The PKG file is no longer on the drive. Remove this download and download it again.": "PKG dosyası artık sürücüde değil. Bu indirmeyi kaldırıp yeniden indirin.",
   "Installing": "Yükleniyor",
-  "Retry install": "Yüklemeyi yeniden dene"
+  "Retry install": "Yüklemeyi yeniden dene",
+  "Sounds": "Sesler",
+  "The app plays a sound as you move and select.": "Uygulama, gezinirken ve seçim yaparken ses çalar.",
+  "The app is silent. Games and the console keep their own sounds.": "Uygulama sessiz. Oyunlar ve konsol kendi seslerini korur.",
+  "Turn sounds off": "Sesleri kapat",
+  "Turn sounds on": "Sesleri aç"
 }

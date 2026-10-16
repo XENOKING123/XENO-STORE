@@ -14,6 +14,7 @@
 #include "gfx/backdrop_spec.hpp"
 #include "gfx/draw_list.hpp"
 #include "orbit/art.hpp"
+#include "orbit/prefs.hpp"
 #include "orbit/store.hpp"
 #include "orbit/ui.hpp"
 #include "ui/components/keyboard.hpp"
@@ -76,6 +77,9 @@ struct Context
     // is not possible.
     std::function<bool(const std::string &game_id)> open_game_browser;
     float clock = 0.0f; // seconds since the app opened
+    // XENO STORE: the app's own settings (Sounds), kept on this console; in
+    // memory only until loaded from a path.
+    Prefs prefs;
 };
 
 // The tabs, in the browser storefront's order; it opens on Discover.
@@ -673,6 +677,7 @@ class SettingsScreen final : public Screen
         archives_toggle,
         download_limit_less,
         download_limit_more,
+        sounds_toggle, // XENO STORE: the app's sounds, kept on this console
     };
     struct Control
     {
@@ -775,6 +780,7 @@ class App
         top,
         content,
     };
+    void update_frame(const InputFrame &input, float dt, Feedback &feedback);
     Screen &screen();
     const Screen &screen() const;
     void draw_top_bar(hui::gfx::DrawList &list) const;

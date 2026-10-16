@@ -727,5 +727,10 @@
   "This download is already installing.": "To pobieranie jest już instalowane.",
   "The PKG file is no longer on the drive. Remove this download and download it again.": "Pliku PKG nie ma już na dysku. Usuń to pobieranie i pobierz go ponownie.",
   "Installing": "Instalowanie",
-  "Retry install": "Ponów instalację"
+  "Retry install": "Ponów instalację",
+  "Sounds": "Dźwięki",
+  "The app plays a sound as you move and select.": "Aplikacja odtwarza dźwięk podczas poruszania się i wybierania.",
+  "The app is silent. Games and the console keep their own sounds.": "Aplikacja jest wyciszona. Gry i konsola zachowują własne dźwięki.",
+  "Turn sounds off": "Wyłącz dźwięki",
+  "Turn sounds on": "Włącz dźwięki"
 }

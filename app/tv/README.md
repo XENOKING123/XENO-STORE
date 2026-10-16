@@ -131,6 +131,9 @@ right (Right or Cross to enter it, Circle or Left to leave).
     Orbit doesn't answer within 15 seconds). Without a loader it says to run
     `/data/orbit-store/orbit_store.elf` from a payload manager, and
     reconnects by itself. A toast names the version that came back.
+- **More settings**: Open browser version; **Sounds**, which turns the
+  app's interface sounds off or on (kept on this console, in
+  `/download0/xeno-store/settings.json` of the app's storage); the versions.
 - **More settings**: Open browser version, and both versions side by side.
 
 When the app opens it asks Orbit to look for updates of both parts (the

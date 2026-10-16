@@ -719,5 +719,10 @@
   "This download is already installing.": "Esta descarga ya se está instalando.",
   "The PKG file is no longer on the drive. Remove this download and download it again.": "El archivo PKG ya no está en la unidad. Quita esta descarga y vuelve a descargarlo.",
   "Installing": "Instalando",
-  "Retry install": "Reintentar instalación"
+  "Retry install": "Reintentar instalación",
+  "Sounds": "Sonidos",
+  "The app plays a sound as you move and select.": "La app reproduce un sonido al moverte y seleccionar.",
+  "The app is silent. Games and the console keep their own sounds.": "La app está en silencio. Los juegos y la consola mantienen sus propios sonidos.",
+  "Turn sounds off": "Desactivar sonidos",
+  "Turn sounds on": "Activar sonidos"
 }

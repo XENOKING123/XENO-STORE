@@ -711,5 +711,10 @@
   "This download is already installing.": "This download is already installing.",
   "The PKG file is no longer on the drive. Remove this download and download it again.": "The PKG file is no longer on the drive. Remove this download and download it again.",
   "Installing": "Installing",
-  "Retry install": "Retry install"
+  "Retry install": "Retry install",
+  "Sounds": "Sounds",
+  "The app plays a sound as you move and select.": "The app plays a sound as you move and select.",
+  "The app is silent. Games and the console keep their own sounds.": "The app is silent. Games and the console keep their own sounds.",
+  "Turn sounds off": "Turn sounds off",
+  "Turn sounds on": "Turn sounds on"
 }

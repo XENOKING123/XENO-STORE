@@ -711,5 +711,10 @@
   "This download is already installing.": "Ez a letöltés már telepítés alatt áll.",
   "The PKG file is no longer on the drive. Remove this download and download it again.": "A PKG-fájl már nincs a meghajtón. Távolítsd el ezt a letöltést, és töltsd le újra.",
   "Installing": "Telepítés folyamatban",
-  "Retry install": "Telepítés újrapróbálása"
+  "Retry install": "Telepítés újrapróbálása",
+  "Sounds": "Hangok",
+  "The app plays a sound as you move and select.": "Az app hangot ad navigáláskor és kiválasztáskor.",
+  "The app is silent. Games and the console keep their own sounds.": "Az app néma. A játékok és a konzol saját hangjai megmaradnak.",
+  "Turn sounds off": "Hangok kikapcsolása",
+  "Turn sounds on": "Hangok bekapcsolása"
 }

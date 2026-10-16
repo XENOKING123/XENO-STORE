@@ -66,7 +66,7 @@
   "settings-catalogue": {"captures": ["settings-catalogue-status", "settings-catalogue-busy", "settings-catalogue-done"]},
   "settings-updates": {"captures": ["settings-updates-status", "settings-updates-checked", "settings-updates-saved"]},
   "settings-tv-app": {"captures": ["settings-tv-app", "settings-tv-app-checked"]},
-  "settings-more": {"captures": ["settings-more-page"]},
+  "settings-more": {"captures": ["settings-more-page", "settings-sounds-off"]},
   "restart": {"captures": ["restart-confirm", "restart-stopping", "restart-done"], "maxSeconds": 90, "expect": {"loaderSends": 1, "allow503": true, "drain": true}},
   "connection-lost": {"captures": ["connection-lost-before", "connection-lost-banner"], "expect": {"linkError": true, "marks": ["stop-backend"]}},
   "state-unhealthy": {"captures": ["state-unhealthy-banner"]}

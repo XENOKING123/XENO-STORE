@@ -1,11 +1,12 @@
-// XENO STORE TV app - Settings: the simultaneous downloads stepper, and source chips.
+// XENO STORE TV app - Settings: the simultaneous downloads stepper, source chips and Sounds.
 // Copyright (C) 2026 XENO STORE contributors
 // SPDX-License-Identifier: GPL-3.0-or-later
 //
 // XENO STORE runs 1 to 4 downloads at once. The stepper in Settings, Storage
 // stops at 4, the API client refuses anything outside 1..4, and a larger
 // limit reported by an older backend steps down into that range. Download
-// sources wrap onto more rows rather than running off the page.
+// sources wrap onto more rows rather than running off the page. Sounds (More
+// settings) silences the app, and the choice is kept on the console.
 
 #include "fixture.hpp"
 #include "orbit/api.hpp"
@@ -16,8 +17,12 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
+#include <fstream>
 #include <string>
 #include <vector>
+
+#include <stdlib.h>
 
 namespace orbit
 {
@@ -178,6 +183,80 @@ TEST(SettingsSources, ChipsWrapInsideThePane)
     for (const auto &instance : drawn.scene.instances())
         right = std::max(right, instance.rect[0] + instance.rect[2]);
     EXPECT_LE(right, 600.0f + 940.0f + 24.0f); // the pane, and a focus ring's glow
+}
+
+// ---- Sounds: the app's own setting, in a file of the title's storage ----
+
+struct PrefsDir
+{
+    std::string path;
+    PrefsDir()
+    {
+        char name[] = "/tmp/xeno-tv-prefs-XXXXXX";
+        path = mkdtemp(name);
+    }
+    ~PrefsDir()
+    {
+        std::system(("rm -rf '" + path + "'").c_str());
+    }
+};
+
+TEST(SettingsSounds, SoundsAreOnUntilTurnedOffAndTheChoiceIsKept)
+{
+    PrefsDir dir;
+    const std::string file = dir.path + "/xeno-store/settings.json"; // its folder is made
+    Prefs prefs;
+    prefs.load(file);
+    EXPECT_TRUE(prefs.sounds()); // nothing saved yet
+    EXPECT_EQ(prefs.set_sounds(false), "");
+    EXPECT_FALSE(prefs.sounds());
+    Prefs reopened; // the next time the app starts
+    reopened.load(file);
+    EXPECT_FALSE(reopened.sounds());
+    EXPECT_EQ(reopened.set_sounds(true), "");
+    Prefs again;
+    again.load(file);
+    EXPECT_TRUE(again.sounds());
+    // An unreadable file gives the default.
+    std::ofstream(file, std::ios::binary | std::ios::trunc) << "{\"sounds\":";
+    Prefs broken;
+    broken.load(file);
+    EXPECT_TRUE(broken.sounds());
+    // In memory only (previews and tests): nothing to save.
+    Prefs memory;
+    memory.load("");
+    EXPECT_EQ(memory.set_sounds(false), "");
+    EXPECT_FALSE(memory.sounds());
+}
+
+TEST(SettingsSounds, TurningSoundsOffSilencesTheAppUntilTurnedOnAgain)
+{
+    PrefsDir dir;
+    const std::string file = dir.path + "/settings.json";
+    SettingsHarness h(1);
+    h.context.prefs.load(file);
+    h.app.open_settings(SettingsScreen::Section::more, true); // Turn sounds off has the focus
+    h.settle();
+    h.press(Action::confirm);
+    EXPECT_FALSE(h.context.prefs.sounds());
+    EXPECT_TRUE(h.feedback.cues.empty()); // not even this press
+    Prefs saved;
+    saved.load(file);
+    EXPECT_FALSE(saved.sounds());
+    h.press(Action::back); // out of the section, then out of App settings: silent
+    EXPECT_TRUE(h.feedback.cues.empty());
+    h.press(Action::back);
+    EXPECT_TRUE(h.feedback.cues.empty());
+    h.settle();
+    h.frame(Direction::right); // a tab moves, quietly
+    EXPECT_TRUE(h.feedback.cues.empty());
+    h.app.open_settings(SettingsScreen::Section::more, true);
+    h.settle();
+    h.press(Action::confirm); // Turn sounds on
+    EXPECT_TRUE(h.context.prefs.sounds());
+    EXPECT_FALSE(h.feedback.cues.empty());
+    saved.load(file);
+    EXPECT_TRUE(saved.sounds());
 }
 
 TEST(SettingsStepper, TheClientAcceptsOnlyOneToFour)

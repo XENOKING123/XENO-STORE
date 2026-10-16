@@ -266,6 +266,15 @@ void App::handle_intent(const Intent &intent, Feedback &feedback)
 
 void App::update(const InputFrame &input, float dt, Feedback &feedback)
 {
+    update_frame(input, dt, feedback);
+    // XENO STORE: with Sounds off (App settings, More settings) the app is
+    // silent; the controller still rumbles.
+    if (!ctx_.prefs.sounds())
+        feedback.cues.clear();
+}
+
+void App::update_frame(const InputFrame &input, float dt, Feedback &feedback)
+{
     ctx_.clock += dt;
     ctx_.store.tick();
     const Snapshot &state = ctx_.store.state();

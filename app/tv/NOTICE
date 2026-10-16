@@ -248,7 +248,7 @@ Modified upstream files:
   sce_sys/param.json        PPSA99500, XENO STORE titles, contentVersion from
                             VERSION
   src/main.cpp              port 9095, the browser version URL, log tags,
-                            the badge
+                            the badge, the app's own settings file
   src/orbit/api.cpp, api.hpp, model.cpp, model.hpp, http.cpp
                             the backend dialect: no Orbit Zero, 1 to 4
                             downloads, the browser message, User-Agent, an
@@ -295,6 +295,9 @@ New files (Copyright (C) 2026 XENO STORE contributors, GPL-3.0-or-later):
                             the badge: the XENO STORE icon cut to a circle
   src/orbit/brand.cpp, brand.hpp
                             the badge, its turning rim and the wordmark
+  src/orbit/prefs.cpp, prefs.hpp
+                            the app's own settings (Sounds), kept in the
+                            title's storage
   tests/unit/brand_test.cpp, settings_test.cpp, store_outdated_test.cpp,
     store_restart_test.cpp
                             tests of the above

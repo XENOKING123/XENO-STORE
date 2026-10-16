@@ -162,6 +162,9 @@ int main()
     art.start();
 
     orbit::Context context(type, fonts, store, art);
+    // XENO STORE: the app's own settings (Sounds), kept in its storage.
+    context.prefs.load(orbit::kPrefsPath);
+    sys::log("[XENO-TV] sounds=%d", context.prefs.sounds() ? 1 : 0);
     context.mark = mark;
     context.loader_mark = loader_mark;
     context.today = today();

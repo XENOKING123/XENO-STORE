@@ -899,6 +899,15 @@ void SettingsScreen::build_more(Pane &pane) const
         pane.buttons({{Kind::open_browser, tr("Open browser version"), ui::ButtonKind::primary}});
     pane.gap(12.0f);
     pane.rule();
+    // XENO STORE: the app's own sounds, kept on this console.
+    pane.heading(tr("Sounds"));
+    pane.body(ctx_.prefs.sounds()
+                  ? tr("The app plays a sound as you move and select.")
+                  : tr("The app is silent. Games and the console keep their own sounds."));
+    pane.buttons({{Kind::sounds_toggle,
+                   ctx_.prefs.sounds() ? tr("Turn sounds off") : tr("Turn sounds on")}});
+    pane.gap(12.0f);
+    pane.rule();
     const std::string running = app_release_version(ctx_.app_version);
     pane.version_row(tr("TV app"), running.empty() ? tr("Unknown") : running);
     pane.version_row(tr("Download service"),
@@ -925,6 +934,14 @@ void SettingsScreen::activate(const Control &control, Intent &intent, Feedback &
         error_.clear();
         ctx_.store.set_delete_archives(!state.system.delete_archives);
         break;
+    case Kind::sounds_toggle:
+    {
+        // A failed save keeps the choice until the app closes.
+        const std::string failed = ctx_.prefs.set_sounds(!ctx_.prefs.sounds());
+        if (!failed.empty())
+            std::fprintf(stderr, "[XENO-TV] sounds setting not saved: %s\n", failed.c_str());
+        break;
+    }
     case Kind::source:
     {
         if (control.index >= static_cast<int>(state.sources.options.size()))
