@@ -48,7 +48,10 @@
     "autoResign": "내 계정으로 자동 재서명되어 게임에 바로 들어갑니다",
     "worksHere": "내 게임과 호환",
     "allSaves": "커뮤니티 세이브 전체",
-    "browse": "세이브 둘러보기"
+    "browse": "세이브 둘러보기",
+    "myBackups": "내 백업",
+    "options": "세이브 스토어 옵션",
+    "optionsDesc": "백업 드라이브, 닉네임, 세이브 피드, 업로드 호스트"
   },
   "link": {
     "title": "PS5와 연결",

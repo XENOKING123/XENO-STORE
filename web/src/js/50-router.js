@@ -6,6 +6,9 @@
   R.stack = [];
   R.screens = {};
   R.tabs = [];
+  /* Top tabs left to right, also the L1/R1 cycle: Discover · Browse · Saves (the Save Data Store, §17.22) · Homebrew
+     (§17.21) · Downloads · Library. A tab screen missing here follows in registration order. */
+  R.tabOrder = ['discover', 'browse', 'saves', 'homebrew', 'downloads', 'library'];
   var scrolls = {}, pendingTab = null, polling = { queue: 0, status: 0, catalog: 0 }, prevJobs = {}, bannerEls = {}, dismissedUpdate = U.store.get('dismissedUpdate', '');
   /* ---- History model ----
      Every screen above the base tab and every open layer (sheet/menu/dialog) owns one history entry carrying
@@ -44,8 +47,9 @@
       main.appendChild(el);
       R.screens[id] = el;
       if (def.mount) def.mount(el);
-      if (def.tab) R.tabs.push(id);
     });
+    R.tabs = R.tabOrder.filter(function (id) { return R.defs[id] && R.defs[id].tab; })
+      .concat(R.order.filter(function (id) { return R.defs[id].tab && R.tabOrder.indexOf(id) < 0; }));
     renderTabs(); renderPhonebar(); renderChrome();
     XS.nav.actions = {
       back: function () { R.back(); },
@@ -220,11 +224,12 @@
   function renderPhonebar() {
     var box = U.$('#phonebar'); U.clear(box);
     var cur = R.current().id;
-    var items = [{ id: 'discover', icon: 'compass' }, { id: 'browse', icon: 'grid' }, { id: 'search', icon: 'search' }, { id: 'downloads', icon: 'download' }, { id: 'library', icon: 'library' }];
+    /* five places: a sixth does not fit 360 px in every language; search keeps its top-bar button */
+    var items = [{ id: 'discover', icon: 'compass' }, { id: 'browse', icon: 'grid' }, { id: 'saves', icon: 'shield' }, { id: 'downloads', icon: 'download' }, { id: 'library', icon: 'library' }];
     items.forEach(function (it) {
-      var b = h('button.pb' + (it.id === cur ? '.active' : ''), { nav: 'pb:' + it.id }, [ui.svg(it.icon), h('span', { text: it.id === 'search' ? t('nav.search') : R.defs[it.id].label() })]);
+      var b = h('button.pb' + (it.id === cur ? '.active' : ''), { nav: 'pb:' + it.id }, [ui.svg(it.icon), h('span.ellipsis', { text: R.defs[it.id].label() })]);
       if (it.id === 'downloads') b.appendChild(h('span.badge', { 'data-dl-badge': '', hidden: true }));
-      b.addEventListener('click', function () { if (it.id === 'search') XS.search.toggle(); else R.go(it.id); });
+      b.addEventListener('click', function () { R.go(it.id); });
       box.appendChild(b);
     });
     updateBadge();

@@ -48,7 +48,10 @@
     "autoResign": "Re-signed to your account and placed in the game automatically",
     "worksHere": "Works with your games",
     "allSaves": "All community saves",
-    "browse": "Browse saves"
+    "browse": "Browse saves",
+    "myBackups": "My backups",
+    "options": "Save Store options",
+    "optionsDesc": "Backup drive, nickname, save feeds and upload host"
   },
   "link": {
     "title": "Link to your PS5",

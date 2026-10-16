@@ -48,7 +48,10 @@
     "autoResign": "Automatisch opnieuw ondertekend voor je account en in de game gezet",
     "worksHere": "Werkt met je games",
     "allSaves": "Alle community-saves",
-    "browse": "Saves bekijken"
+    "browse": "Saves bekijken",
+    "myBackups": "Mijn back-ups",
+    "options": "Opties van de savewinkel",
+    "optionsDesc": "Back-upschijf, bijnaam, savefeeds en uploadhost"
   },
   "link": {
     "title": "Koppel je PS5",

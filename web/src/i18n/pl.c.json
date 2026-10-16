@@ -48,7 +48,10 @@
     "autoResign": "Automatycznie podpisany dla twojego konta i umieszczony w grze",
     "worksHere": "Działa z twoimi grami",
     "allSaves": "Wszystkie zapisy społeczności",
-    "browse": "Przeglądaj zapisy"
+    "browse": "Przeglądaj zapisy",
+    "myBackups": "Moje kopie zapasowe",
+    "options": "Opcje sklepu z zapisami",
+    "optionsDesc": "Dysk kopii zapasowych, pseudonim, kanały zapisów i host przesyłania"
   },
   "link": {
     "title": "Połącz z PS5",

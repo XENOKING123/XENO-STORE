@@ -149,6 +149,12 @@
     row.get = function () { return row.classList.contains('on'); };
     return row;
   };
+  /* Entry tile (Library, Saves): icon, label, one-line description, then a count badge or a chevron. */
+  cb.entryTile = function (nav, icon, label, desc, onClick, badge) {
+    var el = h('button.lib-tile', { nav: nav, data: { hints: 'open' } }, [h('span.ic', { html: U.icon(icon) }), h('span.grow', [h('span.l', { text: label }), h('span.d', { text: desc })]), badge ? h('span.chip.sm.gold', { text: String(badge) }) : ui.svg('chevR')]);
+    el.addEventListener('click', onClick);
+    return el;
+  };
   cb.busy = function (text) { return h('div.panel.busy-row', [h('div.row', [h('span.skel', { style: { width: '18px', height: '18px', borderRadius: '50%', flex: '0 0 auto' } }), h('span.dim', { text: text })])]); };
   cb.spinnerBtn = function (btn, on) { if (!btn) return; btn.classList.toggle('busy', !!on); if (on) btn.setAttribute('aria-disabled', 'true'); else btn.removeAttribute('aria-disabled'); };
   cb.okToast = function (title, desc) { return ui.toast({ cls: 'good', title: title, desc: desc || '' }); };
@@ -404,8 +410,8 @@
 
   /* ---------- Command palette (Ctrl/Cmd+K): screens, settings, recent games, catalog search ---------- */
   var SCREENS = [
-    { id: 'discover', icon: 'compass' }, { id: 'browse', icon: 'grid' }, { id: 'homebrew', icon: 'box' }, { id: 'downloads', icon: 'download' }, { id: 'library', icon: 'library' },
-    { id: 'saves', icon: 'shield' }, { id: 'updates', icon: 'refresh' }, { id: 'saveshub', icon: 'folder' }, { id: 'setup', icon: 'check' }, { id: 'settings', icon: 'settings' }
+    { id: 'discover', icon: 'compass' }, { id: 'browse', icon: 'grid' }, { id: 'saves', icon: 'shield' }, { id: 'homebrew', icon: 'box' }, { id: 'downloads', icon: 'download' },
+    { id: 'library', icon: 'library' }, { id: 'updates', icon: 'refresh' }, { id: 'saveshub', icon: 'folder' }, { id: 'setup', icon: 'check' }, { id: 'settings', icon: 'settings' }
   ];
   var SETTING_GROUPS = ['general', 'downloads', 'debrid', 'sources', 'catalog', 'saves', 'accounts', 'setup', 'pair', 'updates', 'notifications', 'diagnostics', 'about', 'uninstall'];
   cb.groupLabel = function (gid) { return XS.i18n.has('set.group.' + gid) ? t('set.group.' + gid) : (XS.i18n.has('settings2.group.' + gid) ? t('settings2.group.' + gid) : gid); };

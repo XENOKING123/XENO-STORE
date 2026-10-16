@@ -1,5 +1,6 @@
-/* XENO STORE — 47-saves.js: PS5 Save Data Store UI (§17.22): the game page "Saves (n)" tab, the Community Saves
-   screen (id "saves"), save detail sheet, Install / Download / Report flows and the Upload-my-save wizard.
+/* XENO STORE — 47-saves.js: PS5 Save Data Store UI (§17.22): the game page "Saves (n)" tab, the Saves top tab (screen
+   id "saves": Community Saves, with the Saves hub and the Save Store options one step away), save detail sheet,
+   Install / Download / Report flows and the Upload-my-save wizard.
    Uses /api/saves/* exactly as SPEC §17.22.7; the re-sign engine tier is shown honestly (native / garlic / raw), with
    Garlic Save Manager's state (GET /api/saves/garlic) and a Start / Install action when community saves need it. */
 (function () {
@@ -549,7 +550,7 @@
   }
   function report(s) { ca.linkDialog({ title: t('saves.report'), hint: t('saves.reportHint'), url: ca.issueUrl('save', { save: s }), display: t('game2.issueOnGithub'), openLabel: t('game2.openIssue') }); }
 
-  /* ---------- Community Saves screen ---------- */
+  /* ---------- Saves tab: Community Saves ---------- */
   var buildingRetries = 0;
   /* Refresh: the console rebuilds its index at most once per 30 s, so a mashed button cannot hammer the save site;
      a click in between reads the console's copy again, and none goes out while a request is on its way. */
@@ -573,13 +574,16 @@
     head.appendChild(h('div.grow', [h('div.kicker', { text: t('saves.kicker') }), h('h1', { text: t('saves.title') }), h('p.dim', { text: t('saves.subtitle') })]));
     var pill = h('span', { 'data-engine': '' }); head.appendChild(pill);
     engine().then(function (e) { var fresh = enginePill(e); if (pill.parentNode) pill.parentNode.replaceChild(fresh, pill); });
-    var mine = h('button.btn.lg', { nav: 'sv-mine', html: U.icon('library') + '<span>' + U.escapeHtml(t('saves.mySaves')) + '</span>' });
-    mine.addEventListener('click', function () { XS.router.go('library', { section: 'saves' }); });
-    head.appendChild(mine);
     var up = h('button.btn.primary.lg', { nav: 'sv-upload', 'data-autofocus': '', html: U.icon('upload') + '<span>' + U.escapeHtml(t('saves.uploadMine')) + '</span>' });
     up.addEventListener('click', function () { uploadWizard({}); });
     head.appendChild(up);
     inner.appendChild(head);
+    /* the tab is the home of every save feature: the Saves hub (backups, restore, profile transfer) and the
+       Save Store's options, which stay in Settings → Saves */
+    inner.appendChild(h('div.lib-entries.sv-entries', { data: { navRegion: '' } }, [
+      XS.cb.entryTile('sv-entry-backups', 'folder', t('saves3.myBackups'), t('lib2.savesHubDesc'), function () { XS.router.go('saveshub'); }),
+      XS.cb.entryTile('sv-entry-options', 'settings', t('saves3.options'), t('saves3.optionsDesc'), function () { XS.router.go('settings', { group: 'saves' }); })
+    ]));
     inner.appendChild(garlicPanel({ nav: 'sv-garlic' }));
     var bar = h('div.browse-bar', { data: { navRegion: '' } });
     var sb = ui.searchBox({ id: 'sv-search', placeholder: t('saves.searchPlaceholder'), value: scr.q, onInput: function (v) { scr.q = v; live(); } });
@@ -876,7 +880,7 @@
   }
 
   XS.router.register('saves', {
-    tab: false, icon: 'shield', label: function () { return t('saves.title'); },
+    tab: true, icon: 'shield', label: function () { return t('nav.saves'); },
     mount: function (el) { root = el; },
     show: function (params) { if (params && params.q !== undefined) scr.q = params.q; if (params && params.category) scr.cat = params.category; render(); },
     refresh: render

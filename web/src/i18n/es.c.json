@@ -48,7 +48,10 @@
     "autoResign": "Se vuelve a firmar para tu cuenta y se coloca en el juego automáticamente",
     "worksHere": "Funciona con tus juegos",
     "allSaves": "Todas las partidas de la comunidad",
-    "browse": "Ver partidas"
+    "browse": "Ver partidas",
+    "myBackups": "Mis copias",
+    "options": "Opciones de la tienda de partidas",
+    "optionsDesc": "Unidad de copias, apodo, feeds de partidas y host de subida"
   },
   "link": {
     "title": "Vincula tu PS5",

@@ -48,7 +48,10 @@
     "autoResign": "Reassinado para sua conta e colocado no jogo automaticamente",
     "worksHere": "Funciona com seus jogos",
     "allSaves": "Todos os saves da comunidade",
-    "browse": "Ver saves"
+    "browse": "Ver saves",
+    "myBackups": "Meus backups",
+    "options": "Opções da loja de saves",
+    "optionsDesc": "Unidade de backup, apelido, feeds de saves e host de envio"
   },
   "link": {
     "title": "Vincule seu PS5",

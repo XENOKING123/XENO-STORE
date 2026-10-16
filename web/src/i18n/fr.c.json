@@ -48,7 +48,10 @@
     "autoResign": "Re-signée pour ton compte et placée dans le jeu automatiquement",
     "worksHere": "Compatible avec tes jeux",
     "allSaves": "Toutes les sauvegardes de la communauté",
-    "browse": "Parcourir les sauvegardes"
+    "browse": "Parcourir les sauvegardes",
+    "myBackups": "Mes copies de sauvegarde",
+    "options": "Options de la boutique de sauvegardes",
+    "optionsDesc": "Disque de sauvegarde, pseudonyme, flux de sauvegardes et hôte de téléversement"
   },
   "link": {
     "title": "Associer ta PS5",

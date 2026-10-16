@@ -48,7 +48,10 @@
     "autoResign": "Hesabın için otomatik yeniden imzalanır ve oyuna yerleştirilir",
     "worksHere": "Oyunlarınla çalışır",
     "allSaves": "Tüm topluluk kayıtları",
-    "browse": "Kayıtlara göz at"
+    "browse": "Kayıtlara göz at",
+    "myBackups": "Yedeklerim",
+    "options": "Kayıt mağazası seçenekleri",
+    "optionsDesc": "Yedek sürücüsü, takma ad, kayıt akışları ve yükleme sunucusu"
   },
   "link": {
     "title": "PS5'ine bağla",

@@ -5,13 +5,14 @@
  *   1. builds web/dist/index.html (unless --no-build) and starts web/dev-server.mjs on a free port
  *   2. at 1920×1080: first-run, Discover (featured rows + announcement banner), Browse (facet sheet with live
  *      counts, quick chips, presets, fuzzy search + "Did you mean"), Game page (gallery + info + backports),
- *      gallery viewer, Download best + Download options sheets, game Saves tab + Install flow, Community Saves,
- *      Upload-my-save wizard (every step), Homebrew tab + app page + install, screensaver, Downloads, Library,
- *      Settings, Search overlay, history stress, themes
+ *      gallery viewer, Download best + Download options sheets, game Saves tab + Install flow, the Saves top tab
+ *      (Community Saves, My backups, Save Store options), Upload-my-save wizard (every step), Homebrew tab + app page
+ *      + install, screensaver, Downloads, Library, Settings, Search overlay, history stress, themes
  *   3. keyboard-only walks: Discover → Game → Download best → Start → Downloads; open gallery with Enter, flip
  *      with ArrowRight, close with Escape; open facets, toggle two facets and assert the counts update;
- *      open the Saves tab and start the Install flow
- *   4. at 390×844 (phone): Discover, Game page (gallery), game Saves tab, Community Saves, Downloads
+ *      open the Saves tab and start the Install flow; R1/L1 between Browse and the Saves top tab, Back from it
+ *   4. at 390×844 (phone): Discover, Game page (gallery), game Saves tab, the Saves tab from the phone bar, Downloads;
+ *      at 360×780: the #saves deep link and a phone bar whose five labels fit
  *   5. fails on any console error / uncaught exception, any failed or ≥ 400 request to the mock, missing i18n keys,
  *      or more than 150 mounted cards in Browse
  *
@@ -107,7 +108,7 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     await expect(async () => !!(await page.$('#scr-discover [data-rail="featured-0"]')), 'owner-curated featured row missing (status.featured.rows)');
     await expect(async () => !!(await page.$('#scr-discover [data-rail="backports"]')), 'Backports rail missing');
     await expect(async () => !!(await page.$('#banners .banner.announce')), 'announcement banner (status.messages) missing');
-    await expect(async () => page.evaluate(() => Array.from(document.querySelectorAll('#tabs .tab > span:first-child')).map((x) => x.textContent.trim()).join(',') === 'Discover,Browse,Homebrew,Downloads,Library'), 'tab order should be Discover · Browse · Homebrew · Downloads · Library (got ' + await page.$$eval('#tabs .tab > span:first-child', (a) => a.map((x) => x.textContent.trim()).join(',')) + ')');
+    await expect(async () => page.evaluate(() => Array.from(document.querySelectorAll('#tabs .tab > span:first-child')).map((x) => x.textContent.trim()).join(',') === 'Discover,Browse,Saves,Homebrew,Downloads,Library'), 'tab order should be Discover · Browse · Saves · Homebrew · Downloads · Library (got ' + await page.$$eval('#tabs .tab > span:first-child', (a) => a.map((x) => x.textContent.trim()).join(',')) + ')');
     await expect(async () => !!(await page.$('#legend .hint')), 'legend hints missing');
     await expect(async () => !!(await page.$('#tabs [data-dl-badge]:not([hidden])')), 'Downloads badge should be visible while a job is active');
     await page.waitForSelector('#scr-discover [data-rail="saves"] .save-card', { timeout: 8000 }).catch(() => fail('New community saves rail did not load on Discover'));
@@ -363,12 +364,24 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     await page.keyboard.press('Escape'); await noLayer(page);
     note('saves tab + install flow OK');
 
-    /* ================= Community Saves screen + Upload wizard ================= */
-    await page.evaluate(() => XS.router.go('saves'));
+    /* ================= Saves top tab (Community Saves) + Upload wizard ================= */
+    /* the Save Data Store is the tab after Browse: R1 (e) from Browse lands on it, L1 (q) goes back */
+    const savesTabOn = () => page.evaluate(() => { const a = document.querySelector('#tabs .tab.active'); return !!document.querySelector('#scr-saves.active') && !!a && a.getAttribute('data-nav-id') === 'tab:saves' && a.getAttribute('aria-selected') === 'true' && location.hash === '#saves' && XS.router.stack.length === 1; });
+    await page.click('[data-nav-id="tab:browse"]');
+    await page.waitForSelector('#scr-browse.active');
+    await page.evaluate(() => document.querySelector('[data-nav-id="tab:browse"]').focus());
+    await page.keyboard.press('e');                                                     // E = R1 → next tab
+    await page.waitForSelector('#scr-saves.active', { timeout: 6000 }).catch(() => fail('R1 (e) from Browse should open the Saves tab'));
+    await expect(savesTabOn, 'the Saves tab should be highlighted with #saves in the address (got ' + await page.evaluate(() => (document.querySelector('#tabs .tab.active') || {}).textContent + ' ' + location.hash) + ')');
+    await page.evaluate(() => document.querySelector('[data-nav-id="tab:saves"]').focus());
+    await page.keyboard.press('q');                                                     // Q = L1 → previous tab
+    await page.waitForSelector('#scr-browse.active', { timeout: 6000 }).catch(() => fail('L1 (q) from Saves should go back to Browse'));
+    await page.click('[data-nav-id="tab:saves"]');
     await page.waitForSelector('#scr-saves.active .save-card', { timeout: 10000 });
     await waitCovers(page, 10);
     await sleep(400);
     await shot(page, 'tv-saves.png');
+    await expect(async () => !!(await page.$('#scr-saves [data-nav-id="sv-entry-backups"]')) && !!(await page.$('#scr-saves [data-nav-id="sv-entry-options"]')), 'the Saves tab should lead to My backups and the Save Store options');
     await expect(async () => page.evaluate(() => { const sp = document.querySelector('#scr-saves .sv-spot'); return !!sp && sp._spot.size >= 2 && !!sp.querySelector('[data-nav-id="sv-spot-install"]'); }), 'save spotlight missing on the Saves screen');
     await page.evaluate(() => document.querySelector('#scr-saves .sv-spot')._spot.select(1));
     await expect(async () => page.evaluate(() => { const sp = document.querySelector('#scr-saves .sv-spot'); return sp._spot.index() === 1 && sp.querySelectorAll('.sv-pick')[1].classList.contains('live'); }), 'save spotlight select did not move');
@@ -463,6 +476,23 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     await page.click('[data-nav-id="wz-done"]');
     await noLayer(page);
     note('upload wizard GitHub hand-off OK');
+    /* My backups opens the Saves hub above the tab (Back returns to Saves); the options are Settings → Saves */
+    await page.click('[data-nav-id="sv-entry-backups"]');
+    await page.waitForSelector('#scr-saveshub.active .srow', { timeout: 10000 }).catch(() => fail('My backups should open the Saves hub'));
+    await expect(async () => page.evaluate(() => XS.router.stack.map((e) => e.id).join('>') === 'saves>saveshub' && location.hash === '#saveshub'), 'the Saves hub should sit above the Saves tab (stack ' + await page.evaluate(() => XS.router.stack.map((e) => e.id).join('>')) + ')');
+    await page.keyboard.press('Escape');
+    await page.waitForSelector('#scr-saves.active', { timeout: 6000 }).catch(() => fail('Back from the Saves hub should return to the Saves tab'));
+    await page.waitForFunction(() => !XS.router.busy(), null, { timeout: 4000 });
+    await expect(savesTabOn, 'after Back the Saves tab should be highlighted at depth 0 with #saves');
+    await page.click('[data-nav-id="sv-entry-options"]');
+    await page.waitForSelector('#scr-settings.active [data-nav-id="sv-root"]', { timeout: 8000 }).catch(() => fail('Save Store options should open Settings → Saves'));
+    await expect(async () => page.evaluate(() => !!document.querySelector('[data-nav-id="set-nav-saves"].on') && location.hash === '#settings'), 'Save Store options should select the Saves group in Settings');
+    await page.click('[data-nav-id="tab:saves"]');
+    await page.waitForSelector('#scr-saves.active', { timeout: 6000 });
+    await page.waitForFunction(() => !XS.router.busy(), null, { timeout: 4000 });
+    await page.keyboard.press('Escape');                                              // Back from a top tab: Discover
+    await page.waitForSelector('#scr-discover.active', { timeout: 6000 }).catch(() => fail('Back from the Saves tab should land on Discover'));
+    note('Saves tab: tabs, My backups, options, Back OK');
 
     /* ================= Homebrew tab + app page + install ================= */
     await page.click('[data-nav-id="tab:homebrew"]');
@@ -653,6 +683,8 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     await sleep(400);
     await shot(pp, 'phone-discover.png');
     await expect(async () => pp.evaluate(() => getComputedStyle(document.querySelector('#phonebar')).display === 'flex' && getComputedStyle(document.querySelector('#legend')).display === 'none'), 'phone layout should show the tab bar and hide the legend');
+    const pbIds = () => pp.$$eval('#phonebar .pb', (a) => a.map((b) => b.getAttribute('data-nav-id')).join(','));
+    await expect(async () => (await pbIds()) === 'pb:discover,pb:browse,pb:saves,pb:downloads,pb:library', 'phone bar should be Discover · Browse · Saves · Downloads · Library (got ' + await pbIds() + ')');
     await expect(async () => pp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1 && document.querySelector('#scr-discover').scrollWidth <= window.innerWidth + 1), 'phone Discover has horizontal overflow');
     await pp.evaluate((id) => XS.router.go('game', { id }), okSave.gameId);
     await pp.waitForSelector('#scr-game.active .gp-info h1');
@@ -665,8 +697,9 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     await pp.waitForSelector('#scr-game .save-row', { timeout: 8000 });
     await sleep(400);
     await shot(pp, 'phone-game-saves.png');
-    await pp.evaluate(() => XS.router.go('saves'));
+    await pp.click('[data-nav-id="pb:saves"]');
     await pp.waitForSelector('#scr-saves.active .save-card', { timeout: 10000 });
+    await expect(async () => pp.evaluate(() => document.querySelector('#phonebar [data-nav-id="pb:saves"]').classList.contains('active') && location.hash === '#saves'), 'the phone bar should highlight Saves');
     await waitCovers(pp, 6);
     await sleep(400);
     await shot(pp, 'phone-saves.png');
@@ -683,6 +716,20 @@ const api = (path, init) => fetch(BASE + path, init).then((r) => r.json());
     const missingPhone = await pp.evaluate(() => XS.i18n.missing());
     if (missingPhone.length) fail('phone: missing i18n keys: ' + missingPhone.join(', '));
     await phone.close();
+
+    /* ================= small phone 360×780: #saves deep link, five phone-bar places that fit ================= */
+    const small = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, locale: 'en-US' });
+    const sp = await small.newPage();
+    watch(sp, 'phone-360');
+    await sp.goto(BASE + '/#saves', { waitUntil: 'load' });
+    await sp.waitForSelector('#scr-saves.active .save-card', { timeout: 20000 }).catch(() => fail('the #saves deep link should open the Saves tab'));
+    await waitCovers(sp, 4);
+    await sleep(400);
+    await shot(sp, 'phone-360-saves.png');
+    await expect(async () => sp.evaluate(() => document.querySelector('#phonebar [data-nav-id="pb:saves"]').classList.contains('active') && document.querySelector('#tabs .tab.active').getAttribute('data-nav-id') === 'tab:saves'), '#saves deep link: Saves should be the active tab');
+    await expect(async () => sp.evaluate(() => Array.from(document.querySelectorAll('#phonebar .pb')).every((b) => { const l = b.querySelector('.ellipsis'), r = b.getBoundingClientRect(); return r.width >= 60 && l.scrollWidth <= l.clientWidth + 1; })), 'at 360 px every phone-bar label should fit its place (' + await sp.evaluate(() => Array.from(document.querySelectorAll('#phonebar .pb')).map((b) => b.textContent.trim() + ' ' + b.querySelector('.ellipsis').scrollWidth + '/' + b.querySelector('.ellipsis').clientWidth).join(', ')) + ')');
+    await expect(async () => sp.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1 && document.querySelector('#scr-saves').scrollWidth <= window.innerWidth + 1), 'phone 360 Saves tab has horizontal overflow');
+    await small.close();
   } finally {
     await browser.close();
     server.kill();

@@ -64,11 +64,7 @@
     if (!entriesEl) return;
     U.clear(entriesEl);
     var n = updateCandidates().length;
-    function tile(id, icon, label, desc, onClick, badge) {
-      var el = h('button.lib-tile', { nav: 'lib-entry-' + id, data: { hints: 'open' } }, [h('span.ic', { html: U.icon(icon) }), h('span.grow', [h('span.l', { text: label }), h('span.d', { text: desc })]), badge ? h('span.chip.sm.gold', { text: String(badge) }) : ui.svg('chevR')]);
-      el.addEventListener('click', onClick);
-      return el;
-    }
+    function tile(id, icon, label, desc, onClick, badge) { return cb.entryTile('lib-entry-' + id, icon, label, desc, onClick, badge); }
     entriesEl.appendChild(tile('updates', 'refresh', t('lib2.updatesCenter'), n ? t('lib2.updatesN', { n: n }) : t('lib2.updatesNone'), function () { XS.router.go('updates'); }, n || 0));
     entriesEl.appendChild(tile('saveshub', 'shield', t('lib2.savesHub'), t('lib2.savesHubDesc'), function () { XS.router.go('saveshub'); }));
     if (XS.router.defs.saves) entriesEl.appendChild(tile('saves', 'cloud', t('lib2.communitySaves'), t('lib2.communitySavesDesc'), function () { XS.router.go('saves'); }));
@@ -563,7 +559,7 @@
     if (!shRoot) return;
     U.clear(shRoot);
     var inner = h('div.screen-inner'); shRoot.appendChild(inner);
-    var head = h('div.page-head', [h('div.grow', [h('span.kicker', { text: t('nav.library') }), h('h1', { text: t('lib2.savesHub') }), h('p.dim', { text: t('lib2.savesHubSub') })])]);
+    var head = h('div.page-head', [h('div.grow', [h('span.kicker', { text: t('nav.saves') }), h('h1', { text: t('lib2.savesHub') }), h('p.dim', { text: t('lib2.savesHubSub') })])]);
     var all = h('button.btn.primary', { nav: 'sh-backup-all', html: U.icon('shield') + '<span>' + U.escapeHtml(t('lib2.backUpAll')) + '</span>' });
     all.addEventListener('click', backupAll);
     head.appendChild(all);

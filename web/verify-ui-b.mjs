@@ -7,11 +7,12 @@
  *   2. at 1920×1080: Downloads (install-set groups, lifetime stats, rest-mode pill, turbo chip, debrid label, copy and
  *      backup jobs, ZIP extraction, scheduled row + Start now, paused set + Retry), Library (disk analyzer + clean-up,
  *      Play now, uninstall with the token flow, copy-to-drive sheet, installed homebrew), Updates center (one-tap
- *      download+install), Saves hub (keyboard: Back up → progress → toast; restore; profile transfer), Settings
+ *      download+install), Saves hub (keyboard: Back up → progress → toast; restore; profile transfer), the Saves top
+ *      tab (keyboard: My backups → Saves hub → Back, Save Store options → Settings → Saves), Settings
  *      (Setup via keyboard + run check + launch companion + start Garlic + unavailable companion + ghost cleaner,
  *      Debrid connect, Accounts activate, Saves, Pair/mDNS, Uninstall sheet open/cancel + the final screen), command
  *      palette, shortcuts overlay, large text + high contrast, controller remap legend
- *   3. at 390×844: Downloads and Settings
+ *   3. at 390×844: Downloads, Settings, the Saves tab from the phone bar and its My backups entry
  *   4. fails on any console error / uncaught exception, any failed or ≥ 400 request, missing i18n keys
  *
  * Usage: PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers node web/verify-ui-b.mjs [--port 9095] [--no-build] [--out DIR] [--headed] [--verbose]
@@ -120,6 +121,7 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await page.waitForSelector('#scr-discover.active .card', { timeout: 20000 });
     await page.waitForFunction(() => !!(window.XS && XS.cb && XS.cb.palette), null, { timeout: 5000 });
     await expect(async () => page.evaluate(() => typeof XS.actions.applySettings === 'function' && XS.actions.applySettings._cbWrapped === true), 'applySettings should be wrapped by 32-components-b (accessibility attributes)');
+    await expect(async () => page.evaluate(() => { const ids = Array.from(document.querySelectorAll('#tabs .tab')).map((a) => a.getAttribute('data-nav-id')); return ids.indexOf('tab:saves') === ids.indexOf('tab:browse') + 1 && document.querySelector('[data-nav-id="tab:saves"]').textContent.trim() === 'Saves'; }), 'the tab bar should have a Saves tab right after Browse');
 
     /* ---------- Downloads: groups, stats, rest pill, turbo, via, copy, backup, extracting ---------- */
     await page.click('[data-nav-id="tab:downloads"]');
@@ -271,6 +273,30 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await waitToast(page, 'started');
     await page.keyboard.press('Escape');
     await page.waitForSelector('#scr-library.active', { timeout: 6000 });
+
+    /* ---------- Saves tab, keyboard only: My backups → Saves hub → Back, Save Store options → Settings → Saves ---------- */
+    await page.click('[data-nav-id="tab:saves"]');
+    await page.waitForSelector('#scr-saves.active [data-nav-id="sv-entry-backups"]', { timeout: 10000 });
+    await page.waitForSelector('#scr-saves.active .save-card', { timeout: 10000 });
+    await waitCovers(page, 6);
+    await sleep(300);
+    await shot(page, 'tv-b-saves-tab.png');
+    await expect(async () => page.evaluate(() => document.querySelector('#tabs .tab.active').getAttribute('data-nav-id') === 'tab:saves' && location.hash === '#saves'), 'the Saves tab should be highlighted with #saves in the address');
+    await page.evaluate(() => document.querySelector('[data-nav-id="sv-entry-backups"]').focus());
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('#scr-saveshub.active .srow', { timeout: 10000 }).catch(() => fail('My backups should open the Saves hub'));
+    await expect(async () => page.evaluate(() => document.querySelector('#scr-saveshub .kicker').textContent === 'Saves'), 'the Saves hub belongs to the Saves section (kicker)');
+    await page.keyboard.press('Escape');
+    await page.waitForSelector('#scr-saves.active', { timeout: 6000 }).catch(() => fail('Back from the Saves hub should return to the Saves tab'));
+    await page.waitForFunction(() => !XS.router.busy(), null, { timeout: 4000 });
+    await page.evaluate(() => document.querySelector('[data-nav-id="sv-entry-options"]').focus());
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('#scr-settings.active [data-nav-id="sv-nick"]', { timeout: 8000 }).catch(() => fail('Save Store options should open Settings → Saves'));
+    await page.waitForFunction(() => { const a = document.activeElement; return !!a && !!a.closest('[data-group="saves"]'); }, null, { timeout: 3000 }).catch(async () => fail('Save Store options should focus the first Saves setting (got ' + await activeInfo(page) + ')'));
+    await sleep(300);
+    await shot(page, 'tv-b-saves-options.png');
+    await page.keyboard.press('Escape');
+    await page.waitForSelector('#scr-discover.active', { timeout: 6000 });
 
     /* ---------- Settings → Setup (keyboard), run check, launch companion, install companion, ghost cleaner ---------- */
     await page.keyboard.press('o');
@@ -489,7 +515,15 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await sleep(400);
     await shot(pp, 'phone-b-settings.png');
     await expect(async () => pp.evaluate(() => document.querySelector('#scr-settings').scrollWidth <= window.innerWidth + 1), 'phone Settings has horizontal overflow');
-    await pp.evaluate(() => XS.router.go('saveshub'));
+    await expect(async () => !!(await pp.$('#phonebar [data-nav-id="pb:saves"]')), 'the phone bar should have a Saves place');
+    await pp.click('[data-nav-id="pb:saves"]');
+    await pp.waitForSelector('#scr-saves.active [data-nav-id="sv-entry-options"]', { timeout: 10000 });
+    await pp.waitForSelector('#scr-saves.active .save-card', { timeout: 10000 });
+    await waitCovers(pp, 3);
+    await sleep(400);
+    await shot(pp, 'phone-b-saves-tab.png');
+    await expect(async () => pp.evaluate(() => document.querySelector('#phonebar [data-nav-id="pb:saves"]').classList.contains('active') && document.querySelector('#scr-saves').scrollWidth <= window.innerWidth + 1), 'phone Saves tab: Saves highlighted in the phone bar, no horizontal overflow');
+    await pp.click('[data-nav-id="sv-entry-backups"]');
     await pp.waitForSelector('#scr-saveshub.active .srow', { timeout: 10000 });
     await sleep(400);
     await shot(pp, 'phone-b-saves-hub.png');

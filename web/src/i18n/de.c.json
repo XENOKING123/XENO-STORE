@@ -48,7 +48,10 @@
     "autoResign": "Automatisch für dein Konto neu signiert und ins Spiel gelegt",
     "worksHere": "Passt zu deinen Spielen",
     "allSaves": "Alle Community-Spielstände",
-    "browse": "Spielstände ansehen"
+    "browse": "Spielstände ansehen",
+    "myBackups": "Meine Backups",
+    "options": "Optionen des Spielstand-Stores",
+    "optionsDesc": "Backup-Laufwerk, Spitzname, Save-Feeds und Upload-Host"
   },
   "link": {
     "title": "Mit deiner PS5 verbinden",

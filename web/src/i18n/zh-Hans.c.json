@@ -48,7 +48,10 @@
     "autoResign": "自动为你的账户重新签名并放入游戏",
     "worksHere": "适用于你的游戏",
     "allSaves": "全部社区存档",
-    "browse": "浏览存档"
+    "browse": "浏览存档",
+    "myBackups": "我的备份",
+    "options": "存档商店选项",
+    "optionsDesc": "备份驱动器、昵称、存档信息源和上传主机"
   },
   "link": {
     "title": "连接你的 PS5",
