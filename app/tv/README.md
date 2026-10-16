@@ -51,13 +51,14 @@ It follows the browser storefront's design and rules (`src/`)
 screen for screen:
 
 - **Discover** (the opening page): the focused game's art behind the hero,
-  then New on Orbit, Latest releases and an All games grid, largest downloads first,
-  with 96 games per page.
+  then New on Orbit, Latest releases and an All games grid, largest downloads first:
+  one grid of every game, no pages; L2 / R2 jump 16 rows.
 - **Browse**: search, All games or Favourites, Source,
   Platform, Format, Region, Download size and Sort by (release date, newest first, by default),
   Reset filters, and a grid of covers with each game's state.
 - **Quick favourites**: press Square on the selected game in Browse or Discover
-  to save it or remove it from your favourites.
+  to save it or remove it from your favourites. A toast with a heart confirms
+  it, wherever a favourite is saved in the app.
 - **Library**: the games ShadowMount reports on the console and its drives,
   with the status views, search, Location and Format; a game's details with
   Mount/Unmount and Copy/Move to drive (the same confirmations as the web);
@@ -212,6 +213,7 @@ The interface translations share `i18n/` with the browser. The build packages th
 | L1 / R1 | Previous / next tab |
 | Square | On a selected Browse or Discover game: toggle Favourite. In search: delete. In Browse's field: clear the search. In Library: cancel a running copy or move. On a game page: About. |
 | Triangle | In search: space. In the Browse grid: search again. On a game page: toggle Favourite. |
+| L2 / R2 | In the Browse and Discover game grids: jump 16 rows (96 games) up / down, keeping the column |
 
 Dropdowns (filters, Save to, a copy's destination) open with Cross; move with
 the D-pad, choose with Cross, close with Circle.

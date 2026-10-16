@@ -99,7 +99,7 @@ When the preview answers `--list` (one JSON line per scenario: name, fixture, li
 | `crash-fallback` | as cold-start, plus a saved copy that exits at once | `crash-fallback` (2 sends: `copy=saved`, then `copy=bundled`) |
 | `setup` | sources not acknowledged | `setup` |
 | `downloads` | the six seeded rows | `downloads`, `downloads-finished`, `downloads-dialog`, `delete-cancelled`, `downloads-actions`, `queued`, `download`, `game`, `game-viking`, `game-ps4`, `game-library` |
-| `store` | one finished download | `discover` (with the art check), `browse*`, `library-details`, `library-storage`, `settings`, `settings-*`, `library` (`remove-drive` mark) |
+| `store` | one finished download | `discover` (with the art check), `discover-jump`, `favourite` (a toast with "Added to favourites"), `browse*`, `library-details`, `library-storage`, `settings`, `settings-*`, `library` (`remove-drive` mark) |
 | `saves` | saves `community` | `saves` (list, For my games, search, details), `game-saves` (a game page's Community saves), `saves-install` (the second profile, to the end), `saves-progress` (a slow download, then Cancel), `saves-long` (a site save with a long name and long notes), `saves-closed` (Install, then the details closed: the card's progress and the toast at the end), `saves-running` (title_running) |
 | `saves-garlic` | saves `garlic` | `saves-garlic` (garlic_unavailable) |
 | `saves-building` | saves `building` | `saves-building` (the store builds its index, then has no saves) |

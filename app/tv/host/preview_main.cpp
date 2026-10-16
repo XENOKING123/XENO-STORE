@@ -729,6 +729,25 @@ std::vector<Scenario> scenarios()
                      // Square on a rail's cover saves it to favourites: the heart.
                      move(Direction::down), move(Direction::down), tap(Action::west),
                      until(10.0f, settled), pause(1.0f, "discover-favourite")}});
+    // L2 / R2 in All games jump 16 rows down, then back (from Orbit Store
+    // 1.3.5). The live catalogue shows the jump; the fixture's grid is short.
+    list.push_back({"discover-jump",
+                    Mode::normal,
+                    true,
+                    {run(2.0f, [](orbit::App &app) { app.show_tab(orbit::tab::discover); }),
+                     move(Direction::down), move(Direction::down), move(Direction::down),
+                     pause(1.0f, "discover-grid"), tap(Action::jump_next),
+                     pause(1.0f, "discover-jump"), tap(Action::jump_prev),
+                     pause(0.8f, "discover-jump-back")}});
+    // A favourite saved from a game page and removed again: a toast each time
+    // (Orbit Store 1.3.5's favourite-store).
+    list.push_back({"favourite",
+                    Mode::normal,
+                    true,
+                    {run(1.5f, [](orbit::App &app) { app.show_tab(orbit::tab::discover); }),
+                     pause(1.0f), tap(Action::confirm), pause(1.5f), tap(Action::north),
+                     until(10.0f, settled), pause(0.8f, "favourite-1"), pause(2.5f),
+                     tap(Action::north), until(10.0f, settled), pause(0.8f, "favourite-2")}});
     list.push_back({"game", Mode::normal, true,
         {run(1.5f, [](orbit::App &app) { open_pick(app, "ember-hollow", downloadable); }),
          pause(1.2f, "game"), tap(Action::confirm), pause(0.8f, "game-options"),

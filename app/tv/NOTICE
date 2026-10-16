@@ -49,6 +49,28 @@ section "Files changed for XENO STORE" lists):
                              own backend and browser interface, which are not
                              part of this app.)
 
+Later changes taken from Orbit Store 1.3.5 (TV app 1.7.0, content version
+01.007.000), GPL-3.0-or-later, into files that came from 1.2.0:
+
+  Source revision  8043189a7d319be3ffdf828e08bf5a0f105a30fd
+                   (SOURCES.json "sourceCommit" of the source bundle)
+  Source bundle    orbit-store-1.3.5-source-bundle.zip
+                   SHA-256 c0fe51d94b199daa77b620b5d596afc13b77902076db313891885d0e54339858
+  Source archive   orbit-store-1.3.5-source.tar.gz (inside the bundle)
+                   SHA-256 74bdf1d37e821d1d622134420104ea99cfdd763d006d28c2fbdf3025580e3cc6
+
+  Taken: Discover's All games as one grid without pages; L2 / R2 jumping
+  16 rows in it and in Browse (grid_jump and kGridJumpRows in
+  src/orbit/model.*; src/orbit/discover.cpp, browse.cpp, screens.hpp;
+  tests/unit/discover_test.cpp whole, and a model_test.cpp test); the toast
+  when a favourite is added or removed (src/orbit/app.cpp, screens.hpp); the
+  source chips that wrap in App settings (src/orbit/settings.cpp); the
+  catalogue sentences these use (i18n/*.json: "Jump", "Added to
+  favourites", "Removed from favourites"; the pager's four removed); and the
+  favourite preview scenario (host/preview_main.cpp). Not taken: the other
+  interfaces (Crossbar, Cinema, Panorama) and Appearance, the native
+  provider dialog and the Archive.org sign-in.
+
 Generated files are not stored: .deps/, build/, dist/ and runtime/libc.prx
 are made by the build. Built from this unmodified import with
 tools/clang18-prefixmap as PS5_CLANG and the bundle's title (PPSA99177),
@@ -246,10 +268,11 @@ Modified upstream files:
                             hand-off marker) and restart expectation, an
                             older store without /api/v1 on the port and its
                             replacement
-  tests/unit/i18n_test.cpp, image_app_test.cpp, json_http_test.cpp,
-    model_test.cpp, provider_browser_test.cpp, starter_test.cpp,
-    store_art_test.cpp
-                            the new values and behaviour
+  tests/unit/discover_test.cpp, i18n_test.cpp, image_app_test.cpp,
+    json_http_test.cpp, model_test.cpp, provider_browser_test.cpp,
+    starter_test.cpp, store_art_test.cpp
+                            the new values and behaviour (discover_test.cpp:
+                            Orbit Store 1.3.5's, see Origin)
   tools/build.sh            catalogues from i18n/ in this folder
   tools/preview.sh          the preview binary and its settings
 

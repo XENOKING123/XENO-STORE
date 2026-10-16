@@ -390,6 +390,16 @@ class Stub:
             self.poll()
         elif n == "discover":
             self.discover_art()
+        elif n == "favourite":
+            # Favourite on a game's page, twice: each change shows its toast.
+            game = next((o.get("gameId") for o in self.catalog if o.get("gameId")), "")
+            for _ in range(2):
+                st, b = self.get("/api/v1/favorites")
+                saved = game in (jbody(b) or [])
+                st, b = http(self.port, "POST", "/api/v1/favorites", {"gameId": game, "favorite": not saved},
+                             token=self.token)
+                if not self.error_of("/api/v1/favorites", st, b):
+                    self.state["toasts"].append("Removed from favourites" if saved else "Added to favourites")
         elif n == "saves-building":
             if not self.saves(settle=False).get("building"):
                 self.state["timeouts"].append("saves-building")
