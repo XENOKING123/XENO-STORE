@@ -77,7 +77,6 @@
   "Cannot confirm the current storage job. Refresh storage before trying again.": "Nem ellenőrizhető az aktuális tárhelyművelet. Frissítsd a tárhelyet, mielőtt újra próbálkozol.",
   "Capacity of your drives. Select a drive to see its games.": "A meghajtóid kapacitása. Válassz meghajtót a rajta lévő játékok megtekintéséhez.",
   "Catalogue {revision}": "Katalógus: {revision}",
-  "Change page": "Oldal módosítása",
   "Check again in {seconds} s": "Újraellenőrzés {seconds} mp múlva",
   "Check for the TV app again before installing it.": "Ellenőrizd újra a TV appot a telepítés előtt.",
   "Check for updates": "Frissítések keresése",
@@ -252,7 +251,6 @@
   "New games arrive without reinstalling XENO STORE. Your PS5 checks when XENO STORE starts and every six hours, and keeps a saved catalogue for browsing offline.": "Az új játékok a XENO STORE újratelepítése nélkül érkeznek. A PS5 a XENO STORE indításakor és hatóránként ellenőriz, és mentett katalógust tart fenn az offline böngészéshez.",
   "New on XENO STORE": "Újdonságok a XENO STORE-on",
   "Newest first": "Legújabb elöl",
-  "Next": "Következő",
   "No ELF loader is listening on port {port}.": "Nem figyel ELF-betöltő a(z) {port} porton.",
   "No cancelled downloads": "Nincs megszakított letöltés",
   "No compatible XENO STORE release found. An older or invalid release will not replace this build.": "Nem található kompatibilis XENO STORE-kiadás. Régebbi vagy érvénytelen kiadás nem cseréli le ezt a buildet.",
@@ -330,7 +328,6 @@
   "XENO STORE, which downloads your games and keeps running after you close this app.": "A XENO STORE, amely letölti a játékaidat, és az alkalmazás bezárása után is fut.",
   "XENO STORE’s update is saved. It runs the next time XENO STORE starts. Restart the download service to use it now.": "A XENO STORE frissítése mentve. A XENO STORE következő indításakor fut. Azonnali használatához indítsd újra a letöltési szolgáltatást.",
   "Other location": "Másik hely",
-  "Page {page} of {pages}": "{page}. oldal / {pages}",
   "Pair a device": "Eszköz párosítása",
   "Pair a phone or computer": "Telefon vagy számítógép párosítása",
   "Pair this device first.": "Először párosítsd ezt az eszközt.",
@@ -346,7 +343,6 @@
   "Please wait {seconds} s before another request.": "Várj {seconds} mp-et a következő kérés előtt.",
   "Please wait…": "Várj…",
   "Preparing with TorBox": "Előkészítés TorBoxszal",
-  "Previous": "Előző",
   "Provider verification": "Szolgáltató ellenőrzése",
   "Provider verification is available on the PS5 only.": "A szolgáltató ellenőrzése csak PS5-ön érhető el.",
   "Publisher": "Kiadó",
@@ -707,5 +703,6 @@
   "Garlic: creating the save image": "Garlic: a mentéskép létrehozása",
   "Garlic: checking the save": "Garlic: a mentés ellenőrzése",
   "Garlic: re-signing and installing": "Garlic: újraaláírás és telepítés",
-  "Garlic: save installed": "Garlic: mentés telepítve"
+  "Garlic: save installed": "Garlic: mentés telepítve",
+  "Jump": "Ugrás"
 }

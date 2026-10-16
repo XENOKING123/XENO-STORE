@@ -212,18 +212,12 @@ class DiscoverScreen final : public Screen
         bool grid = false;
     };
     void rebuild();
-    void rebuild_grid();
-    int page_count() const;
-    bool on_pager() const;
     const Game *game_at(int row, int column) const;
     float row_top(int row) const;
 
     std::vector<Rail> rails_;
-    std::vector<int> all_games_;
-    int page_ = 0;
-    int page_button_ = 1; // Previous, Next
     std::uint64_t catalog_serial_ = ~0ull;
-    int row_ = 0;              // hero, horizontal rails, All games grid, then page controls
+    int row_ = 0;              // hero, horizontal rails, then the All games grid
     std::vector<int> columns_; // focused column per rail
     std::string featured_;
     std::string previous_featured_;

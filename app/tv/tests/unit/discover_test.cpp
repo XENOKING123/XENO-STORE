@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+// Modified for XENO STORE in 2026 (port: backend dialect, branding, paths). See app/tv/NOTICE.
 #include "fixture.hpp"
 #include "orbit/screens.hpp"
 #include "support.hpp"
@@ -81,6 +82,16 @@ struct DiscoverHarness
         screen.draw(frame, true);
         return result;
     }
+    Intent press(Action action)
+    {
+        InputFrame input;
+        input.connected = true;
+        input.pressed = hui::action_bit(action);
+        Intent result = screen.update(input, 1.0f / 60.0f, feedback, true);
+        Frame frame;
+        screen.draw(frame, true);
+        return result;
+    }
     void all_games()
     {
         input(Direction::down);
@@ -140,20 +151,89 @@ TEST(Discover, GridMovesVerticallyAndReturnsToTheSelectedGame)
     EXPECT_EQ(h.input(Direction::none, true).id, "game-00"); // latest rail
 }
 
-TEST(Discover, PageControlsReachTheWholeCatalogueWithoutOpeningAGame)
+TEST(Discover, AllGamesScrollsThroughTheWholeCatalogueWithoutPages)
 {
-    DiscoverHarness h(99);
+    DiscoverHarness h(250);
+    for (int i = 0; i < h.count; ++i)
+        h.sizes.push_back(1000 + h.count - i); // largest first keeps the fixture's order
+    h.refresh();
     h.all_games();
-    for (int i = 0; i < 16; ++i)
+    for (int i = 0; i < 41; ++i)
         h.input(Direction::down);
-    EXPECT_NE(h.input(Direction::none, true).kind, Intent::Kind::open_game);
-    EXPECT_EQ(h.input(Direction::none, true).id, "game-96");
+    EXPECT_EQ(h.input(Direction::none, true).id, "game-246"); // past the old 96-game page
+    for (int i = 0; i < 3; ++i)
+        h.input(Direction::right);
+    EXPECT_EQ(h.input(Direction::none, true).id, "game-249");
+    h.input(Direction::down); // the last row ends the grid
+    EXPECT_EQ(h.input(Direction::none, true).id, "game-249");
+    h.input(Direction::up);
+    EXPECT_EQ(h.input(Direction::none, true).id, "game-243");
+}
+
+TEST(Discover, L2AndR2JumpSixteenRowsThroughTheGrid)
+{
+    DiscoverHarness h(250);
+    for (int i = 0; i < h.count; ++i)
+        h.sizes.push_back(1000 + h.count - i);
+    h.refresh();
+    const auto jump_hint = [&]
+    {
+        for (const hui::ui::Hint &hint : h.screen.hints())
+            if (hint.button == hui::ui::Button::l2)
+                return true;
+        return false;
+    };
+    EXPECT_FALSE(jump_hint()); // the hero has nothing to jump through
+    h.press(Action::jump_next);
+    EXPECT_EQ(h.input(Direction::none, true).id, "game-00"); // still the hero's game
+    h.all_games();
+    EXPECT_TRUE(jump_hint());
     h.input(Direction::right);
-    h.input(Direction::right);
-    EXPECT_EQ(h.input(Direction::none, true).id, "game-98");
-    h.input(Direction::down); // last row leads to Previous on the final page
-    EXPECT_NE(h.input(Direction::none, true).kind, Intent::Kind::open_game);
+    h.press(Action::jump_next);
+    EXPECT_EQ(h.input(Direction::none, true).id, "game-97"); // same column, 16 rows down
+    h.press(Action::jump_next);
+    EXPECT_EQ(h.input(Direction::none, true).id, "game-193");
+    h.press(Action::jump_next); // fewer than 16 rows remain: the last row
+    EXPECT_EQ(h.input(Direction::none, true).id, "game-247");
+    h.press(Action::jump_next);
+    EXPECT_EQ(h.input(Direction::none, true).id, "game-247");
+    h.press(Action::jump_prev);
+    EXPECT_EQ(h.input(Direction::none, true).id, "game-151");
+    h.press(Action::jump_prev);
+    h.press(Action::jump_prev); // stops on the first row
+    EXPECT_EQ(h.input(Direction::none, true).id, "game-01");
+    h.input(Direction::up); // and the first row still leads up to Latest releases
     EXPECT_EQ(h.input(Direction::none, true).id, "game-00");
+}
+
+TEST(Discover, BrowseL2AndR2MatchSixteenStepsDown)
+{
+    DiscoverHarness h(250);
+    const auto step = [&](BrowseScreen &screen, Direction nav, std::uint32_t pressed = 0)
+    {
+        InputFrame input;
+        input.connected = true;
+        input.nav = nav;
+        input.pressed = pressed;
+        return screen.update(input, 1.0f / 60.0f, h.feedback, true);
+    };
+    BrowseScreen jumped(h.context), walked(h.context);
+    for (BrowseScreen *screen : {&jumped, &walked})
+    {
+        screen->focus();
+        step(*screen, Direction::down); // filters
+        step(*screen, Direction::down); // the first result
+    }
+    const std::string first = step(jumped, Direction::none, hui::action_bit(Action::confirm)).id;
+    step(jumped, Direction::none, hui::action_bit(Action::jump_next));
+    for (int i = 0; i < 16; ++i)
+        step(walked, Direction::down);
+    const std::string landed = step(jumped, Direction::none, hui::action_bit(Action::confirm)).id;
+    EXPECT_FALSE(landed.empty());
+    EXPECT_NE(landed, first);
+    EXPECT_EQ(landed, step(walked, Direction::none, hui::action_bit(Action::confirm)).id);
+    step(jumped, Direction::none, hui::action_bit(Action::jump_prev));
+    EXPECT_EQ(step(jumped, Direction::none, hui::action_bit(Action::confirm)).id, first);
 }
 
 TEST(Discover, CatalogueShrinkAndUndatedGamesKeepNavigationInBounds)

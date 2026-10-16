@@ -77,7 +77,6 @@
   "Cannot confirm the current storage job. Refresh storage before trying again.": "Nie można potwierdzić bieżącej operacji na dysku. Odśwież pamięć przed ponowną próbą.",
   "Capacity of your drives. Select a drive to see its games.": "Pojemność twoich dysków. Wybierz dysk, aby zobaczyć jego gry.",
   "Catalogue {revision}": "Katalog {revision}",
-  "Change page": "Zmień stronę",
   "Check again in {seconds} s": "Sprawdź ponownie za {seconds} s",
   "Check for the TV app again before installing it.": "Sprawdź ponownie aplikację TV przed jej instalacją.",
   "Check for updates": "Sprawdź aktualizacje",
@@ -252,7 +251,6 @@
   "New games arrive without reinstalling XENO STORE. Your PS5 checks when XENO STORE starts and every six hours, and keeps a saved catalogue for browsing offline.": "Nowe gry pojawiają się bez ponownej instalacji XENO STORE. Twoje PS5 sprawdza je przy starcie XENO STORE i co sześć godzin oraz przechowuje zapisany katalog do przeglądania offline.",
   "New on XENO STORE": "Nowości w XENO STORE",
   "Newest first": "Najnowsze najpierw",
-  "Next": "Dalej",
   "No ELF loader is listening on port {port}.": "Na porcie {port} nie nasłuchuje żaden loader ELF.",
   "No cancelled downloads": "Brak anulowanych pobierań",
   "No compatible XENO STORE release found. An older or invalid release will not replace this build.": "Nie znaleziono zgodnego wydania XENO STORE. Starsze lub nieprawidłowe wydanie nie zastąpi tej wersji.",
@@ -330,7 +328,6 @@
   "XENO STORE, which downloads your games and keeps running after you close this app.": "XENO STORE, który pobiera gry i działa dalej po zamknięciu tej aplikacji.",
   "XENO STORE’s update is saved. It runs the next time XENO STORE starts. Restart the download service to use it now.": "Aktualizacja XENO STORE jest zapisana i uruchomi się przy następnym starcie XENO STORE. Uruchom ponownie usługę pobierania, aby używać jej od razu.",
   "Other location": "Inna lokalizacja",
-  "Page {page} of {pages}": "Strona {page} z {pages}",
   "Pair a device": "Sparuj urządzenie",
   "Pair a phone or computer": "Sparuj telefon lub komputer",
   "Pair this device first.": "Najpierw sparuj to urządzenie.",
@@ -346,7 +343,6 @@
   "Please wait {seconds} s before another request.": "Zaczekaj {seconds} s przed kolejną prośbą.",
   "Please wait…": "Proszę czekać…",
   "Preparing with TorBox": "Przygotowywanie przez TorBox",
-  "Previous": "Wstecz",
   "Provider verification": "Weryfikacja u dostawcy",
   "Provider verification is available on the PS5 only.": "Weryfikacja u dostawcy jest dostępna tylko na PS5.",
   "Publisher": "Wydawca",
@@ -723,5 +719,6 @@
   "Garlic: creating the save image": "Garlic: tworzenie obrazu zapisu",
   "Garlic: checking the save": "Garlic: sprawdzanie zapisu",
   "Garlic: re-signing and installing": "Garlic: ponowne podpisywanie i instalacja",
-  "Garlic: save installed": "Garlic: zapis zainstalowany"
+  "Garlic: save installed": "Garlic: zapis zainstalowany",
+  "Jump": "Przeskocz"
 }

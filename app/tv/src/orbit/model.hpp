@@ -489,6 +489,11 @@ std::vector<std::pair<std::string, std::string>> source_choices(const std::vecto
 std::vector<std::string> format_choices(const std::vector<Game> &games);
 // Select the 20 newest catalogue additions, then order by release date (undated last).
 std::vector<int> newly_added_games(const std::vector<Game> &games);
+// L2 / R2 in a game grid move this many rows: 96 games at six columns.
+constexpr int kGridJumpRows = 16;
+// The tile `rows` rows away in the same column, stopping at the first or last
+// row; a short last row lands on its final tile.
+int grid_jump(int index, int count, int columns, int rows);
 bool contains(const std::vector<std::string> &values, std::string_view value);
 
 // Statuses, as the web storefront words them.

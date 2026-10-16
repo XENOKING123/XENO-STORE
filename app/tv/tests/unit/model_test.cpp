@@ -74,6 +74,17 @@ TEST(Model, ArchivePasswordRetryUsesBackendCapability)
     EXPECT_FALSE(parse_jobs(value).front().can_enter_archive_password);
 }
 
+TEST(Model, GridJumpKeepsTheColumnAndStopsAtTheEnds)
+{
+    EXPECT_EQ(grid_jump(1, 250, 6, 16), 97);
+    EXPECT_EQ(grid_jump(193, 250, 6, 16), 247); // the last row, same column
+    EXPECT_EQ(grid_jump(5, 250, 6, 100), 249);  // a short last row ends on its final tile
+    EXPECT_EQ(grid_jump(151, 250, 6, -16), 55);
+    EXPECT_EQ(grid_jump(55, 250, 6, -16), 1);
+    EXPECT_EQ(grid_jump(3, 4, 6, 16), 3); // one row: nowhere to go
+    EXPECT_EQ(grid_jump(0, 0, 6, 16), 0);
+}
+
 TEST(Model, DownloadLimitDefaultsAndReadsSharedConsoleSetting)
 {
     json::Value value;

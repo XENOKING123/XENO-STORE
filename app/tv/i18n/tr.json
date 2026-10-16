@@ -77,7 +77,6 @@
   "Cannot confirm the current storage job. Refresh storage before trying again.": "Geçerli depolama işi doğrulanamıyor. Yeniden denemeden önce depolamayı yenileyin.",
   "Capacity of your drives. Select a drive to see its games.": "Sürücülerinizin kapasitesi. Oyunlarını görmek için bir sürücü seçin.",
   "Catalogue {revision}": "Katalog {revision}",
-  "Change page": "Sayfa değiştir",
   "Check again in {seconds} s": "{seconds} sn sonra yeniden kontrol et",
   "Check for the TV app again before installing it.": "Yüklemeden önce TV uygulamasını yeniden kontrol edin.",
   "Check for updates": "Güncellemeleri kontrol et",
@@ -252,7 +251,6 @@
   "New games arrive without reinstalling XENO STORE. Your PS5 checks when XENO STORE starts and every six hours, and keeps a saved catalogue for browsing offline.": "Yeni oyunlar XENO STORE'u yeniden yüklemeden gelir. PS5'iniz XENO STORE başladığında ve altı saatte bir kontrol eder, çevrimdışı göz atmak için kayıtlı bir katalog tutar.",
   "New on XENO STORE": "XENO STORE’da yeni",
   "Newest first": "Önce en yeniler",
-  "Next": "Sonraki",
   "No ELF loader is listening on port {port}.": "{port} numaralı bağlantı noktasını dinleyen ELF yükleyici yok.",
   "No cancelled downloads": "İptal edilen indirme yok",
   "No compatible XENO STORE release found. An older or invalid release will not replace this build.": "Uyumlu bir XENO STORE sürümü bulunamadı. Daha eski veya geçersiz bir sürüm bu derlemenin yerini almaz.",
@@ -330,7 +328,6 @@
   "XENO STORE, which downloads your games and keeps running after you close this app.": "Oyunlarınızı indiren ve bu uygulamayı kapattıktan sonra da çalışmaya devam eden XENO STORE.",
   "XENO STORE’s update is saved. It runs the next time XENO STORE starts. Restart the download service to use it now.": "XENO STORE güncellemesi kaydedildi ve XENO STORE bir sonraki başladığında çalışır. Şimdi kullanmak için indirme hizmetini yeniden başlatın.",
   "Other location": "Başka konum",
-  "Page {page} of {pages}": "Sayfa {page} / {pages}",
   "Pair a device": "Cihaz eşleştir",
   "Pair a phone or computer": "Bir telefon veya bilgisayar eşleştirin",
   "Pair this device first.": "Önce bu cihazı eşleştirin.",
@@ -346,7 +343,6 @@
   "Please wait {seconds} s before another request.": "Başka bir istekten önce lütfen {seconds} sn bekleyin.",
   "Please wait…": "Lütfen bekleyin…",
   "Preparing with TorBox": "TorBox ile hazırlanıyor",
-  "Previous": "Önceki",
   "Provider verification": "Sağlayıcı doğrulaması",
   "Provider verification is available on the PS5 only.": "Sağlayıcı doğrulaması yalnızca PS5'te kullanılabilir.",
   "Publisher": "Yayıncı",
@@ -707,5 +703,6 @@
   "Garlic: creating the save image": "Garlic: kayıt kalıbı oluşturuluyor",
   "Garlic: checking the save": "Garlic: kayıt denetleniyor",
   "Garlic: re-signing and installing": "Garlic: yeniden imzalanıyor ve yükleniyor",
-  "Garlic: save installed": "Garlic: kayıt yüklendi"
+  "Garlic: save installed": "Garlic: kayıt yüklendi",
+  "Jump": "Atla"
 }

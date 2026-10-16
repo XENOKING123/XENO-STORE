@@ -650,6 +650,14 @@ std::vector<int> latest_games(const std::vector<Game> &games, std::string_view t
     return result;
 }
 
+int grid_jump(int index, int count, int columns, int rows)
+{
+    if (count <= 0 || columns <= 0)
+        return index;
+    const int row = std::clamp(index / columns + rows, 0, (count - 1) / columns);
+    return std::min(row * columns + index % columns, count - 1);
+}
+
 std::vector<int> newly_added_games(const std::vector<Game> &games)
 {
     std::vector<int> result;

@@ -113,7 +113,6 @@
   "Cannot confirm the current storage job. Refresh storage before trying again.": "Cannot confirm the current storage job. Refresh storage before trying again.",
   "Capacity of your drives. Select a drive to see its games.": "Capacity of your drives. Select a drive to see its games.",
   "Catalogue {revision}": "Catalogue {revision}",
-  "Change page": "Change page",
   "Check again in {seconds} s": "Check again in {seconds} s",
   "Check for the TV app again before installing it.": "Check for the TV app again before installing it.",
   "Check for updates": "Check for updates",
@@ -299,7 +298,6 @@
   "New games arrive without reinstalling XENO STORE. Your PS5 checks when XENO STORE starts and every six hours, and keeps a saved catalogue for browsing offline.": "New games arrive without reinstalling XENO STORE. Your PS5 checks when XENO STORE starts and every six hours, and keeps a saved catalogue for browsing offline.",
   "New on XENO STORE": "New on XENO STORE",
   "Newest first": "Newest first",
-  "Next": "Next",
   "no answer": "no answer",
   "No cancelled downloads": "No cancelled downloads",
   "No compatible XENO STORE release found. An older or invalid release will not replace this build.": "No compatible XENO STORE release found. An older or invalid release will not replace this build.",
@@ -373,7 +371,6 @@
   "XENO STORE, which downloads your games and keeps running after you close this app.": "XENO STORE, which downloads your games and keeps running after you close this app.",
   "XENO STORE’s update is saved. It runs the next time XENO STORE starts. Restart the download service to use it now.": "XENO STORE’s update is saved. It runs the next time XENO STORE starts. Restart the download service to use it now.",
   "Other location": "Other location",
-  "Page {page} of {pages}": "Page {page} of {pages}",
   "Pair a device": "Pair a device",
   "Pair a phone or computer": "Pair a phone or computer",
   "Pair this device first.": "Pair this device first.",
@@ -389,7 +386,6 @@
   "Please wait before refreshing the catalogue again.": "Please wait before refreshing the catalogue again.",
   "Please wait…": "Please wait…",
   "Preparing with TorBox": "Preparing with TorBox",
-  "Previous": "Previous",
   "Provider verification": "Provider verification",
   "Provider verification is available on the PS5 only.": "Provider verification is available on the PS5 only.",
   "Publisher": "Publisher",
@@ -707,5 +703,6 @@
   "Garlic: creating the save image": "Garlic: creating the save image",
   "Garlic: checking the save": "Garlic: checking the save",
   "Garlic: re-signing and installing": "Garlic: re-signing and installing",
-  "Garlic: save installed": "Garlic: save installed"
+  "Garlic: save installed": "Garlic: save installed",
+  "Jump": "Jump"
 }
