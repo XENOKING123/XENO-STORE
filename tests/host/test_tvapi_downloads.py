@@ -9,13 +9,16 @@ TV app talks to (PORT-SPEC 1.5.3, 1.9; map-downloads §2-§9, §12, §14):
                       nine routes, the empty queue, unknown releases, the delivery
                       check, disabled sources, Vikingfile without TorBox, the
                       provider-browser stub (never 404), the download settings
-                      (1..4, booleans, the default drive and its "auto" flag).
+                      (1..4, booleans, the default drive and its "auto" flag),
+                      /system's autoInstallPkg (XENO STORE).
   TvDownloadsFlow     §14 items 4-10: create and follow a download to "complete"
                       with the catalogue's fields, a server size that differs from
                       the catalogue, pause / resume / cancel {deletePartial} /
                       delete (a kept partial goes with the row), duplicates and
                       history reuse, retries and errors, the ZIP password flow
-                      (a 128-byte password included), a PKG install.
+                      (a 128-byte password included), a PKG install with its
+                      installState, and (XENO STORE) a failed install retried
+                      with the "install" action.
   TvDownloadsZip      §14 item 9 with TV_SHOW_ZIP: a ZIP option created from the
                       TV app extracts to its image.
   TvDownloadsTorBox   §14 item 11 against a TorBox fixture (XENO_TB_BASE): host
@@ -84,6 +87,10 @@ S = {
     "limit": "Choose a whole number from 1 to 4.",
     "file_exists": "A file with this name is already on that drive. XENO STORE will not overwrite it.",
     "install_wait": "Wait for the install to finish before removing it from history.",
+    "install_failed": "Install failed: ",
+    "install_pkg_only": "Only a finished PKG download can be installed.",
+    "install_busy": "This download is already installing.",
+    "install_gone": "The PKG file is no longer on the drive. Remove this download and download it again.",
     "no_link": "This download has no link to refresh.",
     "browser": ("Vikingfile asks for a human check, so XENO STORE cannot fetch it by itself. Download it with "
                 "TorBox, or open this game in the browser version."),
@@ -382,6 +389,20 @@ class TvDownloadsBasics(unittest.TestCase):
         self.assertEqual(self.c.post("/api/v1/settings/extraction", {"deleteArchives": True}).check(), {"deleteArchives": True})
         self.assertIs(self.c.get("/api/v1/system").check()["deleteArchives"], True)
 
+    def test_08b_system_says_whether_pkgs_install_by_themselves(self):
+        """XENO STORE: /system "autoInstallPkg" follows downloads.autoInstallPkg
+        (the app's download sheet leaves out "installation is separate" for a
+        PKG while it is on); it may lag a change by a second."""
+        def auto():
+            return self.c.get("/api/v1/system").check()["autoInstallPkg"]
+        self.assertIs(auto(), True)
+        put_settings(self.w, {"downloads": {"autoInstallPkg": False}})
+        try:
+            harness.wait_until(lambda: auto() is False, timeout=5, every=0.1, what="autoInstallPkg false")
+        finally:
+            put_settings(self.w, {"downloads": {"autoInstallPkg": True}})
+        harness.wait_until(lambda: auto() is True, timeout=5, every=0.1, what="autoInstallPkg true")
+
     def test_09_preferred_storage_and_auto(self):
         tvapi_json = os.path.join(self.w.data, "tvapi.json")
         for bad in ({}, {"storageId": 1}, {"storageId": None}, {"storageId": "x" * 64}):
@@ -657,16 +678,69 @@ class TvDownloadsFlow(unittest.TestCase):
         self.w.srv.wait_job(jid, {"installing"}, timeout=90)
         row = job_row(self.c, jid)
         self.assertEqual(row["status"], "complete", row)
+        self.assertEqual(row["installState"], "installing", row)
         self.assertEqual(row["error"], "")
         self.act(jid, "remove").error(409, S["install_wait"])
         self.act(jid, "cancel", {}).error(409, S["complete_cancel"])
         self.act(jid, "pause").error(409, S["not_running"])
+        self.act(jid, "install").error(409, S["install_busy"])
         self.w.srv.wait_job(jid, {"installed"}, timeout=30)
         row = job_row(self.c, jid)
         self.assertEqual(row["status"], "complete")
+        self.assertEqual(row["installState"], "installed", row)
         arr = self.act(jid, "remove").check()
         self.assertNotIn(jid, [j["id"] for j in arr])
         self.assertTrue(os.path.exists(row["path"]), row["path"])            # files are kept
+
+    def test_07b_failed_install_and_retry_install(self):
+        """XENO STORE: a PKG whose install fails stays "complete" with
+        installState "failed" and the store's reason after "Install failed: ";
+        "install" (the app's Retry install) starts it again, here once the file
+        on the drive is a package. A download that is not a finished PKG is
+        refused, and so is a file that has gone."""
+        jid = queue_add(self.w, url=self.w.file_url("small.bin"), filename="Broken Harbour.pkg", format="PKG",
+                        root=self.w.default_root)
+        row, _ = wait_row(self.c, jid, lambda j: j and j["installState"] == "failed", timeout=90,
+                          what="the install to fail")
+        self.assertEqual(row["status"], "complete", row)
+        self.assertTrue(row["error"].startswith(S["install_failed"]) and len(row["error"]) > len(S["install_failed"]), row)
+        path = core_job(self.w, jid)["path"]
+        self.assertTrue(path.endswith("Broken Harbour.pkg"), path)
+        # the file goes: nothing to install
+        os.rename(path, path + ".away")
+        self.act(jid, "install").error(409, S["install_gone"])
+        os.rename(path + ".away", path)
+        def retry_install():
+            # the worker that ran the last install lets go of the job a moment
+            # after its row says "failed"; until then the store says it is busy
+            deadline = time.time() + 10
+            while True:
+                r = self.act(jid, "install")
+                if r.status != 409 or time.time() > deadline:
+                    return r
+                r.error(409, S["install_busy"])
+                time.sleep(0.1)
+
+        # the same bytes fail again; a package installs
+        arr = retry_install().check()
+        self.assertIn(jid, [j["id"] for j in arr])
+        wait_row(self.c, jid, lambda j: j and j["installState"] == "failed", timeout=30, what="the second failure")
+        with urllib.request.urlopen(self.w.file_url("tiny.pkg"), timeout=30) as r, open(path, "wb") as f:
+            f.write(r.read())
+        retry_install().check()
+        row, seen = wait_row(self.c, jid, lambda j: j and j["installState"] == "installed", timeout=30,
+                             what="installed after Retry install")
+        self.assertEqual((row["status"], row["error"]), ("complete", ""), row)
+        self.act(jid, "remove").check()
+        # not a PKG, or not finished
+        other = queue_add(self.w, url=self.w.file_url("big.bin", "slow"), filename="Not A Package.ffpfsc",
+                          format="FFPFSC", root=self.w.roots[0])
+        try:
+            wait_row(self.c, other, lambda j: j and j["status"] == "downloading", timeout=30, what="downloading")
+            self.act(other, "install").error(409, S["install_pkg_only"])
+            self.assertEqual(job_row(self.c, other)["installState"], "idle")
+        finally:
+            self.w.srv.action(other, "remove", {"deleteFiles": True})
 
     def test_08_archive_password_of_128_bytes(self):
         """The reference's limit is 128 bytes, and the whole password reaches the

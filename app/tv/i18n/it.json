@@ -714,5 +714,8 @@
   "Garlic: save installed": "Garlic: salvataggio installato",
   "Jump": "Salta",
   "Added to favourites": "Aggiunto ai preferiti",
-  "Removed from favourites": "Rimosso dai preferiti"
+  "Removed from favourites": "Rimosso dai preferiti",
+  "Only a finished PKG download can be installed.": "Si può installare solo un download PKG completato.",
+  "This download is already installing.": "Questo download è già in fase di installazione.",
+  "The PKG file is no longer on the drive. Remove this download and download it again.": "Il file PKG non è più sull’unità. Rimuovi questo download e scaricalo di nuovo."
 }

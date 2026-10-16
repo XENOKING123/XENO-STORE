@@ -25,6 +25,8 @@
 #include "sys.h"
 #include "util.h"
 
+#include <pthread.h>
+#include <stdlib.h>
 #include <string.h>
 
 /* The drain waits this long at most for the job workers (PORT-SPEC 1.5.5 step 4),
@@ -33,6 +35,31 @@
 #define DRAIN_POLL_MS 100
 
 void tvsys_start(void) {}
+
+/* XENO STORE: downloads.autoInstallPkg, the "autoInstallPkg" of /system (the
+ * app's download sheet leaves out "installation is separate" for a PKG while
+ * it is on). settings.h has no single-field read of it, and /system is polled:
+ * the ~30 KB settings copy is made at most once a second. */
+static int auto_install_pkg(void) {
+  static pthread_mutex_t mu = PTHREAD_MUTEX_INITIALIZER;
+  static int64_t read_ms;
+  static int have, value = 1;
+  int64_t now = util_now_ms();
+  pthread_mutex_lock(&mu);
+  if (!have || now - read_ms >= 1000) {
+    settings_t *s = malloc(sizeof *s);
+    if (s) {
+      settings_get(s);
+      value = s->autoInstallPkg != 0;
+      have = 1;
+      read_ms = now;
+      free(s);
+    }
+  }
+  int v = value;
+  pthread_mutex_unlock(&mu);
+  return v;
+}
 
 /* GET /api/v1/system: answered from memory in well under 1 ms (polled every
  * 0.5-3 s). No network, no update_mu, no drive access, no catalogue walk.
@@ -55,6 +82,7 @@ void tvsys_h_system(api_ctx *c) {
   jw_kv_str(&w, "preferredStorage", pref);
   jw_kv_bool(&w, "deleteArchives", settings_delete_archives());
   jw_kv_i64(&w, "concurrentDownloads", settings_concurrent_jobs());
+  jw_kv_bool(&w, "autoInstallPkg", auto_install_pkg());
   /* not read by the app; kept for diagnostics (the reference sends httpPort too) */
   jw_kv_i64(&w, "httpPort", g_cfg.port);
   jw_kv_bool(&w, "safeMode", g_cfg.safe_mode);

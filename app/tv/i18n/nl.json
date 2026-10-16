@@ -706,5 +706,8 @@
   "Garlic: save installed": "Garlic: save geïnstalleerd",
   "Jump": "Springen",
   "Added to favourites": "Toegevoegd aan favorieten",
-  "Removed from favourites": "Verwijderd uit favorieten"
+  "Removed from favourites": "Verwijderd uit favorieten",
+  "Only a finished PKG download can be installed.": "Alleen een voltooide PKG-download kan worden geïnstalleerd.",
+  "This download is already installing.": "Deze download wordt al geïnstalleerd.",
+  "The PKG file is no longer on the drive. Remove this download and download it again.": "Het PKG-bestand staat niet meer op de schijf. Verwijder deze download en download het opnieuw."
 }

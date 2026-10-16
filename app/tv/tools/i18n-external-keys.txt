@@ -93,6 +93,10 @@ Preparing with TorBox
 Download failed.
 # The prefix of a failed install's row text ("Install failed: " + detail).
 "Install failed: "
+# XENO STORE: the "install" action (the app's Retry install).
+Only a finished PKG download can be installed.
+This download is already installing.
+The PKG file is no longer on the drive. Remove this download and download it again.
 
 # /storage/preferred, /settings/downloads, /settings/extraction
 Expected storageId.
