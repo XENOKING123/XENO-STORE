@@ -225,7 +225,6 @@ int main(int argc, char **argv) {
     }
   }
   if (tv_app) LOGI("the TV app is polling: no browser and no start-up toasts");
-  else pairing_announce();
 
   char ip[48];
   sys_local_ip(ip, sizeof ip);   /* "127.0.0.1" stays when there is no LAN address */
@@ -241,19 +240,21 @@ int main(int argc, char **argv) {
                                      restarted, app_install_launchable());
   if (open == APP_OPEN_APP) {
     char err[256];
-    if (cx_library_app_launch(APP_TITLE_ID, err, sizeof err) == 0) LOGI("start-up: opened the XENO STORE app (%s)", APP_TITLE_ID);
+    if (cx_library_app_launch(APP_TITLE_ID, err, sizeof err) == 0) LOGI("start-up: opened the XENO STORE app (%s): no start-up toasts", APP_TITLE_ID);
     else {
       LOGW("start-up: the XENO STORE app did not open (%s), opening the browser", err);
       open = APP_OPEN_BROWSER;
     }
   }
+  int quiet = tv_app || open == APP_OPEN_APP;   /* the app shows the pairing code itself: the toasts would only cover it */
+  if (!quiet) pairing_announce();
   if (open == APP_OPEN_BROWSER) {
     char local[64];
     xsnprintf(local, sizeof local, "http://127.0.0.1:%d/?tv=1", g_cfg.port);
     sys_launch_browser(local);
   }
   if (crashed) sys_toast("XENO STORE restarted after a problem · details in Settings → Diagnostics");
-  if (!tv_app) sys_toast("XENO STORE ready · %s", url);
+  if (!quiet) sys_toast("XENO STORE ready · %s", url);
   LOGI("ready: %s (fw %s)", url, sys_fw_version());
 
   while (!g_cfg.stop_requested) util_sleep_ms(250);

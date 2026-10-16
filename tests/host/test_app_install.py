@@ -459,7 +459,8 @@ class StartupOpenTests(unittest.TestCase):
     and neither when the TV app started the store or the setting is off. A copy
     that Settings → Updates → Restart now started (its hand-off marker, written
     by another build, does not say "start") opens the browser it was restarted
-    from again, never the app over it."""
+    from again, never the app over it. The app shows the pairing code itself, so
+    the start-up toasts stay away when it opens."""
 
     def start(self, image=False, folder=False, registered=False, poll_tv=False, open_on_start=True, env=None, marker=None):
         tmp = tempfile.mkdtemp(prefix="xeno-startopen.")
@@ -514,11 +515,15 @@ class StartupOpenTests(unittest.TestCase):
             self.assertEqual(json.load(f)["titleId"], "PPSA99500")
         self.assertIn("start-up: opened the XENO STORE app", log)
         self.assertNotIn("browser launch not built in", log)
+        self.assertNotIn("toast: XENO STORE pairing code", log, "the app shows the code itself")
+        self.assertNotIn("toast: XENO STORE ready", log)
 
     def assert_browser_opened(self, srv):
         log = srv.log_text()
         self.assertFalse(os.path.exists(self.launched), "the app was launched")
         self.assertIn("browser launch not built in (url http://127.0.0.1:", log)
+        self.assertIn("toast: XENO STORE pairing code", log)
+        self.assertIn("toast: XENO STORE ready", log)
 
     def assert_nothing_opened(self, srv):
         self.assertFalse(os.path.exists(self.launched), "the app was launched")
