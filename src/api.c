@@ -881,9 +881,11 @@ void api_handle(http_req *req) {
     else http_send_error(req, 404, "not_found", "Unknown API route");
     return;
   }
-  /* A paired device's last seen (Settings → Pair a device). */
+  /* A paired device's last seen (Settings → Pair a device). Not from the console
+   * itself: the TV app may still hold an older pairing.json's first token, now a
+   * device's, until /api/v1/system sends it for its own session (tv_authed). */
   const char *bearer = util_istarts_with(req->authorization, "Bearer ") ? req->authorization + 7 : NULL;
-  if (bearer) pairing_touch(bearer, req->user_agent);
+  if (bearer && !req->client_is_loopback) pairing_touch(bearer, req->user_agent);
   /* A token the console no longer knows was unpaired (Settings → Pair a device):
    * refused even where no token is needed, so a device that still has the store
    * open goes back to the Link page instead of carrying on. Pairing itself stays

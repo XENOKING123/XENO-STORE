@@ -122,7 +122,8 @@
 int tv_gate(api_ctx *c, unsigned flags);
 
 /* 1 when the request carries "Authorization: Bearer <token>" and the token is
- * a paired one (pairing_token_valid: 64 hex, constant time). */
+ * a paired one (pairing_token_valid: 64 hex, constant time); from the console
+ * itself (loopback, the TV app) only its own session (pairing_token_local). */
 int tv_authed(const http_req *req);
 
 /* 1 while the process is going away: g_cfg.stop_requested (SIGTERM, web UI

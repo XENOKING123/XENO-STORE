@@ -131,7 +131,10 @@ int tv_authed(const http_req *req) {
   if (!util_istarts_with(req->authorization, "Bearer ")) return 0;
   const char *tok = req->authorization + 7;
   while (*tok == ' ') tok++;
-  return pairing_token_valid(tok);
+  /* On the console only the console's own session: a 1.3.x TV app keeps the first
+   * token of the old pairing.json, which is listed as a device now (it may be a
+   * phone's). paired:false sends the app to /api/v1/session for the console's. */
+  return req->client_is_loopback ? pairing_token_local(tok) : pairing_token_valid(tok);
 }
 
 int tv_stopping(void) {

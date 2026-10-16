@@ -48,9 +48,13 @@ int pairing_redeem(const char *code, const char *name, char *token_out, size_t c
  * session (constant-time). */
 int pairing_token_valid(const char *token);
 
-/* Every api request with a bearer token: a paired device's last seen moves
- * to now (saved at most once a minute), and a device without a name yet
- * (paired before names were kept) takes one from user_agent. */
+/* 1 when `token` (64 hex) is the console's own session (constant-time). */
+int pairing_token_local(const char *token);
+
+/* Every api request from the LAN with a bearer token (the console itself is
+ * no paired device): a paired device's last seen moves to now (saved at most
+ * once a minute), and a device without a name yet (paired before names were
+ * kept) takes one from user_agent. */
 void pairing_touch(const char *token, const char *user_agent);
 
 /* A short name for the device behind a User-Agent: "iPhone Safari",

@@ -168,7 +168,8 @@ static void load_locked(void) {
      * /api/session and /api/v1/session handed out, but that was a phone's
      * whenever one paired before the console first asked: every token is
      * listed (and can be unpaired) then, and the console's session is made
-     * afresh (the TV app asks for it again once its token stops working). */
+     * afresh (the TV app asks for it again: from the console itself only that
+     * session counts, tv_authed, and the app's polls never touch a device). */
     JV_FOREACH(t, jv_get(root, "tokens")) {
       const char *s = jv_str(t, "");
       if (is_hex64(s) && pair_ntokens < PAIR_MAX_TOKENS) add_locked(s, "", 0, 0);
@@ -295,6 +296,14 @@ int pairing_token_valid(const char *token) {
   pthread_mutex_lock(&pair_mu);
   if (pair_local[0] && ct_eq(token, pair_local, PAIR_TOKEN_HEX)) ok = 1;
   for (int i = 0; i < pair_ntokens; i++) if (ct_eq(token, pair_devs[i].token, PAIR_TOKEN_HEX)) ok = 1;
+  pthread_mutex_unlock(&pair_mu);
+  return ok;
+}
+
+int pairing_token_local(const char *token) {
+  if (!is_hex64(token)) return 0;
+  pthread_mutex_lock(&pair_mu);
+  int ok = pair_local[0] && ct_eq(token, pair_local, PAIR_TOKEN_HEX);
   pthread_mutex_unlock(&pair_mu);
   return ok;
 }

@@ -245,7 +245,9 @@ class PairedDevicesTests(unittest.TestCase):
     User-Agent, first and last seen, "this device"), unpair one, unpair all
     others, full slots replace the device unused the longest, and the
     console's own session (GET /api/session and /api/v1/session) is never
-    listed or removed. Each test runs its own instance."""
+    listed or removed; from the console itself (the TV app) only that session
+    counts, and its requests never touch a device. Each test runs its own
+    instance."""
 
     def setUp(self):
         self.tmp = tempfile.mkdtemp(prefix="xeno-devices.")
@@ -316,10 +318,12 @@ class PairedDevicesTests(unittest.TestCase):
         self.assertEqual(len(self.devices(local)), 8)
         self.assertFalse(any(d["current"] for d in self.devices(local)))
         self.assertFalse(any(d["current"] for d in self.devices()))   # the console's browser has no token
-        # a request with a token moves its last seen, and only its own
+        # a request from the LAN with a token moves its last seen, and only its own;
+        # one from the console itself moves nothing (it is no paired device)
         time.sleep(1.2)
         seen = {d["name"]: d["lastSeen"] for d in devs[:3]}
-        self.srv.api("GET", "/api/status", headers=bearer(pc))
+        self.lan("GET", "/api/status", token=pc)
+        self.srv.api("GET", "/api/status", headers=bearer(phone))
         now = {d["name"]: d for d in self.devices(local)[:3]}
         self.assertGreater(now["Windows Chrome"]["lastSeen"], seen["Windows Chrome"])
         self.assertEqual(now["iPhone Safari"]["lastSeen"], seen["iPhone Safari"])
@@ -411,7 +415,7 @@ class PairedDevicesTests(unittest.TestCase):
         self.assertNotIn("replaced", b, "a free slot replaces nothing")
         toks = [b["token"]] + [self.pair(WINDOWS_CHROME_UA) for _ in range(15)]
         time.sleep(1.2)
-        self.srv.api("GET", "/api/status", headers=bearer(toks[0]))   # the first one paired is in use
+        self.lan("GET", "/api/status", token=toks[0])                  # the first one paired is in use
         code = self.srv.api("GET", "/api/pair")[1]["code"]
         st, b = self.srv.api("POST", "/api/pair", {"code": code}, headers={"User-Agent": IPHONE_UA})
         self.assertEqual(st, 200, b)                                     # no "All pairing slots are in use"
@@ -494,8 +498,8 @@ class PairedDevicesTests(unittest.TestCase):
         local = self.session()
         self.assertNotIn(local, (a, b))
         self.assertEqual(self.srv.api("GET", "/api/v1/session")[1]["token"], local)
-        # its first request names it and starts its times
-        self.srv.api("GET", "/api/status", headers={**bearer(b), "User-Agent": IPHONE_UA})
+        # its first request from the LAN names it and starts its times
+        self.lan("GET", "/api/status", token=b, ua=IPHONE_UA)
         self.assertTrue(self.linked(a))
         self.assertTrue(self.linked(b))
         d = self.devices()[1]
@@ -522,7 +526,8 @@ class PairedDevicesTests(unittest.TestCase):
         self.assertEqual([d["current"] for d in listed], [True, False])
         self.assertEqual([d["name"] for d in self.devices()], ["", ""])
         self.srv.api("GET", "/api/status", headers={**bearer(phone), "User-Agent": "XenoStoreTV"})   # the TV app names nothing
-        self.srv.api("GET", "/api/status", headers={**bearer(phone), "User-Agent": IPHONE_UA})
+        self.assertEqual(self.devices()[0]["name"], "")
+        self.lan("GET", "/api/status", token=phone, ua=IPHONE_UA)
         self.assertEqual(self.devices()[0]["name"], "iPhone Safari")
         # the console's "Unpair all other devices" reaches it
         st, b = self.srv.api("POST", "/api/pair/unpair-others", {})
@@ -536,6 +541,42 @@ class PairedDevicesTests(unittest.TestCase):
         self.assertNotIn(local, (phone, pc))
         self.assertTrue(self.linked(local))
         self.assertEqual(self.devices(), [])
+
+    def test_08_the_tv_app_moves_off_an_older_files_first_token(self):
+        # 1.3.x handed tokens[0] to the TV app, which keeps it across the store's update.
+        # From the console itself a device's token is no session: /api/v1/system says
+        # paired:false, so the app asks /api/v1/session for the console's own, and its
+        # polls neither name that device nor move its last seen
+        tv, pc = "a1" * 32, "b2" * 32
+        self.write_v1([tv, pc])
+        app = {**bearer(tv), "User-Agent": "XenoStoreTV"}
+        st, b = self.srv.api("GET", "/api/v1/system", headers=app)
+        self.assertEqual((st, b["paired"], b["localSessionAvailable"]), (200, False, True), b)
+        self.assertEqual(self.srv.api("GET", "/api/v1/updates", headers=app)[0], 401)
+        self.srv.api("GET", "/api/status", headers=app)
+        local = self.srv.api("GET", "/api/v1/session")[1]["token"]
+        self.assertNotIn(local, (tv, pc))
+        st, b = self.srv.api("GET", "/api/v1/system", headers={**bearer(local), "User-Agent": "XenoStoreTV"})
+        self.assertIs(b["paired"], True)
+        self.assertEqual(self.srv.api("GET", "/api/v1/updates", headers=bearer(local))[0], 200)
+        self.assertEqual([(d["name"], d["firstSeen"], d["lastSeen"]) for d in self.devices(local)], [("", 0, 0), ("", 0, 0)])
+        # a phone that paired before the console asked shares that token: from the LAN
+        # it keeps working (the TV dialect too), and it is named and seen
+        st, b = self.lan("GET", "/api/v1/system", token=tv, ua=IPHONE_UA)
+        self.assertIs(b["paired"], True)
+        self.assertEqual(self.lan("GET", "/api/status", token=tv, ua=IPHONE_UA)[0], 200)
+        d = self.devices()[0]
+        self.assertEqual(d["name"], "iPhone Safari")
+        self.assertGreater(d["lastSeen"], 0)
+        # a token no LAN request has used since the update is the first to make room
+        for _ in range(14):
+            self.pair(WINDOWS_CHROME_UA)
+        code = self.srv.api("GET", "/api/pair")[1]["code"]
+        st, b = self.srv.api("POST", "/api/pair", {"code": code}, headers={"User-Agent": IPHONE_UA})
+        self.assertEqual((st, b.get("replaced")), (200, ""), b)
+        self.assertFalse(self.linked(pc))
+        self.assertTrue(self.linked(tv))
+        self.assertTrue(self.linked(local))
 
 
 PAIRED_DEVICES_SCRIPT = r"""
