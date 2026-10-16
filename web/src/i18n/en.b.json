@@ -246,7 +246,7 @@
     "deleteArchive": "Delete the ZIP after extracting",
     "deleteArchiveHint": "Frees the space of the archive once its files are in place",
     "deletePkg": "Delete the PKG after installing",
-    "deletePkgHint": "Frees the space of a downloaded package once it has installed. A package whose install fails is kept.",
+    "deletePkgHint": "Frees the space of a downloaded package once the console reports its install complete. A package whose install fails or can't be confirmed is kept.",
     "scheduleActive": "Downloads run between {start} and {end}; other times they wait",
     "scheduleText": "Outside the window new downloads wait in the queue as Scheduled. Start now on a row overrides it for that download.",
     "schedulePresets": "Presets",

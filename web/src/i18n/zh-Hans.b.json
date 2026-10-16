@@ -246,7 +246,7 @@
     "deleteArchive": "解压后删除 ZIP",
     "deleteArchiveHint": "文件就位后释放压缩包所占的空间",
     "deletePkg": "安装后删除 PKG",
-    "deletePkgHint": "下载的包安装完成后释放其空间。安装失败的包会保留。",
+    "deletePkgHint": "主机报告安装完成后，释放已下载包的空间。安装失败或无法确认完成的包会保留。",
     "scheduleActive": "下载在 {start} 到 {end} 之间运行；其他时间等待",
     "scheduleText": "在时段之外，新下载会以“已计划”状态在队列中等待。在某一行按“立即开始”可对该下载覆盖此设置。",
     "schedulePresets": "预设",

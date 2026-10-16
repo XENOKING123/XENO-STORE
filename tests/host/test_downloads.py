@@ -5,7 +5,8 @@ segmented integrity (sha256), pause/resume, cancel+restart, mirror failover,
 provider_page, source_changed (validator and tail-check variants), hash
 mismatch + verified hash, retry on 429/Retry-After, connection drops,
 sequential (no Range) servers, PKG auto-install simulation, queue
-persistence across a restart, bandwidth limit, link replacement, move/clear.
+persistence across a restart, bandwidth limit, link replacement, move/clear,
+the PKG removed only after a confirmed install.
 """
 import json
 import os
@@ -490,6 +491,46 @@ class DownloadTests(unittest.TestCase):
         st, lg = self.srv.api("GET", f"/api/queue/{a['id']}/log")
         self.assertTrue(any("resumed after XENO STORE restarted" in ln for ln in lg["lines"]), lg["lines"])
         self.srv.action(c["id"], "remove", {"deleteFiles": True})
+
+    # downloads.deletePkgAfterInstall on the console: /user/app/<TITLEID> exists as soon as an
+    # install starts, and before it for an update or a DLC, so "installed" is no proof there.
+    # The package goes only once the install status (sceAppInstUtilGetInstallStatus, simulated
+    # through XENO_HOST_INSTALL_STATUS) showed this install in progress and then complete.
+    def pkg_update_store(self, name, env):
+        """A store of its own (the simulation reads its environment) that reads "installed"
+        from the title folder like the console, with PPSA01234 installed already: the PKG is
+        an update. Returns the store and the job once it reads "installed"."""
+        data = os.path.join(self.tmp, name)
+        os.makedirs(os.path.join(data, "user", "app", "PPSA01234"))
+        srv = harness.XenoServer(data, env=dict(env, XENO_HOST_INSTALL_DIRCHECK="1")).start()
+        self.addCleanup(srv.stop)
+        srv.api("PUT", "/api/settings", {"downloads": {"deletePkgAfterInstall": True, "turboStart": False}})
+        job = srv.add(url=f"{self.rs}/ok/tiny.pkg", filename="PPSA01234 Update.pkg", format="PKG", autoInstall=True, size=2 * MiB)
+        return srv, srv.wait_job(job["id"], "installed", timeout=60)
+
+    def test_23_pkg_removed_once_its_install_completes(self):
+        srv, j = self.pkg_update_store("data-del-update", {"XENO_HOST_INSTALL_SECS": "8"})
+        time.sleep(1.5)
+        j = srv.job(j["id"])
+        self.assertTrue(os.path.exists(j["path"]), "the install still runs: its package must stay")
+        self.assertFalse(j["install"]["pkgDeleted"])
+        j = srv.wait_job(j["id"], None, timeout=30, until=lambda x: x["install"]["pkgDeleted"])
+        self.assertFalse(os.path.exists(j["path"]))
+        self.assertEqual(j["message"], "Installed · package removed")
+
+    def test_24_pkg_kept_when_its_install_is_not_confirmed(self):
+        # the install reports an error (the game's folder reads "installed" anyway) ...
+        srv, j = self.pkg_update_store("data-del-error", {"XENO_HOST_INSTALL_STATUS": "error"})
+        # ... or this console reports no install status at all
+        srv2, j2 = self.pkg_update_store("data-del-nostatus", {"XENO_HOST_INSTALL_STATUS": "none"})
+        time.sleep(5)
+        for s, x in ((srv, j), (srv2, j2)):
+            x = s.job(x["id"])
+            self.assertTrue(os.path.exists(x["path"]), x["path"])
+            self.assertFalse(x["install"]["pkgDeleted"])
+            self.assertEqual(x["message"], "Installed")
+        st, lg = srv2.api("GET", f"/api/queue/{j2['id']}/log")
+        self.assertTrue(any("package kept: this console does not report install progress" in ln for ln in lg["lines"]), lg["lines"])
 
 
 if __name__ == "__main__":

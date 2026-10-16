@@ -246,7 +246,7 @@
     "deleteArchive": "Eliminar el ZIP tras extraer",
     "deleteArchiveHint": "Libera el espacio del archivo una vez que sus archivos están en su sitio",
     "deletePkg": "Eliminar el PKG tras instalar",
-    "deletePkgHint": "Libera el espacio de un paquete descargado en cuanto se ha instalado. Si la instalación falla, el paquete se conserva.",
+    "deletePkgHint": "Libera el espacio de un paquete descargado en cuanto la consola informa de que su instalación ha terminado. Si la instalación falla o no se puede confirmar, el paquete se conserva.",
     "scheduleActive": "Las descargas corren entre las {start} y las {end}; en otros momentos esperan",
     "scheduleText": "Fuera de la franja, las nuevas descargas esperan en la cola como Programadas. Iniciar ahora en una fila lo anula para esa descarga.",
     "schedulePresets": "Preajustes",

@@ -154,6 +154,10 @@ typedef struct dl_job {
   int probe_status;
   int url_replaced;
   void *seg_conns[DL_MAX_SEGMENTS];    /* xhttp_conn* per slot for prompt abort */
+  /* downloads.deletePkgAfterInstall: this install may remove the .pkg once its
+   * status showed it in progress (of pkg_del_total bytes) and then complete */
+  int pkg_del_wait, pkg_del_seen;
+  int64_t pkg_del_total;
 } dl_job;
 
 typedef struct dl_add_req {

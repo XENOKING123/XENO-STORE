@@ -246,7 +246,7 @@
     "deleteArchive": "Supprimer le ZIP après extraction",
     "deleteArchiveHint": "Libère l'espace de l'archive une fois ses fichiers en place",
     "deletePkg": "Supprimer le PKG après l'installation",
-    "deletePkgHint": "Libère l'espace d'un package téléchargé une fois installé. Un package dont l'installation échoue est conservé.",
+    "deletePkgHint": "Libère l'espace d'un package téléchargé dès que la console signale son installation comme terminée. Un package dont l'installation échoue ou ne peut pas être confirmée est conservé.",
     "scheduleActive": "Les téléchargements tournent entre {start} et {end} ; aux autres moments ils attendent",
     "scheduleText": "Hors de la plage, les nouveaux téléchargements attendent dans la file comme Planifiés. Démarrer maintenant sur une ligne l'ignore pour ce téléchargement.",
     "schedulePresets": "Préréglages",

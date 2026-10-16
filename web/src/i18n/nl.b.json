@@ -246,7 +246,7 @@
     "deleteArchive": "De ZIP na het uitpakken verwijderen",
     "deleteArchiveHint": "Maakt de ruimte van het archief vrij zodra de bestanden op hun plaats staan",
     "deletePkg": "De PKG na het installeren verwijderen",
-    "deletePkgHint": "Maakt de ruimte van een gedownload pakket vrij zodra het is geïnstalleerd. Een pakket waarvan de installatie mislukt, blijft staan.",
+    "deletePkgHint": "Maakt de ruimte van een gedownload pakket vrij zodra de console meldt dat de installatie klaar is. Een pakket waarvan de installatie mislukt of niet te bevestigen is, blijft staan.",
     "scheduleActive": "Downloads draaien tussen {start} en {end}; op andere momenten wachten ze",
     "scheduleText": "Buiten het venster wachten nieuwe downloads in de wachtrij als Gepland. Nu starten op een rij overschrijft dat voor die download.",
     "schedulePresets": "Presets",

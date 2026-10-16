@@ -246,7 +246,7 @@
     "deleteArchive": "ZIP nach dem Entpacken löschen",
     "deleteArchiveHint": "Gibt den Speicher des Archivs frei, sobald seine Dateien an ihrem Platz sind",
     "deletePkg": "PKG nach der Installation löschen",
-    "deletePkgHint": "Gibt den Speicher eines heruntergeladenen Pakets frei, sobald es installiert ist. Schlägt die Installation fehl, bleibt das Paket erhalten.",
+    "deletePkgHint": "Gibt den Speicher eines heruntergeladenen Pakets frei, sobald die Konsole die Installation als abgeschlossen meldet. Schlägt die Installation fehl oder lässt sie sich nicht bestätigen, bleibt das Paket erhalten.",
     "scheduleActive": "Downloads laufen zwischen {start} und {end}; zu anderen Zeiten warten sie",
     "scheduleText": "Außerhalb des Fensters warten neue Downloads als „Geplant“ in der Warteschlange. „Jetzt starten“ in einer Zeile überschreibt das für diesen Download.",
     "schedulePresets": "Presets",

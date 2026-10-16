@@ -2112,6 +2112,8 @@ static void install_run(dl_job *j) {
     xstrlcpy(j->install.state, "installing", sizeof j->install.state);
     j->install.startedAt = util_now();
     j->state = DL_INSTALLING;
+    /* a download's own package only: never a Library install (synthetic) of a file found on a drive */
+    j->pkg_del_wait = !j->synthetic && !is_copy_job(j);
   } else {
     xstrlcpy(j->install.state, "failed", sizeof j->install.state);
     j->state = j->synthetic ? DL_FAILED : DL_DONE;
@@ -2133,6 +2135,8 @@ static void *install_thread(void *arg) {
 
 static void mark_installing_locked(dl_job *j) {
   j->state = DL_INSTALLING;
+  j->pkg_del_wait = j->pkg_del_seen = 0;
+  j->pkg_del_total = 0;
   xstrlcpy(j->install.state, "installing", sizeof j->install.state);
   xstrlcpy(j->install.message, "Starting install", sizeof j->install.message);
   j->install.startedAt = util_now();
@@ -2155,39 +2159,75 @@ static void begin_install(dl_job *j) {
   }
 }
 
+#define PKG_DEL_GRACE_S 60            /* an answer that confirms nothing keeps the package after this */
+#define PKG_DEL_MAX_S (2 * 3600)      /* an install still in progress after this keeps it */
+
+/* downloads.deletePkgAfterInstall for an installed job (caller holds queue_mu).
+ * "Installed" (/user/app/<TITLEID>) proves nothing here: that folder appears
+ * when an install starts, and is already there for an update or a DLC. So the
+ * package goes only when the install status (p, total: install_progress())
+ * showed this install in progress and now reports it complete without an
+ * error, same total. Returns 1 to remove it now, else 0: wait, or keep it for
+ * good (logged). */
+static int pkg_delete_due_locked(dl_job *j, const settings_t *s, int p, int64_t total) {
+  if (!s->deletePkgAfterInstall) { j->pkg_del_wait = 0; return 0; }
+  if (p == INSTALL_DONE && j->pkg_del_seen && total == j->pkg_del_total) return 1;
+  time_t age = util_now() - j->install.startedAt;
+  const char *why = NULL;
+  if (p == INSTALL_NO_STATUS) why = "this console does not report install progress, so the install cannot be confirmed";
+  else if (p == INSTALL_RUNNING) { if (age > PKG_DEL_MAX_S) why = "the install still reports progress after 2 hours"; }
+  else if (age > PKG_DEL_GRACE_S) why = p == INSTALL_ERROR ? "the install reported an error" : "the install could not be confirmed as complete";
+  if (!why) return 0;
+  j->pkg_del_wait = 0;
+  jlog_locked(j, "package kept: %s", why);
+  return 0;
+}
+
 /* Caller holds queue_mu and passes its settings snapshot (SPEC §5: no second
  * lock under queue_mu). Tokens to release are returned to the caller, and the
- * ids of the downloads whose package is to be removed now that it installed
- * (downloads.deletePkgAfterInstall) in del[]. */
+ * ids of the downloads whose package is to be removed now that its install is
+ * confirmed (downloads.deletePkgAfterInstall) in del[]; past delcap they wait
+ * for the next poll. */
 static int poll_installs(const settings_t *sp, char (*toks)[24], int tokcap, char (*del)[16], int delcap, int *ndel) {
   const settings_t s = *sp;
   int ntok = 0;
   for (int i = 0; i < n_jobs; i++) {
     dl_job *j = jobs[i];
-    if (j->state != DL_INSTALLING || j->running || strcmp(j->install.state, "installing") != 0) continue;
-    char msg[256];
-    int r = install_poll(j->install.titleId[0] ? j->install.titleId : j->titleId, j->install.contentId, j->install.startedAt, msg, sizeof msg);
-    if (r == 0) continue;
-    if (r > 0) {
-      j->state = DL_INSTALLED;
-      xstrlcpy(j->install.state, "installed", sizeof j->install.state);
-      xstrlcpy(j->install.message, msg, sizeof j->install.message);
-      xstrlcpy(j->message, "Installed", sizeof j->message);
-      j->finishedAt = util_now();
-      jlog_locked(j, "installed");
-      if (s.toasts && s.onInstall) sys_toast("✓ %s installed", j->title);
-      /* a download's own package only: never a Library install (synthetic) of a file found on a drive */
-      if (s.deletePkgAfterInstall && !j->synthetic && !is_copy_job(j) && *ndel < delcap) xstrlcpy(del[(*ndel)++], j->id, 16);
-    } else {
-      xstrlcpy(j->install.state, "failed", sizeof j->install.state);
-      xstrlcpy(j->install.message, msg, sizeof j->install.message);
-      j->state = j->synthetic ? DL_FAILED : DL_DONE;
-      set_error_locked(j, "install_failed", msg);
-      jlog_locked(j, "install failed: %s", msg);
-      if (s.toasts && s.onFail) sys_toast("✗ %s install failed", j->title);
+    if (j->running) continue;
+    int installing = j->state == DL_INSTALLING && strcmp(j->install.state, "installing") == 0;
+    if (!installing && !(j->state == DL_INSTALLED && j->pkg_del_wait)) continue;
+    int p = INSTALL_NO_STATUS;
+    int64_t total = 0;
+    if (j->pkg_del_wait && s.deletePkgAfterInstall) {
+      p = install_progress(j->install.contentId, j->install.startedAt, &total);
+      if (p == INSTALL_RUNNING) { j->pkg_del_seen = 1; j->pkg_del_total = total; }
     }
-    if (ntok < tokcap && j->install.token[0]) xstrlcpy(toks[ntok++], j->install.token, 24);
-    queue_dirty = 1;
+    if (installing) {
+      char msg[256];
+      int r = install_poll(j->install.titleId[0] ? j->install.titleId : j->titleId, j->install.contentId, j->install.startedAt, msg, sizeof msg);
+      if (r == 0) continue;
+      if (r > 0) {
+        j->state = DL_INSTALLED;
+        xstrlcpy(j->install.state, "installed", sizeof j->install.state);
+        xstrlcpy(j->install.message, msg, sizeof j->install.message);
+        xstrlcpy(j->message, "Installed", sizeof j->message);
+        j->finishedAt = util_now();
+        jlog_locked(j, "installed");
+        if (s.toasts && s.onInstall) sys_toast("✓ %s installed", j->title);
+      } else {
+        xstrlcpy(j->install.state, "failed", sizeof j->install.state);
+        xstrlcpy(j->install.message, msg, sizeof j->install.message);
+        j->state = j->synthetic ? DL_FAILED : DL_DONE;
+        j->pkg_del_wait = 0;
+        set_error_locked(j, "install_failed", msg);
+        jlog_locked(j, "install failed: %s", msg);
+        if (s.toasts && s.onFail) sys_toast("✗ %s install failed", j->title);
+      }
+      if (ntok < tokcap && j->install.token[0]) xstrlcpy(toks[ntok++], j->install.token, 24);
+      queue_dirty = 1;
+    }
+    if (j->state == DL_INSTALLED && j->pkg_del_wait && pkg_delete_due_locked(j, &s, p, total) && *ndel < delcap)
+      xstrlcpy(del[(*ndel)++], j->id, 16);
   }
   return ntok;
 }
@@ -2202,8 +2242,8 @@ static void delete_installed_pkg(const char *id) {
   char path[1024];
   pthread_mutex_lock(&queue_mu);
   dl_job *j = find_locked(id);
-  int ok = j && j->state == DL_INSTALLED && !j->running && !j->remove_pending && !j->install.pkgDeleted;
-  if (ok) xstrlcpy(path, j->path, sizeof path);
+  int ok = j && j->state == DL_INSTALLED && j->pkg_del_wait && !j->running && !j->remove_pending && !j->install.pkgDeleted;
+  if (ok) { xstrlcpy(path, j->path, sizeof path); j->pkg_del_wait = 0; }
   pthread_mutex_unlock(&queue_mu);
   if (!ok) return;
   int rc = unlink(path), err = errno;

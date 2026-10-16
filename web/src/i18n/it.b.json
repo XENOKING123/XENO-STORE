@@ -246,7 +246,7 @@
     "deleteArchive": "Elimina lo ZIP dopo l'estrazione",
     "deleteArchiveHint": "Libera lo spazio dell'archivio una volta che i suoi file sono al loro posto",
     "deletePkg": "Elimina il PKG dopo l'installazione",
-    "deletePkgHint": "Libera lo spazio di un pacchetto scaricato una volta installato. Se l'installazione non riesce, il pacchetto resta.",
+    "deletePkgHint": "Libera lo spazio di un pacchetto scaricato quando la console segnala l'installazione come completata. Se l'installazione non riesce o non si può confermare, il pacchetto resta.",
     "scheduleActive": "I download girano tra le {start} e le {end}; negli altri orari aspettano",
     "scheduleText": "Fuori dalla finestra i nuovi download aspettano in coda come Programmati. Avvia ora su una riga lo forza per quel download.",
     "schedulePresets": "Preset",

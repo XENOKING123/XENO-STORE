@@ -246,7 +246,7 @@
     "deleteArchive": "Çıkardıktan sonra ZIP'i sil",
     "deleteArchiveHint": "Dosyaları yerine geldiğinde arşivin yerini boşaltır",
     "deletePkg": "Kurduktan sonra PKG'yi sil",
-    "deletePkgHint": "İndirilen bir paket kurulduğunda yerini boşaltır. Kurulumu başarısız olan paket saklanır.",
+    "deletePkgHint": "Konsol kurulumun tamamlandığını bildirdiğinde indirilen paketin yerini boşaltır. Kurulumu başarısız olan ya da doğrulanamayan paket saklanır.",
     "scheduleActive": "İndirmeler {start} ile {end} arasında çalışır; diğer zamanlarda bekler",
     "scheduleText": "Aralığın dışında yeni indirmeler kuyrukta Zamanlandı olarak bekler. Bir satırda Şimdi başlat, o indirme için bunu geçersiz kılar.",
     "schedulePresets": "Hazır ayarlar",
