@@ -481,6 +481,7 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await page.keyboard.press('Enter');
     await page.waitForSelector('.sheet [data-nav-id="un-go"]');
     await expect(async () => page.evaluate(() => document.querySelector('.sheet [data-nav-id="un-keep"]').classList.contains('on')), '"Keep downloaded games" should be on by default');
+    await expect(async () => page.evaluate(() => !document.querySelector('.sheet [data-nav-id="un-pm"]')), 'the uninstall sheet should not offer a Payload Manager copy the store never places');
     await sleep(300);
     await shot(page, 'tv-b-uninstall-sheet.png');
     await page.keyboard.press('Escape');

@@ -6,7 +6,8 @@ registry), saves hub (users/list/backup/restore/transfer with zip content
 assertions and pre-backups), Save Data Store (index + compatibility against
 simulated installed versions, install through the simulated native engine,
 export → manifest → zip, upload adapters, submission), uninstall path
-allowlist, ghost icon cleaner, companion payloads (sha256 + ELF loader),
+allowlist (and the uninstall sheet without a Payload Manager checkbox),
+ghost icon cleaner, companion payloads (sha256 + ELF loader),
 homebrew listing parser on fixture HTML, enrichment cache + fail-soft, image
 proxy allowlist, library usage/clean/launch/uninstall and the mDNS packet
 builder.
@@ -1256,6 +1257,68 @@ class UninstallTests(unittest.TestCase):
                   os.path.join(self.sim, "data", "homebrew", "PPSA99500"), os.path.join(self.user_app, "XENO00002")):
             self.assertNotIn(p, kept)
             self.assertNotIn(p, b["removed"])
+
+
+
+UNINSTALL_SHEET_SCRIPT = r"""
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.XENO_PLAYWRIGHT);
+const base = process.argv[2];
+const browser = await chromium.launch();
+try {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await page.addInitScript(() => { localStorage.setItem('xs.wizardDone', 'true'); });
+  // what the sheet asks for, without stopping the store
+  let sent = null;
+  await page.route('**/api/uninstall', (r) => { sent = JSON.parse(r.request().postData() || '{}'); r.fulfill({ status: 200, contentType: 'application/json',
+    body: JSON.stringify({ ok: true, removed: [], kept: [], failed: [], removedCount: 0, failedCount: 0, stopping: true }) }); });
+  await page.goto(base + '/');
+  await page.waitForFunction(() => window.XS && XS.router && document.querySelector('#scr-discover'), null, { timeout: 30000 });
+  await page.evaluate(() => XS.router.go('settings'));
+  await page.click('#scr-settings [data-nav-id="uninstall-open"]');
+  await page.waitForSelector('.sheet [data-nav-id="un-data"]', { timeout: 15000 });
+  const out = await page.evaluate(() => {
+    const sheet = document.querySelector('[data-nav-id="un-data"]').closest('.sheet');
+    return { checks: Array.from(sheet.querySelectorAll('[role="checkbox"]')).map((r) => r.getAttribute('data-nav-id')), text: sheet.innerText };
+  });
+  await page.click('.sheet [data-nav-id="un-go"]');
+  await page.click('.dialog-wrap [data-nav-id="dlg-1"]');
+  await page.waitForFunction(() => document.querySelector('.uninstalled'), null, { timeout: 15000 });
+  out.sent = sent;
+  console.log(JSON.stringify(out));
+} finally {
+  await browser.close();
+}
+"""
+
+
+class UninstallSheetUiTests(unittest.TestCase):
+    """The uninstall sheet the console serves: the store never places a copy
+    for Payload Manager (Payload Manager downloads its own from the XENOKING
+    source), so there is no checkbox that would remove nothing; a note says
+    where that copy is removed instead."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pw = harness.playwright_module()
+        if not cls.pw:
+            raise unittest.SkipTest("node with Playwright is not installed")
+        cls.tmp = tempfile.mkdtemp(prefix="xeno-unsheet-")
+        cls.srv = harness.XenoServer(os.path.join(cls.tmp, "data")).start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.srv.stop()
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def test_no_payload_manager_checkbox(self):
+        out = harness.run_ui_script(self, self.pw, self.tmp, UNINSTALL_SHEET_SCRIPT, self.srv.base)
+        self.assertEqual(out["checks"], ["un-data", "un-homebrew", "un-keep"], out)
+        self.assertNotIn("Payload Manager copy", out["text"])
+        self.assertIn("Payload Manager keeps its own copy of XENO STORE", out["text"])
+        self.assertEqual(out["sent"], {"data": True, "homebrew": True, "downloads": False})
+        self.assertIsNone(self.srv.proc.poll(), "the request was answered by the page, the store keeps running")
 
 
 if __name__ == "__main__":

@@ -752,7 +752,7 @@
     sec.appendChild(cb.note(t('uninstall.noGhosts'), '', 'shield'));
   };
   function uninstallSheet() {
-    var st = { data: true, homebrew: true, payloadManager: false, keepDownloads: true };
+    var st = { data: true, homebrew: true, keepDownloads: true };
     var handle = ui.sheet({
       title: t('uninstall.title'), sub: t('uninstall.sub'), cls: 'narrow', key: 'uninstall',
       body: function (body) {
@@ -761,27 +761,28 @@
         var list = h('div.list');
         list.appendChild(cb.checkRow({ id: 'un-data', label: t('uninstall.data'), desc: t('uninstall.dataHint'), value: st.data, onChange: function (v) { st.data = v; paintFoot(); } }));
         list.appendChild(cb.checkRow({ id: 'un-homebrew', label: t('uninstall.homebrew'), desc: t('uninstall.homebrewHint'), value: st.homebrew, onChange: function (v) { st.homebrew = v; paintFoot(); } }));
-        list.appendChild(cb.checkRow({ id: 'un-pm', label: t('uninstall.payloadManager'), desc: t('uninstall.payloadManagerHint'), value: st.payloadManager, onChange: function (v) { st.payloadManager = v; paintFoot(); } }));
         list.appendChild(cb.checkRow({ id: 'un-keep', label: t('uninstall.keepDownloads'), desc: t('uninstall.keepDownloadsHint'), value: st.keepDownloads, onChange: function (v) { st.keepDownloads = v; paintFoot(); } }));
         body.appendChild(list);
+        /* Payload Manager downloads its own copy from the XENOKING source; the store never places one */
+        body.appendChild(cb.note(t('uninstall.pmNote'), '', 'info'));
         body.appendChild(h('p.dim.small', { 'data-un-summary': '', text: '' }));
       },
       foot: [h('button.btn.ghost', { nav: 'un-cancel', 'data-autofocus': '', text: t('common.cancel'), on: { click: function () { ui.closeLayer(handle); } } }), h('span.spacer'), h('button.btn.danger', { nav: 'un-go', 'data-go': '', html: U.icon('trash') + '<span>' + U.escapeHtml(t('uninstall.go')) + '</span>', on: { click: go } })]
     });
     function paintFoot() {
-      var any = st.data || st.homebrew || st.payloadManager || !st.keepDownloads;
+      var any = st.data || st.homebrew || !st.keepDownloads;
       var b = handle.foot.querySelector('[data-go]'); if (any) b.removeAttribute('disabled'); else b.setAttribute('disabled', '');
       var sum = handle.body.querySelector('[data-un-summary]');
       if (sum) sum.textContent = !st.keepDownloads ? t('uninstall.summaryDeleteGames') : t('uninstall.summaryKeepGames');
     }
     function go() {
-      var any = st.data || st.homebrew || st.payloadManager || !st.keepDownloads;
+      var any = st.data || st.homebrew || !st.keepDownloads;
       if (!any) return;
       var text = (!st.keepDownloads ? t('uninstall.confirmGames') + ' ' : '') + t('uninstall.confirmText');
       ui.confirm(t('uninstall.confirmTitle'), text, t('uninstall.go'), true).then(function (ok) {
         if (!ok) return;
         var b = handle.foot.querySelector('[data-go]'); b.classList.add('busy');
-        cb.api.uninstall({ data: st.data, homebrew: st.homebrew, payloadManager: st.payloadManager, downloads: !st.keepDownloads }).then(function (r) {
+        cb.api.uninstall({ data: st.data, homebrew: st.homebrew, downloads: !st.keepDownloads }).then(function (r) {
           b.classList.remove('busy');
           ui.closeLayer(handle);
           finalScreen(r);
