@@ -78,9 +78,10 @@ Fields, in this exact key order (CATALOG_KEYS; [..] = only when present):
   [newOnOrbitRank]  int 1..100 (see Ranks)
   popularRank   int 1..gameCount (see Popular ranks)
   [cheats]      the game's cheats (an integer member) when > 0
-  [screenshotCount] the number of non-empty strings in the game's screenshots list, at most
-                10 (MAX_SHOTS), when > 0: GET /api/v1/art/{gameId}/shot/{n} serves the n-th,
-                0-based (src/tvapi.h TV_ART_MAX_SHOTS)
+  [screenshotCount] the number of strings in the game's screenshots list that pass the art URL
+                policy (shot_usable: so no .avif, .gif or non-https URL), at most 10 (MAX_SHOTS),
+                when > 0: GET /api/v1/art/{gameId}/shot/{n} serves the n-th of them, 0-based
+                (src/tvapi.h TV_ART_MAX_SHOTS)
   artworkLayout game artworkLayout
   provider, sourceId                  release fields
   format        release format; a ZIP (show_zip only) becomes "Unknown"
@@ -131,6 +132,10 @@ TITLE_ID_RX = re.compile(r"(CUSA|PPSA|PLAS|PCAS|PCJS|PLJS|PLJM|PCJM)[0-9]{5}")
 DATE_RX = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")
 MAX_RANK = 100
 MAX_SHOTS = 10
+ART_URL_MAX = 2048
+# Host build: http art is allowed from XENO_HOST_ART_FIXTURE only; tvworld points it at the
+# world's {{ART}}, which is always http://127.0.0.1:<port>.
+ART_FIXTURE_HOST = "127.0.0.1"
 WIRE_KINDS = ("game", "backport", "update", "dlc")
 NOTICE_VERSION = 1
 NOTE_UPDATE = "Update {v}. Install the base game first."
@@ -349,11 +354,34 @@ def popular_ranks(ecat, show_zip=False):
     return {gid: n for n, gid in enumerate(order, 1)}
 
 
+def shot_usable(url):
+    """src/tvapi_art.c tvart_shot_usable (the art URL policy, PORT-SPEC 1.7): a string under
+    2048 bytes (read up to a NUL, as C does) without a byte <= 0x20 or 0x7F; https, or http
+    from the host build's art fixture; a host and no userinfo; a path (without its query) not
+    ending in .avif or .gif. Not mirrored, as no catalogue here has one: host_blocked's
+    address literals and local-only names, and the length limit after the w=1920 rewrite."""
+    if not isinstance(url, str):
+        return False
+    url = url.split("\0", 1)[0]
+    if not url or len(url.encode("utf-8")) >= ART_URL_MAX or any(ord(ch) <= 0x20 or ord(ch) == 0x7F for ch in url):
+        return False
+    try:
+        sp = urlsplit(url)
+        sp.port                                   # a bad port fails util_url_parse
+    except ValueError:
+        return False
+    if not sp.hostname or "@" in sp.netloc:
+        return False
+    if sp.scheme != "https" and not (sp.scheme == "http" and sp.hostname == ART_FIXTURE_HOST):
+        return False
+    return not sp.path.lower().endswith((".avif", ".gif"))
+
+
 def screenshot_count(game):
     shots = game.get("screenshots")
     if not isinstance(shots, list):
         return 0
-    return min(sum(1 for u in shots if isinstance(u, str) and u), MAX_SHOTS)
+    return min(sum(1 for u in shots if shot_usable(u)), MAX_SHOTS)
 
 
 def wire_kind(rel):

@@ -46,7 +46,10 @@ World(name, **options)  (nothing runs until start(); close() undoes everything)
   library=False         True seeds LIBRARY_FILES into the roots and <data>/user/app (PORT-SPEC 4.1)
   files="shared"        range_server.py for {{FILES}}: "shared" (one child process per test run),
                         "own" (a child process of this World, safe to kill), or None
-  art=True              an artgen.ArtServer for {{ART}}; also sets XENO_HOST_ART_FIXTURE
+  art=True              an artgen.ArtServer for {{ART}}; also sets XENO_HOST_ART_FIXTURE. Without one,
+                        {{ART}} is a closed port (NO_ART) that XENO_HOST_ART_FIXTURE still names
+                        (except for "real"), so the art URLs pass the URL policy as with a server
+                        (screenshotCount counts them) and only their fetches fail
   show_zip=False        XENO_TV_SHOW_ZIP=1 (and golden_catalog() follows it)
   tvapi_updates=False   XENO_TVAPI_UPDATES=1
   env=None              more environment for the backend (os.environ is passed through by harness)
@@ -164,6 +167,7 @@ MiB = 1024 * 1024
 RESERVE_GAP = 240 * MiB
 EXPOSED_SOURCES = ("archive", "vikingfile")       # R1: direct/browser kinds, not pkgzone
 FILES_TOKEN, ART_TOKEN = "{{FILES}}", "{{ART}}"
+NO_ART = "127.0.0.1:9"                            # {{ART}} of a world without an art server (closed)
 
 # PORT-SPEC 4.1 / map-library §12: (root index in World.roots or "user", relative path, size, header)
 # Sizes are sparse. Root index 0 is R1, 1 is R2. "user" is <data>/user/app (installed titles).
@@ -727,7 +731,7 @@ class World:
 
     def _build_catalog(self):
         files_base = self.files.base if self.files else "http://127.0.0.1:9"
-        art_base = self.art.base if self.art else "http://127.0.0.1:9"
+        art_base = self.art.base if self.art else "http://" + NO_ART
         if self.opt_catalog == "fixture":
             cat = load_fixture_catalog(files_base, art_base)
         elif isinstance(self.opt_catalog, dict):
@@ -781,6 +785,8 @@ class World:
         e = {"XENO_TVAPI_STOPPING_FILE": self.stopping_file}
         if self.art:
             e["XENO_HOST_ART_FIXTURE"] = self.art.hostport
+        elif self.opt_catalog != "real":
+            e["XENO_HOST_ART_FIXTURE"] = NO_ART
         if self.show_zip:
             e["XENO_TV_SHOW_ZIP"] = "1"
         if self.tvapi_updates:

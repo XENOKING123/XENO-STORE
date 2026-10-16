@@ -615,7 +615,7 @@ class TvCatalogFixture(unittest.TestCase):
         self.assertEqual({g: o["cheats"] for g, o in games.items() if "cheats" in o},
                          {"fx-tidewater-ps5": 12, "fx-copper-coast-ps4": 2})
         self.assertEqual({g: o["screenshotCount"] for g, o in games.items() if "screenshotCount" in o},
-                         {"fx-tidewater-ps5": 5, "fx-vast-archive-ps5": 10})
+                         {"fx-tidewater-ps5": 4, "fx-vast-archive-ps5": 10})
         self.assertEqual([(o["id"], o["kind"]) for o in body if o["gameId"] == "fx-tidewater-ps5"],
                          [("fx-tidewater-ffpfsc", "game"), ("fx-tidewater-backport", "backport"),
                           ("fx-tidewater-update", "update"), ("fx-tidewater-dlc", "dlc")])

@@ -120,7 +120,7 @@
    "slug": "fx-tidewater",
    "title": "Tidewater",
    "platform": "PS5",
-   "_case": "R2 kind order (game, backport, update, dlc) against catalogue order; notes prefixes; JSON escapes in the description; art WebP cover and hero; an AVIF coverFallback that is never needed; popularRank 1; 12 cheats; screenshotCount 5 (an empty string and a number are skipped): WebP and JPEG served, an AVIF never fetched, a tall WebP served (a screenshot may have any shape), a PNG over the 2560x1440 cap refused",
+   "_case": "R2 kind order (game, backport, update, dlc) against catalogue order; notes prefixes; JSON escapes in the description; art WebP cover and hero; an AVIF coverFallback that is never needed; popularRank 1; 12 cheats; screenshotCount 4 (an empty string, a number and an AVIF outside the URL policy are not counted, and the AVIF is never fetched): shot/0 WebP and shot/1 JPEG served, shot/2 a tall WebP served (a screenshot may have any shape), shot/3 a PNG over the 2560x1440 cap refused",
    "artworkLayout": "wide",
    "titleIds": [
     "PPSA90001"

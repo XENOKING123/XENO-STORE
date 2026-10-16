@@ -715,7 +715,7 @@ static void add_game(build_ctx *b, jv g, jv dg, uint32_t first, uint32_t cat_ind
   if (jv_type(shots) == JV_ARR) {   /* the rule of tvapi.h TV_ART_MAX_SHOTS, as tvapi_art.c indexes them */
     JV_FOREACH(it, shots) {
       if (e->shots >= TV_ART_MAX_SHOTS) break;
-      if (jv_type(it) == JV_STR && jv_strlen(it) > 0) e->shots++;
+      if (jv_type(it) == JV_STR && tvart_shot_usable(jv_str(it, ""))) e->shots++;
     }
   }
   e->first = first;

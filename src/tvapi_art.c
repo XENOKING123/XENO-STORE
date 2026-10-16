@@ -120,7 +120,7 @@ typedef struct art_idx {
   uint32_t nslots;
   char *pool;
   size_t plen, pcap;
-  uint32_t *shots;       /* screenshot URLs as pool offsets, 0 = outside the URL policy */
+  uint32_t *shots;       /* screenshot URLs as pool offsets */
   uint32_t nshots, shcap;
   int oom;
   int covers, heroes;    /* games with a cover / hero candidate */
@@ -278,6 +278,12 @@ static int art_url_ok(const char *url, int kind, int final, char *out, size_t ca
   int width = kind == KIND_COVER ? ART_COVER_WIDTH : kind == KIND_HERO ? ART_HERO_WIDTH : ART_SHOT_WIDTH;
   if (strcmp(u.host, "image.api.playstation.com") == 0 && sharp_art(out, cap, width) != 0) return 0;
   return 1;
+}
+
+/* tvapi.h: /catalog counts a game's screenshots by this, the index keeps the same ones. */
+int tvart_shot_usable(const char *url) {
+  char out[ART_URL_MAX];
+  return art_url_ok(url, KIND_SHOT, 0, out, sizeof out);
 }
 
 /* ---- the probe: format and size from the first bytes, without decoding ----------
@@ -568,7 +574,7 @@ static uint32_t pool_add(art_idx *x, const char *s) {
   return off;
 }
 
-/* Appends one screenshot slot (a pool offset, 0 = unusable). 0, or -1 when out of memory. */
+/* Appends one screenshot URL (a pool offset). 0, or -1 when out of memory. */
 static int shot_push(art_idx *x, uint32_t off) {
   if (x->nshots == x->shcap) {
     uint32_t nc = x->shcap ? x->shcap * 2 : 1024;
@@ -588,9 +594,9 @@ static int shot_push(art_idx *x, uint32_t off) {
  *         else [cover, coverFallback];
  *  hero:  [hero unless it equals cover, heroFallback unless it equals
  *         coverFallback]; the probe then requires a wide picture;
- *  shot n: the n-th screenshot (TV_ART_MAX_SHOTS in tvapi.h) alone; one
- *         outside the URL policy keeps its place, so n means the same here
- *         as in /catalog's screenshotCount, and answers 404 at once.
+ *  shot n: the n-th screenshot within the URL policy (TV_ART_MAX_SHOTS in
+ *         tvapi.h) alone: n means the same here as in /catalog's
+ *         screenshotCount, which counts the same ones (tvart_shot_usable).
  * A game without any usable candidate is left out (404 at once). */
 static void index_game(art_build *b, jv g) {
   art_idx *x = b->x;
@@ -611,30 +617,24 @@ static void index_game(art_build *b, jv g) {
     if (!(ag.url[k] = pool_add(x, url))) return;
     any = 1;
   }
-  int shots = 0;
   ag.shot0 = x->nshots;
   jv list = jv_get(g, "screenshots");
   if (jv_type(list) == JV_ARR) {   /* JV_FOREACH would walk an object's members too */
     JV_FOREACH(s, list) {
       if (ag.nshots >= TV_ART_MAX_SHOTS) break;
-      if (jv_type(s) != JV_STR || jv_strlen(s) == 0) continue;
-      uint32_t off = 0;
-      if (art_url_ok(jv_str(s, ""), KIND_SHOT, 0, url, sizeof url) && !(off = pool_add(x, url))) return;
-      if (shot_push(x, off) != 0) return;
+      if (jv_type(s) != JV_STR || !art_url_ok(jv_str(s, ""), KIND_SHOT, 0, url, sizeof url)) continue;
+      uint32_t off = pool_add(x, url);
+      if (!off || shot_push(x, off) != 0) return;
       ag.nshots++;
-      if (off) shots = 1;
     }
   }
-  if (!any && !shots) {
-    x->nshots = ag.shot0;
-    return;
-  }
+  if (!any && !ag.nshots) return;
   if (!(ag.id = pool_add(x, id))) return;
   ag.hash = fnv1a(id);
   x->games[x->ngames++] = ag;
   if (ag.url[0] || ag.url[1]) x->covers++;
   if (ag.url[2] || ag.url[3]) x->heroes++;
-  if (shots) x->shot_games++;
+  if (ag.nshots) x->shot_games++;
 }
 
 /* catalog_visit_root callback: holds catalog_mu, so it calls no catalog_* or

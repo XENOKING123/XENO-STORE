@@ -511,7 +511,7 @@ class GoldenFixtureTests(unittest.TestCase):
         self.assertEqual({k: o["cheats"] for k, o in g.items() if "cheats" in o},
                          {"fx-tidewater-ps5": 12, "fx-copper-coast-ps4": 2})          # 2.7 -> 2; -3 -> none
         self.assertEqual({k: o["screenshotCount"] for k, o in g.items() if "screenshotCount" in o},
-                         {"fx-tidewater-ps5": 5, "fx-vast-archive-ps5": 10})         # "" and 7 skipped; 11 -> 10
+                         {"fx-tidewater-ps5": 4, "fx-vast-archive-ps5": 10})         # "", 7, an AVIF not counted; 11 -> 10
         self.assertNotIn("screenshotCount", g["fx-iron-meridian-ps5"])               # an object is not a list
         for o in self.out:
             self.assertNotIn("screenshots", o)
