@@ -18,10 +18,12 @@ release named by updates/tv-app.json (served next to the updates feed) against
 the installed app's version, never for a folder copy. And what a store that
 starts on its own opens on the TV: the app when it is installed and registered,
 else (or when it does not start) the browser, nothing when the TV app started it
-or the setting is off.
+or the setting is off, and the browser again when Settings → Updates → Restart
+now started it.
 """
 import hashlib
 import http.server
+import itertools
 import json
 import os
 import shutil
@@ -454,14 +456,20 @@ class StartupOpenTests(unittest.TestCase):
     (or folder) is in /data/homebrew and its title is registered (host:
     <data>/user/app/PPSA99500; the simulated launch writes <data>/sim/launched.json),
     the browser otherwise or when the app does not start (XENO_HOST_LAUNCH_FAIL),
-    and neither when the TV app started the store or the setting is off."""
+    and neither when the TV app started the store or the setting is off. A copy
+    that Settings → Updates → Restart now started (its hand-off marker, written
+    by another build, does not say "start") opens the browser it was restarted
+    from again, never the app over it."""
 
-    def start(self, image=False, folder=False, registered=False, poll_tv=False, open_on_start=True, env=None):
+    def start(self, image=False, folder=False, registered=False, poll_tv=False, open_on_start=True, env=None, marker=None):
         tmp = tempfile.mkdtemp(prefix="xeno-startopen.")
         self.addCleanup(shutil.rmtree, tmp, True)
         data = os.path.join(tmp, "data")
         homebrew = os.path.join(data, "sim", "data", "homebrew")
         os.makedirs(homebrew)
+        if marker is not None:   # <data>/handoff.pending: "<time> <version that handed off> [start|restart]"
+            with open(os.path.join(data, "handoff.pending"), "w") as f:
+                f.write(marker)
         if image:
             with open(os.path.join(homebrew, APP), "wb") as f:
                 f.write(PKG)
@@ -508,8 +516,9 @@ class StartupOpenTests(unittest.TestCase):
         self.assertNotIn("browser launch not built in", log)
 
     def assert_browser_opened(self, srv):
+        log = srv.log_text()
         self.assertFalse(os.path.exists(self.launched), "the app was launched")
-        self.assertIn("browser launch not built in (url http://127.0.0.1:", srv.log_text())
+        self.assertIn("browser launch not built in (url http://127.0.0.1:", log)
 
     def assert_nothing_opened(self, srv):
         self.assertFalse(os.path.exists(self.launched), "the app was launched")
@@ -538,6 +547,38 @@ class StartupOpenTests(unittest.TestCase):
 
     def test_nothing_when_the_setting_is_off(self):
         self.assert_nothing_opened(self.start(image=True, registered=True, open_on_start=False))
+
+    def test_the_browser_again_after_restart_now(self):
+        now = int(time.time())
+        self.assert_browser_opened(self.start(image=True, registered=True, marker=f"{now - 3} 0.0.1 restart\n"))
+        # an older build's marker does not say why: as before, the browser
+        self.assert_browser_opened(self.start(image=True, registered=True, marker=f"{now - 3} 0.0.1\n"))
+        # a store that started on its own and handed over to a downloaded update: the app
+        self.assert_app_opened(self.start(image=True, registered=True, marker=f"{now - 3} 0.0.1 start\n"))
+        # a marker from long ago is no restart of this copy
+        self.assert_app_opened(self.start(image=True, registered=True, marker=f"{now - 600} 0.0.1 restart\n"))
+
+    def test_the_decision_table(self):
+        # app_install_open_choice over every input (host-only route)
+        srv = harness.XenoServer(tempfile.mkdtemp(prefix="xeno-choice.")).start()
+        self.addCleanup(shutil.rmtree, srv.data_dir, True)
+        self.addCleanup(srv.stop)
+        seen = {}
+        for tv, wanted, recent, restarted, launchable in itertools.product((0, 1), repeat=5):
+            st, b = srv.api("GET", f"/api/debug/open-choice?tvApp={tv}&wanted={wanted}&recent={recent}"
+                                   f"&restarted={restarted}&launchable={launchable}")
+            self.assertEqual(st, 200, b)
+            seen[(tv, wanted, recent, restarted, launchable)] = b["open"]
+        for (tv, wanted, recent, restarted, launchable), got in seen.items():
+            if tv or not wanted or recent:      # the TV app is open, the setting is off, or the Games-row app just opened the browser
+                want = "none"
+            elif launchable and not restarted:  # started on its own with the app installed
+                want = "app"
+            else:
+                want = "browser"
+            self.assertEqual(got, want, dict(tvApp=tv, wanted=wanted, recent=recent, restarted=restarted, launchable=launchable))
+        self.assertEqual(seen[(0, 1, 1, 0, 1)], "none", "a browser opened moments ago keeps even a launchable app shut")
+        self.assertEqual(seen[(0, 1, 0, 1, 1)], "browser", "Restart now reopens the browser, never the app over it")
 
 
 if __name__ == "__main__":

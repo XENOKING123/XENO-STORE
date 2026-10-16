@@ -89,10 +89,12 @@ int update_sums_lookup(const char *sums, const char *name, char out[65]);
 int update_staged(char *path, size_t cap);
 
 /* Called after the server and the downloads have shut down: writes
- * <data>/handoff.pending and sends the staged ELF to the local ELF loader so
- * the new version starts on the freed port. 0 sent, -1 nothing staged or the
- * loader did not take it (err filled, marker removed). */
-int update_relaunch(int loader_port, char *err, size_t errcap);
+ * <data>/handoff.pending ("<time> <this version> <why>"; why: "restart" for
+ * Settings → Updates → Restart now, "start" for update_handoff_newer) and
+ * sends the staged ELF to the local ELF loader so the new version starts on
+ * the freed port. 0 sent, -1 nothing staged or the loader did not take it
+ * (err filled, marker removed). */
+int update_relaunch(int loader_port, const char *why, char *err, size_t errcap);
 
 /* At start, before the server binds: when a downloaded update newer than this
  * build waits in the data dir, hand it to the ELF loader and return 1 so this
@@ -102,6 +104,11 @@ int update_relaunch(int loader_port, char *err, size_t errcap);
  * after its last start / never came up after the last hand-off — then it is
  * renamed to *.failed and the built-in version keeps the console usable. */
 int update_handoff_newer(int loader_port);
+
+/* 1 when another build handed over to this copy moments ago for any reason
+ * but its own start: Settings → Updates → Restart now, or an older build,
+ * whose marker does not say why. Read before update_handoff_done(). */
+int update_restarted(void);
 
 /* Clears the hand-off marker once this copy's server is up. */
 void update_handoff_done(void);

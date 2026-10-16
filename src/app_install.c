@@ -154,9 +154,9 @@ int app_install_launchable(void) {
   return util_dir_exists(appdir);
 }
 
-int app_install_open_choice(int tv_app, int wanted, int recent, int launchable) {
+int app_install_open_choice(int tv_app, int wanted, int recent, int restarted, int launchable) {
   if (tv_app || !wanted || recent) return APP_OPEN_NONE;
-  return launchable ? APP_OPEN_APP : APP_OPEN_BROWSER;
+  return launchable && !restarted ? APP_OPEN_APP : APP_OPEN_BROWSER;
 }
 
 /* Writes the install record for the image now at dest (after the rename). */

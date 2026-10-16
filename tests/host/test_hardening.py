@@ -896,7 +896,8 @@ class UpdateRestartTests(unittest.TestCase):
             while time.time() < deadline and elf not in got:
                 time.sleep(0.05)
             self.assertIn(elf, got, "the loader must receive exactly the staged ELF")
-            self.assertTrue(os.path.exists(os.path.join(srv.data_dir, "handoff.pending")))
+            with open(os.path.join(srv.data_dir, "handoff.pending")) as f:
+                self.assertEqual(f.read().split()[2], "restart", "the next copy reopens the browser, not the app over it")
             # the port is free again for the new version
             s2 = socket.socket()
             s2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -944,7 +945,7 @@ class LoaderSink:
 
 class UpdateHandoffTests(unittest.TestCase):
     """At start, a newer downloaded xeno-store.elf takes over (XENO_HANDOFF=1 on
-    host). handoff.pending ("<time> <version that handed off>") is cleared by a
+    host). handoff.pending ("<time> <version that handed off> start|restart") is cleared by a
     copy once its server is up, so an update that never comes up, or crashes
     right after its start, is set aside as *.failed instead of retried forever."""
 
@@ -1014,9 +1015,10 @@ class UpdateHandoffTests(unittest.TestCase):
         self.assertEqual(rc, 0, out)
         self.assertEqual(self.received(), [self.ELF], "the loader must receive exactly the staged ELF")
         with open(self.path("handoff.pending")) as f:
-            ts, frm = f.read().split()
+            ts, frm, why = f.read().split()
         self.assertLess(abs(time.time() - int(ts)), 60)
         self.assertEqual(frm, self.version)
+        self.assertEqual(why, "start", "the next copy may open the app: nobody restarted it from a browser")
         # the handed-off copy must still see the report as fresh
         with open(self.path("crash.txt")) as f:
             self.assertEqual(f.read(), report)
@@ -1069,8 +1071,8 @@ class UpdateHandoffTests(unittest.TestCase):
             srv.stop()
         self.assertEqual(len(self.sink.got), 1, "no second hand-off")
         with open(self.path("handoff.pending")) as f:
-            ts, frm = f.read().split()
-        self.write("handoff.pending", "%d %s\n" % (int(ts) - 600, frm))
+            ts, frm, why = f.read().split()
+        self.write("handoff.pending", "%d %s %s\n" % (int(ts) - 600, frm, why))
         srv = XenoServer(self.data, env=self.env).start()
         try:
             self.assert_set_aside()

@@ -152,6 +152,7 @@ int main(int argc, char **argv) {
     log_shutdown();
     return 0;
   }
+  int restarted = update_restarted();   /* before update_handoff_done() clears the marker */
   crash_consume();
   if (crashed) {
     long up = -1;
@@ -234,9 +235,10 @@ int main(int argc, char **argv) {
    * starts"): the XENO STORE app when it is installed and registered (it finds
    * this copy running), otherwise, or when the app does not start, the
    * browser. Skipped when the Games-row app already asked for the browser,
-   * and when the TV app started this copy (it is open already). */
+   * and when the TV app started this copy (it is open already); the browser
+   * again when Settings → Updates → Restart now started this copy. */
   int open = app_install_open_choice(tv_app, !g_cfg.no_browser && settings_open_on_start(), sys_browser_opened_ago_ms() <= 15000,
-                                     app_install_launchable());
+                                     restarted, app_install_launchable());
   if (open == APP_OPEN_APP) {
     char err[256];
     if (cx_library_app_launch(APP_TITLE_ID, err, sizeof err) == 0) LOGI("start-up: opened the XENO STORE app (%s)", APP_TITLE_ID);
@@ -272,7 +274,7 @@ int main(int argc, char **argv) {
   pthread_join(hk, NULL);
   if (g_cfg.restart_requested) {
     char err[256];
-    if (update_relaunch(cx_local_port("LOADER", 9021), err, sizeof err) != 0) sys_toast("XENO STORE update: %s — send the payload again", err);
+    if (update_relaunch(cx_local_port("LOADER", 9021), "restart", err, sizeof err) != 0) sys_toast("XENO STORE update: %s — send the payload again", err);
   }
   LOGI("bye");
   log_shutdown();

@@ -84,11 +84,13 @@ int app_install_launchable(void);
  * "Open XENO STORE when it starts"). tv_app: the TV app started this copy
  * and is open already; wanted: the setting is on (and no --no-browser);
  * recent: the browser was opened for the Games-row app moments ago;
+ * restarted: update_restarted(), Settings → Updates → Restart now started
+ * this copy from a browser, which it opens again rather than the app over it;
  * launchable: app_install_launchable(). NONE when any of the first three
- * says so, else APP when launchable, else BROWSER (main.c also falls back to
- * the browser when the app does not start). */
+ * says so, else APP when launchable and not restarted, else BROWSER (main.c
+ * also falls back to the browser when the app does not start). */
 enum { APP_OPEN_NONE = 0, APP_OPEN_APP, APP_OPEN_BROWSER };
-int app_install_open_choice(int tv_app, int wanted, int recent, int launchable);
+int app_install_open_choice(int tv_app, int wanted, int recent, int restarted, int launchable);
 
 /* 1 when url may carry a pinned TV app release: APP_RELEASE_BASE + ... +
  * "/PPSA99500.ffpkg", no '?', '#', '\', ' ' or "..". Host build: also a

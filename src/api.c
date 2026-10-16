@@ -7,6 +7,7 @@
  * settings.pairing.pin is set (SPEC §15).
  */
 #include "api.h"
+#include "app_install.h"
 #include "assets.h"
 #include "catalog.h"
 #include "config.h"
@@ -725,6 +726,17 @@ static void h_debug_pause_all(api_ctx *c) {
   jw_kv_bool(&w, "stateHealthy", dl_state_healthy());
   api_send(c, &w);
 }
+
+/* Host build only (tests): app_install_open_choice for the given inputs (0/1 each). */
+static void h_debug_open_choice(api_ctx *c) {
+  int open = app_install_open_choice(http_query_int(c->req, "tvApp", 0), http_query_int(c->req, "wanted", 0),
+                                     http_query_int(c->req, "recent", 0), http_query_int(c->req, "restarted", 0),
+                                     http_query_int(c->req, "launchable", 0));
+  jw w;
+  api_begin(&w);
+  jw_kv_str(&w, "open", open == APP_OPEN_APP ? "app" : open == APP_OPEN_BROWSER ? "browser" : "none");
+  api_send(c, &w);
+}
 #endif
 
 /* ---- routing ------------------------------------------------------------ */
@@ -777,6 +789,7 @@ static const api_route ROUTES[] = {
   { "GET", "/api/session", h_session },
 #ifdef XENO_HOST
   { "POST", "/api/debug/queue/pause-all", h_debug_pause_all },
+  { "GET", "/api/debug/open-choice", h_debug_open_choice },
 #endif
 };
 

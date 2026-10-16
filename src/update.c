@@ -581,6 +581,32 @@ int update_staged(char *path, size_t cap) {
 
 static void marker_path(char *out, size_t cap) { xsnprintf(out, cap, "%s/handoff.pending", data_dir); }
 
+/* The hand-off marker, "<time> <version that handed off> <why>" (why: "start"
+ * when a copy handed over at its start, "restart" for Settings → Updates →
+ * Restart now; an older build writes none): 1 with its age, version and why,
+ * 0 when there is none. */
+static int marker_read(long long *age, char *from, size_t fcap, char *why, size_t wcap) {
+  char mpath[600];
+  marker_path(mpath, sizeof mpath);
+  size_t len = 0;
+  char *m = util_read_file(mpath, &len, 128);
+  if (!m) return 0;
+  char *end = m;
+  long long ts = strtoll(m, &end, 10);
+  from[0] = why[0] = 0;
+  if (end == m) ts = (long long)util_file_mtime(mpath);
+  else {
+    end += strspn(end, " \t");
+    size_t n = strcspn(end, " \t\r\n");
+    xsnprintf(from, fcap, "%.*s", (int)n, end);
+    xstrlcpy(why, end + n, wcap);
+    util_trim(why);
+  }
+  free(m);
+  *age = (long long)util_now() - ts;
+  return 1;
+}
+
 /* Renames the staged ELF and its .version to <name><suffix> so no later start picks them up. */
 static void staged_set_aside(const char *elf, const char *suffix) {
   char from[640], to[660];
@@ -620,25 +646,14 @@ int update_handoff_newer(int loader_port) {
   char tag[64];
   xsnprintf(tag, sizeof tag, "XENO STORE %s stopped", ver);
   if (fresh && up >= 0 && up < CRASH_EARLY_S && util_starts_with(rep, tag)) return handoff_failed(path, ver, "stopped right after its last start");
-  /* Hand-off marker ("<time> <version that handed off>"), cleared by a copy
-   * once its server is up. A young one from another build means this copy was
+  /* Hand-off marker (marker_read), cleared by a copy once its server is up. A young one from another build means this copy was
    * just handed the ELF (or the .version overstates it): do not hand over again.
    * A young one this very build wrote means two copies started at once: run this
    * one and leave the marker to the handed-off copy. An old one means the copy it
    * started never came up. */
-  char mpath[600];
-  marker_path(mpath, sizeof mpath);
-  size_t len = 0;
-  char *m = util_read_file(mpath, &len, 128);
-  if (m) {
-    char *end = m;
-    long long ts = strtoll(m, &end, 10);
-    char from[32] = "";
-    if (end == m) ts = (long long)util_file_mtime(mpath);
-    else xstrlcpy(from, end, sizeof from);
-    free(m);
-    util_trim(from);
-    long long age = (long long)util_now() - ts;
+  long long age = 0;
+  char from[32], why[16];
+  if (marker_read(&age, from, sizeof from, why, sizeof why)) {
     if (age < HANDOFF_WINDOW_S && strcmp(from, XENO_VERSION) != 0) {
       LOGI("update: started by a hand-off %lld s ago — not handing over to %s again", age, ver);
       return 0;
@@ -651,12 +666,19 @@ int update_handoff_newer(int loader_port) {
     return handoff_failed(path, ver, "never came up after the last hand-off");
   }
   char err[160];
-  if (update_relaunch(loader_port, err, sizeof err) != 0) {
+  if (update_relaunch(loader_port, "start", err, sizeof err) != 0) {
     LOGW("update: could not start the downloaded %s (%s) — running %s", ver, err, XENO_VERSION);
     return 0;
   }
   LOGI("update: handed over to the downloaded %s (this copy is %s)", ver, XENO_VERSION);
   return 1;
+}
+
+int update_restarted(void) {
+  long long age = 0;
+  char from[32], why[16];
+  return marker_read(&age, from, sizeof from, why, sizeof why) && age < HANDOFF_WINDOW_S && strcmp(from, XENO_VERSION) != 0 &&
+         strcmp(why, "start") != 0;
 }
 
 void update_handoff_done(void) {
@@ -666,7 +688,7 @@ void update_handoff_done(void) {
   util_unlink_quiet(mpath);
 }
 
-int update_relaunch(int loader_port, char *err, size_t errcap) {
+int update_relaunch(int loader_port, const char *why, char *err, size_t errcap) {
   char path[600];
   if (!update_staged(path, sizeof path)) { xsnprintf(err, errcap, "No downloaded update is waiting"); return -1; }
   size_t len = 0;
@@ -675,7 +697,7 @@ int update_relaunch(int loader_port, char *err, size_t errcap) {
   /* Written first: the started copy may come up before this one returns. */
   char mpath[600], mark[64];
   marker_path(mpath, sizeof mpath);
-  xsnprintf(mark, sizeof mark, "%lld %s\n", (long long)util_now(), XENO_VERSION);
+  xsnprintf(mark, sizeof mark, "%lld %s %s\n", (long long)util_now(), XENO_VERSION, why);
   if (util_write_file_atomic(mpath, mark, strlen(mark)) != 0) LOGW("update: cannot write %s", mpath);
   int rc = cx_tcp_send_all(loader_port, elf, len, 15000, err, errcap);
   free(elf);
