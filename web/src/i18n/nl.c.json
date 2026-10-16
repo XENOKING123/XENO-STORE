@@ -108,7 +108,7 @@
     "hintText": "Installeer de app één keer en open de store vanaf zijn eigen tegel — zonder FTP of browseradres.",
     "notNow": "Niet nu",
     "openOnStart": "XENO STORE openen bij het starten",
-    "openOnStartHint": "Opent de store op de tv telkens als hij start. Zet dit uit als de store automatisch start bij het opstarten.",
+    "openOnStartHint": "Opent de XENO STORE-app op de tv telkens als de store start, of de browser als de app niet geïnstalleerd is. Zet dit uit als de store automatisch start bij het opstarten.",
     "err": {
       "sha256_mismatch": "De download komt niet overeen met de controlesom — er is niets geïnstalleerd. Probeer het opnieuw.",
       "sha256_unavailable": "Deze versie heeft nog geen controlesom — probeer het over een paar minuten opnieuw.",

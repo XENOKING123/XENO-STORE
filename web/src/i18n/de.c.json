@@ -108,7 +108,7 @@
     "hintText": "Installiere die App einmal und öffne den Store über seine eigene Kachel – ohne FTP, ohne Browser-Adresse.",
     "notNow": "Nicht jetzt",
     "openOnStart": "XENO STORE beim Start öffnen",
-    "openOnStartHint": "Öffnet den Store bei jedem Start auf dem Fernseher. Schalte es aus, wenn der Store beim Booten automatisch startet.",
+    "openOnStartHint": "Öffnet bei jedem Start des Stores die XENO STORE-App auf dem Fernseher, oder den Browser, wenn die App nicht installiert ist. Schalte es aus, wenn der Store beim Booten automatisch startet.",
     "err": {
       "sha256_mismatch": "Der Download stimmt nicht mit seiner Prüfsumme überein – es wurde nichts installiert. Versuch es erneut.",
       "sha256_unavailable": "Die Version hat noch keine Prüfsumme – versuch es in ein paar Minuten erneut.",

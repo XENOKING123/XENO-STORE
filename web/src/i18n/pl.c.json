@@ -108,7 +108,7 @@
     "hintText": "Zainstaluj aplikację raz i otwieraj sklep z jego własnego kafelka — bez FTP i adresu w przeglądarce.",
     "notNow": "Nie teraz",
     "openOnStart": "Otwieraj XENO STORE przy uruchomieniu",
-    "openOnStartHint": "Otwiera sklep na telewizorze przy każdym uruchomieniu. Wyłącz, jeśli sklep startuje automatycznie przy włączaniu konsoli.",
+    "openOnStartHint": "Otwiera aplikację XENO STORE na telewizorze przy każdym uruchomieniu sklepu albo przeglądarkę, gdy aplikacja nie jest zainstalowana. Wyłącz, jeśli sklep startuje automatycznie przy włączaniu konsoli.",
     "err": {
       "sha256_mismatch": "Pobrany plik nie zgadza się z sumą kontrolną — nic nie zainstalowano. Spróbuj ponownie.",
       "sha256_unavailable": "To wydanie nie ma jeszcze sumy kontrolnej — spróbuj za kilka minut.",

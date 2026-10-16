@@ -75,6 +75,21 @@ int app_install_state(char *version, size_t cap);
  * means "installed by this store"). */
 const char *app_install_state_name(int state);
 
+/* 1 when the app can be started by its title id: its image or folder is in
+ * /data/homebrew (STORE, MANUAL or FOLDER above) and the title is registered
+ * on the home screen (<user/app>/PPSA99500). */
+int app_install_launchable(void);
+
+/* What a store that just came up opens on the TV (main.c, Settings →
+ * "Open XENO STORE when it starts"). tv_app: the TV app started this copy
+ * and is open already; wanted: the setting is on (and no --no-browser);
+ * recent: the browser was opened for the Games-row app moments ago;
+ * launchable: app_install_launchable(). NONE when any of the first three
+ * says so, else APP when launchable, else BROWSER (main.c also falls back to
+ * the browser when the app does not start). */
+enum { APP_OPEN_NONE = 0, APP_OPEN_APP, APP_OPEN_BROWSER };
+int app_install_open_choice(int tv_app, int wanted, int recent, int launchable);
+
 /* 1 when url may carry a pinned TV app release: APP_RELEASE_BASE + ... +
  * "/PPSA99500.ffpkg", no '?', '#', '\', ' ' or "..". Host build: also a
  * loopback http:// URL of that shape (test servers). */

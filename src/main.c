@@ -6,11 +6,12 @@
  *   xeno-store [--port N] [--data DIR] [--root PATH]... [--no-browser] [--log-level debug|info|warn]
  *
  * On the console the loader passes no arguments and the defaults apply
- * (data dir /data/xeno-store, port 9095). Once the server is up the PS5
- * browser opens on the store unless Settings → "Open when XENO STORE starts"
- * is off (or --no-browser).
+ * (data dir /data/xeno-store, port 9095). Once the server is up the XENO
+ * STORE app (or, without it, the PS5 browser) opens on the store unless
+ * Settings → "Open XENO STORE when it starts" is off (or --no-browser).
  */
 #include "api.h"
+#include "app_install.h"
 #include "catalog.h"
 #include "config.h"
 #include "dl.h"
@@ -24,6 +25,7 @@
 #include "sys.h"
 #include "update.h"
 #include "cx_common.h"
+#include "cx_library.h"
 #include "util.h"
 #include "xthread.h"
 
@@ -228,10 +230,22 @@ int main(int argc, char **argv) {
   sys_local_ip(ip, sizeof ip);   /* "127.0.0.1" stays when there is no LAN address */
   char url[96];
   xsnprintf(url, sizeof url, "http://%s:%d/", ip, g_cfg.port);
-  /* Open the store on the TV (Settings → General → "Open when XENO STORE
-   * starts"); skipped when the Games-row app already asked for it, and when
-   * the TV app started this copy. */
-  if (!tv_app && !g_cfg.no_browser && settings_open_on_start() && sys_browser_opened_ago_ms() > 15000) {
+  /* Open the store on the TV (Settings → General → "Open XENO STORE when it
+   * starts"): the XENO STORE app when it is installed and registered (it finds
+   * this copy running), otherwise, or when the app does not start, the
+   * browser. Skipped when the Games-row app already asked for the browser,
+   * and when the TV app started this copy (it is open already). */
+  int open = app_install_open_choice(tv_app, !g_cfg.no_browser && settings_open_on_start(), sys_browser_opened_ago_ms() <= 15000,
+                                     app_install_launchable());
+  if (open == APP_OPEN_APP) {
+    char err[256];
+    if (cx_library_app_launch(APP_TITLE_ID, err, sizeof err) == 0) LOGI("start-up: opened the XENO STORE app (%s)", APP_TITLE_ID);
+    else {
+      LOGW("start-up: the XENO STORE app did not open (%s), opening the browser", err);
+      open = APP_OPEN_BROWSER;
+    }
+  }
+  if (open == APP_OPEN_BROWSER) {
     char local[64];
     xsnprintf(local, sizeof local, "http://127.0.0.1:%d/?tv=1", g_cfg.port);
     sys_launch_browser(local);

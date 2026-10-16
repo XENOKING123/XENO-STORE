@@ -108,7 +108,7 @@
     "hintText": "Uygulamayı bir kez yükle ve mağazayı kendi kutucuğundan aç — FTP yok, tarayıcı adresi yok.",
     "notNow": "Şimdi değil",
     "openOnStart": "XENO STORE başladığında aç",
-    "openOnStartHint": "Mağaza her başladığında onu TV'de açar. Mağazayı açılışta otomatik başlatıyorsan kapat.",
+    "openOnStartHint": "Mağaza her başladığında TV'de XENO STORE uygulamasını, uygulama yüklü değilse tarayıcıyı açar. Mağazayı açılışta otomatik başlatıyorsan kapat.",
     "err": {
       "sha256_mismatch": "İndirilen dosya sağlama toplamıyla eşleşmiyor — hiçbir şey yüklenmedi. Tekrar dene.",
       "sha256_unavailable": "Bu sürümün henüz sağlama toplamı yok — birkaç dakika sonra tekrar dene.",

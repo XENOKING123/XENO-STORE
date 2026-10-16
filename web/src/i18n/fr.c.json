@@ -108,7 +108,7 @@
     "hintText": "Installez l'appli une fois et ouvrez la boutique depuis sa propre vignette — sans FTP ni adresse dans le navigateur.",
     "notNow": "Pas maintenant",
     "openOnStart": "Ouvrir XENO STORE à son démarrage",
-    "openOnStartHint": "Ouvre la boutique sur la TV à chaque démarrage. Désactivez-le si la boutique démarre automatiquement au lancement de la console.",
+    "openOnStartHint": "Ouvre l'appli XENO STORE sur la TV à chaque démarrage de la boutique, ou le navigateur si l'appli n'est pas installée. Désactivez-le si la boutique démarre automatiquement au lancement de la console.",
     "err": {
       "sha256_mismatch": "Le téléchargement ne correspond pas à sa somme de contrôle — rien n'a été installé. Réessayez.",
       "sha256_unavailable": "La version n'a pas encore de somme de contrôle — réessayez dans quelques minutes.",

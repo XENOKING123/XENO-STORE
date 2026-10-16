@@ -15,7 +15,10 @@ Also: ShadowMountPlus without its HTTP API (before 1.7) — the install and the
 setup check rely on its process, and "launch" is offered only when it surely
 is not running. And "Update available" on the Settings → Updates card: the
 release named by updates/tv-app.json (served next to the updates feed) against
-the installed app's version, never for a folder copy.
+the installed app's version, never for a folder copy. And what a store that
+starts on its own opens on the TV: the app when it is installed and registered,
+else (or when it does not start) the browser, nothing when the TV app started it
+or the setting is off.
 """
 import hashlib
 import http.server
@@ -27,6 +30,7 @@ import tempfile
 import threading
 import time
 import unittest
+import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import harness  # noqa: E402
@@ -441,6 +445,99 @@ class AppInstallTests(unittest.TestCase):
         self.assertFalse(c["ok"], c)
         self.assertTrue(c["optional"], c)
         self.assertNotIn("action", c)
+
+
+
+class StartupOpenTests(unittest.TestCase):
+    """Settings → "Open XENO STORE when it starts" when the store starts on
+    its own (ELF loader, Payload Manager): the XENO STORE app when its image
+    (or folder) is in /data/homebrew and its title is registered (host:
+    <data>/user/app/PPSA99500; the simulated launch writes <data>/sim/launched.json),
+    the browser otherwise or when the app does not start (XENO_HOST_LAUNCH_FAIL),
+    and neither when the TV app started the store or the setting is off."""
+
+    def start(self, image=False, folder=False, registered=False, poll_tv=False, open_on_start=True, env=None):
+        tmp = tempfile.mkdtemp(prefix="xeno-startopen.")
+        self.addCleanup(shutil.rmtree, tmp, True)
+        data = os.path.join(tmp, "data")
+        homebrew = os.path.join(data, "sim", "data", "homebrew")
+        os.makedirs(homebrew)
+        if image:
+            with open(os.path.join(homebrew, APP), "wb") as f:
+                f.write(PKG)
+        if folder:
+            os.makedirs(os.path.join(homebrew, "PPSA99500"))
+            with open(os.path.join(homebrew, "PPSA99500", "eboot.bin"), "wb") as f:
+                f.write(b"\x7fELF")
+        if registered:
+            os.makedirs(os.path.join(data, "user", "app", "PPSA99500", "sce_sys"))
+        port = harness.free_port()
+        if not open_on_start:
+            srv = harness.XenoServer(data, port=port).start()
+            srv.api("PUT", "/api/settings", {"general": {"openOnStart": False}})
+            srv.stop()
+            os.unlink(srv.log_path)
+        stop = threading.Event()
+        seen = []
+
+        def poller():   # the TV app waits for the store it started by polling GET /api/v1/system
+            while not stop.is_set():
+                try:
+                    with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/v1/system", timeout=1) as r:
+                        if r.status == 200:
+                            seen.append(time.time())
+                except Exception:
+                    pass
+                time.sleep(0.2)
+        if poll_tv:
+            threading.Thread(target=poller, daemon=True).start()
+            self.addCleanup(stop.set)
+        srv = harness.XenoServer(data, port=port, env=env).start()
+        self.addCleanup(srv.stop)
+        harness.wait_until(lambda: "ready: " in srv.log_text(), timeout=15, what="the ready line")
+        if poll_tv:
+            self.assertTrue(seen, "the poller never reached /api/v1/system")
+        self.launched = os.path.join(data, "sim", "launched.json")
+        return srv
+
+    def assert_app_opened(self, srv):
+        log = srv.log_text()
+        with open(self.launched) as f:
+            self.assertEqual(json.load(f)["titleId"], "PPSA99500")
+        self.assertIn("start-up: opened the XENO STORE app", log)
+        self.assertNotIn("browser launch not built in", log)
+
+    def assert_browser_opened(self, srv):
+        self.assertFalse(os.path.exists(self.launched), "the app was launched")
+        self.assertIn("browser launch not built in (url http://127.0.0.1:", srv.log_text())
+
+    def assert_nothing_opened(self, srv):
+        self.assertFalse(os.path.exists(self.launched), "the app was launched")
+        self.assertNotIn("browser launch not built in", srv.log_text())
+
+    def test_the_app_when_installed_and_registered(self):
+        self.assert_app_opened(self.start(image=True, registered=True))
+
+    def test_the_app_as_a_folder(self):
+        self.assert_app_opened(self.start(folder=True, registered=True))
+
+    def test_the_browser_without_the_app(self):
+        self.assert_browser_opened(self.start())
+        self.assert_browser_opened(self.start(image=True))           # not registered (yet)
+        self.assert_browser_opened(self.start(registered=True))      # a tile left behind without its image
+
+    def test_the_browser_when_the_app_does_not_start(self):
+        srv = self.start(image=True, registered=True, env={"XENO_HOST_LAUNCH_FAIL": "1"})
+        self.assert_browser_opened(srv)
+        self.assertIn("start-up: the XENO STORE app did not open", srv.log_text())
+
+    def test_nothing_when_the_tv_app_started_the_store(self):
+        srv = self.start(image=True, registered=True, poll_tv=True)
+        self.assert_nothing_opened(srv)
+        self.assertIn("the TV app is polling", srv.log_text())
+
+    def test_nothing_when_the_setting_is_off(self):
+        self.assert_nothing_opened(self.start(image=True, registered=True, open_on_start=False))
 
 
 if __name__ == "__main__":

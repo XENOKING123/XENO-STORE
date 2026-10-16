@@ -68,7 +68,8 @@ int cx_library_app_uninstall(const char *titleId, char *err, size_t errcap) {
 }
 #else
 static int native_launch(const char *titleId, char *err, size_t errcap) {
-  (void)err; (void)errcap;
+  const char *fail = getenv("XENO_HOST_LAUNCH_FAIL");   /* tests: the launcher refuses */
+  if (fail && *fail) { xsnprintf(err, errcap, "the launcher refused (simulated)"); return -1; }
   char p[700];
   cx_console_path("/launched.json", p, sizeof p);
   jw w;
@@ -92,6 +93,8 @@ int cx_library_app_uninstall(const char *titleId, char *err, size_t errcap) {
   return 0;
 }
 #endif
+
+int cx_library_app_launch(const char *titleId, char *err, size_t errcap) { return native_launch(titleId, err, errcap); }
 
 int cx_library_launch(const char *titleId, jw *w, char *code, size_t ccap, char *err, size_t errcap) {
   xstrlcpy(code, "bad_request", ccap);

@@ -146,6 +146,19 @@ int app_install_state(char *version, size_t cap) {
   return state;
 }
 
+int app_install_launchable(void) {
+  int state = app_install_state(NULL, 0);
+  if (state != APP_STATE_STORE && state != APP_STATE_MANUAL && state != APP_STATE_FOLDER) return 0;
+  char appdir[700];
+  xsnprintf(appdir, sizeof appdir, "%s/%s", storage_user_app_dir(), APP_TITLE_ID);
+  return util_dir_exists(appdir);
+}
+
+int app_install_open_choice(int tv_app, int wanted, int recent, int launchable) {
+  if (tv_app || !wanted || recent) return APP_OPEN_NONE;
+  return launchable ? APP_OPEN_APP : APP_OPEN_BROWSER;
+}
+
 /* Writes the install record for the image now at dest (after the rename). */
 static int write_record(const char *dest, const char *version, const char *sha256) {
   struct stat st;

@@ -108,7 +108,7 @@
     "hintText": "Installa l'app una volta e apri lo store dal suo riquadro, senza FTP né indirizzi nel browser.",
     "notNow": "Non ora",
     "openOnStart": "Apri XENO STORE all'avvio",
-    "openOnStartHint": "Apre lo store sulla TV a ogni avvio. Disattivalo se lo store parte automaticamente all'accensione.",
+    "openOnStartHint": "Apre l'app XENO STORE sulla TV a ogni avvio dello store, o il browser se l'app non è installata. Disattivalo se lo store parte automaticamente all'accensione.",
     "err": {
       "sha256_mismatch": "Il download non corrisponde al suo checksum: non è stato installato nulla. Riprova.",
       "sha256_unavailable": "La versione non ha ancora un checksum: riprova tra qualche minuto.",

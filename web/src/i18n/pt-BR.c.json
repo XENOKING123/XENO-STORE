@@ -108,7 +108,7 @@
     "hintText": "Instale o app uma vez e abra a loja pelo próprio ícone — sem FTP e sem endereço no navegador.",
     "notNow": "Agora não",
     "openOnStart": "Abrir o XENO STORE ao iniciar",
-    "openOnStartHint": "Abre a loja na TV toda vez que ela inicia. Desative se a loja inicia automaticamente quando o console liga.",
+    "openOnStartHint": "Abre o app XENO STORE na TV toda vez que a loja inicia, ou o navegador quando o app não está instalado. Desative se a loja inicia automaticamente quando o console liga.",
     "err": {
       "sha256_mismatch": "O download não corresponde à soma de verificação — nada foi instalado. Tente novamente.",
       "sha256_unavailable": "Esta versão ainda não tem soma de verificação — tente novamente em alguns minutos.",

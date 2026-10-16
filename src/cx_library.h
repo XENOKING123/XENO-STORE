@@ -12,6 +12,10 @@ int cx_library_launch(const char *titleId, jw *w, char *code, size_t ccap, char 
 /* Without a valid token: writes confirmRequired/token/expiresIn and returns 1.
  * With it: uninstalls and returns 0. -1 on error. */
 int cx_library_uninstall(const char *titleId, const char *token, jw *w, char *code, size_t ccap, char *err, size_t errcap);
+/* The launch call itself, no checks: sceSystemServiceLaunchApp (host build:
+ * writes <sim>/launched.json, or fails when XENO_HOST_LAUNCH_FAIL is set).
+ * 0, or -1 with err. */
+int cx_library_app_launch(const char *titleId, char *err, size_t errcap);
 /* The uninstall call itself, no checks or token: sceAppInstUtilAppUnInstall
  * (host build: deletes <user/app>/<id> and its appmeta). 0, or -1 with err. */
 int cx_library_app_uninstall(const char *titleId, char *err, size_t errcap);
