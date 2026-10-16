@@ -732,5 +732,12 @@
   "The app plays a sound as you move and select.": "Aplikacja odtwarza dźwięk podczas poruszania się i wybierania.",
   "The app is silent. Games and the console keep their own sounds.": "Aplikacja jest wyciszona. Gry i konsola zachowują własne dźwięki.",
   "Turn sounds off": "Wyłącz dźwięki",
-  "Turn sounds on": "Włącz dźwięki"
+  "Turn sounds on": "Włącz dźwięki",
+  "About": "Informacje",
+  "XENO STORE version": "Wersja XENO STORE",
+  "This TV app is based on the TV app of {orbit} and on {kit} by BlackBearReloaded.": "Ta aplikacja TV opiera się na aplikacji TV {orbit} oraz na {kit} autorstwa BlackBearReloaded.",
+  "XENO STORE is free software under the GNU General Public License, version 3 or later. It comes with no warranty.": "XENO STORE to wolne oprogramowanie na licencji GNU General Public License w wersji 3 lub późniejszej. Jest dostarczane bez żadnej gwarancji.",
+  "Get the TV app’s complete source from XENO STORE’s GitHub releases: {file}.": "Pełny kod źródłowy aplikacji TV pobierzesz z wydań XENO STORE na GitHubie: {file}.",
+  "Third-party components": "Komponenty innych firm",
+  "Their licences are in app/tv/licenses of the source.": "Ich licencje znajdują się w app/tv/licenses w kodzie źródłowym."
 }

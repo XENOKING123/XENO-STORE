@@ -185,6 +185,42 @@ TEST(SettingsSources, ChipsWrapInsideThePane)
     EXPECT_LE(right, 600.0f + 940.0f + 24.0f); // the pane, and a focus ring's glow
 }
 
+// ---- About: the version, credits, licence and where the source is ----
+
+std::size_t settings_glyphs(SettingsHarness &h)
+{
+    Frame drawn;
+    h.app.settings().draw(drawn, true);
+    std::size_t glyphs = 0;
+    for (const auto &instance : drawn.scene.instances())
+        glyphs += instance.params[3] == static_cast<float>(hui::gfx::Shape::glyph) ? 1u : 0u;
+    return glyphs;
+}
+
+TEST(SettingsAbout, AboutFollowsMoreSettingsAndNamesTheVersionTwice)
+{
+    std::size_t glyphs[2] = {};
+    for (int i = 0; i < 2; ++i)
+    {
+        SettingsHarness h(1);
+        h.context.app_version = i == 0 ? "01.003.001" : "01.013.001"; // 1.3.1, then 1.13.1
+        h.app.open_settings(SettingsScreen::Section::more);
+        h.settle();
+        h.frame(Direction::down);
+        ASSERT_EQ(h.app.settings().section(), SettingsScreen::Section::about);
+        h.frame(Direction::down); // the last section
+        EXPECT_EQ(h.app.settings().section(), SettingsScreen::Section::about);
+        h.frame(Direction::right); // nothing to select: the focus stays on the sections
+        h.frame(Direction::up);
+        EXPECT_EQ(h.app.settings().section(), SettingsScreen::Section::more);
+        h.frame(Direction::down);
+        h.settle();
+        glyphs[i] = settings_glyphs(h);
+    }
+    // One more digit in the version row and one in the source archive's name.
+    EXPECT_EQ(glyphs[1], glyphs[0] + 2);
+}
+
 // ---- Sounds: the app's own setting, in a file of the title's storage ----
 
 struct PrefsDir

@@ -653,6 +653,15 @@ TEST(Model, TheAppsVersionComesFromItsContentVersion)
     EXPECT_EQ(app_release_version(""), "");
 }
 
+// XENO STORE: each release attaches the TV app's complete source under this
+// name (.github/workflows/build.yml); App settings, About names it.
+TEST(Model, TheSourceArchiveOfARelease)
+{
+    EXPECT_EQ(tv_source_archive("1.3.1"), "XENO-STORE-1.3.1-tv-sources.tar.gz");
+    EXPECT_EQ(tv_source_archive(app_release_version("01.012.000")), "XENO-STORE-1.12.0-tv-sources.tar.gz");
+    EXPECT_EQ(tv_source_archive(""), "XENO-STORE-<version>-tv-sources.tar.gz");
+}
+
 TEST(Model, AgesAndChecksAreRelativeToNow)
 {
     const double now = 1'800'000'000.0;

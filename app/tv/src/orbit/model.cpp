@@ -1341,6 +1341,12 @@ std::string app_release_version(std::string_view content_version)
            std::to_string(parts[2]);
 }
 
+std::string tv_source_archive(std::string_view release_version)
+{
+    return "XENO-STORE-" + std::string(release_version.empty() ? "<version>" : release_version) +
+           "-tv-sources.tar.gz";
+}
+
 bool check_fresh(double checked_at, double now)
 {
     return checked_at > 0.0 && now - checked_at <= 900.0;

@@ -11,7 +11,7 @@
   {"name": "crash-fallback", "world": {"backend": "down", "loader": "fake", "saved": "crash", "seed": []}, "scenarios": ["crash-fallback"]},
   {"name": "setup", "world": {"acknowledged": false, "seed": ["pair"]}, "scenarios": ["setup"]},
   {"name": "downloads", "world": {"seed": ["pair", "acknowledge", "settings", "downloads"]}, "scenarios": ["downloads", "downloads-finished", "downloads-dialog", "delete-cancelled", "downloads-actions", "queued", "download", "game", "game-viking", "game-ps4", "game-library"]},
-  {"name": "store", "world": {"seed": ["pair", "acknowledge", "finished-download"]}, "scenarios": ["discover", "discover-jump", "favourite", "browse", "browse-platform", "browse-filters", "library-details", "library-storage", "settings", "settings-sources", "settings-pairing", "settings-catalogue", "settings-more", "settings-storage", "settings-downloads", "settings-updates", "settings-tv-app", "library"]},
+  {"name": "store", "world": {"seed": ["pair", "acknowledge", "finished-download"]}, "scenarios": ["discover", "discover-jump", "favourite", "browse", "browse-platform", "browse-filters", "library-details", "library-storage", "settings", "settings-sources", "settings-pairing", "settings-catalogue", "settings-more", "settings-about", "settings-storage", "settings-downloads", "settings-updates", "settings-tv-app", "library"]},
   {"name": "saves", "world": {"saves": "community"}, "scenarios": ["saves", "game-saves", "saves-install", "saves-progress", "saves-long", "saves-closed", "saves-running"]},
   {"name": "saves-garlic", "world": {"saves": "garlic"}, "scenarios": ["saves-garlic"], "sweep": false},
   {"name": "saves-building", "world": {"saves": "building"}, "scenarios": ["saves-building"], "sweep": false},
@@ -67,6 +67,7 @@
   "settings-updates": {"captures": ["settings-updates-status", "settings-updates-checked", "settings-updates-saved"]},
   "settings-tv-app": {"captures": ["settings-tv-app", "settings-tv-app-checked"]},
   "settings-more": {"captures": ["settings-more-page", "settings-sounds-off"]},
+  "settings-about": {"captures": ["settings-about"]},
   "restart": {"captures": ["restart-confirm", "restart-stopping", "restart-done"], "maxSeconds": 90, "expect": {"loaderSends": 1, "allow503": true, "drain": true}},
   "connection-lost": {"captures": ["connection-lost-before", "connection-lost-banner"], "expect": {"linkError": true, "marks": ["stop-backend"]}},
   "state-unhealthy": {"captures": ["state-unhealthy-banner"]}

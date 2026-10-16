@@ -716,5 +716,12 @@
   "The app plays a sound as you move and select.": "The app plays a sound as you move and select.",
   "The app is silent. Games and the console keep their own sounds.": "The app is silent. Games and the console keep their own sounds.",
   "Turn sounds off": "Turn sounds off",
-  "Turn sounds on": "Turn sounds on"
+  "Turn sounds on": "Turn sounds on",
+  "About": "About",
+  "XENO STORE version": "XENO STORE version",
+  "This TV app is based on the TV app of {orbit} and on {kit} by BlackBearReloaded.": "This TV app is based on the TV app of {orbit} and on {kit} by BlackBearReloaded.",
+  "XENO STORE is free software under the GNU General Public License, version 3 or later. It comes with no warranty.": "XENO STORE is free software under the GNU General Public License, version 3 or later. It comes with no warranty.",
+  "Get the TV app’s complete source from XENO STORE’s GitHub releases: {file}.": "Get the TV app’s complete source from XENO STORE’s GitHub releases: {file}.",
+  "Third-party components": "Third-party components",
+  "Their licences are in app/tv/licenses of the source.": "Their licences are in app/tv/licenses of the source."
 }

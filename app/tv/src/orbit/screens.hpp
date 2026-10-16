@@ -636,6 +636,7 @@ class SettingsScreen final : public Screen
         catalogue,
         updates,
         more,
+        about, // XENO STORE: the version, credits, licence and source
         count,
     };
     explicit SettingsScreen(Context &context);
@@ -695,6 +696,7 @@ class SettingsScreen final : public Screen
     void build_catalogue(Pane &pane) const;
     void build_updates(Pane &pane) const;
     void build_more(Pane &pane) const;
+    void build_about(Pane &pane) const;
     std::vector<Control> controls(float *height = nullptr) const;
     void activate(const Control &control, Intent &intent, Feedback &feedback);
     void load_draft();

@@ -34,9 +34,21 @@ constexpr float kViewBottom = 990.0f; // and stops above the hints
 constexpr float kCardRadius = 14.0f;
 constexpr int kSectionCount = static_cast<int>(SettingsScreen::Section::count);
 constexpr const char *kSections[] = {/* i18n */ "Download sources", /* i18n */ "Storage", /* i18n */ "Pair a device",
-                                     /* i18n */ "Game catalogue",   /* i18n */ "Updates", /* i18n */ "More settings"};
+                                     /* i18n */ "Game catalogue",   /* i18n */ "Updates", /* i18n */ "More settings",
+                                     /* i18n */ "About"};
 constexpr const char *kSavedElf = "/data/xeno-store/xeno-store.elf";
 constexpr int kMaxDownloads = 4; // XENO STORE runs 1 to 4 downloads at once
+// XENO STORE: About's third-party components, from app/tv/NOTICE (short list).
+// Names, versions and licence identifiers: not translated.
+constexpr const char *kComponents[] = {
+    "Orbit Store 1.2.0 / 1.3.5, saawant12 \xC2\xB7 GPL-3.0-or-later",
+    "ps5-homebrew-ui, BlackBearReloaded \xC2\xB7 GPL-3.0-or-later",
+    "SharpProspero, SvenGDK \xC2\xB7 GPL-3.0",
+    "ps5-opengl SDK 1.0.0 (Mesa 26.2.0) \xC2\xB7 GPL-3.0-or-later",
+    "PS5 payload SDK v0.42 \xC2\xB7 GPL-3.0-or-later",
+    "LLVM libc++, libc++abi, libunwind, compiler-rt \xC2\xB7 Apache-2.0 WITH LLVM-exception",
+    "libwebp 1.4.0 \xC2\xB7 BSD-3-Clause;  stb \xC2\xB7 MIT OR Unlicense;  Inter 4.1 \xC2\xB7 OFL-1.1",
+};
 constexpr const char *kNotice =
     /* i18n */ "XENO STORE does not host game files. The catalog links to public archives and "
     "community pages; it is your responsibility to only download what you are allowed to. Hosts "
@@ -308,6 +320,9 @@ void SettingsScreen::build(Pane &pane) const
         break;
     case Section::updates:
         build_updates(pane);
+        break;
+    case Section::about:
+        build_about(pane);
         break;
     default:
         build_more(pane);
@@ -912,6 +927,27 @@ void SettingsScreen::build_more(Pane &pane) const
     pane.version_row(tr("TV app"), running.empty() ? tr("Unknown") : running);
     pane.version_row(tr("Download service"),
                      state.system.version.empty() ? tr("Unknown") : state.system.version);
+}
+
+// ---- About (XENO STORE): the version, credits, licence and source ----
+
+void SettingsScreen::build_about(Pane &pane) const
+{
+    const std::string running = app_release_version(ctx_.app_version);
+    pane.heading(tr("About"));
+    pane.version_row(tr("XENO STORE version"), running.empty() ? tr("Unknown") : running);
+    pane.gap(8.0f);
+    pane.body(tr("This TV app is based on the TV app of {orbit} and on {kit} by BlackBearReloaded.",
+                 {{"orbit", "Orbit Store"}, {"kit", "ps5-homebrew-ui"}}));
+    pane.body(tr("XENO STORE is free software under the GNU General Public License, version 3 or "
+                 "later. It comes with no warranty."));
+    pane.body(tr("Get the TV app\xE2\x80\x99s complete source from XENO STORE\xE2\x80\x99s GitHub releases: {file}.",
+                 {{"file", tv_source_archive(running)}}));
+    pane.rule();
+    pane.subheading(tr("Third-party components"));
+    for (const char *component : kComponents)
+        pane.fine(component);
+    pane.fine(tr("Their licences are in app/tv/licenses of the source."));
 }
 
 // ---- input ----

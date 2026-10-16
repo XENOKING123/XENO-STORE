@@ -635,6 +635,9 @@ std::string save_install_outcome(const SaveJob &job, const std::string &game,
 // This app's release version from its package's content version:
 // "01.002.003" is 1.2.3, as the release feed numbers it. Empty if malformed.
 std::string app_release_version(std::string_view content_version);
+// XENO STORE: the TV app's complete source, as each release attaches it
+// ("XENO-STORE-1.3.1-tv-sources.tar.gz"; "<version>" when it is not known).
+std::string tv_source_archive(std::string_view release_version);
 // A checked release is fresh for 15 minutes; installing needs a fresh check.
 bool check_fresh(double checked_at, double now);
 

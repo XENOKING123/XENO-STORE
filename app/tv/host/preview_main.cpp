@@ -1130,6 +1130,10 @@ std::vector<Scenario> scenarios()
          // XENO STORE: Sounds, turned off (in memory only here).
          run(0.3f, [](orbit::App &app) { app.open_settings(Section::more, true); }),
          move(Direction::down), tap(Action::confirm), pause(0.8f, "settings-sounds-off")}});
+    // XENO STORE: About, the version, credits, licence and source.
+    list.push_back({"settings-about", Mode::normal, true,
+        {run(0.5f, [](orbit::App &app) { app.open_settings(Section::about); }),
+         pause(1.0f, "settings-about")}});
     // Newer releases of both parts: the badge, guided installs and a restart.
     list.push_back(
         {"updates",

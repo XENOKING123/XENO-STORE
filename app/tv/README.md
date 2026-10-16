@@ -74,7 +74,8 @@ screen for screen:
   View download / View in Library / Download another copy, storage estimates,
   metadata and Vikingfile instructions remain available.
 - **App settings** (the gear in the top bar): Download sources, Storage (the
-  default drive), Pair a device, Game catalogue and Updates. See below.
+  default drive), Pair a device, Game catalogue, Updates, More settings and
+  About. See below.
 
 Connect TorBox in the browser's **App settings → Debrid**, then select
 **Download using → TorBox** on a supported game's native download page.
@@ -134,6 +135,10 @@ right (Right or Cross to enter it, Circle or Left to leave).
 - **More settings**: Open browser version; **Sounds**, which turns the
   app's interface sounds off or on (kept on this console, in
   `/download0/xeno-store/settings.json` of the app's storage); the versions.
+- **About**: XENO STORE's version; that the app is based on Orbit Store's
+  TV app and BlackBearReloaded's ps5-homebrew-ui; the GPL-3.0 notice (no
+  warranty); where its source is (`XENO-STORE-<version>-tv-sources.tar.gz`
+  on the GitHub releases); and the third-party components of `NOTICE`.
 - **More settings**: Open browser version, and both versions side by side.
 
 When the app opens it asks Orbit to look for updates of both parts (the
