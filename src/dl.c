@@ -1649,7 +1649,8 @@ static int finish_job(dl_job *j) {
   xsnprintf(j->message, sizeof j->message, "Downloaded (%s)", fb);
   jlog_locked(j, "done: %s", fb);
   int in_group = j->group[0] != 0;
-  int want_install = is_pkg_format(j->format) && (j->autoInstall || s.autoInstallPkg);
+  /* the download's own choice: dl_add() already put the settings default in when the request had none */
+  int want_install = is_pkg_format(j->format) && j->autoInstall;
   int want_scan = is_image_format(j->format) && s.shadowMountScan;
   int want_extract = dlx_extract_applies(j) && s.extractZip;
   if (want_install && in_group && s.autoInstallSets) {

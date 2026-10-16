@@ -398,6 +398,30 @@ class DownloadTests(unittest.TestCase):
         self.assertFalse(os.path.exists(j["path"]))
         self.assertIsNone(self.srv.job(job["id"]))
 
+    def test_20_per_download_auto_install_wins(self):
+        # The download sheet's Auto-install choice wins over Settings → Downloads, both ways.
+        self.addCleanup(self.srv.api, "PUT", "/api/settings", {"downloads": {"autoInstallPkg": True}})
+        self.srv.api("PUT", "/api/settings", {"downloads": {"autoInstallPkg": True}})
+        off = self.srv.add(url=f"{self.rs}/ok/tiny.pkg", filename="PPSA01234 Keep.pkg", format="PKG", autoInstall=False, size=2 * MiB)
+        self.assertFalse(off["autoInstall"])
+        self.srv.wait_job(off["id"], None, timeout=60, until=lambda x: x["state"] in ("done", "installing", "installed"))
+        time.sleep(1.5)
+        j = self.srv.job(off["id"])
+        self.assertEqual(j["state"], "done", "Auto-install off for this download: the package must not install")
+        self.assertEqual(j["install"]["state"], "idle")
+        self.assertTrue(os.path.exists(j["path"]))
+        self.srv.api("PUT", "/api/settings", {"downloads": {"autoInstallPkg": False}})
+        on = self.srv.add(url=f"{self.rs}/ok/tiny.pkg", filename="PPSA01234 Auto.pkg", format="PKG", autoInstall=True, size=2 * MiB)
+        self.assertTrue(on["autoInstall"])
+        j = self.srv.wait_job(on["id"], "installed", timeout=60)
+        self.assertEqual(j["install"]["state"], "installed")
+        # without a choice the setting decides (off here)
+        dflt = self.srv.add(url=f"{self.rs}/ok/tiny.pkg", filename="PPSA01234 Default.pkg", format="PKG", size=2 * MiB)
+        self.assertFalse(dflt["autoInstall"])
+        self.srv.wait_job(dflt["id"], None, timeout=60, until=lambda x: x["state"] in ("done", "installing", "installed"))
+        time.sleep(1.5)
+        self.assertEqual(self.srv.job(dflt["id"])["state"], "done")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
