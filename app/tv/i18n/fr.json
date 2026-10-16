@@ -725,11 +725,13 @@
   "The app is silent. Games and the console keep their own sounds.": "L’app est silencieuse. Les jeux et la console gardent leurs propres sons.",
   "Turn sounds off": "Désactiver les sons",
   "Turn sounds on": "Activer les sons",
+  "Changed until the app closes. The choice could not be saved on this console.": "Modifié jusqu’à la fermeture de l’app. Le choix n’a pas pu être enregistré sur cette console.",
   "About": "À propos",
   "XENO STORE version": "Version de XENO STORE",
+  "TV app version": "Version de l’app TV",
   "This TV app is based on the TV app of {orbit} and on {kit} by BlackBearReloaded.": "Cette app TV est basée sur l’app TV de {orbit} et sur {kit} de BlackBearReloaded.",
   "XENO STORE is free software under the GNU General Public License, version 3 or later. It comes with no warranty.": "XENO STORE est un logiciel libre sous la GNU General Public License, version 3 ou ultérieure. Il est fourni sans aucune garantie.",
-  "Get the TV app’s complete source from XENO STORE’s GitHub releases: {file}.": "Téléchargez le code source complet de l’app TV depuis les versions GitHub de XENO STORE : {file}.",
+  "Get the TV app’s complete source from {url}: {file}.": "Téléchargez le code source complet de l’app TV sur {url} : {file}.",
   "Third-party components": "Composants tiers",
-  "Their licences are in app/tv/licenses of the source.": "Leurs licences se trouvent dans app/tv/licenses du code source."
+  "The source’s app/tv/NOTICE lists each one’s licence and where its text is.": "Le fichier app/tv/NOTICE du code source indique la licence de chacun et où se trouve son texte."
 }

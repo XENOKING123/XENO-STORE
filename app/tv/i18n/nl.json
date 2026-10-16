@@ -717,11 +717,13 @@
   "The app is silent. Games and the console keep their own sounds.": "De app is stil. Games en de console houden hun eigen geluiden.",
   "Turn sounds off": "Geluiden uitzetten",
   "Turn sounds on": "Geluiden aanzetten",
+  "Changed until the app closes. The choice could not be saved on this console.": "Gewijzigd tot de app sluit. De keuze kon niet op deze console worden opgeslagen.",
   "About": "Over",
   "XENO STORE version": "XENO STORE-versie",
+  "TV app version": "Versie van de tv-app",
   "This TV app is based on the TV app of {orbit} and on {kit} by BlackBearReloaded.": "Deze tv-app is gebaseerd op de tv-app van {orbit} en op {kit} van BlackBearReloaded.",
   "XENO STORE is free software under the GNU General Public License, version 3 or later. It comes with no warranty.": "XENO STORE is vrije software onder de GNU General Public License, versie 3 of later. Er wordt geen enkele garantie gegeven.",
-  "Get the TV app’s complete source from XENO STORE’s GitHub releases: {file}.": "Download de volledige broncode van de tv-app via de GitHub-releases van XENO STORE: {file}.",
+  "Get the TV app’s complete source from {url}: {file}.": "Download de volledige broncode van de tv-app via {url}: {file}.",
   "Third-party components": "Componenten van derden",
-  "Their licences are in app/tv/licenses of the source.": "Hun licenties staan in app/tv/licenses van de broncode."
+  "The source’s app/tv/NOTICE lists each one’s licence and where its text is.": "Het bestand app/tv/NOTICE in de broncode noemt de licentie van elk onderdeel en waar de tekst ervan staat."
 }

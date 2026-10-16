@@ -719,6 +719,7 @@ class SettingsScreen final : public Screen
     std::uint64_t setting_serial_ = 0;
     std::string error_;
     Setting error_setting_ = Setting::none;
+    std::string sounds_error_; // XENO STORE: why the Sounds choice was not saved
     float age_ = 0.0f;
     ui::Ease scroll_;
     std::vector<float> focus_amount_; // parallel to controls(), by position

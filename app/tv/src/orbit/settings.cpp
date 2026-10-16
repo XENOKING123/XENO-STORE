@@ -37,6 +37,8 @@ constexpr const char *kSections[] = {/* i18n */ "Download sources", /* i18n */ "
                                      /* i18n */ "Game catalogue",   /* i18n */ "Updates", /* i18n */ "More settings",
                                      /* i18n */ "About"};
 constexpr const char *kSavedElf = "/data/xeno-store/xeno-store.elf";
+// XENO STORE: where each release's TV app source archive is (About).
+constexpr const char *kReleasesPage = "github.com/XENOKING123/XENO-STORE/releases";
 constexpr int kMaxDownloads = 4; // XENO STORE runs 1 to 4 downloads at once
 // XENO STORE: About's third-party components, from app/tv/NOTICE (short list).
 // Names, versions and licence identifiers: not translated.
@@ -252,6 +254,7 @@ void SettingsScreen::open(Section section, bool content)
     confirm_replace_ = false;
     error_.clear();
     error_setting_ = Setting::none;
+    sounds_error_.clear();
     age_ = 0.0f;
     scroll_.snap(0.0f);
     load_draft();
@@ -921,6 +924,11 @@ void SettingsScreen::build_more(Pane &pane) const
                   : tr("The app is silent. Games and the console keep their own sounds."));
     pane.buttons({{Kind::sounds_toggle,
                    ctx_.prefs.sounds() ? tr("Turn sounds off") : tr("Turn sounds on")}});
+    if (!sounds_error_.empty())
+        pane.body(std::string(tr("Changed until the app closes. The choice could not be saved on "
+                                 "this console.")) +
+                      " (" + sounds_error_ + ")",
+                  19.0f, ui::color::bad);
     pane.gap(12.0f);
     pane.rule();
     const std::string running = app_release_version(ctx_.app_version);
@@ -933,21 +941,26 @@ void SettingsScreen::build_more(Pane &pane) const
 
 void SettingsScreen::build_about(Pane &pane) const
 {
+    const Snapshot &state = ctx_.store.state();
     const std::string running = app_release_version(ctx_.app_version);
     pane.heading(tr("About"));
-    pane.version_row(tr("XENO STORE version"), running.empty() ? tr("Unknown") : running);
+    // XENO STORE's is the running store's version; Updates installs the TV app
+    // apart, and its source archive follows its own release.
+    pane.version_row(tr("XENO STORE version"),
+                     state.system.version.empty() ? tr("Unknown") : state.system.version);
+    pane.version_row(tr("TV app version"), running.empty() ? tr("Unknown") : running);
     pane.gap(8.0f);
     pane.body(tr("This TV app is based on the TV app of {orbit} and on {kit} by BlackBearReloaded.",
                  {{"orbit", "Orbit Store"}, {"kit", "ps5-homebrew-ui"}}));
     pane.body(tr("XENO STORE is free software under the GNU General Public License, version 3 or "
                  "later. It comes with no warranty."));
-    pane.body(tr("Get the TV app\xE2\x80\x99s complete source from XENO STORE\xE2\x80\x99s GitHub releases: {file}.",
-                 {{"file", tv_source_archive(running)}}));
+    pane.body(tr("Get the TV app\xE2\x80\x99s complete source from {url}: {file}.",
+                 {{"url", kReleasesPage}, {"file", tv_source_archive(running)}}));
     pane.rule();
     pane.subheading(tr("Third-party components"));
     for (const char *component : kComponents)
         pane.fine(component);
-    pane.fine(tr("Their licences are in app/tv/licenses of the source."));
+    pane.fine(tr("The source\xE2\x80\x99s app/tv/NOTICE lists each one\xE2\x80\x99s licence and where its text is."));
 }
 
 // ---- input ----
@@ -971,13 +984,11 @@ void SettingsScreen::activate(const Control &control, Intent &intent, Feedback &
         ctx_.store.set_delete_archives(!state.system.delete_archives);
         break;
     case Kind::sounds_toggle:
-    {
-        // A failed save keeps the choice until the app closes.
-        const std::string failed = ctx_.prefs.set_sounds(!ctx_.prefs.sounds());
-        if (!failed.empty())
-            std::fprintf(stderr, "[XENO-TV] sounds setting not saved: %s\n", failed.c_str());
+        // A failed save keeps the choice until the app closes, and says so.
+        sounds_error_ = ctx_.prefs.set_sounds(!ctx_.prefs.sounds());
+        if (!sounds_error_.empty())
+            std::fprintf(stderr, "[XENO-TV] sounds setting not saved: %s\n", sounds_error_.c_str());
         break;
-    }
     case Kind::source:
     {
         if (control.index >= static_cast<int>(state.sources.options.size()))
@@ -1165,6 +1176,7 @@ Intent SettingsScreen::update(const InputFrame &input, float dt, Feedback &feedb
                     confirm_replace_ = false;
                     error_.clear();
                     error_setting_ = Setting::none;
+                    sounds_error_.clear();
                     load_draft();
                     if (section_ == Section::pairing)
                         ctx_.store.refresh_session();
@@ -1363,6 +1375,8 @@ std::vector<hui::ui::Hint> SettingsScreen::hints() const
 {
     if (in_content_)
         return {{hui::ui::Button::cross, tr("Select")}, {hui::ui::Button::circle, tr("Back")}};
+    if (controls().empty()) // About: nothing to select
+        return {{hui::ui::Button::dpad, tr("Sections")}, {hui::ui::Button::circle, tr("Close")}};
     return {{hui::ui::Button::dpad, tr("Sections")},
             {hui::ui::Button::cross, tr("Select")},
             {hui::ui::Button::circle, tr("Close")}};

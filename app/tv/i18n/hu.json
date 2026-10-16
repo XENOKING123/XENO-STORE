@@ -717,11 +717,13 @@
   "The app is silent. Games and the console keep their own sounds.": "Az app néma. A játékok és a konzol saját hangjai megmaradnak.",
   "Turn sounds off": "Hangok kikapcsolása",
   "Turn sounds on": "Hangok bekapcsolása",
+  "Changed until the app closes. The choice could not be saved on this console.": "Az app bezárásáig módosítva. A választást nem sikerült menteni ezen a konzolon.",
   "About": "Névjegy",
   "XENO STORE version": "XENO STORE-verzió",
+  "TV app version": "TV app-verzió",
   "This TV app is based on the TV app of {orbit} and on {kit} by BlackBearReloaded.": "Ez a TV app az {orbit} TV appján, valamint BlackBearReloaded {kit} keretrendszerén alapul.",
   "XENO STORE is free software under the GNU General Public License, version 3 or later. It comes with no warranty.": "A XENO STORE szabad szoftver a GNU General Public License 3-as vagy későbbi verziója alatt. Semmilyen garancia nem vonatkozik rá.",
-  "Get the TV app’s complete source from XENO STORE’s GitHub releases: {file}.": "A TV app teljes forráskódja a XENO STORE GitHub-kiadásai között található: {file}.",
+  "Get the TV app’s complete source from {url}: {file}.": "A TV app teljes forráskódja itt található: {url} ({file}).",
   "Third-party components": "Harmadik féltől származó összetevők",
-  "Their licences are in app/tv/licenses of the source.": "A licenceik a forráskód app/tv/licenses mappájában találhatók."
+  "The source’s app/tv/NOTICE lists each one’s licence and where its text is.": "A forráskód app/tv/NOTICE fájlja felsorolja mindegyik licencét, és hogy hol található a szövege."
 }

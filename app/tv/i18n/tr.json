@@ -717,11 +717,13 @@
   "The app is silent. Games and the console keep their own sounds.": "Uygulama sessiz. Oyunlar ve konsol kendi seslerini korur.",
   "Turn sounds off": "Sesleri kapat",
   "Turn sounds on": "Sesleri aç",
+  "Changed until the app closes. The choice could not be saved on this console.": "Uygulama kapanana kadar değiştirildi. Seçim bu konsola kaydedilemedi.",
   "About": "Hakkında",
   "XENO STORE version": "XENO STORE sürümü",
+  "TV app version": "TV uygulaması sürümü",
   "This TV app is based on the TV app of {orbit} and on {kit} by BlackBearReloaded.": "Bu TV uygulaması, {orbit} TV uygulamasına ve BlackBearReloaded'ın {kit} projesine dayanır.",
   "XENO STORE is free software under the GNU General Public License, version 3 or later. It comes with no warranty.": "XENO STORE, GNU General Public License sürüm 3 veya sonrası kapsamında özgür bir yazılımdır. Hiçbir garanti olmadan sunulur.",
-  "Get the TV app’s complete source from XENO STORE’s GitHub releases: {file}.": "TV uygulamasının tam kaynak kodunu XENO STORE'un GitHub sürümlerinden indirin: {file}.",
+  "Get the TV app’s complete source from {url}: {file}.": "TV uygulamasının tam kaynak kodunu {url} adresinden indirin: {file}.",
   "Third-party components": "Üçüncü taraf bileşenleri",
-  "Their licences are in app/tv/licenses of the source.": "Lisansları kaynak kodundaki app/tv/licenses klasöründedir."
+  "The source’s app/tv/NOTICE lists each one’s licence and where its text is.": "Kaynak kodundaki app/tv/NOTICE dosyası her birinin lisansını ve metninin nerede olduğunu listeler."
 }
