@@ -28,6 +28,9 @@ enum class FixtureMode
     saves_empty,  // the store builds its index for two lists, then has no saves
     saves_older,  // a store without the Save Data Store (404 on /api/saves)
     saves_garlic, // installs fail: Garlic Save Manager cannot be started
+    saves_failed, // the list answers 503 (the first answer after 1.2 s, so it shows loading)
+    saves_partial, // the XenoKing site cannot be reached, then (after a reload) the
+                   // Settings backend is not usable: the GitHub index only
 };
 
 // Whose answers the fixture gives where the two backends differ.
@@ -83,7 +86,8 @@ class Fixture final : public http::Transport
     std::string jobs_json() const;
     std::string art(const std::string &game, bool hero) const;
     std::string saves_json();
-    std::string save_job_json(const SaveJob &job) const;
+    // state: the job's state now (running, done, ...), for the cancel's 404.
+    std::string save_job_json(const SaveJob &job, std::string *state = nullptr) const;
 
     std::string library_json() const;
     std::string favourites_json() const;

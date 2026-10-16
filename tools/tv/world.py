@@ -159,18 +159,22 @@ SAVES_INDEX = (
      "author": "gridline", "category": "starter", "gameVersion": "01.010.000", "region": "USA",
      "createdAt": "2026-10-05T20:00:00Z", "slow": True},
 )
-# The site's rows (its own columns, and "data" as above); the store names them from the notes.
+# The site's rows (its own columns, and "data" as above); the store names them from
+# the notes and lists them as "sb:<id>" (the fixture's IDs). Echo Valley's notes
+# are long, with a long first sentence: a long name and long notes in the details.
 SAVES_SITE = (
-    {"title_id": "PPSA90001", "game": "Tidewater", "shared_by": "tidesinger",
+    {"id": "5a1d0000-0000-4000-8000-000000000001", "title_id": "PPSA90001", "game": "Tidewater", "shared_by": "tidesinger",
      "notes": "100% platinum route. Every chart and wreck found, ready for the last trophy.",
      "file_path": "PPSA90001/tidewater-platinum.zip", "created_at": "2026-10-14T08:30:00.000000+00:00",
      "data": 3100},
-    {"title_id": "PPSA90002", "game": "Neon Courier", "shared_by": "nightshift",
+    {"id": "5a1d0000-0000-4000-8000-000000000002", "title_id": "PPSA90002", "game": "Neon Courier", "shared_by": "nightshift",
      "notes": "Boss rush checkpoint. Saved before the final delivery.",
      "file_path": "PPSA90002/neon-courier-boss-rush.zip", "created_at": "2026-10-13T22:10:00.000000+00:00",
      "data": 800},
-    {"title_id": "PPSA90010", "game": "Echo Valley", "shared_by": "undertow",
-     "notes": "Glitched endless night. Use at your own risk.",
+    {"id": "5a1d0000-0000-4000-8000-000000000003", "title_id": "PPSA90010", "game": "Echo Valley", "shared_by": "undertow",
+     "notes": "Glitched endless night on the lighthouse coast with every lantern in town lit. The moon stays "
+              "overhead for good, so the night creatures never leave and the lantern quests can be repeated "
+              "for coins. Saved on the pier before the last ferry with the side quests done. Use at your own risk.",
      "file_path": "PPSA90010/echo-valley-endless-night.zip", "created_at": "2026-10-01T10:00:00.000000+00:00",
      "data": 34},
 )

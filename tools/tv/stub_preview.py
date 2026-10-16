@@ -45,8 +45,11 @@ START_UP = ("offline", "no-loader", "cold-start", "crash-fallback")
 # The Save Data Store scenarios that install a save, as the real ones do (the
 # saves of tools/tv/world.py): (save id, profile index, cancel once bytes arrive).
 SAVE_INSTALLS = {"saves-install": ("xk-ember-forge", 1, False), "saves-progress": ("xk-starfall-season", 0, True),
+                 "saves-closed": ("xk-ember-forge", 0, False),
                  "saves-running": ("xk-orchard-bloom", 0, False), "saves-garlic": ("xk-ember-forge", 0, False)}
-SAVES = ("saves", "game-saves", "saves-building") + tuple(SAVE_INSTALLS)
+# The installs that end with the details closed: the app's toast names the save.
+SAVE_TOASTS = ("saves-closed",)
+SAVES = ("saves", "game-saves", "saves-long", "saves-building") + tuple(SAVE_INSTALLS)
 
 
 class Refused(Exception):
@@ -393,9 +396,13 @@ class Stub:
             self.capture(caps.pop(0))
             self.saves()
         elif n in SAVES:
-            self.saves()
+            listing = self.saves()
             if n in SAVE_INSTALLS:
                 self.install_save(*SAVE_INSTALLS[n])
+            if n in SAVE_TOASTS:
+                save = SAVE_INSTALLS[n][0]
+                name = next((r.get("name", "") for r in listing.get("saves") or [] if r.get("id") == save), save)
+                self.state["toasts"].append(f"{name} | {self.state['saveInstall']}")
         elif n == "library":
             self.capture(caps.pop(0))
             self.mark("remove-drive")

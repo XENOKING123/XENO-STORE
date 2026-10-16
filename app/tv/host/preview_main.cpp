@@ -313,7 +313,8 @@ void observe(const orbit::App &app, Watch &watch)
     // replace another that had longer left.
     const bool showing = app.toast_left() > 0.0f && !app.toast().empty();
     if (showing && (app.toast_left() > watch.toast_left + 1e-4f || app.toast() != watch.toast))
-        watch.toasts.push_back(app.toast());
+        watch.toasts.push_back(app.toast_detail().empty() ? app.toast()
+                                                          : app.toast() + " | " + app.toast_detail());
     watch.toast_left = app.toast_left();
     watch.toast = showing ? app.toast() : std::string();
     const auto error = [&watch](const char *where, const std::string &text)
@@ -569,6 +570,13 @@ bool saves_settled()
 bool save_install_ended()
 {
     return g_store->saves().install().ended();
+}
+
+// The list answered by the store's GitHub index alone (saves_partial's reload).
+bool saves_github_only()
+{
+    const orbit::SavesState &saves = g_store->saves().state();
+    return saves.load == orbit::SavesLoad::ready && saves.listing.backend == "github";
 }
 
 // A save install is downloading, with bytes arrived.
@@ -871,6 +879,19 @@ std::vector<Scenario> scenarios()
                pause(1.0f, "saves-installing"), move(Direction::left), tap(Action::confirm),
                until(30.0f, save_install_ended), pause(0.8f, "saves-cancelled")}}),
         false, true});
+    // A save with a long name and long notes: the facts stay clear of them.
+    list.push_back({"saves-long", Mode::normal, true,
+        join({save_details("sb:5a1d0000-0000-4000-8000-000000000003"),
+              {pause(1.0f, "saves-detail-long")}}),
+        false, true});
+    // Install, then close the details at once: the card follows the install,
+    // and a toast says how it ended.
+    list.push_back({"saves-closed", Mode::normal, true,
+        join({save_details("xk-ember-forge"),
+              {pause(0.8f), tap(Action::confirm, 0.1f), tap(Action::back, 0.1f),
+               quick(pause(0.3f, "saves-card-installing")), until(60.0f, save_install_ended),
+               quick(pause(0.5f, "saves-toast"))}}),
+        false, true});
     // The game is running: the store refuses before downloading.
     list.push_back({"saves-running", Mode::normal, true,
         join({save_details("xk-orchard-bloom"),
@@ -893,6 +914,17 @@ std::vector<Scenario> scenarios()
     list.push_back({"saves-older", Mode::saves_older, false,
         {run(1.0f, [](orbit::App &app) { app.show_tab(orbit::tab::saves); }),
          until(10.0f, saves_settled), pause(0.8f, "saves-unsupported")}});
+    // The list on its way, then a store that cannot list the saves: Try again.
+    list.push_back({"saves-failed", Mode::saves_failed, false,
+        {run(0.1f, [](orbit::App &app) { app.show_tab(orbit::tab::saves); }),
+         quick(pause(0.3f, "saves-loading")), until(10.0f, saves_settled),
+         pause(0.8f, "saves-failed")}});
+    // The XenoKing site cannot be reached, then the Settings backend is not usable.
+    list.push_back({"saves-partial", Mode::saves_partial, false,
+        {run(1.0f, [](orbit::App &app) { app.show_tab(orbit::tab::saves); }),
+         until(10.0f, saves_listed), pause(1.0f, "saves-partial"),
+         run(0.3f, [](orbit::App &) { g_store->saves().reload(true); }),
+         until(10.0f, saves_github_only), pause(1.0f, "saves-override")}});
     list.push_back(
         {"library",
          Mode::normal,

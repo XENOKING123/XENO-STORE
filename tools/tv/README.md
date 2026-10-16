@@ -100,7 +100,7 @@ When the preview answers `--list` (one JSON line per scenario: name, fixture, li
 | `setup` | sources not acknowledged | `setup` |
 | `downloads` | the six seeded rows | `downloads`, `downloads-finished`, `downloads-dialog`, `delete-cancelled`, `downloads-actions`, `queued`, `download`, `game`, `game-viking`, `game-ps4`, `game-library` |
 | `store` | one finished download | `discover` (with the art check), `browse*`, `library-details`, `library-storage`, `settings`, `settings-*`, `library` (`remove-drive` mark) |
-| `saves` | saves `community` | `saves` (list, For my games, search, details), `game-saves` (a game page's Community saves), `saves-install` (the second profile, to the end), `saves-progress` (a slow download, then Cancel), `saves-running` (title_running) |
+| `saves` | saves `community` | `saves` (list, For my games, search, details), `game-saves` (a game page's Community saves), `saves-install` (the second profile, to the end), `saves-progress` (a slow download, then Cancel), `saves-long` (a site save with a long name and long notes), `saves-closed` (Install, then the details closed: the card's progress and the toast at the end), `saves-running` (title_running) |
 | `saves-garlic` | saves `garlic` | `saves-garlic` (garlic_unavailable) |
 | `saves-building` | saves `building` | `saves-building` (the store builds its index, then has no saves) |
 | `library-copy` | default | `library-copy` (the app starts and follows the copy) |
@@ -133,7 +133,7 @@ Order matters inside a group: `downloads-actions` deletes the cancelled job, and
 The run fails on any of these, and every failure is listed in `report.json` and on the contact sheet.
 
 1. **Captures.** Every expected capture exists, and the PNG is not uniform: its luma standard deviation is above 4, and more than 1% of its pixels differ from the most common value by more than 2.
-2. **State.** Each scenario's `TVSTATE` has empty `linkError`, `libraryError`, `downloadsError` and `savesError`, unless the scenario expects one (`offline`, `no-loader`, `connection-lost`). No toast, `*Error` field or `errorsSeen` entry contains "unreadable". Every mark the scenario lists was reached. Where the scenario expects them, `savesCount` (the saves the app listed) and `saveInstall` (how its install ended: `done`, `cancelled` or `failed:<errorCode>`) match.
+2. **State.** Each scenario's `TVSTATE` has empty `linkError`, `libraryError`, `downloadsError` and `savesError`, unless the scenario expects one (`offline`, `no-loader`, `connection-lost`). No toast, `*Error` field or `errorsSeen` entry contains "unreadable". Every mark the scenario lists was reached. Where the scenario expects them, `savesCount` (the saves the app listed) and `saveInstall` (how its install ended: `done`, `cancelled` or `failed:<errorCode>`) match, and a toast contains `toastHas`.
 3. **Backend.** The proxy saw no 5xx on `/api/v1/*` or `/api/saves/*`. There are two exceptions: an art 502, and in `restart` a 503 whose body says the store "is stopping". There are no requests to `/zero/companion`. Repeated identical failures are counted once, with "(N times)".
 4. **Loader.**
    - The fake loader received exactly the expected sends: 1 for `cold-start`, 2 for `crash-fallback` and 1 for `restart`.
@@ -202,6 +202,6 @@ python3 -I tools/tv/contact_sheet.py app/tv/build/preview/pictures --dest build/
 ## Adding a scenario
 
 1. Add the scenario to `app/tv/host/preview_main.cpp` with `live_ok` set. Pictures are `capture` steps, and changes to the world are `mark(...)` steps.
-2. Add it to `scenarios.json`: its captures, any `expect` (`linkError`, `savesError`, `marks`, `loaderSends`, `starterOrder`, `allow503`, `drain`, `art`, `savesCount`, `saveInstall`) and `maxSeconds`, and put it in a group whose world fits. A new world needs a group of its own.
+2. Add it to `scenarios.json`: its captures, any `expect` (`linkError`, `savesError`, `marks`, `loaderSends`, `starterOrder`, `allow503`, `drain`, `art`, `savesCount`, `saveInstall`, `toastHas`) and `maxSeconds`, and put it in a group whose world fits. A new world needs a group of its own.
 3. A new mark also needs a case in `World.on_mark` and an entry in `world.MARKS`.
 4. Run `python3 -I tools/tv/preview_live.py --scenarios <name>`. `report.json` `scenarioList.drift` shows any name that differs from the binary.

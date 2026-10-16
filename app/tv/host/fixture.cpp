@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <thread>
 
 namespace orbit::host
 {
@@ -338,10 +339,15 @@ const std::vector<FixtureSave> &saves()
          false, "", 0, "not_installed",
          "You have PPSA90102 installed \xE2\x80\x94 a save never loads on a different title ID",
          "PPSA90102"},
+        // A long first sentence (the store names a site row from it) and long notes.
         {"sb:5a1d0000-0000-4000-8000-000000000003", "PPSA90010", "echo-valley", "Echo Valley",
-         "Glitched endless night", "Glitched endless night. Use at your own risk.", "undertow",
-         "modded", "", "", "2026-10-01T10:00:00.000000+00:00", 409600.0, true, true, "", 0,
-         "unknown", "Version unknown \xE2\x80\x94 check before installing", ""},
+         "Glitched endless night on the lighthouse coast with every lantern in town lit",
+         "Glitched endless night on the lighthouse coast with every lantern in town lit. The moon "
+         "stays overhead for good, so the night creatures never leave and the lantern quests can be "
+         "repeated for coins. Saved on the pier before the last ferry with the side quests done. Use "
+         "at your own risk.",
+         "undertow", "modded", "", "", "2026-10-01T10:00:00.000000+00:00", 409600.0, true, true, "",
+         0, "unknown", "Version unknown \xE2\x80\x94 check before installing", ""},
     };
     return list;
 }
@@ -452,18 +458,31 @@ std::string Fixture::jobs_json() const
 std::string Fixture::saves_json()
 {
     // saves_empty: the store is still building its index for two lists.
-    const bool building = mode_ == FixtureMode::saves_empty && save_lists_++ < 2;
-    std::string out = "{\"ok\":true,\"backend\":\"supabase\",\"backendName\":\"XenoKing\","
-                      "\"siteUpload\":true,\"engine\":\"native\",\"building\":";
+    // saves_partial: the site is not reached, then not used (the GitHub index only).
+    const int lists = save_lists_++;
+    const bool building = mode_ == FixtureMode::saves_empty && lists < 2;
+    const bool partial = mode_ == FixtureMode::saves_partial;
+    const bool github_only = partial && lists > 0;
+    std::string out = github_only ? "{\"ok\":true,\"backend\":\"github\",\"backendName\":\"\","
+                                    "\"backendError\":\"Settings \xE2\x86\x92 Saves \xE2\x86\x92 Backend: "
+                                    "the anon key is not valid\","
+                                  : "{\"ok\":true,\"backend\":\"supabase\",\"backendName\":\"XenoKing\",";
+    out += "\"siteUpload\":true,\"engine\":\"native\",\"building\":";
     out += building ? "true" : "false";
     out += ",\"sources\":[{\"kind\":\"github\",\"url\":\"https://saves.example/saves.json\","
-           "\"rows\":4,\"ok\":true,\"cached\":true},{\"kind\":\"supabase\",\"name\":\"XenoKing\","
-           "\"url\":\"https://site.example\",\"rows\":3,\"ok\":true,\"cached\":true}],\"saves\":[";
+           "\"rows\":4,\"ok\":true,\"cached\":true}";
+    if (!github_only)
+        out += std::string(",{\"kind\":\"supabase\",\"name\":\"XenoKing\",\"url\":\"https://site.example\","
+                           "\"rows\":") +
+               (partial ? "0,\"ok\":false,\"cached\":false}" : "3,\"ok\":true,\"cached\":true}");
+    out += "],\"saves\":[";
     int count = 0;
     if (mode_ != FixtureMode::saves_empty)
     {
         for (const FixtureSave &save : saves())
         {
+            if (partial && save.site)
+                continue; // only the GitHub index answered
             char numbers[160];
             std::snprintf(numbers, sizeof(numbers),
                           ",\"size\":%.0f,\"downloads\":%d,\"versionCompare\":%d", save.size,
@@ -495,7 +514,7 @@ std::string Fixture::saves_json()
 // A save install runs on the fixture's clock: queued, downloading, installing,
 // done. The running game fails at once, the slow save keeps downloading, and
 // saves_garlic fails on Garlic Save Manager.
-std::string Fixture::save_job_json(const SaveJob &job) const
+std::string Fixture::save_job_json(const SaveJob &job, std::string *state_out) const
 {
     const double t = steady_now() - job.started;
     std::string state = "running";
@@ -563,6 +582,8 @@ std::string Fixture::save_job_json(const SaveJob &job) const
                  "\"preBackup\":\"/data/xeno-store/saves/XENO/PPSA90003_ps5_20261015-1200.zip\","
                  "\"accountId\":\"set\"}";
     }
+    if (state_out != nullptr)
+        *state_out = state;
     char numbers[160];
     std::snprintf(numbers, sizeof(numbers), ",\"done\":%.0f,\"total\":%.0f,\"percent\":%d", done,
                   total, total > 0.0 ? static_cast<int>(done * 100.0 / total) : 0);
@@ -1225,6 +1246,19 @@ http::Response Fixture::send(const http::Request &request)
         }
         if (get && (path == "/api/saves/store" || path.rfind("/api/saves/store?", 0) == 0))
         {
+            if (mode_ == FixtureMode::saves_failed)
+            {
+                // The first answer takes a moment: the screen shows the saves loading.
+                if (save_lists_++ == 0)
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+                response.status = 503;
+                response.body = legacy_error(
+                    "unavailable",
+                    "The saves index could not be read: GitHub did not answer in time. Try again in a "
+                    "minute.",
+                    503);
+                return response;
+            }
             response.body = saves_json();
             return response;
         }
@@ -1270,6 +1304,11 @@ http::Response Fixture::send(const http::Request &request)
             {
                 if (job.id != id || (!get && !cancel))
                     continue;
+                std::string state;
+                save_job_json(job, &state);
+                // As the store: only a job still running can be cancelled.
+                if (cancel && state != "queued" && state != "running")
+                    break;
                 if (cancel)
                     job.cancelled = true;
                 response.body = "{\"ok\":true,\"job\":" + save_job_json(job) + "}";

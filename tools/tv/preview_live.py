@@ -885,6 +885,9 @@ def check_group(gr, table, results):
             for key in ("savesCount", "saveInstall"):
                 if key in exp and st.get(key) != exp[key]:
                     fail("state", f"{tag}: {key} {st.get(key)!r}, expected {exp[key]!r}")
+            # A toast the scenario must have shown (part of its text).
+            if exp.get("toastHas") and not any(exp["toastHas"] in t for t in st.get("toasts", [])):
+                fail("state", f"{tag}: no toast with {exp['toastHas']!r} (toasts {st.get('toasts', [])!r})")
             texts = list(st.get("toasts", [])) + [e.get("error", "") for e in st.get("errorsSeen", [])] + \
                 [str(v) for k, v in st.items() if k.endswith("Error") and v]
             for t in texts:
