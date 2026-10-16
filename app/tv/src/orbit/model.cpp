@@ -490,6 +490,87 @@ TvAppStatus parse_tv_app(const json::Value &value)
     return status;
 }
 
+SaveListing parse_save_listing(const json::Value &value)
+{
+    SaveListing listing;
+    listing.backend = value.text("backend");
+    listing.backend_name = value.text("backendName");
+    listing.backend_error = value.text("backendError");
+    listing.building = value.flag("building");
+    for (const json::Value &item : value["sources"].items())
+    {
+        SaveSource source;
+        source.kind = item.text("kind");
+        source.name = item.text("name");
+        source.ok = item.flag("ok", true);
+        listing.sources.push_back(std::move(source));
+    }
+    for (const json::Value &item : value["saves"].items())
+    {
+        SaveRow save;
+        save.id = item.text("id");
+        if (save.id.empty())
+            continue;
+        save.title_id = item.text("titleId");
+        save.game_id = item.text("gameId");
+        save.title = item.text("title");
+        save.name = item.text("name");
+        save.description = item.text("description");
+        save.author = item.text("author");
+        save.category = item.text("category");
+        save.game_version = item.text("gameVersion");
+        save.region = item.text("region");
+        save.created_at = item.text("createdAt");
+        save.source = item.text("source");
+        save.source_name = item.text("sourceName");
+        save.size = std::max(0.0, item.number("size"));
+        save.downloads = static_cast<int>(item["downloads"].as_int());
+        save.installed = item.flag("installed");
+        save.installed_version = item.text("installedVersion");
+        save.version_compare = static_cast<int>(item["versionCompare"].as_int());
+        save.compat = item.text("compat");
+        save.compat_text = item.text("compatText");
+        save.other_region = item.flag("otherRegion");
+        save.installed_title_id = item.text("installedTitleId");
+        listing.saves.push_back(std::move(save));
+    }
+    return listing;
+}
+
+std::vector<SaveProfile> parse_save_profiles(const json::Value &value)
+{
+    std::vector<SaveProfile> profiles;
+    for (const json::Value &item : value["users"].items())
+    {
+        const std::int64_t id = item["id"].as_int();
+        if (id <= 0 || id > 0xFFFFFFFFll)
+            continue;
+        SaveProfile profile;
+        profile.id = static_cast<std::uint32_t>(id);
+        profile.name = item.text("name");
+        profile.foreground = item.flag("foreground");
+        profiles.push_back(std::move(profile));
+    }
+    return profiles;
+}
+
+SaveJob parse_save_job(const json::Value &value)
+{
+    SaveJob job;
+    job.id = value.text("id");
+    job.type = value.text("type");
+    job.state = value.text("state");
+    job.message = value.text("message");
+    job.error = value.text("error");
+    job.error_code = value.text("errorCode");
+    job.done = value.number("done");
+    job.total = value.number("total");
+    job.percent = static_cast<int>(std::clamp<std::int64_t>(value["percent"].as_int(), 0, 100));
+    job.note = value["result"].text("note");
+    job.pre_backup = value["result"].text("preBackup");
+    return job;
+}
+
 bool LibrarySnapshot::can(std::string_view capability) const
 {
     return contains(capabilities, capability);
@@ -983,6 +1064,187 @@ const char *job_view_label(JobView view)
     default:
         return tr("Active");
     }
+}
+
+SaveCompat save_compat(const SaveRow &save)
+{
+    if (save.compat == "match")
+        return save.version_compare < 0 ? SaveCompat::older_save : SaveCompat::match;
+    if (save.compat == "update_game")
+        return SaveCompat::update_game;
+    if (save.compat == "not_installed")
+        return save.other_region ? SaveCompat::other_region : SaveCompat::not_installed;
+    return SaveCompat::unknown;
+}
+
+const char *save_compat_label(SaveCompat compat)
+{
+    switch (compat)
+    {
+    case SaveCompat::match:
+        return tr("Matches your version");
+    case SaveCompat::older_save:
+        return tr("Made on an older version");
+    case SaveCompat::update_game:
+        return tr("Update the game first");
+    case SaveCompat::other_region:
+        return tr("Other region");
+    case SaveCompat::not_installed:
+        return tr("Game not installed");
+    default:
+        return tr("Version unknown");
+    }
+}
+
+std::string save_compat_sentence(const SaveRow &save)
+{
+    const std::string &mine = save.installed_version;
+    switch (save_compat(save))
+    {
+    case SaveCompat::match:
+        return tr("Made on version {version}, the version you have.",
+                  {{"version", save.game_version.empty() ? mine : save.game_version}});
+    case SaveCompat::older_save:
+        return tr("Made on version {version}, and you have {installed}. A newer game loads older "
+                  "saves.",
+                  {{"version", save.game_version}, {"installed", mine}});
+    case SaveCompat::update_game:
+        return tr("Made on version {version}, and you have {installed}. Update the game first, or "
+                  "the save may not load.",
+                  {{"version", save.game_version}, {"installed", mine}});
+    case SaveCompat::other_region:
+        return tr("This save is for {title}, but {installed} is installed. A save only loads on its "
+                  "own title ID.",
+                  {{"title", save.title_id}, {"installed", save.installed_title_id}});
+    case SaveCompat::not_installed:
+        return tr("The game is not installed on this console. The save still installs, and loads "
+                  "once the game is installed.");
+    default:
+        return tr("The game version could not be compared. Check it before you install.");
+    }
+}
+
+SaveCategory save_category(const SaveRow &save)
+{
+    static constexpr const char *kNames[] = {"starter", "platinum", "checkpoint",
+                                             "modded",  "chapter",  "other"};
+    for (int i = 0; i < static_cast<int>(SaveCategory::count); ++i)
+    {
+        if (compare_folded(save.category, kNames[i]) == 0)
+            return static_cast<SaveCategory>(i);
+    }
+    // As the store infers it (src/cx_savestore.c infer_category).
+    const std::string &text = save.description;
+    if (contains_folded(text, "100%") || contains_folded(text, "platinum"))
+        return SaveCategory::platinum;
+    if (contains_folded(text, "start") || contains_folded(text, "ng+") || contains_folded(text, "max"))
+        return SaveCategory::starter;
+    if (contains_folded(text, "trophy") || contains_folded(text, "boss"))
+        return SaveCategory::checkpoint;
+    if (contains_folded(text, "mod") || contains_folded(text, "glitch"))
+        return SaveCategory::modded;
+    if (contains_folded(text, "chapter"))
+        return SaveCategory::chapter;
+    return SaveCategory::other;
+}
+
+const char *save_category_label(SaveCategory category)
+{
+    switch (category)
+    {
+    case SaveCategory::starter:
+        return tr("Maxed starter");
+    case SaveCategory::platinum:
+        return tr("100% Platinum");
+    case SaveCategory::checkpoint:
+        return tr("Trophy checkpoint");
+    case SaveCategory::modded:
+        return tr("Modded or glitched");
+    case SaveCategory::chapter:
+        return tr("Chapter");
+    default:
+        return tr("Other");
+    }
+}
+
+std::vector<SaveCategory> save_categories(const std::vector<SaveRow> &saves)
+{
+    bool present[static_cast<int>(SaveCategory::count)] = {};
+    for (const SaveRow &save : saves)
+        present[static_cast<int>(save_category(save))] = true;
+    std::vector<SaveCategory> categories;
+    for (int i = 0; i < static_cast<int>(SaveCategory::count); ++i)
+    {
+        if (present[i])
+            categories.push_back(static_cast<SaveCategory>(i));
+    }
+    return categories;
+}
+
+bool save_for_game(const SaveRow &save, const Game &game)
+{
+    if (!save.game_id.empty() && save.game_id == game.id)
+        return true;
+    for (const Release &release : game.releases)
+    {
+        if (!release.title_id.empty() && compare_folded(release.title_id, save.title_id) == 0)
+            return true;
+    }
+    return false;
+}
+
+int count_saves(const std::vector<SaveRow> &saves, const Game &game)
+{
+    int count = 0;
+    for (const SaveRow &save : saves)
+        count += save_for_game(save, game) ? 1 : 0;
+    return count;
+}
+
+std::vector<int> filter_saves(const std::vector<SaveRow> &saves, const SaveFilters &filters)
+{
+    const std::string_view query = trim(filters.query);
+    std::vector<int> matches;
+    for (int i = 0; i < static_cast<int>(saves.size()); ++i)
+    {
+        const SaveRow &save = saves[static_cast<std::size_t>(i)];
+        if (filters.game != nullptr && !save_for_game(save, *filters.game))
+            continue;
+        if (filters.mine && !save.installed)
+            continue;
+        if (filters.category >= 0 && static_cast<int>(save_category(save)) != filters.category)
+            continue;
+        if (!query.empty() && !contains_folded(save.title, query) &&
+            !contains_folded(save.title_id, query) && !contains_folded(save.name, query) &&
+            !contains_folded(save.author, query) && !contains_folded(save.description, query))
+            continue;
+        matches.push_back(i);
+    }
+    // Newest first, as the browser version lists them; undated saves keep their order last.
+    std::stable_sort(matches.begin(), matches.end(),
+                     [&saves](int a, int b)
+                     {
+                         const std::string &x = saves[static_cast<std::size_t>(a)].created_at;
+                         const std::string &y = saves[static_cast<std::size_t>(b)].created_at;
+                         if (x.empty() || y.empty())
+                             return !x.empty() && y.empty();
+                         return x > y;
+                     });
+    return matches;
+}
+
+std::string save_install_outcome(const SaveJob &job, const std::string &game)
+{
+    if (job.state == "done")
+        return tr("Installed. Start the game to use it.");
+    if (job.state == "cancelled" || job.error_code == "cancelled")
+        return tr("Install cancelled.");
+    if (job.error_code == "title_running")
+        return tr("{game} is running. Close the game (not just suspend it), then install the save "
+                  "again.",
+                  {{"game", game}});
+    // Garlic Save Manager and every other refusal: the store says what happened.
+    return job.error.empty() ? std::string(tr("The save could not be installed.")) : job.error;
 }
 
 std::string format_bytes(double bytes)

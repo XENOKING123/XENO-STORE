@@ -38,18 +38,6 @@ constexpr float kKeyboardTop = 560.0f;
 constexpr const char *kRegions[] = {"", "EUR", "USA", "JPN", "ASIA", "unknown"};
 constexpr const char *kChips[] = {/* i18n */ "All games", /* i18n */ "Favourites"};
 
-// Removes the last UTF-8 character.
-void pop_character(std::string &text)
-{
-    while (!text.empty())
-    {
-        const unsigned char c = static_cast<unsigned char>(text.back());
-        text.pop_back();
-        if ((c & 0xC0) != 0x80)
-            break;
-    }
-}
-
 float chip_width(const ui::Type &type, int chip)
 {
     (void)type;

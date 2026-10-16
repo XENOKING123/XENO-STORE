@@ -172,6 +172,16 @@ The TV app was installed, but XENO STORE could not record its version. It will s
 The download isn't a TV app image. Nothing was installed.
 The download was larger than the release says. Nothing was installed.
 
+# /api/saves: a community save install's job messages (src/cx_savestore.c,
+# src/cx_garlic.c). "Downloading" and "Downloaded" are tr() literals in src/.
+Checking Garlic Save Manager
+Installing to your saves
+Save installed — launch the game
+Garlic: creating the save image
+Garlic: checking the save
+Garlic: re-signing and installing
+Garlic: save installed
+
 [data]
 # Drive and location names (i18n::place; "USB storage {number}" and
 # "Extended storage {number}" are tr() literals in src/). "M.2 SSD" reads the

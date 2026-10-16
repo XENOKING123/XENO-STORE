@@ -333,7 +333,85 @@ struct BrowserSession
     std::string job_id;
 };
 
+// XENO STORE: the Save Data Store (GET /api/saves/store, outside /api/v1):
+// community saves, installed for a console profile by a console job.
+struct SaveRow
+{
+    std::string id;
+    std::string title_id;
+    std::string game_id;     // the catalogue game, when the store matched one
+    std::string title;       // the game's name
+    std::string name;        // the save's name
+    std::string description;
+    std::string author;      // who shared it
+    std::string category;    // starter platinum checkpoint modded chapter other
+    std::string game_version;
+    std::string region;
+    std::string created_at; // ISO date, or empty
+    std::string source;     // github, supabase or garlic
+    std::string source_name; // the site's name ("XenoKing"), for its rows
+    double size = 0.0;
+    int downloads = 0;
+    // What the store found on the console (src/cx_savestore.c compat_json).
+    bool installed = false;
+    std::string installed_version;
+    int version_compare = 0; // the save's version against the installed one
+    std::string compat;      // match, update_game, not_installed, unknown
+    std::string compat_text; // the store's own sentence (English)
+    bool other_region = false;
+    std::string installed_title_id; // the region of the game that is installed
+};
+
+struct SaveSource
+{
+    std::string kind; // github, supabase, garlic
+    std::string name;
+    bool ok = true;
+};
+
+struct SaveListing
+{
+    std::string backend;      // supabase, github or none
+    std::string backend_name; // "XenoKing" while the site is the backend
+    std::string backend_error; // why the backend chosen in Settings is not used
+    bool building = false;     // the store is still building its index
+    std::vector<SaveSource> sources;
+    std::vector<SaveRow> saves;
+};
+
+// A console profile a save installs for (GET /api/saves/users).
+struct SaveProfile
+{
+    std::uint32_t id = 0;
+    std::string name;
+    bool foreground = false;
+};
+
+// A console job (GET /api/saves/jobs/{id}).
+struct SaveJob
+{
+    std::string id;
+    std::string type;
+    std::string state; // queued, running, done, failed, cancelled
+    std::string message;
+    std::string error;
+    std::string error_code; // title_running, garlic_unavailable, download_failed, ...
+    double done = 0.0;
+    double total = 0.0;
+    int percent = 0;
+    std::string note;       // result.note: a caveat the engine reported
+    std::string pre_backup; // result.preBackup: where the save it replaced was zipped
+
+    bool finished() const
+    {
+        return state == "done" || state == "failed" || state == "cancelled";
+    }
+};
+
 // ---- parsing (tolerant: missing or mistyped fields read as empty) ----
+SaveListing parse_save_listing(const json::Value &value);
+std::vector<SaveProfile> parse_save_profiles(const json::Value &value);
+SaveJob parse_save_job(const json::Value &value);
 BrowserSession parse_browser_session(const json::Value &value);
 System parse_system(const json::Value &value);
 Sources parse_sources(const json::Value &value);
@@ -470,6 +548,56 @@ enum class JobView : std::uint8_t
 };
 JobView job_view(const Job &job);
 const char *job_view_label(JobView view);
+
+// ---- the Save Data Store's rules (as the browser version's 47-saves.js) ----
+
+// What a save's badge says about the installed game.
+enum class SaveCompat : std::uint8_t
+{
+    match,         // made on the installed version
+    older_save,    // made on an older version: a newer game loads it
+    update_game,   // made on a newer version: update the game first
+    other_region,  // another region of the game is installed
+    not_installed,
+    unknown, // no version on the save or the console
+};
+SaveCompat save_compat(const SaveRow &save);
+// The short badge, and the sentence the save's details give.
+const char *save_compat_label(SaveCompat compat);
+std::string save_compat_sentence(const SaveRow &save);
+
+enum class SaveCategory : std::uint8_t
+{
+    starter,
+    platinum,
+    checkpoint,
+    modded,
+    chapter,
+    other,
+    count,
+};
+SaveCategory save_category(const SaveRow &save);
+const char *save_category_label(SaveCategory category);
+// The categories the list holds, in the order above.
+std::vector<SaveCategory> save_categories(const std::vector<SaveRow> &saves);
+
+// The saves of one game: its gameId, or one of its options' title IDs.
+bool save_for_game(const SaveRow &save, const Game &game);
+int count_saves(const std::vector<SaveRow> &saves, const Game &game);
+
+struct SaveFilters
+{
+    std::string query;   // the game, title ID, save, description or who shared it
+    bool mine = false;   // For my games: the game is installed
+    int category = -1;   // a SaveCategory, or -1 for every one
+    const Game *game = nullptr; // one game's saves (a game page's Community saves)
+};
+// Indices of the saves that match, newest first (undated last, in list order).
+std::vector<int> filter_saves(const std::vector<SaveRow> &saves, const SaveFilters &filters);
+
+// What a finished install shows: done, cancelled, or why it failed. game
+// names the game for the running-game sentence.
+std::string save_install_outcome(const SaveJob &job, const std::string &game);
 
 // ---- versions ----
 

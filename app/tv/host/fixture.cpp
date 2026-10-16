@@ -12,6 +12,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <ctime>
 
@@ -276,6 +277,98 @@ std::string error_body(const char *message)
     return std::string("{\"error\":") + json::quote(message) + "}";
 }
 
+// XENO STORE's Save Data Store: community saves of the invented games, as
+// GET /api/saves/store lists them with what the console has installed. The
+// IDs are the live preview's (tools/tv/world.py), so its scenarios pick the
+// same saves; one game is running, one download is slow.
+struct FixtureSave
+{
+    const char *id;
+    const char *title_id;
+    const char *game_id;
+    const char *title;
+    const char *name;
+    const char *description;
+    const char *author;
+    const char *category;
+    const char *version;
+    const char *region;
+    const char *created;
+    double size;
+    bool site; // a row of the XenoKing site (else the GitHub index)
+    bool installed;
+    const char *installed_version;
+    int compare;
+    const char *compat;
+    const char *compat_text;
+    const char *other_region; // the title ID of another region that is installed
+};
+
+const std::vector<FixtureSave> &saves()
+{
+    static const std::vector<FixtureSave> list = {
+        {"xk-ember-forge", "PPSA90003", "ember-hollow", "Ember Hollow",
+         "Chapter 4 \xE2\x80\x94 every forge unlocked",
+         "Saved at the mountain pass with every forge in the village relit and the smith's quests "
+         "done.",
+         "ashwright", "chapter", "01.050.000", "EUR", "2026-10-12T18:20:00Z", 2412544.0, false, true,
+         "01.050.000", 0, "match", "Matches your 01.050.000", ""},
+        {"xk-ember-ngplus", "PPSA90003", "ember-hollow", "Ember Hollow",
+         "New game+ with the maxed starter kit",
+         "A fresh new game+ start with every tool maxed and 50,000 coins.", "lumen", "starter",
+         "01.060.000", "EUR", "2026-10-08T09:00:00Z", 1105920.0, false, true, "01.050.000", 1,
+         "update_game", "Made on 01.060.000, you have 01.050.000 \xE2\x80\x94 update the game first", ""},
+        {"xk-orchard-bloom", "PPSA90004", "glass-orchard", "Glass Orchard", "Every garden in bloom",
+         "100% complete: all 60 gardens grown and every beam path solved.", "petalfall", "platinum",
+         "01.000.000", "USA", "2026-10-10T12:00:00Z", 614400.0, false, true, "01.000.000", 0, "match",
+         "Matches your 01.000.000", ""},
+        {"xk-starfall-season", "PPSA90005", "starfall-rally", "Starfall Rally",
+         "Season two \xE2\x80\x94 every car unlocked",
+         "All 40 cars unlocked and maxed, season two ready to start.", "gridline", "starter",
+         "01.010.000", "USA", "2026-10-05T20:00:00Z", 67108864.0, false, true, "01.020.000", -1,
+         "match", "Made on 01.010.000, you have 01.020.000 (newer game loads older saves)", ""},
+        {"sb:5a1d0000-0000-4000-8000-000000000001", "PPSA90001", "tidewater", "Tidewater",
+         "100% platinum route",
+         "100% platinum route. Every chart and wreck found, ready for the last trophy.",
+         "tidesinger", "platinum", "", "", "2026-10-14T08:30:00.000000+00:00", 3145728.0, true,
+         false, "", 0, "not_installed", "Game not installed", ""},
+        {"sb:5a1d0000-0000-4000-8000-000000000002", "PPSA90002", "neon-courier", "Neon Courier",
+         "Boss rush checkpoint", "Boss rush checkpoint. Saved before the final delivery.",
+         "nightshift", "checkpoint", "", "", "2026-10-13T22:10:00.000000+00:00", 819200.0, true,
+         false, "", 0, "not_installed",
+         "You have PPSA90102 installed \xE2\x80\x94 a save never loads on a different title ID",
+         "PPSA90102"},
+        {"sb:5a1d0000-0000-4000-8000-000000000003", "PPSA90010", "echo-valley", "Echo Valley",
+         "Glitched endless night", "Glitched endless night. Use at your own risk.", "undertow",
+         "modded", "", "", "2026-10-01T10:00:00.000000+00:00", 409600.0, true, true, "", 0,
+         "unknown", "Version unknown \xE2\x80\x94 check before installing", ""},
+    };
+    return list;
+}
+
+// The store's refusals outside /api/v1: a code and a sentence.
+std::string legacy_error(const char *code, const char *message, int status)
+{
+    return std::string("{\"ok\":false,\"error\":") + json::quote(code) +
+           ",\"message\":" + json::quote(message) + ",\"status\":" + std::to_string(status) + "}";
+}
+
+std::string percent_decoded(const std::string &text)
+{
+    std::string out;
+    for (std::size_t i = 0; i < text.size(); ++i)
+    {
+        if (text[i] == '%' && i + 2 < text.size())
+        {
+            out += static_cast<char>(std::strtol(text.substr(i + 1, 2).c_str(), nullptr, 16));
+            i += 2;
+        }
+        else
+            out += text[i];
+    }
+    return out;
+}
+
 // XENO STORE has no provider capture: Vikingfile pages need the browser version.
 constexpr const char *kVikingfile =
     "Vikingfile asks for a human check, so XENO STORE cannot fetch it by itself. Download it "
@@ -354,6 +447,131 @@ std::string Fixture::jobs_json() const
             "}";
     }
     return out + "]";
+}
+
+std::string Fixture::saves_json()
+{
+    // saves_empty: the store is still building its index for two lists.
+    const bool building = mode_ == FixtureMode::saves_empty && save_lists_++ < 2;
+    std::string out = "{\"ok\":true,\"backend\":\"supabase\",\"backendName\":\"XenoKing\","
+                      "\"siteUpload\":true,\"engine\":\"native\",\"building\":";
+    out += building ? "true" : "false";
+    out += ",\"sources\":[{\"kind\":\"github\",\"url\":\"https://saves.example/saves.json\","
+           "\"rows\":4,\"ok\":true,\"cached\":true},{\"kind\":\"supabase\",\"name\":\"XenoKing\","
+           "\"url\":\"https://site.example\",\"rows\":3,\"ok\":true,\"cached\":true}],\"saves\":[";
+    int count = 0;
+    if (mode_ != FixtureMode::saves_empty)
+    {
+        for (const FixtureSave &save : saves())
+        {
+            char numbers[160];
+            std::snprintf(numbers, sizeof(numbers),
+                          ",\"size\":%.0f,\"downloads\":%d,\"versionCompare\":%d", save.size,
+                          3 + count * 7, save.compare);
+            out += count++ > 0 ? "," : "";
+            out += "{\"id\":" + json::quote(save.id) + ",\"titleId\":" + json::quote(save.title_id) +
+                   ",\"gameId\":" + json::quote(save.game_id) + ",\"title\":" + json::quote(save.title) +
+                   ",\"category\":" + json::quote(save.category) + ",\"name\":" + json::quote(save.name) +
+                   ",\"description\":" + json::quote(save.description) +
+                   ",\"author\":" + json::quote(save.author) + ",\"gameVersion\":" + json::quote(save.version) +
+                   ",\"region\":" + json::quote(save.region) + ",\"dirName\":\"SAVEDATA00\"" + numbers +
+                   ",\"format\":\"xeno-save-zip\",\"createdAt\":" + json::quote(save.created) +
+                   ",\"status\":\"published\",\"tags\":[],\"source\":" +
+                   json::quote(save.site ? "supabase" : "github") +
+                   (save.site ? ",\"sourceName\":\"XenoKing\"" : "") +
+                   ",\"needsResign\":true,\"installed\":" + (save.installed ? "true" : "false") +
+                   ",\"installedVersion\":" + json::quote(save.installed_version) +
+                   ",\"compat\":" + json::quote(save.compat) +
+                   ",\"compatText\":" + json::quote(save.compat_text) +
+                   (*save.other_region != '\0'
+                        ? ",\"otherRegion\":true,\"installedTitleId\":" + json::quote(save.other_region)
+                        : std::string()) +
+                   "}";
+        }
+    }
+    return out + "],\"count\":" + std::to_string(count) + ",\"updatedAt\":1791100000}";
+}
+
+// A save install runs on the fixture's clock: queued, downloading, installing,
+// done. The running game fails at once, the slow save keeps downloading, and
+// saves_garlic fails on Garlic Save Manager.
+std::string Fixture::save_job_json(const SaveJob &job) const
+{
+    const double t = steady_now() - job.started;
+    std::string state = "running";
+    std::string message = "Downloading";
+    std::string code;
+    std::string error;
+    std::string result = "{}";
+    double done = 0.0;
+    double total = job.size;
+    if (job.cancelled)
+    {
+        state = "cancelled";
+        message.clear();
+        code = "cancelled";
+        error = "Install cancelled";
+    }
+    else if (job.save == "xk-orchard-bloom")
+    {
+        state = t < 0.2 ? "queued" : "failed";
+        message.clear();
+        if (state == "failed")
+        {
+            code = "title_running";
+            error = "PPSA90004 is running: close the game (not just suspend it) before its save is "
+                    "replaced";
+        }
+    }
+    else if (mode_ == FixtureMode::saves_garlic)
+    {
+        total = 0.0;
+        message = "Checking Garlic Save Manager";
+        if (t >= 0.4)
+        {
+            state = "failed";
+            code = "garlic_unavailable";
+            error = "This save needs Garlic Save Manager to be re-signed for your account: Garlic Save "
+                    "Manager is not running and the ELF loader is not answering on 127.0.0.1:9021 "
+                    "\xE2\x80\x94 start etaHEN or elfldr, then try again";
+        }
+    }
+    else if (job.save == "xk-starfall-season")
+    {
+        done = std::min(job.size * 0.6, 1048576.0 * (4.0 + t));
+    }
+    else if (t < 0.2)
+    {
+        state = "queued";
+        message.clear();
+    }
+    else if (t < 1.6)
+    {
+        done = job.size * (t - 0.2) / 1.4;
+    }
+    else if (t < 2.4)
+    {
+        done = total = 0.0;
+        message = "Installing to your saves";
+    }
+    else
+    {
+        state = "done";
+        done = total = 1.0;
+        message = "Save installed \xE2\x80\x94 launch the game";
+        result = "{\"tier\":\"native\",\"style\":\"native\",\"files\":5,\"bytes\":2412544,"
+                 "\"preBackup\":\"/data/xeno-store/saves/XENO/PPSA90003_ps5_20261015-1200.zip\","
+                 "\"accountId\":\"set\"}";
+    }
+    char numbers[160];
+    std::snprintf(numbers, sizeof(numbers), ",\"done\":%.0f,\"total\":%.0f,\"percent\":%d", done,
+                  total, total > 0.0 ? static_cast<int>(done * 100.0 / total) : 0);
+    return "{\"id\":" + json::quote(job.id) + ",\"type\":\"save-install\",\"title\":" +
+           json::quote(job.save) + ",\"state\":" + json::quote(state) +
+           ",\"message\":" + json::quote(message) + ",\"error\":" + json::quote(error) +
+           ",\"errorCode\":" + json::quote(code) + numbers +
+           ",\"createdAt\":1791100000,\"startedAt\":1791100000,\"finishedAt\":0,\"result\":" + result +
+           "}";
 }
 
 std::string Fixture::art(const std::string &game, bool hero) const
@@ -994,6 +1212,75 @@ http::Response Fixture::send(const http::Request &request)
         }
         response.status = 404;
         response.body = error_body("Unknown download.");
+        return response;
+    }
+    // XENO STORE's Save Data Store (outside /api/v1).
+    if (path.rfind("/api/saves", 0) == 0)
+    {
+        if (mode_ == FixtureMode::saves_older)
+        {
+            response.status = 404;
+            response.body = legacy_error("not_found", "Unknown API route", 404);
+            return response;
+        }
+        if (get && (path == "/api/saves/store" || path.rfind("/api/saves/store?", 0) == 0))
+        {
+            response.body = saves_json();
+            return response;
+        }
+        if (get && path == "/api/saves/users")
+        {
+            response.body = "{\"ok\":true,\"users\":[{\"id\":268435456,\"name\":\"XENO\","
+                            "\"foreground\":true},{\"id\":268435457,\"name\":\"Guest\","
+                            "\"foreground\":false}]}";
+            return response;
+        }
+        const std::string store = "/api/saves/store/";
+        const std::string install = "/install";
+        if (!get && path.rfind(store, 0) == 0 && path.size() > store.size() + install.size() &&
+            path.compare(path.size() - install.size(), install.size(), install) == 0)
+        {
+            const std::string id =
+                percent_decoded(path.substr(store.size(), path.size() - store.size() - install.size()));
+            for (const FixtureSave &save : saves())
+            {
+                if (id != save.id)
+                    continue;
+                SaveJob job;
+                job.id = "s_fx" + std::to_string(next_save_job_++);
+                job.save = id;
+                job.size = save.size;
+                job.started = steady_now();
+                save_jobs_.push_back(job);
+                response.body = "{\"ok\":true,\"job\":" + save_job_json(job) + "}";
+                return response;
+            }
+            response.status = 404;
+            response.body = legacy_error("not_found", "unknown save id", 404);
+            return response;
+        }
+        const std::string jobs = "/api/saves/jobs/";
+        if (path.rfind(jobs, 0) == 0)
+        {
+            std::string id = path.substr(jobs.size());
+            const bool cancel = !get && id.size() > 7 && id.compare(id.size() - 7, 7, "/cancel") == 0;
+            if (cancel)
+                id.resize(id.size() - 7);
+            for (SaveJob &job : save_jobs_)
+            {
+                if (job.id != id || (!get && !cancel))
+                    continue;
+                if (cancel)
+                    job.cancelled = true;
+                response.body = "{\"ok\":true,\"job\":" + save_job_json(job) + "}";
+                return response;
+            }
+            response.status = 404;
+            response.body = legacy_error("not_found", cancel ? "No such running job" : "No such job", 404);
+            return response;
+        }
+        response.status = 404;
+        response.body = legacy_error("not_found", "Unknown API route", 404);
         return response;
     }
     response.status = 404;

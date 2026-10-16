@@ -239,6 +239,7 @@ struct Watch
     std::vector<std::string> captures, marks, timeouts, opened;
     std::mutex log_mutex; // the starter logs from the store's worker
     std::vector<std::string> log;
+    std::string save_install; // XENO STORE: the last save install that ended, "state[:code]"
 };
 
 // The running scenario's store and what its steps picked: what conditions and
@@ -332,6 +333,22 @@ void observe(const orbit::App &app, Watch &watch)
     error("libraryAction", g_store->library_action().error);
     error("browserAction", g_store->browser_action().error);
     error("setting", g_store->setting_result().error);
+    // XENO STORE: the Save Data Store's list, and the save install.
+    const orbit::SavesState &saves = g_store->saves().state();
+    if (saves.load == orbit::SavesLoad::failed || saves.load == orbit::SavesLoad::unsupported)
+        error("saves", saves.error);
+    const orbit::SaveInstall &install = g_store->saves().install();
+    error("saveInstall", install.error);
+    if (install.ended())
+    {
+        const orbit::SaveJob &job = install.job;
+        watch.save_install = !install.have_job ? std::string("refused")
+                             : job.state == "done" || job.state == "cancelled" || job.error_code.empty()
+                                 ? job.state
+                                 : job.state + ":" + job.error_code;
+        if (install.have_job && job.state == "failed")
+            error("saveInstall", job.error);
+    }
     if (state.starting == orbit::Starting::no_loader ||
         state.starting == orbit::Starting::no_payload || state.starting == orbit::Starting::failed)
         error("start", state.start_detail);
@@ -527,6 +544,54 @@ bool storage_job_ended()
 {
     const orbit::LibrarySnapshot &library = now().library;
     return storage_job_seen() && !library.storage_job.active && !library.storage_busy;
+}
+
+// XENO STORE: the Save Data Store answered with its saves (not still building).
+bool saves_listed()
+{
+    const orbit::SavesState &saves = g_store->saves().state();
+    return saves.load == orbit::SavesLoad::ready && !saves.listing.building &&
+           !saves.listing.saves.empty();
+}
+
+bool saves_building()
+{
+    return g_store->saves().state().building();
+}
+
+bool saves_settled()
+{
+    const orbit::SavesState &saves = g_store->saves().state();
+    return saves.load != orbit::SavesLoad::idle && saves.load != orbit::SavesLoad::loading &&
+           !saves.building();
+}
+
+bool save_install_ended()
+{
+    return g_store->saves().install().ended();
+}
+
+// A save install is downloading, with bytes arrived.
+bool save_install_running()
+{
+    const orbit::SaveInstall &install = g_store->saves().install();
+    return install.active && install.have_job && install.job.state == "running" &&
+           install.job.done > 0.0;
+}
+
+// A game with at least two community saves.
+bool has_saves(const orbit::Game &game)
+{
+    return orbit::count_saves(g_store->saves().state().listing.saves, game) >= 2;
+}
+
+// The Saves tab once its list is in, then one save's details (the live
+// world's saves have the fixture's IDs: tools/tv/world.py).
+std::vector<Step> save_details(const char *save_id)
+{
+    return {run(1.0f, [](orbit::App &app) { app.show_tab(orbit::tab::saves); }),
+            until(30.0f, saves_listed),
+            run(0.6f, [save_id](orbit::App &app) { app.saves().open_save(save_id); })};
 }
 
 // The service's install button shows (a newer or the same release, not saved yet).
@@ -774,6 +839,60 @@ std::vector<Scenario> scenarios()
          move(Direction::left), tap(Action::confirm), pause(0.6f, "browse-format-menu"),
          tap(Action::back), move(Direction::left), move(Direction::left), tap(Action::confirm),
          pause(1.0f, "browse-favourites")}});
+    // XENO STORE: the Save Data Store. The list, For my games, a search and a save's details.
+    list.push_back({"saves", Mode::normal, true,
+        {run(1.5f, [](orbit::App &app) { app.show_tab(orbit::tab::saves); }),
+         until(30.0f, saves_listed), pause(1.2f, "saves"), move(Direction::down),
+         move(Direction::right), tap(Action::confirm), pause(0.8f, "saves-filter"),
+         move(Direction::up), tap(Action::confirm),
+         run(0.3f, [](orbit::App &app) { app.saves().set_query("ember"); }),
+         pause(0.9f, "saves-search"), tap(Action::back), move(Direction::down), move(Direction::down),
+         pause(0.6f, "saves-results"), tap(Action::confirm), pause(1.0f, "saves-detail")},
+        false, true});
+    // A game page's Community saves, then that game's saves.
+    list.push_back({"game-saves", Mode::normal, true,
+        {run(1.0f, [](orbit::App &app) { app.show_tab(orbit::tab::saves); }),
+         until(30.0f, saves_listed),
+         run(0.5f, [](orbit::App &app) { open_pick(app, "ember-hollow", has_saves); }),
+         pause(1.2f, "game-saves"), times(3, move(Direction::right)), tap(Action::confirm),
+         pause(1.0f, "saves-game")},
+        false, true});
+    // Install for the second profile, followed to its end.
+    list.push_back({"saves-install", Mode::normal, true,
+        join({save_details("xk-ember-forge"),
+              {pause(0.8f), move(Direction::left), tap(Action::confirm), pause(0.6f, "saves-profiles"),
+               move(Direction::down), tap(Action::confirm), move(Direction::right), tap(Action::confirm),
+               until(60.0f, save_install_ended), pause(0.8f, "saves-installed")}}),
+        false, true});
+    // A slow download: the progress, then Cancel.
+    list.push_back({"saves-progress", Mode::normal, true,
+        join({save_details("xk-starfall-season"),
+              {pause(0.8f), tap(Action::confirm), until(30.0f, save_install_running),
+               pause(1.0f, "saves-installing"), move(Direction::left), tap(Action::confirm),
+               until(30.0f, save_install_ended), pause(0.8f, "saves-cancelled")}}),
+        false, true});
+    // The game is running: the store refuses before downloading.
+    list.push_back({"saves-running", Mode::normal, true,
+        join({save_details("xk-orchard-bloom"),
+              {pause(0.8f), tap(Action::confirm), until(30.0f, save_install_ended),
+               pause(0.8f, "saves-title-running")}}),
+        false, true});
+    // No native engine and no Garlic Save Manager: the store's own sentence.
+    list.push_back({"saves-garlic", Mode::saves_garlic, true,
+        join({save_details("xk-ember-forge"),
+              {pause(0.8f), tap(Action::confirm), until(60.0f, save_install_ended),
+               pause(0.8f, "saves-garlic")}}),
+        false, true});
+    // The store's first list builds its index: the screen waits, then has none.
+    list.push_back({"saves-building", Mode::saves_empty, true,
+        {run(1.0f, [](orbit::App &app) { app.show_tab(orbit::tab::saves); }),
+         until(30.0f, saves_building), pause(0.6f, "saves-building"), until(60.0f, saves_settled),
+         pause(0.8f, "saves-empty")},
+        false, true});
+    // A store without the Save Data Store.
+    list.push_back({"saves-older", Mode::saves_older, false,
+        {run(1.0f, [](orbit::App &app) { app.show_tab(orbit::tab::saves); }),
+         until(10.0f, saves_settled), pause(0.8f, "saves-unsupported")}});
     list.push_back(
         {"library",
          Mode::normal,
@@ -1002,6 +1121,23 @@ std::vector<Scenario> scenarios()
     return list;
 }
 
+const char *saves_load_name(orbit::SavesLoad load)
+{
+    switch (load)
+    {
+    case orbit::SavesLoad::loading:
+        return "loading";
+    case orbit::SavesLoad::ready:
+        return "ready";
+    case orbit::SavesLoad::unsupported:
+        return "unsupported";
+    case orbit::SavesLoad::failed:
+        return "failed";
+    default:
+        return "idle";
+    }
+}
+
 std::vector<std::string> split_names(const std::string &text)
 {
     std::vector<std::string> names;
@@ -1087,6 +1223,13 @@ void print_state(const Scenario &scenario, bool live, orbit::Store &store, Watch
         ",\"startDetail\":" + quote(state.start_detail) +
         ",\"restart\":" + quote(restart_name(state.restart)) +
         ",\"restartDetail\":" + quote(state.restart_detail) + ",\"jobs\":" + job_counts +
+        ",\"saves\":" + quote(saves_load_name(store.saves().state().load)) +
+        ",\"savesCount\":" + std::to_string(store.saves().state().listing.saves.size()) +
+        ",\"savesBuilding\":" + (store.saves().state().listing.building ? "true" : "false") +
+        ",\"savesError\":" + quote(store.saves().state().load == orbit::SavesLoad::ready
+                                         ? std::string()
+                                         : store.saves().state().error) +
+        ",\"saveInstall\":" + quote(watch.save_install) +
         ",\"libraryGames\":" + std::to_string(state.have_library ? library.games.size() : 0) +
         ",\"storageJob\":" +
         quote(library.has_storage_job && library.storage_job.id > 0 ? library.storage_job.state
@@ -1254,6 +1397,7 @@ int main(int argc, char **argv)
     {
         std::unique_ptr<orbit::http::Transport> transport;
         std::unique_ptr<orbit::http::Transport> art_transport;
+        std::unique_ptr<orbit::http::Transport> saves_transport;
         if (backend != nullptr)
         {
             std::string address = backend;
@@ -1263,6 +1407,7 @@ int main(int argc, char **argv)
             address = address.substr(0, colon);
             transport = std::make_unique<orbit::http::SocketTransport>(address, port);
             art_transport = std::make_unique<orbit::http::SocketTransport>(address, port, 30000);
+            saves_transport = std::make_unique<orbit::http::SocketTransport>(address, port, 30000);
         }
         else
         {
@@ -1271,6 +1416,8 @@ int main(int argc, char **argv)
                                                                 orbit::host::Dialect::xeno);
             art_transport = std::make_unique<orbit::host::Fixture>(scenario.mode,
                                                                     orbit::host::Dialect::xeno);
+            saves_transport = std::make_unique<orbit::host::Fixture>(scenario.mode,
+                                                                      orbit::host::Dialect::xeno);
         }
         const std::string name = scenario.name;
         Watch watch;
@@ -1289,7 +1436,7 @@ int main(int argc, char **argv)
                                      });
         else if (backend != nullptr && name == "no-loader")
             starter = std::make_unique<PreviewStarter>(orbit::starter::Outcome::no_loader);
-        orbit::Store store(*transport, starter.get());
+        orbit::Store store(*transport, starter.get(), saves_transport.get());
         g_store = &store;
         g_watch = &watch;
         g_job.clear();

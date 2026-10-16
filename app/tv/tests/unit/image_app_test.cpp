@@ -438,10 +438,13 @@ TEST(App, CircleLeavesTheGamePageAndTabsSwitchWithL1R1)
     h.settle();
     h.press(Action::back);
     h.settle();
-    // From Discover, Browse comes next; three presses reach Downloads.
+    // From Discover, Browse comes next, then Saves; four presses reach Downloads.
     h.press(Action::page_next);
     EXPECT_EQ(h.app.current_tab(), orbit::tab::browse);
     h.press(Action::page_next);
+    EXPECT_EQ(h.app.current_tab(), orbit::tab::saves);
+    h.press(Action::page_next);
+    EXPECT_EQ(h.app.current_tab(), orbit::tab::library);
     h.press(Action::page_next);
     h.settle();
     EXPECT_EQ(h.app.current_tab(), orbit::tab::downloads);

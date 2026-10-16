@@ -79,8 +79,9 @@ const std::vector<LibraryGame> &Snapshot::library_games() const
     return have_library && library.ready() ? library.games : kNone;
 }
 
-Store::Store(http::Transport &transport, starter::Starter *starter)
-    : client_(transport), starter_(starter), start_wait_(kStartWait), restart_answer_(kRestartAnswer)
+Store::Store(http::Transport &transport, starter::Starter *starter, http::Transport *saves_transport)
+    : client_(transport), saves_(saves_transport != nullptr ? *saves_transport : transport),
+      starter_(starter), start_wait_(kStartWait), restart_answer_(kRestartAnswer)
 {
 }
 
@@ -92,6 +93,7 @@ Store::~Store()
 void Store::start()
 {
     thread_.start([this] { worker(); });
+    saves_.start();
 }
 
 void Store::stop()
@@ -102,11 +104,14 @@ void Store::stop()
     }
     signal_.notify();
     thread_.join();
+    saves_.stop();
 }
 
 void Store::tick()
 {
     inbox_.drain();
+    saves_.set_token(state_.token);
+    saves_.tick();
 }
 
 void Store::refresh_now()

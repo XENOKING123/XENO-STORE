@@ -11,6 +11,7 @@
 
 #include "orbit/api.hpp"
 #include "orbit/model.hpp"
+#include "orbit/save_store.hpp"
 #include "orbit/starter.hpp"
 #include "orbit/thread.hpp"
 
@@ -166,8 +167,11 @@ class Store
     // launches the worker; tests may instead call poll_once() and
     // run_next_action() directly. Without a starter the app only waits for
     // Orbit; with one it starts Orbit once when nothing answers on its port,
-    // and again whenever the player asks.
-    explicit Store(http::Transport &transport, starter::Starter *starter = nullptr);
+    // and again whenever the player asks. XENO STORE: the community saves
+    // use saves_transport when given (one that waits for the store's first
+    // answer, 15 s), else the same transport.
+    explicit Store(http::Transport &transport, starter::Starter *starter = nullptr,
+                   http::Transport *saves_transport = nullptr);
     ~Store();
     Store(const Store &) = delete;
     Store &operator=(const Store &) = delete;
@@ -184,6 +188,16 @@ class Store
     const ActionState &action() const
     {
         return action_;
+    }
+    // XENO STORE: the Save Data Store (orbit/save_store.hpp). start(), stop()
+    // and tick() run it too, and tick() hands it the console session's token.
+    SaveStore &saves()
+    {
+        return saves_;
+    }
+    const SaveStore &saves() const
+    {
+        return saves_;
     }
 
     // Poll every second while a screen shows live progress, else every three.
@@ -314,6 +328,7 @@ class Store
     void start_if_needed(bool refused);
 
     api::Client client_;
+    SaveStore saves_;
     starter::Starter *starter_;
     Inbox inbox_;
     Snapshot state_;

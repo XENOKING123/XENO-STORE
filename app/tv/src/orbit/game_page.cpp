@@ -254,6 +254,15 @@ GamePage::Layout GamePage::compose(hui::gfx::DrawList *list, Sheet sheet, bool f
                 if (i==0 && state.favourite(game->id)) list->circle(r.cx()+26,r.cy()-26,5,ui::color::text);
             }
         }
+        // XENO STORE: this game's community saves, once the Save Data Store lists some.
+        const SavesState &saves = ctx_.store.saves().state();
+        const int shared = saves.load == SavesLoad::ready ? count_saves(saves.listing.saves, *game) : 0;
+        if (shared > 0)
+        {
+            const std::string label = tr("Community saves ({count})", {{"count", i18n::count(shared)}});
+            const float width = ui::button_width(type, label, 23, ui::ButtonKind::secondary);
+            control(Slot::saves, 0, {kLeft + button_width + 24 + 2 * 108.0f + 12, y, width, 88}, label, !waiting_);
+        }
         y += 140;
         paragraph(error_,kLeft,y,1000,21,ui::color::bad);
         out.end = y;
@@ -450,6 +459,7 @@ Intent GamePage::activate(const Control &control,const Game &game,const Release 
         if(state.paired && !ctx_.store.favourite_action().busy)ctx_.store.set_favourite(game.id,!state.favourite(game.id));
         break;
     case Slot::about: show_sheet(Sheet::about,Slot::back);break;
+    case Slot::saves: intent.kind=Intent::Kind::show_saves;intent.id=game.id;break;
     case Slot::source: show_sheet(Sheet::source,Slot::choice,option_);break;
     case Slot::delivery:
         show_sheet(Sheet::delivery,Slot::choice,torbox_?1:0);break;
@@ -525,6 +535,7 @@ Intent GamePage::update(const InputFrame &input,float dt,Feedback &feedback,bool
         if(focused && (input.is_pressed(Action::back)||input.is_pressed(Action::confirm)))intent.kind=Intent::Kind::close;
         return intent;
     }
+    ctx_.store.saves().want(); // XENO STORE: Community saves (N) once they are listed
     option_=std::clamp(option_,0,static_cast<int>(game->releases.size())-1);
     if(waiting_ && ctx_.store.action().serial!=action_serial_ && !ctx_.store.action().busy)
     {

@@ -16,7 +16,7 @@ namespace orbit
 namespace
 {
 
-constexpr const char *kTabs[] = {/* i18n */ "Discover", /* i18n */ "Browse", /* i18n */ "Library", /* i18n */ "Downloads"}; // by tab::
+constexpr const char *kTabs[] = {/* i18n */ "Discover", /* i18n */ "Browse", /* i18n */ "Saves", /* i18n */ "Library", /* i18n */ "Downloads"}; // by tab::
 constexpr int kTabCount = tab::count;
 constexpr int kSearchItem = kTabCount;
 constexpr int kSettingsItem = kTabCount + 1;
@@ -93,8 +93,8 @@ int active_jobs(const Snapshot &state)
 } // namespace
 
 App::App(Context &context)
-    : ctx_(context), discover_(context), browse_(context), library_(context), downloads_(context),
-      game_(context), settings_(context)
+    : ctx_(context), discover_(context), browse_(context), saves_(context), library_(context),
+      downloads_(context), game_(context), settings_(context)
 {
     top_focus_.resize(kTopItems);
     backdrop_in_.snap(1.0f);
@@ -106,6 +106,8 @@ Screen &App::screen()
     {
     case tab::discover:
         return discover_;
+    case tab::saves:
+        return saves_;
     case tab::library:
         return library_;
     case tab::downloads:
@@ -122,8 +124,8 @@ const Screen &App::screen() const
 
 bool App::content_blocked() const
 {
-    // Library and Downloads don't depend on the download sources or the catalogue.
-    if (tab_ == tab::downloads || tab_ == tab::library)
+    // Library, Downloads and Saves don't depend on the download sources or the catalogue.
+    if (tab_ == tab::downloads || tab_ == tab::library || tab_ == tab::saves)
         return false;
     const Snapshot &state = ctx_.store.state();
     return state.setup_needed() || (state.have_catalog && state.games.empty());
@@ -220,6 +222,15 @@ void App::handle_intent(const Intent &intent, Feedback &feedback)
         area_ = Area::content;
         library_.focus();
         library_.show_game(intent.id, intent.detail);
+        break;
+    case Intent::Kind::show_saves:
+        // XENO STORE: a game page's Community saves.
+        game_open_ = false;
+        tab_ = tab::saves;
+        area_ = Area::content;
+        saves_.focus();
+        saves_.show_game(intent.id);
+        feedback.play(hui::audio::Cue::tab);
         break;
     default:
         break;
