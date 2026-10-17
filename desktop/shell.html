@@ -71,6 +71,7 @@ small { color: var(--dim); }
     <h1>You're linked</h1>
     <p>Browse the whole store here on your PC: everything you download goes straight to your PS5.</p>
     <div class="row"><button class="primary big" id="open">Open XENO STORE</button><button id="forget">Forget this PS5</button></div>
+    <div class="status" id="readyStatus"></div>
   </section>
 
   <section class="card hidden" id="send">
@@ -106,6 +107,7 @@ small { color: var(--dim); }
     if (linked && !$('files').childNodes.length) files(state.shareDir || '');
   }
   function refresh() { return call('state').then(function (s) { state = s; paint(); }); }
+  if (/[?&]unpaired=1/.test(location.search)) say($('linkStatus'), 'This PC was unpaired on the PS5. Link it again to open the store.', 'bad');
   $('scan').onclick = function () {
     var b = this; b.disabled = true; say($('findStatus'), 'Searching your network…'); $('found').innerHTML = '';
     call('discover').then(function (r) {
@@ -142,7 +144,12 @@ small { color: var(--dim); }
     if (linking || digits().length !== 6) return; linking = true; say($('linkStatus'), 'Linking…');
     call('link', { code: digits() }).then(function (r) {
       linking = false;
-      if (r.ok && r.linked) { say($('linkStatus'), 'Linked!', 'good'); refresh(); return; }
+      if (r.ok && r.linked) {
+        say($('linkStatus'), 'Linked!', 'good');
+        /* all pairing slots were taken: the PS5 unpaired the device unused the longest */
+        say($('readyStatus'), typeof r.replaced === 'string' ? (r.replaced || 'An unknown device') + ' was unpaired to make room — it was the device unused the longest.' : '');
+        refresh(); return;
+      }
       say($('linkStatus'), r._status === 403 ? 'That code is not right — check the notification on your PS5.' : r._status === 429 ? 'Too many tries — wait a minute.' : (r.message || 'Linking failed.'), 'bad');
       $('code').select();
     });

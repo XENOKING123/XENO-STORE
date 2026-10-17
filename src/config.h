@@ -26,6 +26,7 @@ typedef struct xeno_config {
   time_t started_at;
   volatile int stop_requested;   /* set by signals / POST /api/system/stop */
   volatile int restart_requested; /* POST /api/update/restart: after shutdown, hand the staged ELF to the loader */
+  volatile int restart_local;     /* ... asked for by the console's own browser (loopback), which the next copy reopens */
   int safe_mode;                  /* the previous run crashed early: skip automatic network duties this session */
 } xeno_config;
 

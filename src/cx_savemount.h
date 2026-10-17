@@ -86,8 +86,8 @@ int cx_savemount_import_zip_job(uint32_t uid, const char *titleId, const char *d
                                 int backup_first, const char *backup_dir, int allow_raw, cx_job *j, cx_import_result *out,
                                 char *code, size_t ccap, char *err, size_t errcap);
 
-/* One restore, install or transfer per (profile, title) at a time: 0 claimed,
- * -1 when it is already held. Release what was claimed. */
+/* One backup, restore, install or transfer per (profile, title) at a time:
+ * 0 claimed, -1 when it is already held. Release what was claimed. */
 int cx_savemount_claim(uint32_t uid, const char *titleId);
 void cx_savemount_release(uint32_t uid, const char *titleId);
 

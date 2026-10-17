@@ -7,6 +7,7 @@
  * settings.pairing.pin is set (SPEC §15).
  */
 #include "api.h"
+#include "app_install.h"
 #include "assets.h"
 #include "catalog.h"
 #include "config.h"
@@ -219,6 +220,7 @@ static void h_update_restart(api_ctx *c) {
   int port = cx_local_port("LOADER", 9021);
   if (!cx_tcp_probe(port, 800)) { api_error(c, 503, "loader_unavailable", "The ELF loader is not answering on 127.0.0.1:9021 — load etaHEN or elfldr, then try again"); return; }
   LOGI("update: restart requested (staged %s, loader :%d)", path, port);
+  g_cfg.restart_local = c->req->client_is_loopback;
   g_cfg.restart_requested = 1;
   g_cfg.stop_requested = 1;
   jw w;
@@ -595,14 +597,16 @@ static void h_pair_show(api_ctx *c) {
 
 static void h_pair_redeem(api_ctx *c) {
   const char *code = body_str(c, "code", "");
-  char token[72];
+  char token[72], name[48], replaced[48];
   int retry = 0;
-  int rc = pairing_redeem(code, token, sizeof token, &retry);
-  if (rc == 0) {
+  pairing_device_name(c->req->user_agent, name, sizeof name);
+  int rc = pairing_redeem(code, name, token, sizeof token, replaced, sizeof replaced, &retry);
+  if (rc >= 0) {
     jw w;
     api_begin(&w);
     jw_kv_str(&w, "token", token);
     jw_kv_bool(&w, "paired", 1);
+    if (rc == 1) jw_kv_str(&w, "replaced", replaced);   /* all slots were taken: the device that made room ("" = no name) */
     api_send(c, &w);
     return;
   }
@@ -620,11 +624,56 @@ static void h_pair_redeem(api_ctx *c) {
     http_send_json(c->req, 429, &w);
     return;
   }
-  const char *scode = status == 409 ? "slots_full" : status == 503 ? "save_failed" : "bad_code";
-  const char *msg = status == 409 ? "All pairing slots are in use."
-                    : status == 503 ? "Could not save the pairing."
-                                    : "Pairing failed. Check the code shown on the console.";
+  const char *scode = status == 503 ? "save_failed" : "bad_code";
+  const char *msg = status == 503 ? "Could not save the pairing." : "Pairing failed. Check the code shown on the console.";
   api_error(c, status, scode, msg);
+}
+
+/* Settings → Pair a device. The /api/pair routes skip the PIN gate, so these check the
+ * caller themselves: the console itself or a paired device, never a stranger.
+ * Returns the caller's bearer token (NULL without one) through *self. */
+static int pair_caller_ok(api_ctx *c, const char **self) {
+  const char *bearer = util_istarts_with(c->req->authorization, "Bearer ") ? c->req->authorization + 7 : NULL;
+  *self = bearer;
+  if (c->req->client_is_loopback || (bearer && pairing_token_valid(bearer))) return 1;
+  api_error(c, 403, "not_paired", "Pair this device first.");
+  return 0;
+}
+
+static void h_pair_devices(api_ctx *c) {
+  const char *self;
+  if (!pair_caller_ok(c, &self)) return;
+  jw w;
+  api_begin(&w);
+  pairing_devices_json(&w, self);
+  api_send(c, &w);
+}
+
+static void h_pair_unpair(api_ctx *c) {
+  const char *self;
+  if (!pair_caller_ok(c, &self)) return;
+  const char *id = body_str(c, "id", "");
+  if (!*id) { api_error(c, 400, "bad_request", "id is required"); return; }
+  int rc = pairing_unpair(id);
+  if (rc == -404) { api_error(c, 404, "not_found", "No paired device has that id."); return; }
+  if (rc != 0) { api_error(c, 503, "save_failed", "Could not save the pairing."); return; }
+  jw w;
+  api_begin(&w);
+  jw_kv_bool(&w, "unpaired", 1);
+  pairing_devices_json(&w, self);
+  api_send(c, &w);
+}
+
+static void h_pair_unpair_others(api_ctx *c) {
+  const char *self;
+  if (!pair_caller_ok(c, &self)) return;
+  int n = pairing_unpair_others(self);
+  if (n < 0) { api_error(c, 503, "save_failed", "Could not save the pairing."); return; }
+  jw w;
+  api_begin(&w);
+  jw_kv_int(&w, "unpaired", n);
+  pairing_devices_json(&w, self);
+  api_send(c, &w);
 }
 
 /* The Games-row app (app/eboot) calls this when the store is already running: open the
@@ -679,6 +728,17 @@ static void h_debug_pause_all(api_ctx *c) {
   jw_kv_bool(&w, "stateHealthy", dl_state_healthy());
   api_send(c, &w);
 }
+
+/* Host build only (tests): app_install_open_choice for the given inputs (0/1 each). */
+static void h_debug_open_choice(api_ctx *c) {
+  int open = app_install_open_choice(http_query_int(c->req, "tvApp", 0), http_query_int(c->req, "wanted", 0),
+                                     http_query_int(c->req, "recent", 0), http_query_int(c->req, "restarted", 0),
+                                     http_query_int(c->req, "launchable", 0));
+  jw w;
+  api_begin(&w);
+  jw_kv_str(&w, "open", open == APP_OPEN_APP ? "app" : open == APP_OPEN_BROWSER ? "browser" : "none");
+  api_send(c, &w);
+}
 #endif
 
 /* ---- routing ------------------------------------------------------------ */
@@ -725,9 +785,13 @@ static const api_route ROUTES[] = {
   { "GET", "/api/pair", h_pair },
   { "POST", "/api/pair/show", h_pair_show },
   { "POST", "/api/pair", h_pair_redeem },
+  { "GET", "/api/pair/devices", h_pair_devices },
+  { "POST", "/api/pair/unpair", h_pair_unpair },
+  { "POST", "/api/pair/unpair-others", h_pair_unpair_others },
   { "GET", "/api/session", h_session },
 #ifdef XENO_HOST
   { "POST", "/api/debug/queue/pause-all", h_debug_pause_all },
+  { "GET", "/api/debug/open-choice", h_debug_open_choice },
 #endif
 };
 
@@ -817,13 +881,26 @@ void api_handle(http_req *req) {
     else http_send_error(req, 404, "not_found", "Unknown API route");
     return;
   }
+  /* A paired device's last seen (Settings → Pair a device). Not from the console
+   * itself: the TV app may still hold an older pairing.json's first token, now a
+   * device's, until /api/v1/system sends it for its own session (tv_authed). */
+  const char *bearer = util_istarts_with(req->authorization, "Bearer ") ? req->authorization + 7 : NULL;
+  if (bearer && !req->client_is_loopback) pairing_touch(bearer, req->user_agent);
+  /* A token the console no longer knows was unpaired (Settings → Pair a device):
+   * refused even where no token is needed, so a device that still has the store
+   * open goes back to the Link page instead of carrying on. Pairing itself stays
+   * reachable, the console itself is never cut off, and the TV app's dialect
+   * answers for its own token (paired:false, 401). */
+  if (bearer && !v1 && !req->client_is_loopback && !util_starts_with(req->path, "/api/pair") && !pairing_token_valid(bearer)) {
+    http_send_error(req, 403, "not_paired", "This device is no longer paired with the console. Pair it again with the code the PS5 shows.");
+    return;
+  }
   if (strcmp(req->method, "GET") != 0 && strcmp(req->method, "HEAD") != 0 &&
       !util_starts_with(req->path, "/api/pair") &&   /* pairing itself must stay reachable */
       !(req->client_is_loopback && strcmp(req->path, "/api/launcher/open") == 0)) {   /* the Games-row app */
     settings_t s;
     settings_get(&s);
     if (s.pin[0]) {
-      const char *bearer = util_istarts_with(req->authorization, "Bearer ") ? req->authorization + 7 : NULL;
       int authed = strcmp(s.pin, req->pin) == 0 || (bearer && pairing_token_valid(bearer));
       if (!authed) {
         if (v1) http_send_sentence(req, 401, API_V1_MSG_PAIR_AGAIN);

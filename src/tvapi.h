@@ -122,7 +122,8 @@
 int tv_gate(api_ctx *c, unsigned flags);
 
 /* 1 when the request carries "Authorization: Bearer <token>" and the token is
- * a paired one (pairing_token_valid: 64 hex, constant time). */
+ * a paired one (pairing_token_valid: 64 hex, constant time); from the console
+ * itself (loopback, the TV app) only its own session (pairing_token_local). */
 int tv_authed(const http_req *req);
 
 /* 1 while the process is going away: g_cfg.stop_requested (SIGTERM, web UI
@@ -225,6 +226,15 @@ void tvcat_h_favorites(api_ctx *c);  /* GET (S,B) / POST (S,B,O) /api/v1/favorit
 
 /* tvapi_art.c */
 void tvart_h_art(api_ctx *c);        /* GET /api/v1/art/{id}/{kind} (S,B): params[0] = game id, params[1] = cover|hero */
+void tvart_h_shot(api_ctx *c);       /* GET /api/v1/art/{id}/shot/{n} (S,B): params[0] = game id, params[1] = 0..9 */
+int tvart_shot_usable(const char *url);   /* 1 when the art URL policy lets shot/{n} fetch this catalogue URL */
+
+/* A game's screenshots as the TV app sees them: the first TV_ART_MAX_SHOTS
+ * strings of its catalogue "screenshots" that pass the art URL policy
+ * (tvart_shot_usable), in catalogue order. GET /api/v1/catalog counts them
+ * (screenshotCount), /art/{id}/shot/{n} serves the n-th (0-based); both
+ * files apply this one rule, so every n below the count can be fetched. */
+#define TV_ART_MAX_SHOTS 10
 
 /* tvapi_downloads.c */
 void tvdl_h_jobs(api_ctx *c);        /* GET /api/v1/downloads (S,B): bare array */

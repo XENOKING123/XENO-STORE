@@ -7,11 +7,12 @@
  *   2. at 1920×1080: Downloads (install-set groups, lifetime stats, rest-mode pill, turbo chip, debrid label, copy and
  *      backup jobs, ZIP extraction, scheduled row + Start now, paused set + Retry), Library (disk analyzer + clean-up,
  *      Play now, uninstall with the token flow, copy-to-drive sheet, installed homebrew), Updates center (one-tap
- *      download+install), Saves hub (keyboard: Back up → progress → toast; restore; profile transfer), Settings
+ *      download+install), Saves hub (keyboard: Back up → progress → toast; restore; profile transfer), the Saves top
+ *      tab (keyboard from its first focus: Saves hub → Back, Save Store options → Settings → Saves → Back), Settings
  *      (Setup via keyboard + run check + launch companion + start Garlic + unavailable companion + ghost cleaner,
  *      Debrid connect, Accounts activate, Saves, Pair/mDNS, Uninstall sheet open/cancel + the final screen), command
  *      palette, shortcuts overlay, large text + high contrast, controller remap legend
- *   3. at 390×844: Downloads and Settings
+ *   3. at 390×844: Downloads, Settings, the Saves tab from the phone bar and its Saves hub entry
  *   4. fails on any console error / uncaught exception, any failed or ≥ 400 request, missing i18n keys
  *
  * Usage: PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers node web/verify-ui-b.mjs [--port 9095] [--no-build] [--out DIR] [--headed] [--verbose]
@@ -60,6 +61,7 @@ function watch(page, label, expected) {
   page.on('response', (res) => { if (res.url().indexOf(BASE) === 0 && res.status() >= 400 && !(expected && expected.test(res.status() + ' ' + res.url()))) fail(`[${label}] HTTP ${res.status()} for ${res.request().method()} ${res.url()}`); });
 }
 const activeInfo = (page) => page.evaluate(() => { const a = document.activeElement; return a ? (a.tagName + ' ' + (a.className || '') + ' #' + (a.getAttribute('data-nav-id') || '')) : 'none'; });
+const activeId = (page) => page.evaluate(() => (document.activeElement && document.activeElement.getAttribute('data-nav-id')) || '');
 async function waitCovers(page, min, ms) { try { await page.waitForFunction((n) => document.querySelectorAll('.cover.loaded').length >= n, min, { timeout: ms || 8000 }); } catch (e) { note('covers still loading (continuing)'); } }
 async function shot(page, name) { await page.screenshot({ path: join(OUT, name), fullPage: false }); note('screenshot ' + name); }
 const VERBOSE = args.includes('--verbose');
@@ -120,6 +122,7 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await page.waitForSelector('#scr-discover.active .card', { timeout: 20000 });
     await page.waitForFunction(() => !!(window.XS && XS.cb && XS.cb.palette), null, { timeout: 5000 });
     await expect(async () => page.evaluate(() => typeof XS.actions.applySettings === 'function' && XS.actions.applySettings._cbWrapped === true), 'applySettings should be wrapped by 32-components-b (accessibility attributes)');
+    await expect(async () => page.evaluate(() => { const ids = Array.from(document.querySelectorAll('#tabs .tab')).map((a) => a.getAttribute('data-nav-id')); return ids.indexOf('tab:saves') === ids.indexOf('tab:browse') + 1 && document.querySelector('[data-nav-id="tab:saves"]').textContent.trim() === 'Saves'; }), 'the tab bar should have a Saves tab right after Browse');
 
     /* ---------- Downloads: groups, stats, rest pill, turbo, via, copy, backup, extracting ---------- */
     await page.click('[data-nav-id="tab:downloads"]');
@@ -132,6 +135,7 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await expect(async () => !!(await page.$('#scr-downloads .job .chip.turbo')), 'turbo result chip ("Fastest mirror") missing on the running row');
     await expect(async () => page.evaluate(() => /Fastest mirror/.test(document.querySelector('#scr-downloads .job .chip.turbo').textContent)), 'turbo chip should read "Fastest mirror: …"');
     await expect(async () => !!(await page.$('#scr-downloads .job .chip.via')), '"via Real-Debrid" label missing');
+    await expect(async () => page.evaluate(() => Array.from(document.querySelectorAll('#scr-downloads .job.st-paused .stats')).some((x) => x.textContent.indexOf(XS.t('dl2.restartHeld')) >= 0)), 'a download a safe start left paused should say so (job.restart "held", dl2.restartHeld)');
     await expect(async () => !!(await page.$('#scr-downloads .job.type-copy')), 'copy job row missing');
     await expect(async () => !!(await page.$('#scr-downloads .job.st-extracting')), 'ZIP extracting row missing');
     await expect(async () => !!(await page.$('#scr-downloads .jobgroup .ghead .bar')), 'install-set group progress bar missing');
@@ -169,6 +173,15 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await page.waitForSelector('#scr-downloads .job.type-backup', { timeout: 6000 }).catch(() => fail('save backup job row missing in Finished'));
     await page.waitForSelector('#scr-downloads .job.st-extracted', { timeout: 25000 }).catch(() => fail('ZIP should reach the "extracted" state'));
     await expect(async () => page.evaluate(() => { const r = document.querySelector('#scr-downloads .job.st-extracted'); return r && /Extracted/.test(r.textContent); }), 'extracted row should show the "Extracted · n files" chip');
+    /* an installed PKG whose package was removed (downloads.deletePkgAfterInstall): says so, and offers no Verify / Open location */
+    const pkgGone = await page.evaluate(() => { const r = Array.from(document.querySelectorAll('#scr-downloads .job.st-installed')).find((x) => /Installed/.test(x.textContent) && /Package removed/.test(x.textContent)); if (!r) return false; r.querySelector('[data-nav-id$="-more"]').click(); return true; });
+    if (!pkgGone) fail('an installed PKG whose package was removed should show "Installed" and "Package removed" (install.pkgDeleted)');
+    else {
+      await page.waitForSelector('.menu .mi');
+      await expect(async () => page.evaluate(() => { const tx = Array.from(document.querySelectorAll('.menu .mi')).map((m) => m.textContent).join('|'); return !/Verify hash|Open location/.test(tx) && /Log/i.test(tx); }), 'the menu of a removed package should not offer Verify hash or Open location');
+      await page.keyboard.press('Escape');
+      await page.waitForSelector('.menu', { state: 'detached', timeout: 4000 }).catch(() => fail('the job menu should close on Escape'));
+    }
     await sleep(300);
     await shot(page, 'tv-b-downloads-finished.png');
     /* turbo details sheet from the row menu */
@@ -271,6 +284,39 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await waitToast(page, 'started');
     await page.keyboard.press('Escape');
     await page.waitForSelector('#scr-library.active', { timeout: 6000 });
+
+    /* ---------- Saves tab, keyboard only from its first focus (Upload my save): Down reaches the Save Store options,
+       Left the Saves hub; both open above the tab and ○ comes back to it ---------- */
+    await page.click('[data-nav-id="tab:saves"]');
+    await page.waitForSelector('#scr-saves.active [data-nav-id="sv-entry-backups"]', { timeout: 10000 });
+    await page.waitForSelector('#scr-saves.active .save-card', { timeout: 10000 });
+    await waitCovers(page, 6);
+    await sleep(300);
+    await shot(page, 'tv-b-saves-tab.png');
+    await expect(async () => page.evaluate(() => document.querySelector('#tabs .tab.active').getAttribute('data-nav-id') === 'tab:saves' && location.hash === '#saves'), 'the Saves tab should be highlighted with #saves in the address');
+    await page.waitForFunction(() => document.activeElement && document.activeElement.getAttribute('data-nav-id') === 'sv-upload', null, { timeout: 3000 }).catch(async () => fail('the Saves tab should start on Upload my save (got ' + await activeInfo(page) + ')'));
+    await page.keyboard.press('ArrowDown');
+    await expect(async () => (await activeId(page)) === 'sv-entry-options', 'Down from Upload my save should reach the Save Store options (got ' + await activeInfo(page) + ')');
+    await page.keyboard.press('ArrowLeft');
+    await expect(async () => (await activeId(page)) === 'sv-entry-backups', 'Left from the Save Store options should reach the Saves hub (got ' + await activeInfo(page) + ')');
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('#scr-saveshub.active .srow', { timeout: 10000 }).catch(() => fail('the Saves hub entry should open the Saves hub'));
+    await expect(async () => page.evaluate(() => document.querySelector('#scr-saveshub .kicker').textContent === 'Saves'), 'the Saves hub belongs to the Saves section (kicker)');
+    await page.keyboard.press('Escape');
+    await page.waitForSelector('#scr-saves.active', { timeout: 6000 }).catch(() => fail('Back from the Saves hub should return to the Saves tab'));
+    await page.waitForFunction(() => !XS.router.busy(), null, { timeout: 4000 });
+    await page.waitForFunction(() => document.activeElement && document.activeElement.getAttribute('data-nav-id') === 'sv-entry-backups', null, { timeout: 3000 }).catch(async () => fail('Back from the Saves hub should land on its entry (got ' + await activeInfo(page) + ')'));
+    await page.keyboard.press('ArrowRight');
+    await expect(async () => (await activeId(page)) === 'sv-entry-options', 'Right from the Saves hub entry should reach the Save Store options (got ' + await activeInfo(page) + ')');
+    await page.keyboard.press('Enter');
+    await page.waitForSelector('#scr-settings.active [data-nav-id="sv-nick"]', { timeout: 8000 }).catch(() => fail('Save Store options should open Settings → Saves'));
+    await page.waitForFunction(() => { const a = document.activeElement; return !!a && !!a.closest('[data-group="saves"]'); }, null, { timeout: 3000 }).catch(async () => fail('Save Store options should focus the first Saves setting (got ' + await activeInfo(page) + ')'));
+    await sleep(300);
+    await shot(page, 'tv-b-saves-options.png');
+    await page.keyboard.press('Escape');
+    await page.waitForSelector('#scr-saves.active', { timeout: 6000 }).catch(() => fail('Back from the Save Store options should return to the Saves tab'));
+    await page.waitForFunction(() => !XS.router.busy(), null, { timeout: 4000 });
+    await expect(async () => page.evaluate(() => XS.router.stack.length === 1 && location.hash === '#saves' && document.querySelector('#tabs .tab.active').getAttribute('data-nav-id') === 'tab:saves'), 'after Back from the options the Saves tab should be highlighted with #saves (got ' + await page.evaluate(() => XS.router.stack.map((e) => e.id).join('>') + ' ' + location.hash) + ')');
 
     /* ---------- Settings → Setup (keyboard), run check, launch companion, install companion, ghost cleaner ---------- */
     await page.keyboard.press('o');
@@ -380,18 +426,51 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await expect(async () => page.evaluate(() => /xeno\.local:/.test(document.querySelector('#scr-settings [data-nav-id="pair-local"]').textContent)), 'Pair a device should show http://xeno.local:<port>');
     await expect(async () => page.evaluate(() => /Answering on this network/.test(document.querySelector('#scr-settings [data-nav-id="pair-local"]').textContent)), 'Pair a device should read the mDNS state from the {ok, mdns:{…}} envelope');
     await expect(async () => !!(await page.$('#scr-settings [data-nav-id="pair-mdns"]')), 'mDNS toggle missing');
+    await expect(async () => page.evaluate(() => document.querySelectorAll('#scr-settings .pd-row button[data-nav-id$="-unpair"]').length === 4), 'Pair a device should list the paired devices, each with Unpair');
     await sleep(200);
     await shot(page, 'tv-b-settings-pair.png');
     /* downloads group: Phase 2 rows */
     await page.click('[data-nav-id="set-nav-downloads"]');
     await sleep(300);
-    for (const id of ['set-prefer', 'set-turbo', 'set-autosets', 'set-order', 'set-restresume', 'set-extract', 'set-delarchive', 'set-schedule']) await expect(async () => !!(await page.$('#scr-settings [data-nav-id="' + id + '"]')), 'Settings → Downloads row missing: ' + id);
+    for (const id of ['set-prefer', 'set-turbo', 'set-autosets', 'set-order', 'set-delpkg', 'set-restresume', 'set-restartresume', 'set-extract', 'set-delarchive', 'set-schedule']) await expect(async () => !!(await page.$('#scr-settings [data-nav-id="' + id + '"]')), 'Settings → Downloads row missing: ' + id);
+    const dlSetting = (key, want) => page.waitForFunction(([k, w]) => fetch('/api/settings').then((r) => r.json()).then((b) => (b.settings || b).downloads[k] === w), [key, want], { timeout: 4000, polling: 200 }).then(() => true, () => false);
+    await expect(async () => !(await page.evaluate(() => document.querySelector('#scr-settings [data-nav-id="set-delpkg"]').getAttribute('aria-checked') === 'true')), '"Delete the PKG after installing" should be off by default');
+    await page.click('#scr-settings [data-nav-id="set-delpkg"]');
+    await expect(() => dlSetting('deletePkgAfterInstall', true), 'the "Delete the PKG after installing" toggle should save downloads.deletePkgAfterInstall');
+    await page.click('#scr-settings [data-nav-id="set-delpkg"]');
+    await expect(() => dlSetting('deletePkgAfterInstall', false), 'turning "Delete the PKG after installing" off again should save it');
+    await expect(async () => page.evaluate(() => document.querySelector('#scr-settings [data-nav-id="set-restartresume"]').getAttribute('aria-checked') === 'true'), '"Resume after a restart" should be on by default');
+    await page.click('#scr-settings [data-nav-id="set-restartresume"]');
+    await expect(() => dlSetting('resumeAfterRestart', false), 'the "Resume after a restart" toggle should save downloads.resumeAfterRestart');
+    await page.click('#scr-settings [data-nav-id="set-restartresume"]');
+    await expect(() => dlSetting('resumeAfterRestart', true), 'turning "Resume after a restart" on again should save it');
     await page.click('[data-nav-id="set-schedule"]');
     await page.waitForSelector('.sheet [data-nav-id="sch-save"]');
     await page.click('.sheet [data-nav-id="sch-preset-1"]');
     await page.click('.sheet [data-nav-id="sch-save"]');
     await waitToast(page, '00:00 and 08:00');
     await expect(async () => (await api('/api/settings')).downloads.scheduleStart === '00:00', 'schedule window should be saved');
+
+    /* ---------- Settings → Updates: the app card names a newer app (updates/tv-app.json) and updates it ---------- */
+    await api('/api/__mock/app', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ installed: true, version: '01.003.001', latest: '1.4.0' }) });
+    await page.click('[data-nav-id="set-nav-updates"]');
+    await page.waitForSelector('#scr-settings [data-nav-id="upd-check"]');
+    await page.click('#scr-settings [data-nav-id="upd-check"]');   /* Check for updates also reads the app's release again */
+    await page.waitForFunction(() => { const c = document.querySelector('#scr-settings .app-card'); return c && /Update available: 1\.4\.0/.test(c.textContent); }, null, { timeout: 10000 }).catch(() => fail('the app card should say "Update available: 1.4.0" when tv-app.json names a newer app'));
+    await expect(async () => page.evaluate(() => { const b = document.querySelector('#scr-settings .app-card [data-nav-id="app-install"]'); return !!b && /Update the app/.test(b.textContent) && b.classList.contains('primary'); }), 'the app card button should read "Update the app" (primary) when a newer app exists');
+    await expect(async () => serverLog.some((l) => /tv-app\.json read again \(\?check=1\)/.test(l)), 'Check for updates should ask GET /api/app/status?check=1');
+    await page.evaluate(() => { const c = document.querySelector('#scr-settings .app-card'); if (c) c.scrollIntoView({ block: 'center' }); });
+    await sleep(300);
+    await shot(page, 'tv-b-settings-app-update.png');
+    await page.click('#scr-settings .app-card [data-nav-id="app-install"]');
+    await waitToast(page, 'XENO STORE app installed', 20000);
+    await page.waitForFunction(() => { const c = document.querySelector('#scr-settings .app-card'); return c && !/Update available/.test(c.textContent) && /Reinstall/.test(c.textContent); }, null, { timeout: 8000 }).catch(() => fail('after the update the app card should show the installed app (Reinstall / update), not "Update available"'));
+    /* the app as the folder /data/homebrew/PPSA99500: no update offered, a hint instead of the button (an install would add a second copy) */
+    await api('/api/__mock/app', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ version: '01.003.001', latest: '1.4.0', copy: 'folder' }) });
+    await page.click('#scr-settings [data-nav-id="upd-check"]');
+    await page.waitForFunction(() => { const c = document.querySelector('#scr-settings .app-card'); return c && /XENO STORE does not update/.test(c.textContent); }, null, { timeout: 10000 }).catch(() => fail('a folder copy of the app should get the "does not update" hint on the app card'));
+    await expect(async () => page.evaluate(() => { const c = document.querySelector('#scr-settings .app-card'); return !c.querySelector('[data-nav-id="app-install"]') && !/Update available/.test(c.textContent); }), 'a folder copy of the app should get no install button and no "Update available"');
+    await api('/api/__mock/app', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ copy: '' }) });
 
     /* ---------- Uninstall sheet, keyboard: open from the nav, cancel with Escape ---------- */
     await page.evaluate(() => document.querySelector('[data-nav-id="set-nav-general"]').focus());
@@ -402,6 +481,7 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await page.keyboard.press('Enter');
     await page.waitForSelector('.sheet [data-nav-id="un-go"]');
     await expect(async () => page.evaluate(() => document.querySelector('.sheet [data-nav-id="un-keep"]').classList.contains('on')), '"Keep downloaded games" should be on by default');
+    await expect(async () => page.evaluate(() => !document.querySelector('.sheet [data-nav-id="un-pm"]')), 'the uninstall sheet should not offer a Payload Manager copy the store never places');
     await sleep(300);
     await shot(page, 'tv-b-uninstall-sheet.png');
     await page.keyboard.press('Escape');
@@ -423,6 +503,8 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await page.waitForFunction(() => !XS.router.busy() && !XS.ui.layers.length && !document.querySelector('.layer'), null, { timeout: 5000 });
     await page.keyboard.press('Control+k');
     await page.waitForSelector('.palette [data-nav-id="palette-input"]');
+    await page.fill('.palette [data-nav-id="palette-input"]', 'community');
+    await page.waitForFunction(() => { const it = document.querySelector('.palette .pal-item'); return !!it && /Saves/.test(it.textContent) && /Screen/.test(it.textContent); }, null, { timeout: 4000 }).catch(async () => fail('palette should find the Saves tab by "community" (Community Saves) (' + await page.evaluate(() => Array.from(document.querySelectorAll('.palette .pal-item')).map((e) => e.textContent.trim().slice(0, 40)).join(' | ')) + ')'));
     await page.fill('.palette [data-nav-id="palette-input"]', 'god of');
     await page.waitForFunction(() => Array.from(document.querySelectorAll('.palette .pal-item .kind')).some((k) => /Game/.test(k.textContent)), null, { timeout: 4000 }).catch(async () => fail('palette should find catalog games (' + await page.evaluate(() => JSON.stringify({ active: document.activeElement && (document.activeElement.className + '/' + document.activeElement.value), palettes: document.querySelectorAll('.palette').length, layers: XS.ui.layers.map((l) => l.key).join('+'), busy: XS.router.busy(), items: Array.from(document.querySelectorAll('.palette .pal-item')).map((e) => e.textContent.trim().slice(0, 30)), search: (function () { try { return XS.ca.search('god of', 2).map((x) => x.g.title); } catch (e) { return 'ERR ' + e.message; } })() })) + ')'));
     await page.keyboard.press('Escape'); await noLayer(page);
@@ -489,7 +571,15 @@ const put = (path, body) => api(path, { method: 'PUT', headers: { 'Content-Type'
     await sleep(400);
     await shot(pp, 'phone-b-settings.png');
     await expect(async () => pp.evaluate(() => document.querySelector('#scr-settings').scrollWidth <= window.innerWidth + 1), 'phone Settings has horizontal overflow');
-    await pp.evaluate(() => XS.router.go('saveshub'));
+    await expect(async () => !!(await pp.$('#phonebar [data-nav-id="pb:saves"]')), 'the phone bar should have a Saves place');
+    await pp.click('[data-nav-id="pb:saves"]');
+    await pp.waitForSelector('#scr-saves.active [data-nav-id="sv-entry-options"]', { timeout: 10000 });
+    await pp.waitForSelector('#scr-saves.active .save-card', { timeout: 10000 });
+    await waitCovers(pp, 3);
+    await sleep(400);
+    await shot(pp, 'phone-b-saves-tab.png');
+    await expect(async () => pp.evaluate(() => document.querySelector('#phonebar [data-nav-id="pb:saves"]').classList.contains('active') && document.querySelector('#scr-saves').scrollWidth <= window.innerWidth + 1), 'phone Saves tab: Saves highlighted in the phone bar, no horizontal overflow');
+    await pp.click('[data-nav-id="sv-entry-backups"]');
     await pp.waitForSelector('#scr-saveshub.active .srow', { timeout: 10000 });
     await sleep(400);
     await shot(pp, 'phone-b-saves-hub.png');

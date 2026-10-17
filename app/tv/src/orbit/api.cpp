@@ -30,6 +30,29 @@ bool safe_path_segment(std::string_view value)
     return value != "." && value != "..";
 }
 
+std::string save_path_segment(std::string_view id)
+{
+    // The store reads at most 95 bytes of a path segment, after decoding.
+    if (id.empty() || id.size() > 95)
+        return {};
+    static constexpr char kHex[] = "0123456789ABCDEF";
+    std::string out;
+    for (const char c : id)
+    {
+        const bool plain = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+                           (c >= '0' && c <= '9') || c == '-' || c == '_' || c == '.' || c == '~';
+        if (plain)
+        {
+            out += c;
+            continue;
+        }
+        out += '%';
+        out += kHex[(static_cast<unsigned char>(c) >> 4) & 15];
+        out += kHex[static_cast<unsigned char>(c) & 15];
+    }
+    return out == "." || out == ".." ? std::string() : out;
+}
+
 http::Response Client::send(const char *method, std::string path, std::string body,
                             std::size_t max_bytes)
 {
@@ -58,6 +81,30 @@ template <typename T> bool Client::fail(const http::Response &response, Result<T
     if (json::parse(response.body, &value) && !value.text("error").empty())
         result->error = value.text("error");
     else
+        result->error = tr("XENO STORE could not complete this request.");
+    return true;
+}
+
+// XENO STORE: the Save Data Store's routes are not /api/v1: a refusal is
+// {"ok": false, "error": code, "message": sentence}.
+template <typename T> bool Client::fail_saves(const http::Response &response, Result<T> *result)
+{
+    result->status = response.status;
+    result->retry_after = response.retry_after;
+    if (!response.error.empty())
+    {
+        result->error = response.error;
+        return true;
+    }
+    if (response.status >= 200 && response.status < 300)
+        return false;
+    json::Value value;
+    if (json::parse(response.body, &value))
+    {
+        result->code = value.text("error");
+        result->error = value.text("message");
+    }
+    if (result->error.empty())
         result->error = tr("XENO STORE could not complete this request.");
     return true;
 }
@@ -550,6 +597,87 @@ Result<TvAppStatus> Client::tv_app_action(const UpdateRequest &request)
     if (json::parse(response.body, &value) && value.is_object())
         result.value = parse_tv_app(value);
     return result;
+}
+
+Result<SaveListing> Client::save_store(bool refresh)
+{
+    Result<SaveListing> result;
+    const http::Response response =
+        send("GET", refresh ? "/api/saves/store?refresh=1" : "/api/saves/store");
+    if (fail_saves(response, &result))
+        return result;
+    json::Value value;
+    if (!json::parse(response.body, &value) || !value.is_object() || !value["saves"].is_array())
+        result.error = tr("XENO STORE sent an unreadable list of community saves.");
+    else
+        result.value = parse_save_listing(value);
+    return result;
+}
+
+Result<std::vector<SaveProfile>> Client::save_users()
+{
+    Result<std::vector<SaveProfile>> result;
+    const http::Response response = send("GET", "/api/saves/users");
+    if (fail_saves(response, &result))
+        return result;
+    json::Value value;
+    if (!json::parse(response.body, &value) || !value["users"].is_array())
+        result.error = tr("XENO STORE sent an unreadable list of profiles.");
+    else
+        result.value = parse_save_profiles(value);
+    return result;
+}
+
+Result<SaveJob> Client::save_job_request(const char *method, std::string path, std::string body)
+{
+    Result<SaveJob> result;
+    const http::Response response = send(method, std::move(path), std::move(body));
+    if (fail_saves(response, &result))
+        return result;
+    json::Value value;
+    if (!json::parse(response.body, &value) || !value["job"].is_object() ||
+        value["job"].text("id").empty())
+        result.error = tr("XENO STORE sent an unreadable save install.");
+    else
+        result.value = parse_save_job(value["job"]);
+    return result;
+}
+
+Result<SaveJob> Client::install_save(std::string_view save_id, std::uint32_t user)
+{
+    const std::string segment = save_path_segment(save_id);
+    if (segment.empty())
+    {
+        Result<SaveJob> result;
+        result.error = tr("Unknown save.");
+        return result;
+    }
+    // The current save is always backed up first; the app follows the job.
+    return save_job_request("POST", "/api/saves/store/" + segment + "/install",
+                            "{\"user\":" + std::to_string(user) +
+                                ",\"backupFirst\":true,\"wait\":false}");
+}
+
+Result<SaveJob> Client::save_job(std::string_view job_id)
+{
+    if (!safe_path_segment(job_id))
+    {
+        Result<SaveJob> result;
+        result.error = tr("Unknown save install.");
+        return result;
+    }
+    return save_job_request("GET", "/api/saves/jobs/" + std::string(job_id), {});
+}
+
+Result<SaveJob> Client::cancel_save_job(std::string_view job_id)
+{
+    if (!safe_path_segment(job_id))
+    {
+        Result<SaveJob> result;
+        result.error = tr("Unknown save install.");
+        return result;
+    }
+    return save_job_request("POST", "/api/saves/jobs/" + std::string(job_id) + "/cancel", "{}");
 }
 
 } // namespace orbit::api

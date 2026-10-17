@@ -79,6 +79,7 @@ static void settings_defaults(settings_t *s) {
   s->turboStart = 1; s->autoInstallSets = 1;
   xstrlcpy(s->installOrder, DEFAULT_INSTALL_ORDER, sizeof s->installOrder);
   s->restModeAutoResume = 1; s->extractZip = 1; s->deleteArchiveAfterExtract = 1;
+  s->deletePkgAfterInstall = 0; s->resumeAfterRestart = 1;
   xstrlcpy(s->debrid.preferred, "auto", sizeof s->debrid.preferred);
   xstrlcpy(s->featuredUrl, DEFAULT_FEATURED_URL, sizeof s->featuredUrl);
   xstrlcpy(s->messagesUrl, DEFAULT_MESSAGES_URL, sizeof s->messagesUrl);
@@ -132,6 +133,7 @@ static void write_settings(jw *w, const settings_t *s, int mask) {
   jw_kv_bool(w, "autoInstallSets", s->autoInstallSets); jw_kv_str(w, "installOrder", s->installOrder);
   jw_kv_bool(w, "restModeAutoResume", s->restModeAutoResume); jw_kv_bool(w, "extractZip", s->extractZip);
   jw_kv_bool(w, "deleteArchiveAfterExtract", s->deleteArchiveAfterExtract);
+  jw_kv_bool(w, "deletePkgAfterInstall", s->deletePkgAfterInstall); jw_kv_bool(w, "resumeAfterRestart", s->resumeAfterRestart);
   jw_obj_end(w);
   jw_key(w, "debrid"); jw_obj_begin(w);
   jw_key(w, "realdebrid"); jw_obj_begin(w); write_key(w, s->debrid.realdebrid.apiKey, mask); jw_obj_end(w);
@@ -336,6 +338,7 @@ static int merge_into(settings_t *s, jv o, char *err, size_t errcap) {
     merge_str(d, "installOrder", s->installOrder, sizeof s->installOrder);
     merge_bool(d, "restModeAutoResume", &s->restModeAutoResume); merge_bool(d, "extractZip", &s->extractZip);
     merge_bool(d, "deleteArchiveAfterExtract", &s->deleteArchiveAfterExtract);
+    merge_bool(d, "deletePkgAfterInstall", &s->deletePkgAfterInstall); merge_bool(d, "resumeAfterRestart", &s->resumeAfterRestart);
   }
   jv db = jv_get(o, "debrid");
   if (jv_ok(db)) {

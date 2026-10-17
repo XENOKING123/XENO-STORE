@@ -4,8 +4,11 @@
  * folder name that was listed by the previous call and confirmed twice.
  */
 #include "cx_uninstall.h"
+#include "app_install.h"
 #include "config.h"
 #include "cx_common.h"
+#include "cx_library.h"
+#include "launcher_icon.h"
 #include "log.h"
 #include "storage.h"
 #include "util.h"
@@ -59,17 +62,52 @@ static void delete_recorded_downloads(jw *removed, jw *failed, int *nr, int *nf)
   json_free(d);
 }
 
+/* A home-screen title of ours: the Games-row app (PPSA99500) or the XENO STORE
+ * Web shortcut (launcher_icon.c). ShadowMountPlus keeps a title registered
+ * after its image is gone (it only drops it with auto_remove_missing_games,
+ * off by default), so the tile is taken off with the Library's uninstall call,
+ * after the files are deleted so nothing registers it again. */
+static void unregister_title(const char *tid, int remove, jw *removed, jw *kept, jw *failed, int *nr, int *nf) {
+  char p[700], err[256];
+  xsnprintf(p, sizeof p, "%s/%s", storage_user_app_dir(), tid);
+  if (!util_dir_exists(p)) return;
+  if (!remove) { arr_path(kept, p); return; }
+  if (cx_library_app_uninstall(tid, err, sizeof err) == 0) { arr_path(removed, p); (*nr)++; }
+  else { LOGW("uninstall: %s: %s", tid, err); arr_path(failed, p); (*nf)++; }
+}
+
 int cx_uninstall(int data, int homebrew, int payload_manager, int downloads, jw *w) {
   jw removed, kept, failed;
   jw_init(&removed); jw_arr_begin(&removed);
   jw_init(&kept); jw_arr_begin(&kept);
   jw_init(&failed); jw_arr_begin(&failed);
   int nr = 0, nf = 0;
-  char hb_app[700];
-  xsnprintf(hb_app, sizeof hb_app, "%s/XENO-STORE", cx_data_homebrew_dir());
+  char hb_app[700], hb_dir[700], hb_eboot[720], hb_pkg[700], hb_part[720];
+  xsnprintf(hb_app, sizeof hb_app, "%s/XENO-STORE", cx_data_homebrew_dir());   /* the 1.0.0 folder layout */
+  xsnprintf(hb_dir, sizeof hb_dir, "%s/%s", cx_data_homebrew_dir(), APP_TITLE_ID);   /* the app as a folder (app_install_state) */
+  xsnprintf(hb_eboot, sizeof hb_eboot, "%s/eboot.bin", hb_dir);
+  int app_dir = util_file_exists(hb_eboot);
+  app_install_pkg_path(hb_pkg, sizeof hb_pkg);   /* the Games-row app since 1.2.0 */
+  xsnprintf(hb_part, sizeof hb_part, "%s.part", hb_pkg);   /* an app install's download */
   if (homebrew) {
+    /* An app install still running (web UI, or the TV app's update) would put
+     * the file back: it is cancelled first. The .part goes before the app
+     * file, so a job that renames it in between still leaves nothing. */
+    if (app_install_cancel(10000) != 0) LOGW("uninstall: the app install job is still running");
     if (util_dir_exists(hb_app)) { if (cx_rm_rf(hb_app, 6) == 0) { arr_path(&removed, hb_app); nr++; } else { arr_path(&failed, hb_app); nf++; } }
-  } else arr_path(&kept, hb_app);
+    if (app_dir) { if (cx_rm_rf(hb_dir, 8) == 0) { arr_path(&removed, hb_dir); nr++; } else { arr_path(&failed, hb_dir); nf++; } }
+    const char *files[2] = {hb_part, hb_pkg};
+    for (int i = 0; i < 2; i++) {
+      if (!util_file_exists(files[i])) continue;
+      if (util_unlink_quiet(files[i]) == 0) { arr_path(&removed, files[i]); nr++; } else { arr_path(&failed, files[i]); nf++; }
+    }
+  } else {
+    if (util_dir_exists(hb_app)) arr_path(&kept, hb_app);
+    if (app_dir) arr_path(&kept, hb_dir);
+    if (util_file_exists(hb_pkg)) arr_path(&kept, hb_pkg);
+  }
+  unregister_title(APP_TITLE_ID, homebrew, &removed, &kept, &failed, &nr, &nf);
+  unregister_title(LAUNCHER_ICON_TITLE_ID, homebrew, &removed, &kept, &failed, &nr, &nf);
   /* Payload Manager copy: only one we recorded ourselves */
   char pm_marker[700];
   xsnprintf(pm_marker, sizeof pm_marker, "%s/payload-manager.json", g_cfg.data_dir);
@@ -189,7 +227,7 @@ void cx_homebrew_dirs_json(jw *w) {
   }
   jw_arr_end(w);
   jw_kv_str(w, "root", base);
-  jw_kv_str(w, "note", "ShadowMountPlus registers every folder here as a home-screen icon; deleting a folder removes its icon on the next scan.");
+  jw_kv_str(w, "note", "ShadowMountPlus registers every folder here as a home-screen icon. Deleting a folder does not remove the icon ShadowMountPlus already made for it; delete that icon in the PS5's Settings → Storage (ShadowMountPlus only drops it by itself when auto_remove_missing_games is on).");
   pthread_mutex_unlock(&hb_mu);
 }
 

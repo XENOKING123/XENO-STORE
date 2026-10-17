@@ -17,11 +17,13 @@
 #include "app_install.h"
 #include "config.h"
 #include "cx_common.h"
+#include "cx_feeds.h"
 #include "cx_jobs.h"
 #include "cx_savestore.h"
 #include "http_client.h"
 #include "install.h"
 #include "log.h"
+#include "settings.h"
 #include "sha256.h"
 #include "storage.h"
 #include "util.h"
@@ -31,6 +33,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -43,11 +46,18 @@
 #define APP_SPACE_SLACK (16LL << 20)   /* headroom left on /data after the write */
 #define APP_BUF (512u << 10)
 #define APP_RECORD "tv-app.json"        /* <data>/tv-app.json: the install record */
+#define APP_FEED "https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/tv-app.json"
+#define APP_FEED_MAX_AGE (6 * 3600)     /* the card's automatic read of tv-app.json */
 
 static const char *const APP_HOSTS[] = {"github.com", "githubusercontent.com"};
 static pthread_mutex_t app_mu = PTHREAD_MUTEX_INITIALIZER;   /* order: app_mu, then cx_jobs' lock */
 static char app_job[16];   /* last job started (guarded by app_mu) */
 static app_install_info g_info;   /* what the last job is doing (guarded by app_mu) */
+/* tv-app.json's release for the web UI's card (guarded by app_mu) */
+static struct { char version[32]; time_t at; int checking; } g_latest;
+
+static int version_compare(const char *a, const char *b);
+static int version_parts(const char *v, unsigned parts[5]);
 
 /* A job's parameters. The web UI path fills base; the pinned path fills url,
  * sha256, size, version and replace. */
@@ -88,7 +98,7 @@ static const char *app_base(void) {
   return o[0] ? o : APP_BASE;
 }
 
-static void pkg_path(char *out, size_t cap) { xsnprintf(out, cap, "%s/%s", cx_data_homebrew_dir(), APP_FILE); }
+void app_install_pkg_path(char *out, size_t cap) { xsnprintf(out, cap, "%s/%s", cx_data_homebrew_dir(), APP_FILE); }
 
 static int host_allowed(const char *url) {
   char host[256];
@@ -114,7 +124,7 @@ int app_install_state(char *version, size_t cap) {
   xsnprintf(p, sizeof p, "%s/%s/eboot.bin", cx_data_homebrew_dir(), APP_TITLE_ID);
   if (lstat(p, &st) == 0) return APP_STATE_FOLDER;
   if (errno != ENOENT && errno != ENOTDIR) return APP_STATE_BLOCKED;
-  pkg_path(p, sizeof p);
+  app_install_pkg_path(p, sizeof p);
   if (lstat(p, &st) != 0) return errno == ENOENT ? APP_STATE_NONE : APP_STATE_BLOCKED;
   if (!S_ISREG(st.st_mode)) return APP_STATE_BLOCKED;
   int state = APP_STATE_MANUAL;
@@ -134,6 +144,19 @@ int app_install_state(char *version, size_t cap) {
     json_free(d);
   }
   return state;
+}
+
+int app_install_launchable(void) {
+  int state = app_install_state(NULL, 0);
+  if (state != APP_STATE_STORE && state != APP_STATE_MANUAL && state != APP_STATE_FOLDER) return 0;
+  char appdir[700];
+  xsnprintf(appdir, sizeof appdir, "%s/%s", storage_user_app_dir(), APP_TITLE_ID);
+  return util_dir_exists(appdir);
+}
+
+int app_install_open_choice(int tv_app, int wanted, int recent, int restarted, int launchable) {
+  if (tv_app || !wanted || recent) return APP_OPEN_NONE;
+  return launchable && !restarted ? APP_OPEN_APP : APP_OPEN_BROWSER;
 }
 
 /* Writes the install record for the image now at dest (after the rename). */
@@ -166,17 +189,21 @@ int app_install_release_url_ok(const char *url) {
 }
 
 void app_install_status_json(jw *w) {
-  char path[700], appdir[700], ver[32] = "", job[16] = "", last[16];
-  pkg_path(path, sizeof path);
+  char path[700], appdir[700], ver[32] = "", job[16] = "", last[16], latest[32];
+  app_install_pkg_path(path, sizeof path);
   xsnprintf(appdir, sizeof appdir, "%s/%s", storage_user_app_dir(), APP_TITLE_ID);
   int64_t size = util_file_size(path);
   int registered = util_dir_exists(appdir);
   cx_installed_version(APP_TITLE_ID, ver, sizeof ver, NULL, 0);
+  int copy = app_install_state(NULL, 0);
   pthread_mutex_lock(&app_mu);
   xstrlcpy(last, app_job, sizeof last);
   if (app_job[0] && cx_jobs_active(APP_JOB_TYPE) > 0) xstrlcpy(job, app_job, sizeof job);
+  xstrlcpy(latest, g_latest.version, sizeof latest);
+  int checking = g_latest.checking;
   pthread_mutex_unlock(&app_mu);
-  jw_kv_bool(w, "installed", size > 0 || registered);
+  int installed = size > 0 || registered;
+  jw_kv_bool(w, "installed", installed);
   jw_kv_str(w, "path", path);
   jw_kv_i64(w, "size", size > 0 ? size : 0);
   jw_kv_str(w, "version", ver);
@@ -185,6 +212,74 @@ void app_install_status_json(jw *w) {
   jw_kv_str(w, "titleId", APP_TITLE_ID);
   jw_kv_bool(w, "file", size > 0);
   jw_kv_bool(w, "registered", registered);
+  jw_kv_str(w, "copy", app_install_state_name(copy));
+  jw_kv_str(w, "latestVersion", latest);
+  /* the installed contentVersion (01.003.001) reads as 1.3.1. Not for a folder
+   * copy or something else at the image's path: like the TV app's install
+   * (tvapi_update.c), the card's install never adds a second copy. */
+  jw_kv_bool(w, "updateAvailable", installed && copy != APP_STATE_FOLDER && copy != APP_STATE_BLOCKED && ver[0] && latest[0] &&
+                                       version_compare(latest, ver) == 1);
+  jw_kv_bool(w, "checking", checking);
+}
+
+void app_install_feed_url(char *out, size_t cap) {
+  xstrlcpy(out, APP_FEED, cap);
+  settings_t *s = malloc(sizeof *s);
+  if (!s) return;
+  settings_get(s);
+  static const char tail[] = "/payloads.json";
+  size_t n = strlen(s->updatesFeed), tl = sizeof tail - 1;
+  if (n > tl && strcmp(s->updatesFeed + n - tl, tail) == 0 && n - tl + sizeof "/tv-app.json" <= cap) {
+    memcpy(out, s->updatesFeed, n - tl);
+    xstrlcpy(out + (n - tl), "/tv-app.json", cap - (n - tl));
+  }
+  free(s);
+}
+
+/* The feed's version when it names this app's image and is a plain N.N.N, else "". */
+static void feed_version(const char *txt, size_t len, char *out, size_t cap) {
+  out[0] = 0;
+  jdoc *d = txt ? json_parse(txt, len, 200, 8) : NULL;
+  if (!d) return;
+  jv r = json_root(d);
+  const char *v = jv_get_str(r, "version", "");
+  if (*v == 'v') v++;
+  unsigned p[5];
+  if (jv_type(r) == JV_OBJ && strcmp(jv_get_str(r, "filename", ""), APP_FILE) == 0 && strlen(v) < cap && version_parts(v, p) && p[3] == 1)
+    xstrlcpy(out, v, cap);
+  json_free(d);
+}
+
+static void *latest_thread(void *arg) {
+  int force = (int)(intptr_t)arg;
+  char url[640], v[32];
+  app_install_feed_url(url, sizeof url);
+  size_t len = 0;
+  char *txt = cx_cached_fetch("tv-app", url, APP_FEED_MAX_AGE, force, 64 << 10, &len, NULL, NULL);
+  feed_version(txt, len, v, sizeof v);
+  free(txt);
+  pthread_mutex_lock(&app_mu);
+  if (v[0]) xstrlcpy(g_latest.version, v, sizeof g_latest.version);   /* unreadable: the last one stays */
+  g_latest.at = util_now();
+  g_latest.checking = 0;
+  pthread_mutex_unlock(&app_mu);
+  if (v[0]) LOGI("app: latest release in tv-app.json: %s", v);
+  else LOGW("app: no release read from %s", url);
+  return NULL;
+}
+
+void app_install_check_latest(int force) {
+  time_t now = util_now();
+  pthread_mutex_lock(&app_mu);
+  int start = !g_latest.checking && (force || !g_latest.at || now - g_latest.at >= APP_FEED_MAX_AGE);
+  if (start) g_latest.checking = 1;
+  pthread_mutex_unlock(&app_mu);
+  if (start && xthread_start(NULL, "app-latest", latest_thread, (void *)(intptr_t)force, 0, 1) != 0) {
+    pthread_mutex_lock(&app_mu);
+    g_latest.checking = 0;
+    pthread_mutex_unlock(&app_mu);
+    LOGW("app: cannot start the tv-app.json read");
+  }
 }
 
 /* Reads the release's SHA256SUMS ("<64 hex>  <file>" per line, sha256sum
@@ -597,10 +692,20 @@ int app_install_start(char *job_id, size_t idcap, char *code, size_t ccap, char 
   xstrlcpy(a->base, base, sizeof a->base);
   size_t bl = strlen(a->base);
   while (bl > 0 && a->base[bl - 1] == '/') a->base[--bl] = 0;
-  pkg_path(a->dest, sizeof a->dest);
+  app_install_pkg_path(a->dest, sizeof a->dest);
   if (start_job(a, "XENO STORE app (Games row)", app_worker, job_id, idcap, code, ccap, err, errcap) != 0) return -1;
   LOGI("app install: job %s started (%s)", job_id, base);
   return 0;
+}
+
+int app_install_cancel(int timeout_ms) {
+  char id[16] = "";
+  pthread_mutex_lock(&app_mu);
+  if (app_job[0] && cx_jobs_active(APP_JOB_TYPE) > 0) xstrlcpy(id, app_job, sizeof id);
+  pthread_mutex_unlock(&app_mu);
+  if (!id[0] || cx_job_cancel(id) != 0) return 0;
+  LOGI("app install: cancelling job %s", id);
+  return cx_job_wait(id, timeout_ms) == 0 ? -1 : 0;
 }
 
 int app_install_start_pinned(const char *url, const char *sha256, int64_t size, const char *version, int replace,
@@ -624,7 +729,7 @@ int app_install_start_pinned(const char *url, const char *sha256, int64_t size, 
   xstrlcpy(a->url, url, sizeof a->url);
   xstrlcpy(a->sha256, sha256, sizeof a->sha256);
   xstrlcpy(a->version, version, sizeof a->version);
-  pkg_path(a->dest, sizeof a->dest);
+  app_install_pkg_path(a->dest, sizeof a->dest);
   char title[96];
   xsnprintf(title, sizeof title, "XENO STORE TV app %s", version);
   if (start_job(a, title, app_worker_pinned, job_id, idcap, code, ccap, err, errcap) != 0) return -1;

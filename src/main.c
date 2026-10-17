@@ -6,11 +6,12 @@
  *   xeno-store [--port N] [--data DIR] [--root PATH]... [--no-browser] [--log-level debug|info|warn]
  *
  * On the console the loader passes no arguments and the defaults apply
- * (data dir /data/xeno-store, port 9095). Once the server is up the PS5
- * browser opens on the store unless Settings → "Open when XENO STORE starts"
- * is off (or --no-browser).
+ * (data dir /data/xeno-store, port 9095). Once the server is up the XENO
+ * STORE app (or, without it, the PS5 browser) opens on the store unless
+ * Settings → "Open XENO STORE when it starts" is off (or --no-browser).
  */
 #include "api.h"
+#include "app_install.h"
 #include "catalog.h"
 #include "config.h"
 #include "dl.h"
@@ -24,6 +25,7 @@
 #include "sys.h"
 #include "update.h"
 #include "cx_common.h"
+#include "cx_library.h"
 #include "util.h"
 #include "xthread.h"
 
@@ -150,6 +152,7 @@ int main(int argc, char **argv) {
     log_shutdown();
     return 0;
   }
+  int restarted = update_restarted();   /* before update_handoff_done() clears the marker */
   crash_consume();
   if (crashed) {
     long up = -1;
@@ -222,22 +225,37 @@ int main(int argc, char **argv) {
     }
   }
   if (tv_app) LOGI("the TV app is polling: no browser and no start-up toasts");
-  else pairing_announce();
 
   char ip[48];
   sys_local_ip(ip, sizeof ip);   /* "127.0.0.1" stays when there is no LAN address */
   char url[96];
   xsnprintf(url, sizeof url, "http://%s:%d/", ip, g_cfg.port);
-  /* Open the store on the TV (Settings → General → "Open when XENO STORE
-   * starts"); skipped when the Games-row app already asked for it, and when
-   * the TV app started this copy. */
-  if (!tv_app && !g_cfg.no_browser && settings_open_on_start() && sys_browser_opened_ago_ms() > 15000) {
+  /* Open the store on the TV (Settings → General → "Open XENO STORE when it
+   * starts"): the XENO STORE app when it is installed and registered (it finds
+   * this copy running), otherwise, or when the app does not start, the
+   * browser. Skipped when the Games-row app already asked for the browser,
+   * and when the TV app started this copy (it is open already); the browser
+   * again when Settings → Updates → Restart now in the console's own browser
+   * started this copy. */
+  int open = app_install_open_choice(tv_app, !g_cfg.no_browser && settings_open_on_start(), sys_browser_opened_ago_ms() <= 15000,
+                                     restarted, app_install_launchable());
+  if (open == APP_OPEN_APP) {
+    char err[256];
+    if (cx_library_app_launch(APP_TITLE_ID, err, sizeof err) == 0) LOGI("start-up: opened the XENO STORE app (%s): no start-up toasts", APP_TITLE_ID);
+    else {
+      LOGW("start-up: the XENO STORE app did not open (%s), opening the browser", err);
+      open = APP_OPEN_BROWSER;
+    }
+  }
+  int quiet = tv_app || open == APP_OPEN_APP;   /* the app shows the pairing code itself: the toasts would only cover it */
+  if (!quiet) pairing_announce();
+  if (open == APP_OPEN_BROWSER) {
     char local[64];
     xsnprintf(local, sizeof local, "http://127.0.0.1:%d/?tv=1", g_cfg.port);
     sys_launch_browser(local);
   }
   if (crashed) sys_toast("XENO STORE restarted after a problem · details in Settings → Diagnostics");
-  if (!tv_app) sys_toast("XENO STORE ready · %s", url);
+  if (!quiet) sys_toast("XENO STORE ready · %s", url);
   LOGI("ready: %s (fw %s)", url, sys_fw_version());
 
   while (!g_cfg.stop_requested) util_sleep_ms(250);
@@ -258,7 +276,9 @@ int main(int argc, char **argv) {
   pthread_join(hk, NULL);
   if (g_cfg.restart_requested) {
     char err[256];
-    if (update_relaunch(cx_local_port("LOADER", 9021), err, sizeof err) != 0) sys_toast("XENO STORE update: %s — send the payload again", err);
+    /* "restart" reopens the console's browser it came from; from a phone or a PC, the app */
+    if (update_relaunch(cx_local_port("LOADER", 9021), g_cfg.restart_local ? "restart" : "remote", err, sizeof err) != 0)
+      sys_toast("XENO STORE update: %s — send the payload again", err);
   }
   LOGI("bye");
   log_shutdown();

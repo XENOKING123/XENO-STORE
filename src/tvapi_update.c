@@ -58,7 +58,6 @@
 #define TVAPP_THROTTLE 60               /* /tv-app retryAt after a 403/429/503 */
 #define TVAPP_SPARE (64LL << 20)        /* left free on /data after the image */
 #define TVAPP_FILE APP_TITLE_ID ".ffpkg"
-#define TVAPP_FEED "https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/tv-app.json"
 #define TVUP_POLL_MS 100                /* the worker's idle poll */
 
 /* /updates sentences */
@@ -611,22 +610,6 @@ static void tv_throttle(int status) {
   pthread_mutex_unlock(&SV.mu);
 }
 
-/* tv-app.json next to the store's payloads.json feed (so a test or a fork
- * that moves the feed moves both), else the project's own. */
-static void tvapp_feed_url(char *out, size_t cap) {
-  xstrlcpy(out, TVAPP_FEED, cap);
-  settings_t *s = malloc(sizeof *s);
-  if (!s) return;
-  settings_get(s);
-  static const char tail[] = "/payloads.json";
-  size_t n = strlen(s->updatesFeed), tl = sizeof tail - 1;
-  if (n > tl && strcmp(s->updatesFeed + n - tl, tail) == 0 && n - tl + sizeof "/tv-app.json" <= cap) {
-    memcpy(out, s->updatesFeed, n - tl);
-    xstrlcpy(out + (n - tl), "/tv-app.json", cap - (n - tl));
-  }
-  free(s);
-}
-
 /* A whole-number JSON size within the image limits, else -1. */
 static int64_t json_size(jv v) {
   if (jv_type(v) != JV_NUM) return -1;
@@ -648,7 +631,7 @@ static int tv_rel_valid(const tv_rel *r) {
  * unusable, -1 not reachable / not published (try GitHub). */
 static int tv_from_feed(tv_rel *out, char *detail, size_t dcap) {
   char url[640];
-  tvapp_feed_url(url, sizeof url);
+  app_install_feed_url(url, sizeof url);
   cx_http o = {0};
   o.timeout_ms = 20000;
   o.max_bytes = 64 << 10;

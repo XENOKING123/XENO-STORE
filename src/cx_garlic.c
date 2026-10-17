@@ -429,14 +429,20 @@ static int find_elf(found_elf *f, int fresh) {
   return rc;
 }
 
-/* Compiled-in download of the pinned release; off on the host build. */
-static const char *default_url(void) { return cx_is_host() ? "" : CX_GARLIC_ELF_URL; }
+void cx_garlic_pin_url(char *out, size_t cap) {
+  const char *o = cx_base_override("GARLIC");
+  if (!cx_is_host()) xstrlcpy(out, CX_GARLIC_ELF_URL, cap);
+  else if (*o) xsnprintf(out, cap, "%s%s", o, strrchr(CX_GARLIC_ELF_URL, '/'));
+  else if (cap) out[0] = 0;
+}
 
 static int can_download(void) {
   if (!xhttp_available()) return 0;
   int unavailable = 0;
   if (cx_companions_by_kind("saves", NULL, 0, NULL, 0, &unavailable) == 0) return !unavailable;
-  return default_url()[0] != 0;
+  char pin[300];
+  cx_garlic_pin_url(pin, sizeof pin);
+  return pin[0] != 0;
 }
 
 /* ---- ensure / start ----------------------------------------------------- */
@@ -457,11 +463,12 @@ static int ensure_locked(char *err, size_t errcap) {
   found_elf f;
   memset(&f, 0, sizeof f);
   cx_companion_file cf;
-  char e2[300] = "";
+  char e2[300] = "", pin[300];
+  cx_garlic_pin_url(pin, sizeof pin);
   /* the pinned release first: a garlic*.elf the user keeps may predate the
    * import API (1.6); a scanned copy is only used when the pinned one cannot
    * be had (offline), and never from USB or an external drive */
-  if (cx_companions_fetch("saves", CX_GARLIC_COMPANION_ID, default_url(), CX_GARLIC_ELF_SHA256, CX_GARLIC_ELF_VERSION, &cf, e2, sizeof e2) == 0) {
+  if (cx_companions_fetch("saves", CX_GARLIC_COMPANION_ID, pin, CX_GARLIC_ELF_SHA256, CX_GARLIC_ELF_VERSION, &cf, e2, sizeof e2) == 0) {
     xstrlcpy(f.path, cf.path, sizeof f.path);
     xstrlcpy(f.source, cf.downloaded ? "download" : "store", sizeof f.source);
     f.size = util_file_size(f.path);

@@ -37,6 +37,7 @@ typedef struct http_req {
   char origin[300];            /* Origin header, "" when absent */
   char sec_fetch_site[24];     /* Sec-Fetch-Site, "" when absent */
   char authorization[160];     /* Authorization header ("Bearer <token>") */
+  char user_agent[160];        /* User-Agent (a paired device's name, pairing.c) */
   int host_count, origin_count, site_count;  /* duplicate-header smuggling guard */
   int responded;
 } http_req;

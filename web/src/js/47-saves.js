@@ -1,5 +1,6 @@
-/* XENO STORE — 47-saves.js: PS5 Save Data Store UI (§17.22): the game page "Saves (n)" tab, the Community Saves
-   screen (id "saves"), save detail sheet, Install / Download / Report flows and the Upload-my-save wizard.
+/* XENO STORE — 47-saves.js: PS5 Save Data Store UI (§17.22): the game page "Saves (n)" tab, the Saves top tab (screen
+   id "saves": Community Saves, with the Saves hub and the Save Store options one step away), save detail sheet,
+   Install / Download / Report flows and the Upload-my-save wizard.
    Uses /api/saves/* exactly as SPEC §17.22.7; the re-sign engine tier is shown honestly (native / garlic / raw), with
    Garlic Save Manager's state (GET /api/saves/garlic) and a Start / Install action when community saves need it. */
 (function () {
@@ -8,7 +9,7 @@
   var root = null;
   var CATS = ['starter', 'platinum', 'checkpoint', 'modded', 'chapter', 'other'];
   var SORTS = ['newest', 'popular', 'version'];
-  var cache = { all: null, allAt: 0, building: false, byGame: {}, engine: null, engineAt: 0, users: null, garlic: null, garlicAt: 0, site: null };
+  var cache = { all: null, allAt: 0, p: null, building: false, byGame: {}, engine: null, engineAt: 0, users: null, garlic: null, garlicAt: 0, site: null };
   var scr = { q: '', cat: '', sort: 'newest', compatOnly: false };
 
   /* ---------- data ---------- */
@@ -53,15 +54,20 @@
     if (/\b(chapter|act|mission|level)\b/.test(x)) return 'chapter';
     return 'other';
   }
-  function fetchAll(force) {
+  /* One request at a time; rebuild (the refresh button) has the console fetch saves-backend.json and every source
+     again (refresh=1) instead of serving its copy. */
+  function fetchAll(force, rebuild) {
     if (!force && cache.all && Date.now() - cache.allAt < 120000) return Promise.resolve(cache.all);
-    return ca.api.savesStore({}).then(function (r) {
+    if (cache.p) return cache.p;
+    cache.p = ca.api.savesStore(rebuild ? { refresh: 1 } : {}).then(function (r) {
+      cache.p = null;
       noteSite(r);
       cache.all = (r.saves || []).map(normalize);
       cache.building = !!r.building;
       cache.allAt = cache.building && !cache.all.length ? 0 : Date.now();   /* the console is still fetching the index: ask again soon */
       return cache.all;
-    });
+    }, function (err) { cache.p = null; throw err; });
+    return cache.p;
   }
   function fetchGame(g, force) {
     var key = g.id;
@@ -544,8 +550,21 @@
   }
   function report(s) { ca.linkDialog({ title: t('saves.report'), hint: t('saves.reportHint'), url: ca.issueUrl('save', { save: s }), display: t('game2.issueOnGithub'), openLabel: t('game2.openIssue') }); }
 
-  /* ---------- Community Saves screen ---------- */
+  /* ---------- Saves tab: Community Saves ---------- */
   var buildingRetries = 0;
+  /* Refresh: the console rebuilds its index at most once per 30 s, so a mashed button cannot hammer the save site;
+     a click in between reads the console's copy again, and none goes out while a request is on its way. */
+  var rebuiltAt = 0;
+  function refreshAll() {
+    if (cache.p) return;
+    var rebuild = Date.now() - rebuiltAt >= 30000;
+    if (rebuild) rebuiltAt = Date.now();
+    cache.all = null;
+    cache.byGame = {};
+    fetchAll(true, rebuild).then(null, function () { /* render() shows the error */ });
+    render();
+    ca.focusIn(root, 'sv-refresh');
+  }
   function render() {
     if (!root) return;
     U.clear(root);
@@ -555,13 +574,17 @@
     head.appendChild(h('div.grow', [h('div.kicker', { text: t('saves.kicker') }), h('h1', { text: t('saves.title') }), h('p.dim', { text: t('saves.subtitle') })]));
     var pill = h('span', { 'data-engine': '' }); head.appendChild(pill);
     engine().then(function (e) { var fresh = enginePill(e); if (pill.parentNode) pill.parentNode.replaceChild(fresh, pill); });
-    var mine = h('button.btn.lg', { nav: 'sv-mine', html: U.icon('library') + '<span>' + U.escapeHtml(t('saves.mySaves')) + '</span>' });
-    mine.addEventListener('click', function () { XS.router.go('library', { section: 'saves' }); });
-    head.appendChild(mine);
     var up = h('button.btn.primary.lg', { nav: 'sv-upload', 'data-autofocus': '', html: U.icon('upload') + '<span>' + U.escapeHtml(t('saves.uploadMine')) + '</span>' });
     up.addEventListener('click', function () { uploadWizard({}); });
     head.appendChild(up);
     inner.appendChild(head);
+    /* the tab is the home of every save feature: the Saves hub (backups, restore, profile transfer) and the
+       Save Store's options, which stay in Settings → Saves and open above the tab (Back returns here). The row spans
+       the page so Down from Upload reaches it. */
+    inner.appendChild(h('div.lib-entries.sv-entries', [
+      XS.cb.entryTile('sv-entry-backups', 'folder', t('lib2.savesHub'), t('lib2.savesHubDesc'), function () { XS.router.go('saveshub'); }),
+      XS.cb.entryTile('sv-entry-options', 'settings', t('saves3.options'), t('saves3.optionsDesc'), function () { XS.router.go('settings', { group: 'saves' }, { push: true }); })
+    ]));
     inner.appendChild(garlicPanel({ nav: 'sv-garlic' }));
     var bar = h('div.browse-bar', { data: { navRegion: '' } });
     var sb = ui.searchBox({ id: 'sv-search', placeholder: t('saves.searchPlaceholder'), value: scr.q, onInput: function (v) { scr.q = v; live(); } });
@@ -573,7 +596,7 @@
     comp.addEventListener('click', function () { scr.compatOnly = !scr.compatOnly; render(); ca.focusIn(root, 'sv-compat'); });
     bar.appendChild(comp);
     var rf = h('button.iconbtn', { nav: 'sv-refresh', html: U.icon('refresh'), 'aria-label': t('common.refresh'), title: t('common.refresh') });
-    rf.addEventListener('click', function () { cache.all = null; cache.byGame = {}; render(); });
+    rf.addEventListener('click', refreshAll);
     bar.appendChild(rf);
     inner.appendChild(bar);
     inner.appendChild(catChips(scr.cat, function (c) { scr.cat = c; render(); ca.focusIn(root, 'cat-' + (c || 'all')); }));
@@ -858,7 +881,7 @@
   }
 
   XS.router.register('saves', {
-    tab: false, icon: 'shield', label: function () { return t('saves.title'); },
+    tab: true, icon: 'shield', label: function () { return t('nav.saves'); },
     mount: function (el) { root = el; },
     show: function (params) { if (params && params.q !== undefined) scr.q = params.q; if (params && params.category) scr.cat = params.category; render(); },
     refresh: render

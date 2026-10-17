@@ -2,6 +2,7 @@
   "nav": {
     "discover": "둘러보기",
     "browse": "탐색",
+    "saves": "세이브",
     "library": "라이브러리",
     "downloads": "다운로드",
     "search": "검색",
@@ -395,7 +396,7 @@
     "verifyHashes": "해시 검증",
     "verifyHashesHint": "카탈로그가 알고 있을 때 다운로드 후 SHA-256을 확인합니다",
     "autoInstall": "PKG 자동 설치",
-    "autoInstallHint": "다운로드가 끝나는 즉시 패키지를 설치합니다",
+    "autoInstallHint": "다운로드가 끝나는 즉시 패키지를 설치합니다. 새 다운로드의 기본값이며, 다운로드마다 따로 선택할 수 있습니다.",
     "shadowScan": "ShadowMount 검색",
     "shadowScanHint": "이미지 다운로드 후 ShadowMountPlus가 다시 검색하도록 요청합니다",
     "keepAwake": "콘솔 깨움 유지",
@@ -578,6 +579,7 @@
     "not_found": "콘솔에서 찾을 수 없음",
     "forbidden": "호스트가 요청을 거부했습니다",
     "pin_required": "이 콘솔은 변경을 허용하기 전에 PIN이 필요합니다",
+    "not_paired": "이 브라우저는 PS5와의 페어링이 해제되었습니다. XENO STORE를 계속 사용하려면 다시 연결하세요.",
     "rate_limited": "호스트가 속도를 제한하고 있습니다 — 더 적은 연결로 다시 시도 중",
     "transport": "연결이 끊겼습니다 — 자동으로 다시 시도 중",
     "fix": {

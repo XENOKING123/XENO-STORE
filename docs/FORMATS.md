@@ -83,6 +83,7 @@ Console: `/data/xeno-store/` (host build: `./xeno-data/` or `--data DIR`).
 | `catalog.json`, `catalog.meta.json` | refreshed catalog when its revision is newer than the embedded one, plus `{revision, fetchedAt, etag}` |
 | `feeds/featured.json`, `feeds/messages.json`, `feeds/companions.json`, `feeds/saves-backend.json` | cached owner feeds (refreshed every 6 h; `saves-backend.json` also before a save listing when older than that) |
 | `feeds/saves-index-<hash>.json`, `feeds/saves-supabase-<hash>.json` | the save store's cached GitHub index(es) and database rows, one file per source URL (1 h) |
+| `feeds/tv-app.json` | the last copy of `updates/tv-app.json` read for the web UI's app card (`GET /api/app/status`: every 6 h while automatic update checks are on, at once with `?check=1`) |
 | `enrich/<gameId>.json` | on-console Steam enrichment (30 days) |
 | `homebrew.json` | pkg-zone listing cache (7 days) |
 | `payloads/<id>.elf`, `payloads/installed.json` | companion payloads and `{<id>:{version, sha256, installedAt}}` |
@@ -92,16 +93,20 @@ Console: `/data/xeno-store/` (host build: `./xeno-data/` or `--data DIR`).
 | `xeno-store.elf.version` | the saved update's version (`N.N.N`, no newline), written after the ELF; the TV app's starter reads it (§10) |
 | `tvapi.json` | `{"preferredAuto":true}`: "Choose automatically" for the TV app's default drive |
 | `tv-app.json` | the TV app install record `{"version","checksum","size","modified","inode"}`, written after the store installed `/data/homebrew/PPSA99500.ffpkg` (version `""` for the web UI's install); a file that no longer matches it is a copy placed by hand |
+| `pairing.json` | paired devices, version 2: `{"v":2,"local":"<64 hex>","devices":[{"token":"<64 hex>","name":"iPhone Safari","first":1760300000,"last":1760313600}],"tokens":["<local>","<device>",…]}`. `local` is the console's own session (`GET /api/session`, `/api/v1/session`), kept apart from the at most 16 `devices` (pairing order; `name` from the User-Agent, `""` when unknown; `first` / `last` = paired / last request from the LAN, Unix seconds, 0 = unknown, `last` written at most once a minute). `tokens` is the legacy list an older store reads after a downgrade: `local` first, then the devices, leaving out the one unused the longest when there are 16. A version-1 file `{"v":1,"tokens":[…]}` is migrated: every token becomes a device with no name and times 0 (the first to be replaced), and a new `local` session is made on the first `/api/session` or `/api/v1/session` (SPEC §6.6) |
+| `handoff.pending` | `<unix time> <version that handed off> <why>`, written before a copy sends the staged update to the ELF loader and removed once the new copy is up; `why` is `restart` (Settings → Updates → *Restart now* in the console's own browser: the new copy reopens the browser), `remote` (Restart now from another device) or `start` (a copy handed over to a downloaded update at its start). A marker without `why` (an older build) is not a restart, so the app opens (SPEC §3.2) |
 
 ---
 
 ## 5. `queue.json`
 
 ```json
-{"v":1,"savedAt":1760313600,"jobs":[ {…job object as in docs/API.md §4…} ]}
+{"v":1,"stopMarks":true,"savedAt":1760313600,"jobs":[ {…job object as in docs/API.md §4…, "stopPaused":true} ]}
 ```
 
-Written atomically (`.tmp` + rename) on every state change and every 5 s during transfers. On load, jobs in `downloading` / `connecting` / `verifying` become `paused` with the message *Stopped when XENO STORE closed*; `installing` jobs re-check the install status once. Groups (`group`, `groupOrder`) survive restarts, so an install set continues in order.
+Written atomically (`.tmp` + rename) on every state change and every 5 s during transfers. Besides the API's job object a job may carry `"stopPaused":true` (only here, never in `/api/queue`): it was paused by the TV app's stop (*Restart download service*, a store update from the TV app) or held by a safe start, not by the user; the next start or any user action on the job clears it. `install.pkgDeleted` records that `downloads.deletePkgAfterInstall` removed the installed package. The top-level `"stopMarks":true` says the file marks stop pauses this way; in a file without it (an older store) a job paused with the message *Paused for the XENO STORE restart* counts as stop-paused.
+
+On load, a job that was running when the store stopped (`connecting` / `downloading` / `verifying` / `extracting`, or stop-paused) is queued again with the message *Resuming after XENO STORE restarted* while `downloads.resumeAfterRestart` is on; with the setting off it stays `paused` (a running one with *Stopped when XENO STORE closed*). After a safe start (the last run crashed within 300 s of its start) running, stop-paused and queued jobs come back `paused` with *Not resumed: XENO STORE restarted after a problem* and `stopPaused` set, so the next normal start resumes them. A job the user paused stays paused. A running or stop-paused download whose final file is complete (no `.xpart`, size = `total`) comes back `done` / `installed` with *Verification interrupted*; a stopped extraction comes back `done` with Extract to press; `installing` jobs re-check the install status once (SPEC §7.5). Groups (`group`, `groupOrder`) survive restarts, so an install set continues in order.
 
 ---
 
@@ -115,7 +120,8 @@ Defaults (SPEC §9 + Phase 2):
             "largeText":false,"highContrast":false,"safeMode":false,"screensaver":true,"screensaverMinutes":3,"controllerSwapConfirm":false,"mdns":true},
  "downloads":{"defaultRoot":"/data","connections":8,"concurrentJobs":1,"maxBytesPerSec":0,"verifyHashes":true,"autoInstallPkg":true,"shadowMountScan":true,
               "keepAwake":true,"retryMax":8,"allowInsecureTls":false,"scheduleStart":"","scheduleEnd":"",
-              "preferFormat":"auto","turboStart":true,"autoInstallSets":true,"installOrder":"game,backport,update,dlc","restModeAutoResume":true,"extractZip":true,"deleteArchiveAfterExtract":true},
+              "preferFormat":"auto","turboStart":true,"autoInstallSets":true,"installOrder":"game,backport,update,dlc","restModeAutoResume":true,"extractZip":true,"deleteArchiveAfterExtract":true,
+              "deletePkgAfterInstall":false,"resumeAfterRestart":true},
  "debrid":{"realdebrid":{"apiKey":""},"alldebrid":{"apiKey":""},"torbox":{"apiKey":""},"premiumize":{"apiKey":""},"preferred":"auto"},
  "sources":{"enabled":{"archive":true,"vikingfile":true,"dlpsgame":true,"other":true},"acknowledged":false},
  "catalog":{"autoRefresh":true,
@@ -133,7 +139,7 @@ Defaults (SPEC §9 + Phase 2):
  "pairing":{"pin":""}}
 ```
 
-`PUT /api/settings` deep-merges; unknown keys are ignored, ranges are clamped (connections 1–16, concurrentJobs 1–4, screensaverMinutes 1–30), URLs must be `http(s)`. Debrid keys are returned masked by the API but stored in clear in this file (it lives only on the console). `preset.filters` is opaque JSON text produced by the Browse screen.
+`PUT /api/settings` deep-merges; unknown keys are ignored, ranges are clamped (connections 1–16, concurrentJobs 1–4, screensaverMinutes 1–30), URLs must be `http(s)`. `downloads.autoInstallPkg` is only the default a new download takes (`job.autoInstall`, API.md §4). `downloads.deletePkgAfterInstall` removes a download's `.pkg` once the console confirms its install (SPEC §8); `downloads.resumeAfterRestart` queues again what was running when the store stopped (§5). Debrid keys are returned masked by the API but stored in clear in this file (it lives only on the console). `preset.filters` is opaque JSON text produced by the Browse screen.
 
 ---
 
@@ -199,6 +205,12 @@ invalid. Nothing was downloaded.". The release job applies the same rules, and c
 writes the file. The install downloads exactly this URL and refuses a body larger than `size`, a different SHA-256
 or a missing UFS2 magic `19 01 54 19` at offset 65536 + 1372.
 
+The web UI's Settings → Updates → *XENO STORE app* card (`GET /api/app/status`, API.md §8) reads the same file (from
+`updates.feed` with `/payloads.json` replaced by `/tv-app.json`, otherwise this repository's raw URL), cached as
+`feeds/tv-app.json`: every 6 h while `updates.autoCheck` is on and the store is not in safe mode, and at once on *Check
+for updates*. It takes `version` only when `filename` is `PPSA99500.ffpkg` and `version` is plain `N.N.N`, and shows
+"Update available: <version>" when that is newer than the installed app's `contentVersion` (`01.003.001` = 1.3.1).
+
 ### `messages.json` — announcement banner
 ```json
 {"messages":[{"id":"welcome-1.0.0","ts":1760313600,"url":"https://…","texts":{"en":"…","de":"…"}}]}
@@ -220,7 +232,7 @@ Newest `ts` wins; each `id` is dismissible once per device; `texts` is a `{lang:
  {"id":"np-fake-signout","name":"NP fake sign-out","kind":"np-signout","version":"","url":"","sha256":"",
   "unavailable":true,"unavailableReason":"…","homepage":"https://github.com/earthonion/np-fake-signin","notes":"…"}]}
 ```
-`id` is `[a-z0-9-]` (derived from the name when absent), `url` must be `http(s)` and is the author's own pinned release asset (XENO STORE never rehosts companion payloads; the console downloads them from the author's release), `sha256` is checked after download — a placeholder such as `FILLED-BY-OWNER` makes the install fail on purpose. `kind` drives the checklist actions (`shadowmount`, `dpi`, `kernel`, `np-signin`, `np-signout`, `dumper`, `saves`); the `saves` entry is the Garlic Save Manager release the console starts on demand. `unavailable:true` lists an entry with no upstream asset to pin (`url` may be empty): the console reports it with `"available":false` and `unavailableReason`, offers no download and refuses its install (`unavailable`). `license` is informational (omitted when the upstream repository states none). Top-level `_notes` is ignored by the console.
+`id` is `[a-z0-9-]` (derived from the name when absent), `url` must be `http(s)` and is the author's own pinned release asset (XENO STORE never rehosts companion payloads; the console downloads them from the author's release), `sha256` is checked after download — an entry whose `sha256` is a placeholder such as `FILLED-BY-OWNER` is listed as not available and never downloads (the `saves` entry then falls back to the Garlic release pinned in the store). `kind` drives the checklist actions (`shadowmount`, `dpi`, `kernel`, `np-signin`, `np-signout`, `dumper`, `saves`); the `saves` entry is the Garlic Save Manager release the console starts on demand. `unavailable:true` lists an entry with no upstream asset to pin (`url` may be empty): the console reports it with `"available":false` and `unavailableReason`, offers no download and refuses its install (`unavailable`). `license` is informational (omitted when the upstream repository states none). Top-level `_notes` is ignored by the console.
 
 ### `saves-backend.json` — Save Data Store backend
 The published file is the XenoKing site:
@@ -303,8 +315,8 @@ to the files plus 8 MiB of slack. No `-S`: the console's UFS driver addresses bl
 rejects a wrong `fs_fsbtodb`, a truncated file or a missing icon, and compares every file with the staged folder; in
 `--app-dir` mode the script also checks the UFS2 magic `19 01 54 19` at 65536 + 1372 (what the store's installer
 checks), reads `xeno/version.txt` back from the image and keeps the image at most 512 MiB. contentVersion is
-`NN.NNN.NNN` (1.3.0 → `01.003.000`), checked against `VERSION` by `tools/tv/check_param.py` (`make tv-check`).
-Settings → Updates → *Install the XENO STORE app* (web UI) and Settings → Updates → *TV app* (the app) put it in
+`NN.NNN.NNN` (1.3.1 → `01.003.001`), checked against `VERSION` by `tools/tv/check_param.py` (`make tv-check`).
+Settings → Updates → *XENO STORE app* → *Install the app* (web UI) and App settings → Updates → *TV app* (the TV app) put it in
 place on the console; copying it to `/data/homebrew/` by hand works too.
 
 `make pkg` (`tools/make_homebrew.py`) can still build a `dist/XENO-STORE/` folder (+ zip) for etaHEN / itemzflow homebrew launchers (`eboot.bin` = `xeno-store.elf`, title id `XENO00002`); it is not part of a release.

@@ -10,6 +10,7 @@
 #include "log.h"
 #include "util.h"
 
+#include <ctype.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,12 +28,19 @@ typedef struct comp {
   char reason[320];
   int64_t size;
   int unavailable;         /* no upstream asset to pin: listed, never installed */
+  int placeholder;         /* unavailable because its sha256 is no digest ("FILLED-BY-OWNER") */
 } comp;
 
 static int loader_port(void) { return cx_local_port("LOADER", LOADER_PORT_DEFAULT); }
 
 static void payload_path(const char *id, char *out, size_t cap) { xsnprintf(out, cap, "%s/payloads/%s.elf", cx_data_dir(), id); }
 static void installed_path(char *out, size_t cap) { xsnprintf(out, cap, "%s/payloads/installed.json", cx_data_dir()); }
+
+static int is_hex64(const char *s) {
+  if (strlen(s) != 64) return 0;
+  for (int i = 0; i < 64; i++) if (!isxdigit((unsigned char)s[i])) return 0;
+  return 1;
+}
 
 static int load_feed(comp *out, int max) {
   jdoc *d = cx_feed_doc(CX_FEED_COMPANIONS);
@@ -63,19 +71,31 @@ static int load_feed(comp *out, int max) {
     }
     int unavailable = jv_get_bool(it, "unavailable", 0) || !jv_get_bool(it, "available", 1);
     if (!cx_id_valid(id, 47) || !*name || (!unavailable && !util_istarts_with(url, "http"))) continue;
-    c->unavailable = unavailable;
-    xstrlcpy(c->reason, jv_get_str(it, "unavailableReason", ""), sizeof c->reason);
+    const char *sha = jv_get_str(it, "sha256", ""), *version = jv_get_str(it, "version", ""), *kind = jv_get_str(it, "kind", "payload");
+    int64_t size = jv_get_i64(it, "size", 0);
+    /* Garlic's entry without a real digest (feeds before 1.3 said
+     * "FILLED-BY-OWNER") is the release this build pins, the one cx_garlic
+     * starts: listed, installed and started from the same file */
+    char pin[300] = "";
+    if (!unavailable && !is_hex64(sha) && strcmp(kind, "saves") == 0) cx_garlic_pin_url(pin, sizeof pin);
+    if (pin[0]) { url = pin; sha = CX_GARLIC_ELF_SHA256; version = CX_GARLIC_ELF_VERSION; size = CX_GARLIC_ELF_SIZE; }
+    /* any other sha256 that is no digest could only fail the download after
+     * it: not available instead */
+    c->placeholder = !unavailable && *sha && !is_hex64(sha);
+    c->unavailable = unavailable || c->placeholder;
+    if (c->placeholder) xstrlcpy(c->reason, "the companions list on this console has a placeholder instead of its sha256, so the download cannot be verified (the payload list fetches the published list when it is opened while online)", sizeof c->reason);
+    else xstrlcpy(c->reason, jv_get_str(it, "unavailableReason", ""), sizeof c->reason);
     xstrlcpy(c->id, id, sizeof c->id);
     xstrlcpy(c->name, name, sizeof c->name);
-    xstrlcpy(c->version, jv_get_str(it, "version", ""), sizeof c->version);
+    xstrlcpy(c->version, version, sizeof c->version);
     xstrlcpy(c->url, url, sizeof c->url);
-    xstrlcpy(c->sha256, jv_get_str(it, "sha256", ""), sizeof c->sha256);
+    xstrlcpy(c->sha256, sha, sizeof c->sha256);
     util_lower(c->sha256);
     xstrlcpy(c->notes, jv_get_str(it, "notes", jv_get_str(it, "description", "")), sizeof c->notes);
-    xstrlcpy(c->kind, jv_get_str(it, "kind", "payload"), sizeof c->kind);
+    xstrlcpy(c->kind, kind, sizeof c->kind);
     xstrlcpy(c->homepage, jv_get_str(it, "homepage", ""), sizeof c->homepage);
     xstrlcpy(c->filename, jv_get_str(it, "filename", ""), sizeof c->filename);
-    c->size = jv_get_i64(it, "size", 0);
+    c->size = size;
     n++;
   }
   json_free(d);
@@ -134,6 +154,10 @@ void cx_companions_init(void) {
 }
 
 void cx_companions_json(jw *w) {
+  /* the published list, catalog auto-refresh on or off: a copy cached by
+   * another build (1.2.1's placeholder hashes) or 6 h old is fetched first,
+   * waited for a few seconds at most */
+  cx_feed_ensure_wait(CX_FEED_COMPANIONS, 5000);
   comp *all = calloc(COMP_MAX, sizeof *all);
   int n = all ? load_feed(all, COMP_MAX) : 0;
   jdoc *inst = installed_doc();
@@ -219,6 +243,7 @@ static int install_worker(cx_job *j, void *p) {
 int cx_companions_install(const char *id, char *job_id, size_t idcap, char *code, size_t ccap, char *err, size_t errcap) {
   xstrlcpy(code, "bad_request", ccap);
   if (!cx_id_valid(id, 47)) { xsnprintf(err, errcap, "invalid payload id"); return -1; }
+  cx_feed_ensure(CX_FEED_COMPANIONS, 6 * 3600);   /* installs from the published list (cx_companions_json) */
   inst_arg *a = calloc(1, sizeof *a);
   if (!a) { xstrlcpy(code, "oom", ccap); xsnprintf(err, errcap, "out of memory"); return -1; }
   if (find_comp(id, &a->c) != 0) { free(a); xstrlcpy(code, "not_found", ccap); xsnprintf(err, errcap, "unknown payload id (refresh the catalog to update the list)"); return -1; }
@@ -284,6 +309,8 @@ int cx_companions_by_kind(const char *kind, char *id, size_t idcap, char *versio
   int rc = -1;
   for (int i = 0; i < n; i++) {
     if (strcmp(all[i].kind, kind) != 0) continue;
+    /* a placeholder entry counts as none: the caller's own pin stands (cx_companions_fetch) */
+    if (all[i].placeholder) break;
     if (id) xstrlcpy(id, all[i].id, idcap);
     if (version) xstrlcpy(version, all[i].version, vcap);
     if (unavailable) *unavailable = all[i].unavailable;
@@ -306,6 +333,7 @@ static int file_is_elf(const char *path) {
 int cx_companions_fetch(const char *kind, const char *fb_id, const char *fb_url, const char *fb_sha256, const char *fb_version,
                         cx_companion_file *out, char *err, size_t errcap) {
   memset(out, 0, sizeof *out);
+  cx_feed_ensure(CX_FEED_COMPANIONS, 6 * 3600);   /* the published list, as an install reads it */
   comp *all = calloc(COMP_MAX, sizeof *all);
   comp *c = calloc(1, sizeof *c);
   if (!all || !c) { free(all); free(c); xsnprintf(err, errcap, "out of memory"); return -1; }

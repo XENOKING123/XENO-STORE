@@ -2,6 +2,7 @@
   "nav": {
     "discover": "Ontdekken",
     "browse": "Bladeren",
+    "saves": "Saves",
     "library": "Bibliotheek",
     "downloads": "Downloads",
     "search": "Zoeken",
@@ -395,7 +396,7 @@
     "verifyHashes": "Hashes verifiëren",
     "verifyHashesHint": "SHA-256 controleren na download als de catalogus die kent",
     "autoInstall": "PKG automatisch installeren",
-    "autoInstallHint": "Pakketten installeren zodra ze klaar zijn",
+    "autoInstallHint": "Pakketten installeren zodra ze klaar zijn. Standaard voor nieuwe downloads; elke download kan zelf kiezen.",
     "shadowScan": "ShadowMount-scan",
     "shadowScanHint": "ShadowMountPlus vragen opnieuw te scannen na een imagedownload",
     "keepAwake": "Console wakker houden",
@@ -578,6 +579,7 @@
     "not_found": "Niet gevonden op de console",
     "forbidden": "De host weigerde het verzoek",
     "pin_required": "Deze console heeft de pincode nodig voordat wijzigingen worden geaccepteerd",
+    "not_paired": "Deze browser is ontkoppeld van de PS5. Koppel hem opnieuw om XENO STORE te blijven gebruiken.",
     "rate_limited": "De host beperkt onze snelheid — opnieuw proberen met minder verbindingen",
     "transport": "De verbinding viel weg — automatisch opnieuw proberen",
     "fix": {

@@ -24,6 +24,17 @@ enum class FixtureMode
     offline, // the backend is not running
     setup,   // sources not chosen yet
     updates, // as normal, with newer releases of the download service and the TV app
+    // XENO STORE's Save Data Store (otherwise as normal):
+    saves_empty,  // the store builds its index for two lists, then has no saves
+    saves_older,  // a store without the Save Data Store (404 on /api/saves)
+    saves_garlic, // installs fail: Garlic Save Manager cannot be started
+    saves_failed, // the list answers 503 (the first answer after 1.2 s, so it shows loading)
+    saves_partial, // the XenoKing site cannot be reached, then (after a reload) the
+                   // Settings backend is not usable: the GitHub index only
+    // XENO STORE: the queue holds a PKG on each drive, the store installs it once
+    // downloaded: installed on USB, failed on the internal drive (Retry install
+    // starts it again).
+    installs,
 };
 
 // Whose answers the fixture gives where the two backends differ.
@@ -66,9 +77,22 @@ class Fixture final : public http::Transport
         double speed = 0.0;
         double retry_at = 0.0;
         std::string delivery = "direct";
+        std::string install; // XENO STORE's installState, when the row has one
+    };
+    // A save install the fixture runs (POST /api/saves/store/{id}/install).
+    struct SaveJob
+    {
+        std::string id;
+        std::string save;
+        double size = 0.0;
+        double started = 0.0; // steady seconds
+        bool cancelled = false;
     };
     std::string jobs_json() const;
     std::string art(const std::string &game, bool hero) const;
+    std::string saves_json();
+    // state: the job's state now (running, done, ...), for the cancel's 404.
+    std::string save_job_json(const SaveJob &job, std::string *state = nullptr) const;
 
     std::string library_json() const;
     std::string favourites_json() const;
@@ -107,6 +131,11 @@ class Fixture final : public http::Transport
     std::string tv_installed_;
     double tv_checked_ = 0.0;
     std::string tv_phase_ = "idle";
+
+    // The Save Data Store.
+    std::vector<SaveJob> save_jobs_;
+    int next_save_job_ = 1;
+    int save_lists_ = 0; // lists answered, for saves_empty's building phase
 };
 
 } // namespace orbit::host

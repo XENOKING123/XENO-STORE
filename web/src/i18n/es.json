@@ -2,6 +2,7 @@
   "nav": {
     "discover": "Descubrir",
     "browse": "Explorar",
+    "saves": "Partidas",
     "library": "Biblioteca",
     "downloads": "Descargas",
     "search": "Buscar",
@@ -395,7 +396,7 @@
     "verifyHashes": "Verificar hashes",
     "verifyHashesHint": "Comprueba el SHA-256 tras la descarga cuando el catálogo lo conoce",
     "autoInstall": "Instalar PKG automáticamente",
-    "autoInstallHint": "Instala los paquetes en cuanto terminan",
+    "autoInstallHint": "Instala los paquetes en cuanto terminan. Es el valor predeterminado para las descargas nuevas; cada descarga puede elegir por sí misma.",
     "shadowScan": "Análisis de ShadowMount",
     "shadowScanHint": "Pide a ShadowMountPlus que vuelva a analizar tras descargar una imagen",
     "keepAwake": "Mantener la consola despierta",
@@ -578,6 +579,7 @@
     "not_found": "No se encontró en la consola",
     "forbidden": "El host rechazó la solicitud",
     "pin_required": "Esta consola necesita el PIN antes de aceptar cambios",
+    "not_paired": "Este navegador se desvinculó de la PS5. Vincúlalo de nuevo para seguir usando XENO STORE.",
     "rate_limited": "El host nos está limitando la velocidad: reintentando con menos conexiones",
     "transport": "La conexión se cayó: reintentando automáticamente",
     "fix": {

@@ -105,7 +105,10 @@ $(ASSETS):
 	$(PYTHON) tools/gen_assets.py
 
 # ---- host build --------------------------------------------------------------
-host: assets $(HOST_BIN)
+# 'assets' finishes before the objects start: with make -j the two would
+# otherwise both write src/assets.h in a fresh tree.
+host: assets
+	$(MAKE) $(HOST_BIN)
 
 $(HOST_BIN): $(HOST_OBJS)
 	$(HOST_CC) $(HOST_CFLAGS) -o $@ $(HOST_OBJS) $(HOST_LDLIBS)

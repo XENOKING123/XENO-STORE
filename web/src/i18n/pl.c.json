@@ -48,7 +48,9 @@
     "autoResign": "Automatycznie podpisany dla twojego konta i umieszczony w grze",
     "worksHere": "Działa z twoimi grami",
     "allSaves": "Wszystkie zapisy społeczności",
-    "browse": "Przeglądaj zapisy"
+    "browse": "Przeglądaj zapisy",
+    "options": "Opcje sklepu z zapisami",
+    "optionsDesc": "Dysk kopii zapasowych, pseudonim, kanały zapisów i host przesyłania"
   },
   "link": {
     "title": "Połącz z PS5",
@@ -66,6 +68,8 @@
     "bad": "Zły kod — sprawdź powiadomienie na PS5",
     "locked": "Za dużo prób — poczekaj {n} s",
     "done": "Połączono! Otwieram XENO STORE…",
+    "replaced": "Usunięto parowanie urządzenia {name}, aby zrobić miejsce — było nieużywane najdłużej.",
+    "forgotten": "PS5 nie rozpoznaje już tej przeglądarki: została odłączona albo jej miejsce zajęło inne urządzenie, gdy wszystkie miejsca parowania były zajęte. Połącz ją ponownie, aby dalej korzystać z XENO STORE.",
     "note": "Tylko połączone urządzenia mogą sterować sklepem. Robisz to raz na przeglądarkę."
   },
   "discover4": {
@@ -88,6 +92,9 @@
     "installing": "Instalowanie…",
     "install": "Zainstaluj aplikację",
     "reinstall": "Zainstaluj ponownie / zaktualizuj",
+    "update": "Zaktualizuj aplikację",
+    "updateAvailable": "Dostępna aktualizacja: {v}",
+    "folderCopy": "Zainstalowano jako folder /data/homebrew/PPSA99500, którego XENO STORE nie aktualizuje. Usuń ten folder, aby zainstalować tu tę wersję, albo aktualizuj go dalej samodzielnie.",
     "cancel": "Anuluj",
     "cancelled": "Instalacja anulowana",
     "version": "Wersja {v}",
@@ -103,7 +110,7 @@
     "hintText": "Zainstaluj aplikację raz i otwieraj sklep z jego własnego kafelka — bez FTP i adresu w przeglądarce.",
     "notNow": "Nie teraz",
     "openOnStart": "Otwieraj XENO STORE przy uruchomieniu",
-    "openOnStartHint": "Otwiera sklep na telewizorze przy każdym uruchomieniu. Wyłącz, jeśli sklep startuje automatycznie przy włączaniu konsoli.",
+    "openOnStartHint": "Otwiera aplikację XENO STORE na telewizorze przy każdym uruchomieniu sklepu albo przeglądarkę, gdy aplikacja nie jest zainstalowana. Wyłącz, jeśli sklep startuje automatycznie przy włączaniu konsoli.",
     "err": {
       "sha256_mismatch": "Pobrany plik nie zgadza się z sumą kontrolną — nic nie zainstalowano. Spróbuj ponownie.",
       "sha256_unavailable": "To wydanie nie ma jeszcze sumy kontrolnej — spróbuj za kilka minut.",
@@ -112,5 +119,27 @@
       "too_large": "Pobrany plik jest większy niż oczekiwano — nic nie zainstalowano.",
       "download_failed": "Pobieranie nie powiodło się. Sprawdź połączenie konsoli z internetem i spróbuj ponownie."
     }
+  },
+  "pairdev": {
+    "title": "Sparowane urządzenia",
+    "loading": "Wczytywanie sparowanych urządzeń…",
+    "loadFailed": "Nie udało się wczytać sparowanych urządzeń.",
+    "none": "Żaden telefon ani komputer nie jest jeszcze sparowany.",
+    "unknown": "Nieznane urządzenie",
+    "ps5Browser": "Przeglądarka PS5",
+    "thisDevice": "To urządzenie",
+    "lastSeen": "Ostatnio używane: {when}",
+    "notSeen": "Nieużywane od aktualizacji XENO STORE",
+    "unpair": "Usuń parowanie",
+    "unpairTitle": "Usunąć parowanie urządzenia {name}?",
+    "unpairText": "{name} będzie potrzebować nowego kodu z PS5, aby znów sterować XENO STORE.",
+    "unpairSelfText": "Ta przeglądarka będzie potrzebować nowego kodu z PS5, aby znów sterować XENO STORE.",
+    "unpaired": "Usunięto parowanie: {name}",
+    "unpairOthers": "Usuń parowanie wszystkich innych urządzeń",
+    "unpairOthersHint": "Każdy telefon i komputer oprócz tego trzeba będzie sparować ponownie",
+    "unpairOthersText": "Wszystkie inne telefony i komputery będą potrzebować nowego kodu z PS5, aby znów sterować XENO STORE. Aplikacja XENO STORE i przeglądarka konsoli działają dalej.",
+    "unpairOthersGo": "Usuń wszystkie",
+    "unpairedN": "{n, plural, one{Usunięto parowanie # urządzenia} few{Usunięto parowanie # urządzeń} many{Usunięto parowanie # urządzeń} other{Usunięto parowanie # urządzenia}}",
+    "slots": "Sparowanych może pozostać do {max} telefonów i komputerów. Sparowanie kolejnego zastępuje urządzenie nieużywane najdłużej."
   }
 }

@@ -19,6 +19,7 @@ GET /api/v1/system and /session and its gate.
                          settings/feed seeding, the app's request bytes, pairing, the
                          normaliser and golden files.
 """
+import collections
 import copy
 import json
 import os
@@ -205,6 +206,26 @@ class ContractTests(unittest.TestCase):
             m[0]["newOnOrbitRank"] = rank
             self.assertFlags("GET /api/v1/catalog", m, frag)
         self.assertFlags("GET /api/v1/catalog", {"items": cat}, "$: expected array, got object")
+        # XENO's additions are promises of the xeno profile (the reference app never reads them)
+        mine = tv_golden.build(fixture(), featured())
+        self.assertEqual(tc.reply_errors("GET /api/v1/catalog", mine), [])
+        for key, val, frag in (("popularRank", 0, "$[0].popularRank: 0 is below 1"),
+                               ("popularRank", "1", "$[0].popularRank: expected int, got str"),
+                               ("cheats", 0, "$[0].cheats: 0 is below 1"),
+                               ("screenshotCount", 11, "$[0].screenshotCount: 11 is above 10"),
+                               ("kind", "app", "$[0].kind"),
+                               ("kind", "dlc", "$[0].notes: a dlc option's notes start with")):
+            m = copy.deepcopy(mine)
+            m[0][key] = val
+            self.assertFlags("GET /api/v1/catalog", m, frag, "xeno")
+        m = copy.deepcopy(mine)
+        del m[0]["kind"]
+        self.assertFlags("GET /api/v1/catalog", m, "$[0].kind: missing", "xeno")
+        m = copy.deepcopy(mine)
+        other = next(i for i, o in enumerate(m) if o["gameId"] != m[0]["gameId"])
+        m[other]["popularRank"] = m[0]["popularRank"]
+        self.assertFlags("GET /api/v1/catalog", m, f"$[{other}].popularRank: {m[0]['popularRank']} is also", "xeno")
+        self.assertEqual(self.errs("GET /api/v1/catalog", m), [], "the app profile does not read popularRank")
         session = self.reference("GET /api/v1/session")
         self.assertFlags("GET /api/v1/session", dict(session, token=session["token"][:63]), "$.token: length 63")
         jobs = self.reference("GET /api/v1/downloads")
@@ -275,8 +296,8 @@ class ContractTests(unittest.TestCase):
             tc.assert_error_envelope(400, {"error": "Expected a JSON object."}, sentence="Other.")
 
     def test_routes_and_gates(self):
-        # PORT-SPEC 1.4's table has 31 method+pattern rows (its text says 32); the skeleton has 31.
-        self.assertEqual(len(tc.ALL_ROUTES), 31)
+        # PORT-SPEC 1.4's table has 31 method+pattern rows (its text says 32); XENO adds the screenshots.
+        self.assertEqual(len(tc.ALL_ROUTES), 32)
         self.assertEqual(set(tc.ROUTES) | {"GET /api/v1/zero/companion", "POST /api/v1/zero/companion"},
                          set(tc.GATES))
         self.assertEqual(set(k for k, g in tc.GATES.items() if "B" not in g), set(tc.OPEN_ROUTES))
@@ -285,6 +306,9 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(tc.route_key("POST", "/api/v1/downloads/j_1a2b3c/cancel?x=1"),
                          "POST /api/v1/downloads/{id}/{action}")
         self.assertEqual(tc.route_key("get", "/api/v1/art/fx-a/hero"), "GET /api/v1/art/{id}/{kind}")
+        self.assertEqual(tc.route_key("GET", "/api/v1/art/fx-a/shot/3"), "GET /api/v1/art/{id}/shot/{n}")
+        self.assertEqual((tc.GATES["GET /api/v1/art/{id}/shot/{n}"], tc.SUCCESS_STATUS["GET /api/v1/art/{id}/shot/{n}"]),
+                         ("SB", 202))
         for bad in (("GET", "/api/v1/nope"), ("DELETE", "/api/v1/system"), ("GET", "/api/v1/downloads/x")):
             with self.assertRaises(KeyError):
                 tc.route_key(*bad)
@@ -453,6 +477,58 @@ class GoldenFixtureTests(unittest.TestCase):
         self.assertEqual(list(tv_golden.ranks(tv_golden.expand(tie), None)),
                          ["fx-hollow-crown-ps5", "fx-crown-of-ash-ps5", "fx-velvet-static-ps5"])
 
+    def test_popular_ranks(self):
+        p = {o["gameId"]: o["popularRank"] for o in self.out}
+        self.assertEqual(sorted(p.values()), list(range(1, len(p) + 1)))    # every TV game once, no gaps
+        order = sorted(p, key=p.get)
+        self.assertEqual(order[:7], ["fx-tidewater-ps5",                    # 0.42 (paper-moon's 0.99 is hidden)
+                                     "fx-neon-courier-ps5", "fx-quiet-harbour-ps4",     # 0.3: PS5 first
+                                     "fx-iron-meridian-ps5", "fx-frostline-ps4",       # 0.25: PS5 first, though later
+                                     "fx-ember-hollow-ps5", "fx-aurora-drift-ps5"])    # 0.2: catalogue order
+        self.assertNotIn("fx-paper-moon-ps4", p)
+        zero = order[7:]                                                    # popularity 0 ("0.9" is a string)
+        self.assertIn("fx-copper-coast-ps4", zero)
+        plat = {o["gameId"]: o["platform"] for o in self.out}
+        self.assertEqual(zero, [x for x in self.game_ids() if x in zero and plat[x] == "ps5"] +
+                         [x for x in self.game_ids() if x in zero and plat[x] == "ps4"])   # PS5 first, catalogue order
+        for o in self.out:
+            self.assertEqual(o["popularRank"], p[o["gameId"]])
+        vf = tv_golden.build(self.cat, self.feat, enabled=["vikingfile"])
+        self.assertTrue(vf)
+        self.assertEqual({o["gameId"]: o["popularRank"] for o in vf}, {o["gameId"]: p[o["gameId"]] for o in vf})
+        # coercions as jv_dbl: a bool is 0/1, an integer counts, a huge integer is infinite
+        cat = copy.deepcopy(self.cat)
+        for g in cat["games"]:
+            if g["id"] == "fx-cafe-lumiere-ps4":
+                g["popularity"] = True
+            elif g["id"] == "fx-bramble-path-ps4":
+                g["popularity"] = 10 ** 400
+        q = tv_golden.popular_ranks(tv_golden.expand(cat))
+        self.assertEqual(sorted(q, key=q.get)[:2], ["fx-bramble-path-ps4", "fx-cafe-lumiere-ps4"])
+
+    def test_cheats_screenshots_and_kind(self):
+        g = {o["gameId"]: o for o in self.out}
+        self.assertEqual({k: o["cheats"] for k, o in g.items() if "cheats" in o},
+                         {"fx-tidewater-ps5": 12, "fx-copper-coast-ps4": 2})          # 2.7 -> 2; -3 -> none
+        self.assertEqual({k: o["screenshotCount"] for k, o in g.items() if "screenshotCount" in o},
+                         {"fx-tidewater-ps5": 4, "fx-vast-archive-ps5": 10})         # "", 7, an AVIF not counted; 11 -> 10
+        self.assertNotIn("screenshotCount", g["fx-iron-meridian-ps5"])               # an object is not a list
+        for o in self.out:
+            self.assertNotIn("screenshots", o)
+        kinds = {o["id"]: o["kind"] for o in self.out}
+        self.assertEqual([kinds[i] for i in ids(by_game(self.out, "fx-tidewater-ps5"))],
+                         ["game", "backport", "update", "dlc"])
+        self.assertEqual(kinds["fx-starfall-rally-update"], "update")
+        self.assertEqual(collections.Counter(kinds.values()), collections.Counter(
+            {"game": len(kinds) - 4, "backport": 1, "update": 2, "dlc": 1}))
+        odd = copy.deepcopy(self.cat)
+        for gm in odd["games"]:
+            for r in gm["releases"]:
+                if r["id"] == "fx-tidewater-update":
+                    r["kind"] = "patch"                                          # not a TV kind: reads as a game
+        o = tv_golden.find_option(tv_golden.build(odd, self.feat), "fx-tidewater-update")
+        self.assertEqual((o["kind"], o["notes"]), ("game", ""))
+
     def test_game_ids(self):
         gids = self.game_ids()
         long_id = [g for g in gids if len(g) == 78]
@@ -479,7 +555,7 @@ class GoldenFixtureTests(unittest.TestCase):
         for o in self.out:
             keys = list(o)
             self.assertEqual(keys, [k for k in order if k in o])
-            for k in ("url", "browserUrl", "mirrors", "sha256", "password", "health", "cover", "hero"):
+            for k in ("url", "browserUrl", "mirrors", "sha256", "password", "health", "cover", "hero", "screenshots"):
                 self.assertNotIn(k, o)
         raw = json.dumps(self.out, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         self.assertEqual(tc.strict_json(raw), self.out)
@@ -529,6 +605,7 @@ class GoldenFixtureTests(unittest.TestCase):
     def test_c_reader_coercions(self):
         g = {"n": 3.9, "b": True, "s": " 42x", "t": "x", "z": None}
         self.assertEqual([tv_golden._i(g, k) for k in ("n", "b", "s", "t", "z", "missing")], [3, 1, 42, 0, 0, 0])
+        self.assertEqual([tv_golden._d(g, k) for k in ("n", "b", "s", "t", "z", "missing")], [3.9, 1.0, 0, 0, 0, 0])
         self.assertEqual(tv_golden._s({"a": 5}, "a"), "")
 
 
@@ -612,6 +689,31 @@ class ArtGenTests(unittest.TestCase):
                 u = g.get(k, "")
                 if u.startswith("{{ART}}/"):
                     self.assertIn(u.rsplit("/", 1)[-1], artgen.ART_SET, f"{g['id']}.{k}")
+            shots = g.get("screenshots", [])
+            for u in shots if isinstance(shots, list) else shots.values():
+                if isinstance(u, str) and u:
+                    self.assertTrue(u.startswith("{{ART}}/"), f"{g['id']}.screenshots: {u}")
+                    self.assertIn(u.rsplit("/", 1)[-1], artgen.ART_SET, f"{g['id']}.screenshots")
+
+    def test_preview_art_server_knows_the_fixture_art(self):
+        """tools/tv/art_server.py, the live preview's art host for the same fixture, has every {{ART}}
+        name: a good picture (accepted for its kind) wherever the backend tests serve artgen's."""
+        sys.path.insert(0, os.path.join(tvworld.PROJECT, "tools", "tv"))
+        import art_server  # noqa: E402
+        raw = tv_golden.load_json(tvworld.FIXTURE_CATALOG)
+        names = set()
+        for g in raw["games"]:
+            shots = g.get("screenshots", [])
+            urls = [g.get(k, "") for k in ("cover", "hero", "coverFallback", "heroFallback")]
+            for u in urls + (shots if isinstance(shots, list) else list(shots.values())):
+                if isinstance(u, str) and u.startswith("{{ART}}/"):
+                    names.add(u.rsplit("/", 1)[-1])
+        for name in sorted(names):
+            with self.subTest(name=name):
+                self.assertIn(name, set(art_server.GOOD) | set(art_server.BAD))
+                if artgen.ART_SET[name][1] == "served":
+                    self.assertIn(name, art_server.GOOD)
+                    self.assertEqual(art_server.check(art_server.make(name, "T", seed="t"), art_server.GOOD[name][0]), [])
 
     def test_server(self):
         with artgen.ArtServer() as srv:

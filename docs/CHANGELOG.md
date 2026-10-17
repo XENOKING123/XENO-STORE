@@ -2,6 +2,44 @@
 
 All notable changes to XENO STORE. The version lives in `VERSION`; releases are tagged `v<VERSION>`.
 
+## 1.4.0 — unreleased
+
+### Saves
+- **Saves is a main tab** in the web UI, right after Browse (and on the phone's bottom bar): the community saves, *Upload my save*, your backups (the Saves hub) and the Save Store options all start there.
+- **The TV app has a Saves tab too.** Browse the community saves, each one crediting the player who shared it, filter by *All*, *For my games* or category, search, and see how each save fits the version of the game you have. Install one to the profile you pick: your current save of that game is backed up first, the progress shows live and you can cancel. A game page shows **Community saves (N)** when there are saves for it, which opens the tab on that game.
+- **Refresh in the Save Store fetches the list again**: the console rebuilds its list from the XenoKing site and the GitHub index instead of showing its copy for up to an hour (at most once every 30 seconds).
+- **Backups wait their turn**: a backup now holds the same per-game lock as restores, installs and transfers, so a restore can no longer swap the save while it is being zipped. **Back up all** now lists the saves it skipped and why, instead of saying "Nothing to back up".
+
+### Downloads
+- **Auto-install does what the download says.** Turning Auto-install off in a download's options now keeps that package from installing even while Settings → Downloads → *Auto-install PKG* is on, and turning it on still installs when the setting is off. The setting is the default for new downloads; turning it on later does not install packages already in the queue.
+- **Delete the PKG after installing** (Settings → Downloads, off by default) frees a package's space once the console confirms its install is complete. A package whose install fails or can't be confirmed is kept; Downloads shows *Package removed*.
+- **Downloads continue after a restart** (Settings → Downloads → *Resume after a restart*, on by default): what was downloading when XENO STORE stopped — an update, *Restart download service*, a crash, a power cut or a reboot — carries on by itself when the store starts again, one after another in queue order. Downloads you paused stay paused. When the store crashed right after its last start, nothing starts by itself until the next normal start. A Verify that was cut short no longer downloads the whole file again. The TV app's *Restart download service* now says your downloads continue on their own.
+
+### The TV app
+- **All games scrolls on and on**: Discover's *All games* is one grid with no page buttons, and **L2 / R2** jump through it (and through Browse) a screen at a time.
+- **Downloads shows a package's install**: a finished PKG reads *Installing*, then **Installed** with a badge; a failed install says why and offers **Retry install**. When the store installs packages by itself, the download sheet no longer says installing is a separate step.
+- **About** in App settings names both versions, that the app is based on Orbit Store's TV app and BlackBearReloaded's ps5-homebrew-ui, that it is free software under GPL-3.0, and where to get its source.
+- **Sounds** can be turned off in App settings → More settings.
+- A heart toast confirms adding or removing a favourite, and download source chips wrap onto a new row instead of running off the sheet.
+
+### Pairing
+- **See and unpair your devices**: Settings → Pair a device lists every paired phone and PC with its name and when it was last used, with **Unpair** and **Unpair all other devices**. The XENO STORE app and the console's own browser are not on the list and keep working.
+- **Pairing no longer stops at 16 devices**: instead of "All pairing slots are in use", pairing one more replaces the device unused the longest, and the new device is told which one made room.
+- **Unpaired devices are cut off at once** and their Link page says why, also the next time they open the store. XENO STORE Desktop opens its own link page when its PC was unpaired, and shows up in the list as *XENO STORE Desktop*.
+- After updating from 1.3.x the TV app moves to the console's own session by itself. Devices paired before the update show *Not used since XENO STORE was updated* until they next connect.
+
+### Start-up and updates
+- **The store opens the XENO STORE app** at start, not the browser, when the app is installed and the store was started from your ELF loader or Payload Manager. Without the app (or if it doesn't start) the browser opens as before. *Restart now* brings the browser back only when you pressed it in the console's own browser; from a phone or a PC the app opens.
+- **Settings → Updates → XENO STORE app** says when a newer app is published (*Update available*) and offers **Update the app**; *Check for updates* checks for it too.
+
+### Fixes
+- **Uninstall really removes the app**: *Home-screen app* now deletes `PPSA99500.ffpkg` (and a `PPSA99500` folder copy), takes both the **XENO STORE** and **XENO STORE Web** tiles off the home screen, and cancels an app install that is still running. Before, the file and the tiles stayed, and the tile started the store again.
+- The uninstall sheet no longer has a *Payload Manager copy* checkbox that did nothing: Payload Manager keeps its own copy, which you remove in Payload Manager.
+- **Fresh feeds after an update**: the featured games, announcements, companions list and save site settings are fetched again right after an update instead of up to 6 hours later, so the XenoKing saves show and companions install at once.
+- **Placeholder companion hashes are never used**: a companion without a real checksum is shown as not available and never downloads; Garlic Save Manager then uses the release pinned in the store.
+- **Safer releases**: the release job refuses to publish a version again from an older commit, tags the commit it built, and retries its push cleanly after a stopped rebase.
+- **Linux desktop download**: unpacking `XENO-STORE-Desktop-Linux.tar.gz` no longer makes the folder it is unpacked into private (0700).
+
 ## 1.3.0 — 2026-10-15
 
 ### The TV app
@@ -15,19 +53,19 @@ All notable changes to XENO STORE. The version lives in `VERSION`; releases are 
   - **Settings**: download sources, the default drive (or *Choose automatically*), the pairing code for your phone, a catalog refresh, updates for the store and for the app, and *Restart download service*.
 - **It starts the store for you.** When the store isn't running, the app sends the copy it carries (or the newer update you downloaded) to your ELF loader on port 9021 and opens as soon as the store answers. No browser opens over it. If a downloaded update doesn't come up, the next try uses the copy inside the app.
 - **One store, everywhere.** The app uses the same store as your phone and PC: a download started on the TV shows up in the web UI and the other way round, and favourites, drives and settings are shared.
-- **The app updates itself**: **Settings → Updates → TV app** checks for a new version of the app and installs it; it opens the next time you start it. A copy you placed yourself is only replaced when you confirm.
+- **The app updates itself**: **App settings → Updates → TV app** in the app checks for a new version of the app and installs it; it opens the next time you start it. A copy you placed yourself is only replaced when you confirm.
 - **Vikingfile games**: the app says why it can't fetch them by itself and offers TorBox or *Open browser version*.
 - **Languages**: English, Deutsch, Español, Français, Magyar, Italiano, Nederlands, Polski, Português (Brasil), Русский and Türkçe. Arabic, Japanese, Korean and Chinese show English in the TV app for now; the web UI keeps all 14 languages.
 
 ### Save Store
 - **The XenoKing community saves** are in the Save Data Store: ready-made saves shared by the XenoKing community (57 today, more as people share), each one crediting the player who shared it, installable in one tap with a backup of your own save first. New saves added on the XenoKing site show up in the store by themselves.
 - **Share yours with one press**: a save you share from the store goes straight to the XenoKing collection and shows up there and in the store right away.
-- **Nothing to set up**: the store talks to Garlic Save Manager's real API and starts it for you when a save needs re-signing (it downloads the official release and checks it first, and never starts a second copy over a running one).
+- **Nothing to set up**: the store talks to Garlic Save Manager's real API and starts it for you when a save needs re-signing (it downloads the official release and checks its hash first; with no internet it can use a Garlic copy already on the console's internal storage; it never starts a second copy over a running one).
 - **Safer installs**: a save is refused while its game is running, when it belongs to another game, or when it isn't a real save; restoring a backup swaps folders so your current save is only removed once the restored one is in place; only one save operation runs per game and profile at a time.
 - **Companions** (ShadowMountPlus, kstuff, DPI, Garlic, the app dumper, NP fake sign-in) now come from each author's own release with checked hashes.
 
 ### Install and update
-- Update the store as usual (**Settings → Updates**), then **Settings → Updates → Install the XENO STORE app** puts the new app in your Games row. Copying the new `PPSA99500.ffpkg` to `/data/homebrew/` yourself works too. The app needs kstuff + ShadowMountPlus, and an ELF loader on port 9021 to start the store.
+- Update the store as usual (**Settings → Updates**), then **Settings → Updates → XENO STORE app → Reinstall / update** (*Install the app* when it is not there yet) puts the new app in your Games row. Copying the new `PPSA99500.ffpkg` to `/data/homebrew/` yourself works too. The app needs kstuff + ShadowMountPlus, and an ELF loader on port 9021 to start the store.
 - `PPSA99500.ffpkg` now carries the TV app with the store inside (`xeno/xeno-store.elf`). Each release also attaches `XENO-STORE-<version>-tv-sources.tar.gz`, the TV app's complete source with every pinned part it is built from, as its GPL-3.0 licence asks.
 
 ### Fixes
@@ -49,7 +87,7 @@ All notable changes to XENO STORE. The version lives in `VERSION`; releases are 
 
 ### Apps
 - **One ELF**: `xeno-store.elf` is the only payload now (`xeno-store-browser.elf` is gone). It opens the store on the TV when it starts; turn that off with **Settings → General → Open XENO STORE when it starts**.
-- **The store installs its own app**: **Settings → Updates → Install the XENO STORE app** puts the XENO STORE app in your Games row. Copying `PPSA99500.ffpkg` to `/data/homebrew/` yourself still works.
+- **The store installs its own app**: **Settings → Updates → XENO STORE app → Install the app** puts the XENO STORE app in your Games row. Copying `PPSA99500.ffpkg` to `/data/homebrew/` yourself still works.
 - **Smaller app**: the `.ffpkg` keeps only 8 MiB of spare room, so `PPSA99500.ffpkg` is about 17 MiB instead of 81 MiB.
 - **The app picks up updates**: an update downloaded in **Settings → Updates** is the version the app starts from then on.
 - A much simpler release: `PPSA99500.ffpkg` (the app), `xeno-store.elf` (the store), one XENO STORE Desktop download per OS (Windows, Mac — universal for Apple silicon and Intel — and Linux) and one `SHA256SUMS`. The second browser ELF, `XENO-STORE.pkg`, the homebrew zip, the per-file `.sha256` files, `BUILD-INFO.json` and the catalog copy are gone.

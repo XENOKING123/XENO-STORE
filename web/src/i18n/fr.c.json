@@ -48,7 +48,9 @@
     "autoResign": "Re-signée pour ton compte et placée dans le jeu automatiquement",
     "worksHere": "Compatible avec tes jeux",
     "allSaves": "Toutes les sauvegardes de la communauté",
-    "browse": "Parcourir les sauvegardes"
+    "browse": "Parcourir les sauvegardes",
+    "options": "Options de la boutique de sauvegardes",
+    "optionsDesc": "Disque de sauvegarde, pseudonyme, flux de sauvegardes et hôte de téléversement"
   },
   "link": {
     "title": "Associer ta PS5",
@@ -66,6 +68,8 @@
     "bad": "Ce code n'est pas bon — vérifie la notification sur ta PS5",
     "locked": "Trop d'essais — attends {n} s",
     "done": "Associé ! Ouverture de XENO STORE…",
+    "replaced": "{name} a été dissocié pour faire de la place — c'était l'appareil inutilisé depuis le plus longtemps.",
+    "forgotten": "La PS5 ne reconnaît plus ce navigateur : il a été dissocié, ou un autre appareil a pris sa place quand tous les emplacements d'association étaient occupés. Associez-le à nouveau pour continuer à utiliser XENO STORE.",
     "note": "Seuls les appareils associés peuvent contrôler ta boutique. À faire une fois par navigateur."
   },
   "discover4": {
@@ -88,6 +92,9 @@
     "installing": "Installation…",
     "install": "Installer l'appli",
     "reinstall": "Réinstaller / mettre à jour",
+    "update": "Mettre à jour l'appli",
+    "updateAvailable": "Mise à jour disponible : {v}",
+    "folderCopy": "Installée comme dossier /data/homebrew/PPSA99500, que XENO STORE ne met pas à jour. Supprimez ce dossier pour installer la version ici, ou continuez à le mettre à jour vous-même.",
     "cancel": "Annuler",
     "cancelled": "Installation annulée",
     "version": "Version {v}",
@@ -103,7 +110,7 @@
     "hintText": "Installez l'appli une fois et ouvrez la boutique depuis sa propre vignette — sans FTP ni adresse dans le navigateur.",
     "notNow": "Pas maintenant",
     "openOnStart": "Ouvrir XENO STORE à son démarrage",
-    "openOnStartHint": "Ouvre la boutique sur la TV à chaque démarrage. Désactivez-le si la boutique démarre automatiquement au lancement de la console.",
+    "openOnStartHint": "Ouvre l'appli XENO STORE sur la TV à chaque démarrage de la boutique, ou le navigateur si l'appli n'est pas installée. Désactivez-le si la boutique démarre automatiquement au lancement de la console.",
     "err": {
       "sha256_mismatch": "Le téléchargement ne correspond pas à sa somme de contrôle — rien n'a été installé. Réessayez.",
       "sha256_unavailable": "La version n'a pas encore de somme de contrôle — réessayez dans quelques minutes.",
@@ -112,5 +119,27 @@
       "too_large": "Le téléchargement est plus volumineux que prévu — rien n'a été installé.",
       "download_failed": "Échec du téléchargement. Vérifiez la connexion internet de la console et réessayez."
     }
+  },
+  "pairdev": {
+    "title": "Appareils associés",
+    "loading": "Chargement des appareils associés…",
+    "loadFailed": "Impossible de charger les appareils associés.",
+    "none": "Aucun téléphone ni PC n'est encore associé.",
+    "unknown": "Appareil inconnu",
+    "ps5Browser": "Navigateur de la PS5",
+    "thisDevice": "Cet appareil",
+    "lastSeen": "Vu pour la dernière fois : {when}",
+    "notSeen": "Pas utilisé depuis la mise à jour de XENO STORE",
+    "unpair": "Dissocier",
+    "unpairTitle": "Dissocier {name} ?",
+    "unpairText": "{name} aura besoin d'un nouveau code de la PS5 pour contrôler à nouveau XENO STORE.",
+    "unpairSelfText": "Ce navigateur aura besoin d'un nouveau code de la PS5 pour contrôler à nouveau XENO STORE.",
+    "unpaired": "{name} dissocié",
+    "unpairOthers": "Dissocier tous les autres appareils",
+    "unpairOthersHint": "Tous les téléphones et PC sauf celui-ci devront être associés à nouveau",
+    "unpairOthersText": "Tous les autres téléphones et PC auront besoin d'un nouveau code de la PS5 pour contrôler à nouveau XENO STORE. L'appli XENO STORE et le navigateur de la console continuent de fonctionner.",
+    "unpairOthersGo": "Tout dissocier",
+    "unpairedN": "{n, plural, one{# appareil dissocié} other{# appareils dissociés}}",
+    "slots": "Jusqu'à {max} téléphones et PC restent associés. En associer un de plus remplace l'appareil inutilisé depuis le plus longtemps."
   }
 }

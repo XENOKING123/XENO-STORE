@@ -74,15 +74,25 @@
 
   /* PC / phone browsers link to the PS5 first: "Show code on my PS5" puts a 6-digit code in a PS5
      notification, the code typed here buys this browser a device token (sent as a Bearer header on
-     every call). The console's own browser (loopback) never sees this page. */
-  function linkGate() {
-    return api.pair({ quiet: true, timeout: 6000 }).then(function (r) {
+     every call). The console's own browser (loopback) never sees this page. Also run while the store
+     is open once this browser is unpaired (Settings → Pair a device, a call refused with not_paired):
+     one Link page at a time, saying why (note, cls). A token the PS5 forgot while the store was closed
+     here (unpaired, or replaced when every slot was taken) is told so too, not shown the first-time page. */
+  var gating = null;
+  function linkGate(note, cls) {
+    if (gating) return gating;
+    gating = api.pair({ quiet: true, timeout: 6000 }).then(function (r) {
       if (!r || r.local || r.linked) return;
-      if (S.data.token) { S.data.token = ''; U.store.set('token', ''); }   /* forgotten by the PS5 */
-      return linkPage(r);
-    }, function () { /* offline or an older store: boot as before */ });
+      if (S.data.token) {   /* forgotten by the PS5 */
+        S.data.token = ''; U.store.set('token', '');
+        if (!note) { note = t('link.forgotten'); cls = 'bad'; }
+      }
+      return linkPage(r, note, cls);
+    }, function () { /* offline or an older store: boot as before */ }).then(function () { gating = null; });
+    return gating;
   }
-  function linkPage(info) {
+  XS.linkGate = linkGate;
+  function linkPage(info, note, cls) {
     return new Promise(function (resolve) {
       var html = document.documentElement;
       html.classList.add('linking');
@@ -107,6 +117,7 @@
       card.appendChild(status);
       card.appendChild(h('p.link-note', [ui.svg('shield'), h('span', { text: t('link.note') })]));
       function say(text, cls) { status.className = 'link-status' + (cls ? ' ' + cls : ''); status.textContent = text; }
+      if (note) say(note, cls);
       function digits() { return (input.value || '').replace(/\D/g, '').slice(0, 6); }
       var busy = false;
       show.addEventListener('click', function () {
@@ -129,6 +140,8 @@
           S.data.token = r.token || '';
           U.store.set('token', S.data.token);
           say(t('link.done'), 'good');
+          /* all slots were taken: which device made room (the toast outlasts this page) */
+          if (typeof r.replaced === 'string' && XS.pairDeviceName) ui.toast({ title: t('link.replaced', { name: XS.pairDeviceName({ name: r.replaced }) }), timeout: 9000 });
           page.classList.add('done');
           setTimeout(function () { if (page.parentNode) page.parentNode.removeChild(page); html.classList.remove('linking'); resolve(); }, 600);
         }, function (err) {

@@ -10,7 +10,7 @@ talks to (PORT-SPEC 1.2-1.4, 1.6.2, 1.8 E1-E13):
                     (loopback token == /api/session token, 403 from the LAN), the
                     gate order (stopping, Bearer, JSON object body) with every
                     sentence of PORT-SPEC 1.3, dispatcher 404/405 sentences, the
-                    31 routes of the table, the PIN gate with a Bearer token.
+                    32 routes of the table, the PIN gate with a Bearer token.
   TvStorageTests    the tv-storage snapshot built from --root dirs, drive ids and
                     labels, a removed root dropping out, preferredStorage.
   DlHelperTests     the dl.c helpers through the existing /api routes: cancel a
@@ -63,6 +63,7 @@ ROUTES = [
     ("GET", "/api/v1/catalog/updates", "S"),
     ("POST", "/api/v1/catalog/updates", "SBO"),
     ("GET", "/api/v1/art/no-such-game/cover", "SB"),
+    ("GET", "/api/v1/art/no-such-game/shot/0", "SB"),
     ("GET", "/api/v1/favorites", "SB"),
     ("POST", "/api/v1/favorites", "SBO"),
     ("GET", "/api/v1/downloads", "SB"),
@@ -155,7 +156,7 @@ class TvGateTests(unittest.TestCase, EnvelopeMixin):
         self.assertEqual(d["tvapi"]["threads"], 0)
         self.assertEqual(d["tvapi"]["routes"], len(ROUTES))
         self.assertNotIn("tvapi: thread", self.srv.log_text())
-        self.assertIn("tvapi: 31 /api/v1 route(s) registered", self.srv.log_text())
+        self.assertIn("tvapi: 32 /api/v1 route(s) registered", self.srv.log_text())
         # The first /api/v1 request starts them (the tv-storage thread at least).
         st, _ = self.srv.api("GET", "/api/v1/system")
         self.assertEqual(st, 200)
@@ -226,7 +227,7 @@ class TvGateTests(unittest.TestCase, EnvelopeMixin):
             self.assertRegex(b["address"], r"^\d+\.\d+\.\d+\.\d+$")
         st, web = self.srv.api("GET", "/api/session")
         self.assertEqual(st, 200)
-        self.assertEqual(b["token"], web["token"], "the TV app and the console browser share tokens[0]")
+        self.assertEqual(b["token"], web["token"], "the TV app and the console browser share the console's session")
         self.assertEqual(b["pairCode"], web["code"])
         st, again = self.srv.api("GET", "/api/v1/session", headers=bearer("f" * 64))
         self.assertEqual(again["token"], b["token"], "an old Bearer is ignored")

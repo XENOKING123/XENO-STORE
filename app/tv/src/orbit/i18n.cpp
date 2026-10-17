@@ -342,6 +342,15 @@ std::string_view unit(bool giga)
     return giga ? "GB" : "MB";
 }
 
+std::string_view kilo_unit()
+{
+    if (current == "ru")
+        return "\xD0\x9A\xD0\x91"; // КБ
+    if (current == "fr")
+        return "Ko";
+    return "KB";
+}
+
 std::string date(int year, int month, int day)
 {
     // Intl.DateTimeFormat(code, {dateStyle: "medium"}) month names.

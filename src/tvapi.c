@@ -131,7 +131,10 @@ int tv_authed(const http_req *req) {
   if (!util_istarts_with(req->authorization, "Bearer ")) return 0;
   const char *tok = req->authorization + 7;
   while (*tok == ' ') tok++;
-  return pairing_token_valid(tok);
+  /* On the console only the console's own session: a 1.3.x TV app keeps the first
+   * token of the old pairing.json, which is listed as a device now (it may be a
+   * phone's). paired:false sends the app to /api/v1/session for the console's. */
+  return req->client_is_loopback ? pairing_token_local(tok) : pairing_token_valid(tok);
 }
 
 int tv_stopping(void) {
@@ -251,6 +254,7 @@ TV_ROUTE(catalog_get, TV_S, tvcat_h_catalog)
 TV_ROUTE(catalog_updates_get, TV_S, tvcat_h_updates)
 TV_ROUTE(catalog_updates_post, TV_S | TV_B | TV_O, tvcat_h_updates)
 TV_ROUTE(art_get, TV_S | TV_B, tvart_h_art)
+TV_ROUTE(art_shot_get, TV_S | TV_B, tvart_h_shot)
 TV_ROUTE(favorites_get, TV_S | TV_B, tvcat_h_favorites)
 TV_ROUTE(favorites_post, TV_S | TV_B | TV_O, tvcat_h_favorites)
 TV_ROUTE(downloads_get, TV_S | TV_B, tvdl_h_jobs)
@@ -284,6 +288,7 @@ static const api_route TV_ROUTES[] = {
   { "GET", "/api/v1/catalog/updates", catalog_updates_get },
   { "POST", "/api/v1/catalog/updates", catalog_updates_post },
   { "GET", "/api/v1/art/{id}/{kind}", art_get },
+  { "GET", "/api/v1/art/{id}/shot/{n}", art_shot_get },
   { "GET", "/api/v1/favorites", favorites_get },
   { "POST", "/api/v1/favorites", favorites_post },
   { "GET", "/api/v1/downloads", downloads_get },

@@ -438,10 +438,13 @@ TEST(App, CircleLeavesTheGamePageAndTabsSwitchWithL1R1)
     h.settle();
     h.press(Action::back);
     h.settle();
-    // From Discover, Browse comes next; three presses reach Downloads.
+    // From Discover, Browse comes next, then Saves; four presses reach Downloads.
     h.press(Action::page_next);
     EXPECT_EQ(h.app.current_tab(), orbit::tab::browse);
     h.press(Action::page_next);
+    EXPECT_EQ(h.app.current_tab(), orbit::tab::saves);
+    h.press(Action::page_next);
+    EXPECT_EQ(h.app.current_tab(), orbit::tab::library);
     h.press(Action::page_next);
     h.settle();
     EXPECT_EQ(h.app.current_tab(), orbit::tab::downloads);
@@ -514,6 +517,43 @@ TEST(App, DiscoverFavouriteTogglesFromTheHeroWithoutOpeningAGame)
     h.store.run_next_action();
     h.settle(3);
     EXPECT_EQ(h.store.state().favourite("tidewater"), before);
+}
+
+// A favourite saved here says so in a toast, added or removed; one saved on a
+// paired phone arrives with a poll and shows nothing.
+TEST(App, AFavouriteSavedHereShowsAToastAndOneFromElsewhereDoesNot)
+{
+    AppHarness h;
+    h.app.show_tab(orbit::tab::discover);
+    h.settle();
+    EXPECT_EQ(h.app.toast_left(), 0.0f); // nothing at start-up
+    const bool before = h.store.state().favourite("tidewater");
+    h.frame(Direction::right); // Heart beside View game
+    h.press(Action::confirm);
+    ASSERT_TRUE(h.store.favourite_action().busy);
+    h.store.run_next_action();
+    h.settle(3);
+    EXPECT_EQ(h.app.toast(), before ? "Removed from favourites" : "Added to favourites");
+    EXPECT_GT(h.app.toast_left(), 0.0f);
+    h.press(Action::confirm);
+    ASSERT_TRUE(h.store.favourite_action().busy);
+    h.store.run_next_action();
+    h.settle(3);
+    EXPECT_EQ(h.app.toast(), before ? "Added to favourites" : "Removed from favourites");
+    h.settle(200); // the toast has gone
+    ASSERT_EQ(h.app.toast_left(), 0.0f);
+    http::Request phone;
+    phone.method = "POST";
+    phone.path = "/api/v1/favorites";
+    phone.bearer = h.store.state().token;
+    phone.body = "{\"gameId\":\"neon-courier\",\"favorite\":" +
+                 std::string(h.store.state().favourite("neon-courier") ? "false" : "true") + "}";
+    ASSERT_EQ(h.backend.send(phone).status, 200);
+    const auto earlier = h.store.state().favourites;
+    h.store.poll_once();
+    h.settle(3);
+    EXPECT_NE(h.store.state().favourites, earlier);
+    EXPECT_EQ(h.app.toast_left(), 0.0f);
 }
 
 TEST(App, BrowsePlatformPickerOpensOnlyTheMatchingEdition)
@@ -713,6 +753,103 @@ TEST(App, CancelledDeletionFailureStaysVisibleAndHistoryOnlyNeedsAnotherConfirma
     EXPECT_EQ(h.transport.count("/api/v1/downloads/" + id + "/forget"), 1);
     EXPECT_EQ(h.store.state().jobs.size(), 5u);
     EXPECT_FALSE(h.app.downloads().modal());
+}
+
+// XENO STORE: a PKG the store installs once it is downloaded. A failed
+// install is under Failed with Retry install first, which asks the store to
+// install it again; the row then reads Installing, under Finished, and the
+// focus follows it there. While it installs it has nothing to press (the store
+// keeps it in history until the install ends). An installed one offers only
+// Remove from history.
+TEST(App, DownloadsRetryAFailedInstall)
+{
+    AppHarness h(host::FixtureMode::installs);
+    std::string failed, installed;
+    for (const Job &job : h.store.state().jobs)
+        (job.install_state == "failed" ? failed : installed) = job.id;
+    ASSERT_FALSE(failed.empty());
+    ASSERT_FALSE(installed.empty());
+    const auto job = [&](const std::string &id) -> const Job &
+    {
+        for (const Job &each : h.store.state().jobs)
+            if (each.id == id)
+                return each;
+        ADD_FAILURE() << "no job " << id;
+        return h.store.state().jobs.front();
+    };
+    EXPECT_EQ(job_view(job(failed)), JobView::failed);
+    h.app.show_tab(orbit::tab::downloads);
+    h.app.downloads().show_job(failed);
+    h.settle();
+    h.press(Action::confirm); // Retry install
+    ASSERT_TRUE(h.store.action().busy);
+    h.store.run_next_action();
+    h.settle(3);
+    EXPECT_EQ(h.transport.count("/api/v1/downloads/" + failed + "/install"), 1);
+    EXPECT_EQ(job(failed).install_state, "installing");
+    EXPECT_EQ(job_view(job(failed)), JobView::finished);
+    const auto hinted = [&](const char *label)
+    {
+        for (const hui::ui::Hint &hint : h.app.downloads().hints())
+            if (std::string_view(hint.label) == label)
+                return true;
+        return false;
+    };
+    // On the Installing row (not the view switcher): no Select, and Cross is refused.
+    EXPECT_FALSE(hinted("Switch view"));
+    EXPECT_FALSE(hinted("Select"));
+    h.press(Action::confirm);
+    EXPECT_FALSE(h.store.action().busy);
+    ASSERT_EQ(h.feedback.cues.size(), 1u);
+    EXPECT_EQ(h.feedback.cues[0].cue, hui::audio::Cue::error);
+    h.app.downloads().show_job(failed);
+    h.settle();
+    h.frame(Direction::right);
+    h.press(Action::confirm);
+    EXPECT_FALSE(h.store.action().busy);
+    EXPECT_EQ(h.transport.count("/api/v1/downloads/" + failed + "/remove"), 0);
+    EXPECT_EQ(h.transport.count("/api/v1/downloads/" + failed + "/install"), 1);
+
+    h.app.downloads().show_job(installed);
+    h.settle();
+    h.frame(Direction::right); // nothing beside Remove from history
+    h.press(Action::confirm);
+    ASSERT_TRUE(h.store.action().busy);
+    h.store.run_next_action();
+    h.settle(3);
+    EXPECT_EQ(h.transport.count("/api/v1/downloads/" + installed + "/remove"), 1);
+    EXPECT_EQ(h.transport.count("/api/v1/downloads/" + installed + "/install"), 0);
+}
+
+// XENO STORE: while the store installs a finished PKG by itself, its download
+// sheet no longer says that installation is a separate step.
+TEST(App, APkgsDownloadSheetLeavesOutInstallationIsSeparateWhenTheStoreInstallsIt)
+{
+    const std::string sentence = "Saves a file to your console. Installation and launching are separate.";
+    std::size_t glyphs[2] = {};
+    for (int i = 0; i < 2; ++i)
+    {
+        AppHarness h;
+        h.transport.reply = [&h, i](const http::Request &request)
+        {
+            http::Response response = h.backend.send(request);
+            if (i == 1 && request.path == "/api/v1/system")
+                response.body.insert(response.body.size() - 1, ",\"autoInstallPkg\":true");
+            return response;
+        };
+        h.store.poll_once();
+        h.settle();
+        ASSERT_EQ(h.store.state().system.auto_install_pkg, i == 1);
+        h.app.open_game("copper-circuit-ps4"); // a PKG
+        h.settle();
+        h.press(Action::confirm); // Download options
+        h.settle();
+        glyphs[i] = drawn_glyphs(h);
+    }
+    std::size_t letters = 0;
+    for (const char c : sentence)
+        letters += c == ' ' ? 0u : 1u;
+    EXPECT_EQ(glyphs[0], glyphs[1] + letters);
 }
 
 // ---- App settings ----

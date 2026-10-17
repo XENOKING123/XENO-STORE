@@ -6,6 +6,7 @@ a temp data dir and roots, talk JSON to it, wait for job states, hash files.
 import hashlib
 import json
 import os
+import shutil
 import signal
 import socket
 import subprocess
@@ -213,6 +214,33 @@ def wait_until(cond, timeout=30, every=0.1, what="condition"):
             return True
         time.sleep(every)
     raise AssertionError(f"timeout waiting for {what}")
+
+
+def playwright_module():
+    """The Playwright package node can load (the web UI checks use the same one), or None."""
+    node = shutil.which("node")
+    if not node:
+        return None
+    for cand in (os.environ.get("XENO_PLAYWRIGHT", ""), "/opt/node22/lib/node_modules/playwright", "playwright"):
+        if cand and subprocess.run([node, "-e", "require.resolve(process.argv[1])", cand], capture_output=True).returncode == 0:
+            return cand
+    return None
+
+
+def run_ui_script(case, pw, workdir, script, *args):
+    """Runs a Playwright script (ES module text that loads require(process.env.XENO_PLAYWRIGHT)) with node in
+    workdir; skips `case` when Playwright has no Chromium. Returns the last line it prints, parsed as JSON."""
+    path = os.path.join(workdir, "ui-script.mjs")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(script)
+    env = dict(os.environ, XENO_PLAYWRIGHT=pw)
+    if not env.get("PLAYWRIGHT_BROWSERS_PATH") and os.path.isdir("/opt/pw-browsers"):
+        env["PLAYWRIGHT_BROWSERS_PATH"] = "/opt/pw-browsers"
+    r = subprocess.run([shutil.which("node"), path, *args], capture_output=True, text=True, timeout=180, env=env, cwd=workdir)
+    if r.returncode != 0 and "Executable doesn't exist" in r.stderr:
+        case.skipTest("Playwright has no Chromium here")
+    case.assertEqual(r.returncode, 0, r.stderr[-2000:])
+    return json.loads(r.stdout.strip().splitlines()[-1])
 
 
 def write_catalog(data_dir, games, revision=2000000000):

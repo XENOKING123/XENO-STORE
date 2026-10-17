@@ -120,6 +120,10 @@ static int64_t bucket_tokens, bucket_last_ms, bucket_rate;
  * persisted for resume but never written into the /api/queue response. */
 static int persist_mode;
 
+/* load_queue()'s notes on a download that was running when the store stopped */
+#define MSG_RESTART_RESUMED "Resuming after XENO STORE restarted"
+#define MSG_RESTART_HELD "Not resumed: XENO STORE restarted after a problem"
+
 static const int BACKOFF_S[] = {5, 15, 45, 120, 300};
 
 #ifdef XENO_HOST
@@ -342,6 +346,7 @@ static void job_write_json(jw *w, const dl_job *j, int history) {
   jw_kv_str(w, "titleId", j->install.titleId);
   jw_kv_str(w, "via", j->install.via);
   jw_kv_i64(w, "startedAt", (int64_t)j->install.startedAt);
+  jw_kv_bool(w, "pkgDeleted", j->install.pkgDeleted);
   jw_obj_end(w);
   jw_kv_bool(w, "resumable", j->resumable);
   jw_kv_str(w, "etag", j->etag);
@@ -385,6 +390,9 @@ static void job_write_json(jw *w, const dl_job *j, int history) {
   jw_obj_end(w);
   jw_kv_i64(w, "peakSpeed", (int64_t)j->peakSpeed);
   jw_kv_int(w, "restResumes", j->restResumes);
+  if (persist_mode && j->stopPaused) jw_kv_bool(w, "stopPaused", 1);
+  /* load_queue()'s note while it stands, for the web UI to say in its language */
+  if (!persist_mode) jw_kv_str(w, "restart", strcmp(j->message, MSG_RESTART_RESUMED) == 0 ? "resumed" : strcmp(j->message, MSG_RESTART_HELD) == 0 ? "held" : "");
   jw_kv_bool(w, "restResuming", j->state == DL_CONNECTING && j->rest_hit);
   if (history) {
     jw_key(w, "speedHistory"); jw_arr_begin(w);
@@ -443,6 +451,7 @@ static dl_job *job_from_json(jv o) {
   xstrlcpy(j->install.titleId, jv_get_str(in, "titleId", ""), sizeof j->install.titleId);
   xstrlcpy(j->install.via, jv_get_str(in, "via", ""), sizeof j->install.via);
   j->install.startedAt = (time_t)jv_get_i64(in, "startedAt", 0);
+  j->install.pkgDeleted = jv_get_bool(in, "pkgDeleted", 0);
   /* Phase 2 */
   xstrlcpy(j->type, jv_get_str(o, "type", "download"), sizeof j->type);
   if (strcmp(j->type, "copy") != 0) xstrlcpy(j->type, "download", sizeof j->type);
@@ -479,6 +488,7 @@ static dl_job *job_from_json(jv o) {
   j->extract.archiveDeleted = jv_get_bool(ex, "archiveDeleted", 0);
   j->peakSpeed = jv_get_dbl(o, "peakSpeed", 0);
   j->restResumes = (int)jv_get_i64(o, "restResumes", 0);
+  j->stopPaused = jv_get_bool(o, "stopPaused", 0);
   if (!j->id[0] || !j->path[0]) { free(j); return NULL; }
   if (is_copy_job(j) && !j->srcPath[0]) { free(j); return NULL; }
   derive_paths_locked(j);
@@ -492,6 +502,7 @@ static char *queue_text_locked(size_t *len) {
   jw_init(&w);
   jw_obj_begin(&w);
   jw_kv_int(&w, "v", 1);
+  jw_kv_bool(&w, "stopMarks", 1);   /* a stop pause is marked by stopPaused (load_queue) */
   jw_kv_i64(&w, "savedAt", (int64_t)util_now());
   jw_key(&w, "jobs"); jw_arr_begin(&w);
   persist_mode = 1;
@@ -1649,7 +1660,8 @@ static int finish_job(dl_job *j) {
   xsnprintf(j->message, sizeof j->message, "Downloaded (%s)", fb);
   jlog_locked(j, "done: %s", fb);
   int in_group = j->group[0] != 0;
-  int want_install = is_pkg_format(j->format) && (j->autoInstall || s.autoInstallPkg);
+  /* the download's own choice: dl_add() already put the settings default in when the request had none */
+  int want_install = is_pkg_format(j->format) && j->autoInstall;
   int want_scan = is_image_format(j->format) && s.shadowMountScan;
   int want_extract = dlx_extract_applies(j) && s.extractZip;
   if (want_install && in_group && s.autoInstallSets) {
@@ -2107,6 +2119,8 @@ static void install_run(dl_job *j) {
     xstrlcpy(j->install.state, "installing", sizeof j->install.state);
     j->install.startedAt = util_now();
     j->state = DL_INSTALLING;
+    /* a download's own package only: never a Library install (synthetic) of a file found on a drive */
+    j->pkg_del_wait = !j->synthetic && !is_copy_job(j);
   } else {
     xstrlcpy(j->install.state, "failed", sizeof j->install.state);
     j->state = j->synthetic ? DL_FAILED : DL_DONE;
@@ -2128,6 +2142,8 @@ static void *install_thread(void *arg) {
 
 static void mark_installing_locked(dl_job *j) {
   j->state = DL_INSTALLING;
+  j->pkg_del_wait = j->pkg_del_seen = 0;
+  j->pkg_del_total = 0;
   xstrlcpy(j->install.state, "installing", sizeof j->install.state);
   xstrlcpy(j->install.message, "Starting install", sizeof j->install.message);
   j->install.startedAt = util_now();
@@ -2150,41 +2166,106 @@ static void begin_install(dl_job *j) {
   }
 }
 
+#define PKG_DEL_GRACE_S 60            /* an answer that confirms nothing keeps the package after this */
+#define PKG_DEL_MAX_S (2 * 3600)      /* an install still in progress after this keeps it */
+
+/* downloads.deletePkgAfterInstall for an installed job (caller holds queue_mu).
+ * "Installed" (/user/app/<TITLEID>) proves nothing here: that folder appears
+ * when an install starts, and is already there for an update or a DLC. So the
+ * package goes only when the install status (p, total: install_progress())
+ * showed this install in progress and now reports it complete without an
+ * error, same total. Returns 1 to remove it now, else 0: wait, or keep it for
+ * good (logged). */
+static int pkg_delete_due_locked(dl_job *j, const settings_t *s, int p, int64_t total) {
+  if (!s->deletePkgAfterInstall) { j->pkg_del_wait = 0; return 0; }
+  if (p == INSTALL_DONE && j->pkg_del_seen && total == j->pkg_del_total) return 1;
+  time_t age = util_now() - j->install.startedAt;
+  const char *why = NULL;
+  if (p == INSTALL_NO_STATUS) why = "this console does not report install progress, so the install cannot be confirmed";
+  else if (p == INSTALL_RUNNING) { if (age > PKG_DEL_MAX_S) why = "the install still reports progress after 2 hours"; }
+  else if (age > PKG_DEL_GRACE_S) why = p == INSTALL_ERROR ? "the install reported an error" : "the install could not be confirmed as complete";
+  if (!why) return 0;
+  j->pkg_del_wait = 0;
+  jlog_locked(j, "package kept: %s", why);
+  return 0;
+}
+
 /* Caller holds queue_mu and passes its settings snapshot (SPEC §5: no second
- * lock under queue_mu). Tokens to release are returned to the caller. */
-static int poll_installs(const settings_t *sp, char (*toks)[24], int tokcap) {
+ * lock under queue_mu). Tokens to release are returned to the caller, and the
+ * ids of the downloads whose package is to be removed now that its install is
+ * confirmed (downloads.deletePkgAfterInstall) in del[]; past delcap they wait
+ * for the next poll. */
+static int poll_installs(const settings_t *sp, char (*toks)[24], int tokcap, char (*del)[16], int delcap, int *ndel) {
   const settings_t s = *sp;
   int ntok = 0;
   for (int i = 0; i < n_jobs; i++) {
     dl_job *j = jobs[i];
-    if (j->state != DL_INSTALLING || j->running || strcmp(j->install.state, "installing") != 0) continue;
-    char msg[256];
-    int r = install_poll(j->install.titleId[0] ? j->install.titleId : j->titleId, j->install.contentId, j->install.startedAt, msg, sizeof msg);
-    if (r == 0) continue;
-    if (r > 0) {
-      j->state = DL_INSTALLED;
-      xstrlcpy(j->install.state, "installed", sizeof j->install.state);
-      xstrlcpy(j->install.message, msg, sizeof j->install.message);
-      xstrlcpy(j->message, "Installed", sizeof j->message);
-      j->finishedAt = util_now();
-      jlog_locked(j, "installed");
-      if (s.toasts && s.onInstall) sys_toast("✓ %s installed", j->title);
-    } else {
-      xstrlcpy(j->install.state, "failed", sizeof j->install.state);
-      xstrlcpy(j->install.message, msg, sizeof j->install.message);
-      j->state = j->synthetic ? DL_FAILED : DL_DONE;
-      set_error_locked(j, "install_failed", msg);
-      jlog_locked(j, "install failed: %s", msg);
-      if (s.toasts && s.onFail) sys_toast("✗ %s install failed", j->title);
+    if (j->running) continue;
+    int installing = j->state == DL_INSTALLING && strcmp(j->install.state, "installing") == 0;
+    if (!installing && !(j->state == DL_INSTALLED && j->pkg_del_wait)) continue;
+    int p = INSTALL_NO_STATUS;
+    int64_t total = 0;
+    if (j->pkg_del_wait && s.deletePkgAfterInstall) {
+      p = install_progress(j->install.contentId, j->install.startedAt, &total);
+      if (p == INSTALL_RUNNING) { j->pkg_del_seen = 1; j->pkg_del_total = total; }
     }
-    if (ntok < tokcap && j->install.token[0]) xstrlcpy(toks[ntok++], j->install.token, 24);
-    queue_dirty = 1;
+    if (installing) {
+      char msg[256];
+      int r = install_poll(j->install.titleId[0] ? j->install.titleId : j->titleId, j->install.contentId, j->install.startedAt, msg, sizeof msg);
+      if (r == 0) continue;
+      if (r > 0) {
+        j->state = DL_INSTALLED;
+        xstrlcpy(j->install.state, "installed", sizeof j->install.state);
+        xstrlcpy(j->install.message, msg, sizeof j->install.message);
+        xstrlcpy(j->message, "Installed", sizeof j->message);
+        j->finishedAt = util_now();
+        jlog_locked(j, "installed");
+        if (s.toasts && s.onInstall) sys_toast("✓ %s installed", j->title);
+      } else {
+        xstrlcpy(j->install.state, "failed", sizeof j->install.state);
+        xstrlcpy(j->install.message, msg, sizeof j->install.message);
+        j->state = j->synthetic ? DL_FAILED : DL_DONE;
+        j->pkg_del_wait = 0;
+        set_error_locked(j, "install_failed", msg);
+        jlog_locked(j, "install failed: %s", msg);
+        if (s.toasts && s.onFail) sys_toast("✗ %s install failed", j->title);
+      }
+      if (ntok < tokcap && j->install.token[0]) xstrlcpy(toks[ntok++], j->install.token, 24);
+      queue_dirty = 1;
+    }
+    if (j->state == DL_INSTALLED && j->pkg_del_wait && pkg_delete_due_locked(j, &s, p, total) && *ndel < delcap)
+      xstrlcpy(del[(*ndel)++], j->id, 16);
   }
   return ntok;
 }
 
 static void release_tokens(char (*toks)[24], int n) {
   for (int i = 0; i < n; i++) install_release_token(toks[i]);
+}
+
+/* downloads.deletePkgAfterInstall: removes the installed download's .pkg (that
+ * file only). Called without queue_mu: unlinking a big file on exFAT takes a while. */
+static void delete_installed_pkg(const char *id) {
+  char path[1024];
+  pthread_mutex_lock(&queue_mu);
+  dl_job *j = find_locked(id);
+  int ok = j && j->state == DL_INSTALLED && j->pkg_del_wait && !j->running && !j->remove_pending && !j->install.pkgDeleted;
+  if (ok) { xstrlcpy(path, j->path, sizeof path); j->pkg_del_wait = 0; }
+  pthread_mutex_unlock(&queue_mu);
+  if (!ok) return;
+  int rc = unlink(path), err = errno;
+  if (rc == 0) util_fsync_dir(path);
+  pthread_mutex_lock(&queue_mu);
+  j = find_locked(id);
+  if (j && rc == 0) {
+    j->install.pkgDeleted = 1;
+    xstrlcpy(j->message, "Installed · package removed", sizeof j->message);
+    jlog_locked(j, "package removed after the install");
+    queue_dirty = 1;
+  } else if (j) {
+    jlog_locked(j, "the package was kept: %s", strerror(err));
+  }
+  pthread_mutex_unlock(&queue_mu);
 }
 
 /* ---- verify action -------------------------------------------------------- */
@@ -2451,12 +2532,15 @@ void dl_housekeeping_tick(void) {
     if (start_worker_locked(jobs[best]) == 0) running++;
     else break;
   }
-  if (now_ms - last_install_poll_ms >= 2000) { last_install_poll_ms = now_ms; ntok += poll_installs(&s, toks + ntok, 16 - ntok); }
+  char del[8][16];
+  int ndel = 0;
+  if (now_ms - last_install_poll_ms >= 2000) { last_install_poll_ms = now_ms; ntok += poll_installs(&s, toks + ntok, 16 - ntok, del, 8, &ndel); }
   int n_inst = stop_hold ? 0 : group_tick_locked(&s, to_install, 8, &want_scan);
   int dirty = queue_dirty;
   int any_running = running > 0;
   pthread_mutex_unlock(&queue_mu);
   release_tokens(toks, ntok);
+  for (int i = 0; i < ndel; i++) delete_installed_pkg(del[i]);
   for (int i = 0; i < n_inst; i++) { jlog(to_install[i], "install set: installing %s step", to_install[i]->kind); begin_install(to_install[i]); }
   if (want_scan) {
     if (xthread_start(NULL, "shadowmount-scan", scan_thread, NULL, 0, 1) != 0) LOGW("install set: cannot start the ShadowMount scan thread");
@@ -2496,7 +2580,12 @@ int dl_any_downloading(void) {
 
 /* ---- init / shutdown ---------------------------------------------------- */
 
-static void load_queue(void) {
+/* `resume`: downloads.resumeAfterRestart (read before queue_mu, SPEC §5).
+ * `safe`: a safe start (the last run crashed soon after its start) starts no
+ * download by itself, so one that crashes the store cannot do so on every
+ * start: what was running or queued stays paused (MSG_RESTART_HELD), marked
+ * stopPaused so that a later normal start resumes it. */
+static void load_queue(int resume, int safe) {
   char path[600];
   xsnprintf(path, sizeof path, "%s/queue.json", data_dir);
   size_t len;
@@ -2505,15 +2594,21 @@ static void load_queue(void) {
   jdoc *d = json_parse(txt, len, 400000, 16);
   free(txt);
   if (!d) { LOGW("queue.json is not valid JSON — starting with an empty queue"); return; }
-  int recovered = 0;
+  /* written by a store before stopPaused: its stop pause shows only as the message
+   * dl_pause_all_for_stop() was given (api.c, TVSYS_STOP_PAUSE_MESSAGE) */
+  int legacy = !jv_get_bool(json_root(d), "stopMarks", 0);
+  int recovered = 0, resumed = 0, held = 0;
   JV_FOREACH(o, jv_get(json_root(d), "jobs")) {
     if (n_jobs >= DL_MAX_JOBS) break;
     dl_job *j = job_from_json(o);
     if (!j) continue;
+    /* running when the store stopped, or paused by a stop (never one the user paused) */
+    int stop_paused = j->stopPaused || (legacy && strcmp(j->message, "Paused for the XENO STORE restart") == 0);
+    int was_running = state_is_active(j->state) || (j->state == DL_PAUSED && stop_paused);
+    j->stopPaused = 0;
     if (state_is_active(j->state)) {
       j->state = DL_PAUSED;
       xstrlcpy(j->message, "Stopped when XENO STORE closed", sizeof j->message);
-      recovered++;
     }
     if (j->state == DL_PAUSED || j->state == DL_QUEUED) {
       sidecar sc;
@@ -2537,10 +2632,38 @@ static void load_queue(void) {
       j->written = j->total > 0 ? j->total : 0;
     }
     if (is_copy_job(j) && j->state == DL_PAUSED) { int64_t have = util_file_size(j->xpart); j->written = have > 0 ? have : 0; }
+    if (was_running && j->state == DL_PAUSED && !is_copy_job(j) && j->total > 0 && !util_file_exists(j->xpart) &&
+        util_file_size(j->path) == j->total) {
+      /* the whole file is in place (a Verify of it was stopped): nothing to download again */
+      j->state = strcmp(j->install.state, "installed") == 0 ? DL_INSTALLED : DL_DONE;
+      j->written = j->total;
+      j->phase[0] = 0;
+      j->errorCode[0] = j->error[0] = 0;
+      xstrlcpy(j->message, "Verification interrupted", sizeof j->message);
+    } else if (was_running && j->state == DL_PAUSED && resume && !safe) {
+      /* the scheduler starts it again under the concurrent-jobs limit, in queue order */
+      j->state = DL_QUEUED;
+      j->nextRetryAt = 0;
+      j->errorCode[0] = j->error[0] = 0;
+      xstrlcpy(j->message, MSG_RESTART_RESUMED, sizeof j->message);
+      jlog_locked(j, "resumed after XENO STORE restarted");
+      resumed++;
+    } else if (safe && (j->state == DL_QUEUED || (was_running && j->state == DL_PAUSED))) {
+      /* queued too: queue.json lags up to QUEUE_SAVE_EVERY_MS, so a "queued" job may be the one that ran */
+      j->state = DL_PAUSED;
+      j->stopPaused = 1;
+      j->nextRetryAt = 0;
+      xstrlcpy(j->message, MSG_RESTART_HELD, sizeof j->message);
+      jlog_locked(j, "not resumed: safe start after a crash");
+      held++;
+    } else if (was_running && j->state == DL_PAUSED) {
+      recovered++;
+    }
     jobs[n_jobs++] = j;
   }
   json_free(d);
-  LOGI("queue: %d job(s) loaded, %d marked paused", n_jobs, recovered);
+  LOGI("queue: %d job(s) loaded, %d marked paused, %d queued again", n_jobs, recovered, resumed);
+  if (held) LOGW("safe start: %d download(s) left paused until a normal start or Resume", held);
 }
 
 int dl_init(const char *dir, int port) {
@@ -2548,8 +2671,10 @@ int dl_init(const char *dir, int port) {
   g_port = port;
   dlx_stats_init(dir);
   dlx_debrid_init(dir);
+  settings_t s;
+  settings_get(&s);
   pthread_mutex_lock(&queue_mu);
-  load_queue();
+  load_queue(s.resumeAfterRestart, g_cfg.safe_mode);
   pthread_mutex_unlock(&queue_mu);
   storage_set_job_lookup(dl_find_job_by_path);
   return 0;
@@ -2767,6 +2892,7 @@ int dl_pause_all_for_stop(const char *msg) {
     xstrlcpy(p->error, j->error, sizeof p->error);
     xstrlcpy(p->errorCode, j->errorCode, sizeof p->errorCode);
     act_stop_locked(j, DL_STOP_PAUSE, DL_PAUSED, msg);
+    j->stopPaused = 1;
     jlog_locked(j, "paused: XENO STORE is stopping");
   }
   stop_hold = 1;
@@ -2785,6 +2911,7 @@ int dl_pause_all_for_stop(const char *msg) {
     for (int k = 0; k < n; k++) {
       dl_job *j = find_locked(prev[k].id);
       if (!j || j->state != DL_PAUSED) continue;   /* changed meanwhile: leave it */
+      j->stopPaused = 0;
       if (!prev[k].signalled) { j->state = prev[k].state; j->nextRetryAt = prev[k].nextRetryAt; }
       else { j->state = prev[k].state == DL_EXTRACTING ? DL_DONE : DL_QUEUED; j->nextRetryAt = 0; }
       xstrlcpy(j->message, prev[k].message, sizeof j->message);
@@ -3328,6 +3455,7 @@ int dl_action(const char *id, const char *action, jv body, char *code, size_t cc
   if (!j) { pthread_mutex_unlock(&queue_mu); xstrlcpy(code, "not_found", ccap); xsnprintf(msg, mcap, "No such job"); return -1; }
   dl_state st = j->state;
   int busy = j->running && !state_is_active(st);   /* install/verify thread owns it */
+  j->stopPaused = 0;   /* from now on the job is where the user puts it */
   if (strcmp(action, "pause") == 0) {
     if (st == DL_QUEUED || state_is_active(st)) act_stop_locked(j, DL_STOP_PAUSE, DL_PAUSED, "Paused");
     else rc = -1;

@@ -48,7 +48,9 @@
     "autoResign": "Reassinado para sua conta e colocado no jogo automaticamente",
     "worksHere": "Funciona com seus jogos",
     "allSaves": "Todos os saves da comunidade",
-    "browse": "Ver saves"
+    "browse": "Ver saves",
+    "options": "Opções da loja de saves",
+    "optionsDesc": "Unidade de backup, apelido, feeds de saves e host de envio"
   },
   "link": {
     "title": "Vincule seu PS5",
@@ -66,6 +68,8 @@
     "bad": "Código incorreto — confira a notificação no seu PS5",
     "locked": "Tentativas demais — aguarde {n} s",
     "done": "Vinculado! Abrindo a XENO STORE…",
+    "replaced": "{name} foi despareado para liberar espaço — era o dispositivo sem uso há mais tempo.",
+    "forgotten": "O PS5 não reconhece mais este navegador: ele foi despareado, ou outro dispositivo ocupou o lugar dele quando todas as vagas de pareamento estavam em uso. Vincule de novo para continuar usando a XENO STORE.",
     "note": "Só dispositivos vinculados controlam sua loja. Isso é feito uma vez por navegador."
   },
   "discover4": {
@@ -88,6 +92,9 @@
     "installing": "Instalando…",
     "install": "Instalar o app",
     "reinstall": "Reinstalar / atualizar",
+    "update": "Atualizar o app",
+    "updateAvailable": "Atualização disponível: {v}",
+    "folderCopy": "Instalado como a pasta /data/homebrew/PPSA99500, que a XENO STORE não atualiza. Remova essa pasta para instalar a versão aqui ou continue atualizando-a você mesmo.",
     "cancel": "Cancelar",
     "cancelled": "Instalação cancelada",
     "version": "Versão {v}",
@@ -103,7 +110,7 @@
     "hintText": "Instale o app uma vez e abra a loja pelo próprio ícone — sem FTP e sem endereço no navegador.",
     "notNow": "Agora não",
     "openOnStart": "Abrir o XENO STORE ao iniciar",
-    "openOnStartHint": "Abre a loja na TV toda vez que ela inicia. Desative se a loja inicia automaticamente quando o console liga.",
+    "openOnStartHint": "Abre o app XENO STORE na TV toda vez que a loja inicia, ou o navegador quando o app não está instalado. Desative se a loja inicia automaticamente quando o console liga.",
     "err": {
       "sha256_mismatch": "O download não corresponde à soma de verificação — nada foi instalado. Tente novamente.",
       "sha256_unavailable": "Esta versão ainda não tem soma de verificação — tente novamente em alguns minutos.",
@@ -112,5 +119,27 @@
       "too_large": "O download é maior do que o esperado — nada foi instalado.",
       "download_failed": "O download falhou. Verifique a conexão de internet do console e tente novamente."
     }
+  },
+  "pairdev": {
+    "title": "Dispositivos pareados",
+    "loading": "Carregando dispositivos pareados…",
+    "loadFailed": "Não foi possível carregar os dispositivos pareados.",
+    "none": "Nenhum celular ou PC pareado ainda.",
+    "unknown": "Dispositivo desconhecido",
+    "ps5Browser": "Navegador do PS5",
+    "thisDevice": "Este dispositivo",
+    "lastSeen": "Último uso: {when}",
+    "notSeen": "Sem uso desde a atualização da XENO STORE",
+    "unpair": "Desparear",
+    "unpairTitle": "Desparear {name}?",
+    "unpairText": "{name} vai precisar de um novo código do PS5 para controlar a XENO STORE de novo.",
+    "unpairSelfText": "Este navegador vai precisar de um novo código do PS5 para controlar a XENO STORE de novo.",
+    "unpaired": "{name} despareado",
+    "unpairOthers": "Desparear todos os outros dispositivos",
+    "unpairOthersHint": "Todos os celulares e PCs, exceto este, terão que parear de novo",
+    "unpairOthersText": "Todos os outros celulares e PCs vão precisar de um novo código do PS5 para controlar a XENO STORE de novo. O app XENO STORE e o navegador do console continuam funcionando.",
+    "unpairOthersGo": "Desparear todos",
+    "unpairedN": "{n, plural, one{# dispositivo despareado} other{# dispositivos despareados}}",
+    "slots": "Até {max} celulares e PCs ficam pareados. Parear mais um substitui o dispositivo sem uso há mais tempo."
   }
 }

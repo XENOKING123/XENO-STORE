@@ -395,6 +395,7 @@ function tick() {
     }
     if (j.state === 'installing' && t >= j._installUntil) {
       j.state = 'installed'; j.install = { state: 'installed', message: 'Installed', contentId: j.install.contentId }; j.phase = ''; jlog(j, 'installed');
+      if (settings.downloads.deletePkgAfterInstall && j.provider !== 'Local file') { j.install.pkgDeleted = true; j.message = 'Installed · package removed'; jlog(j, 'package removed after the install'); }
       if (j.titleId && !installedTitles.some((x) => x.titleId === j.titleId)) installedTitles.unshift({ titleId: j.titleId, gameId: j.gameId, title: j.title, cover: j.cover, path: `/user/app/${j.titleId}` });
     }
     if (j.state === 'done' && j.type === 'save-install' && !j._saveImportAt) { j._saveImportAt = t + 1500; j.phase = 'Importing save'; j.install = { state: 'installing', message: 'Importing with the native mount engine', contentId: '' }; }

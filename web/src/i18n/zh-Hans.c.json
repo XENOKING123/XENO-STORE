@@ -48,7 +48,9 @@
     "autoResign": "自动为你的账户重新签名并放入游戏",
     "worksHere": "适用于你的游戏",
     "allSaves": "全部社区存档",
-    "browse": "浏览存档"
+    "browse": "浏览存档",
+    "options": "存档商店选项",
+    "optionsDesc": "备份驱动器、昵称、存档信息源和上传主机"
   },
   "link": {
     "title": "连接你的 PS5",
@@ -66,6 +68,8 @@
     "bad": "代码不正确 — 请查看 PS5 上的通知",
     "locked": "尝试次数过多 — 请等待 {n} 秒",
     "done": "已连接！正在打开 XENO STORE…",
+    "replaced": "为腾出位置，已取消配对 {name}（最久未使用的设备）。",
+    "forgotten": "PS5 已不再识别此浏览器：它已被取消配对，或在配对名额全部占用时被其他设备替换。请重新连接以继续使用 XENO STORE。",
     "note": "只有你连接的设备才能控制商店。每个浏览器只需操作一次。"
   },
   "discover4": {
@@ -88,6 +92,9 @@
     "installing": "正在安装…",
     "install": "安装应用",
     "reinstall": "重新安装 / 更新",
+    "update": "更新应用",
+    "updateAvailable": "有可用更新：{v}",
+    "folderCopy": "以文件夹 /data/homebrew/PPSA99500 安装，XENO STORE 不会更新它。删除该文件夹即可在此安装该版本，或继续自行更新。",
     "cancel": "取消",
     "cancelled": "已取消安装",
     "version": "版本 {v}",
@@ -103,7 +110,7 @@
     "hintText": "安装一次应用，即可从它自己的图标打开商店——无需 FTP，也无需浏览器地址。",
     "notNow": "以后再说",
     "openOnStart": "XENO STORE 启动时打开",
-    "openOnStartHint": "每次启动时在电视上打开商店。如果你在开机时自动启动商店，请关闭此项。",
+    "openOnStartHint": "每次商店启动时在电视上打开 XENO STORE 应用；如果未安装应用，则打开浏览器。如果你在开机时自动启动商店，请关闭此项。",
     "err": {
       "sha256_mismatch": "下载内容与校验和不符——未安装任何内容。请重试。",
       "sha256_unavailable": "此版本还没有校验和——请几分钟后重试。",
@@ -112,5 +119,27 @@
       "too_large": "下载内容比预期大——未安装任何内容。",
       "download_failed": "下载失败。请检查主机的网络连接后重试。"
     }
+  },
+  "pairdev": {
+    "title": "已配对的设备",
+    "loading": "正在加载已配对的设备…",
+    "loadFailed": "无法加载已配对的设备。",
+    "none": "还没有配对任何手机或电脑。",
+    "unknown": "未知设备",
+    "ps5Browser": "PS5 浏览器",
+    "thisDevice": "此设备",
+    "lastSeen": "上次使用：{when}",
+    "notSeen": "自 XENO STORE 更新以来未使用",
+    "unpair": "取消配对",
+    "unpairTitle": "取消配对 {name}？",
+    "unpairText": "{name} 需要 PS5 上的新代码才能再次控制 XENO STORE。",
+    "unpairSelfText": "此浏览器需要 PS5 上的新代码才能再次控制 XENO STORE。",
+    "unpaired": "已取消配对 {name}",
+    "unpairOthers": "取消配对其他所有设备",
+    "unpairOthersHint": "除此设备外的所有手机和电脑都需要重新配对",
+    "unpairOthersText": "其他所有手机和电脑都需要 PS5 上的新代码才能再次控制 XENO STORE。XENO STORE 应用和主机自带的浏览器不受影响。",
+    "unpairOthersGo": "全部取消配对",
+    "unpairedN": "{n, plural, other{已取消配对 # 台设备}}",
+    "slots": "最多可保持 {max} 台手机和电脑配对。再配对一台会替换最久未使用的设备。"
   }
 }

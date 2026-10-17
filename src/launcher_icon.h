@@ -9,6 +9,9 @@
 #ifndef XENO_LAUNCHER_ICON_H
 #define XENO_LAUNCHER_ICON_H
 
+/* The shortcut's title id ("XENO STORE Web" on the home screen). */
+#define LAUNCHER_ICON_TITLE_ID "XENO00002"
+
 /* Writes /user/app/XENO00002/sce_sys/{param.json,icon0.png} and asks the shell
  * to register the title. Returns 0 when the icon is in place (or on host),
  * -1 when the files could not be written. Records the outcome in

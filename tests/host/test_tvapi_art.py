@@ -2,8 +2,9 @@
 # Copyright (C) 2026 XENO STORE contributors
 # SPDX-License-Identifier: GPL-3.0-or-later
 """
-test_tvapi_art.py — GET /api/v1/art/{gameId}/{cover|hero}, the TV app's artwork
-(PORT-SPEC 1.7, 1.9, 1.10 "TvArt"; R8, R9; map-catalog-art §8).
+test_tvapi_art.py — GET /api/v1/art/{gameId}/{cover|hero}, the TV app's artwork,
+and GET /api/v1/art/{gameId}/shot/{n}, its screenshots (PORT-SPEC 1.7, 1.9, 1.10
+"TvArt"; R8, R9; map-catalog-art §8).
 
   TvArt              the fixture catalogue against a local art server
                      (XENO_HOST_ART_FIXTURE): 202 then 200 for WebP (VP8, VP8L,
@@ -19,7 +20,12 @@ test_tvapi_art.py — GET /api/v1/art/{gameId}/{cover|hero}, the TV app's artwor
                      without a paired token; 503 while stopping; 502 after a 500
                      and no refetch inside the window; redirects followed, capped
                      at three and their end re-checked against the URL policy; the
-                     Accept header; the first reply within budget (PORT-SPEC 1.9).
+                     Accept header; the first reply within budget (PORT-SPEC 1.9);
+                     screenshots: the n-th of those /catalog counts (an AVIF is not
+                     one, and never fetched), served by the same rules (any shape,
+                     the hero's pixel cap), n past the count or not one digit 404
+                     at once, ten at most, a hidden game's too; a refusal holds for
+                     its kind only (a cover's or hero's URL served as a screenshot).
   TvArtLimits        a catalogue with 376 extra games: the 24 MiB budget evicts
                      the least recently served picture, the 256-entry limit
                      recycles the oldest, the queue holds 64 keys and answers 503
@@ -30,10 +36,10 @@ test_tvapi_art.py — GET /api/v1/art/{gameId}/{cover|hero}, the TV app's artwor
                      and the refusal memory: a URL refused before is fetched again
                      and a game whose cover URL changed gets the new picture.
   TvArtRealCatalogue the candidate rule on the real revision-10 catalogue against a
-                     Python mirror of it: the same games, covers and heroes, and for
-                     a sample the exact URLs tried in order (image.api.playstation.com
-                     sized w=512 / w=1920). https goes to a dead proxy, so nothing
-                     leaves the machine.
+                     Python mirror of it: the same games, covers, heroes and games with
+                     screenshots, and for a sample the exact URLs tried in order
+                     (image.api.playstation.com sized w=512 / w=1920, screenshots
+                     w=1920). https goes to a dead proxy, so nothing leaves the machine.
 
 Pictures come from tests/host/tv/artgen.py (PIL). Every refusal body must pass
 tvcontract.assert_error_envelope.
@@ -63,7 +69,8 @@ CACHE_ENTRIES = 256
 QUEUE = 64
 STALE_S = 10.0                    # a queued key nobody asked for in 10 s makes way
 CACHE_LINE = re.compile(r"tvart: cached (\S+) .*; cache (\d+) image\(s\), (\d+) bytes;")
-INDEX_LINE = r"tvart: art index for catalogue revision {rev}: (\d+) games with art \((\d+) covers, (\d+) heroes\)"
+INDEX_LINE = (r"tvart: art index for catalogue revision {rev}: (\d+) games with art \((\d+) covers, (\d+) heroes\), "
+              r"(\d+) with screenshots")
 
 
 def art(gid, kind="cover"):
@@ -159,14 +166,17 @@ class TvArt(unittest.TestCase, ArtMixin):
     # ---- the gate ------------------------------------------------------------
     def test_01_bearer_required(self):
         for tok in ("", "0" * 64, "f" * 63):
-            r = self.c.get(art("fx-tidewater-ps5"), token=tok)
-            r.error(401, tc.S["unpaired"])
+            for kind in ("cover", "shot/0"):
+                r = self.c.get(art("fx-tidewater-ps5", kind), token=tok)
+                r.error(401, tc.S["unpaired"])
         self.assertEqual(self.w.art.hits(src("fx-tidewater-ps5", "cover.webp")), 0, "an unpaired request fetched art")
+        self.assertEqual(self.w.art.hits(src("fx-tidewater-ps5", "shot.webp")), 0, "an unpaired request fetched art")
 
     def test_02_stopping(self):
         self.w.set_stopping(True)
         try:
             self.c.get(art("fx-tidewater-ps5")).error(503, tc.S["stopping"])
+            self.c.get(art("fx-tidewater-ps5", "shot/0")).error(503, tc.S["stopping"])
         finally:
             self.w.set_stopping(False)
 
@@ -380,6 +390,77 @@ class TvArt(unittest.TestCase, ArtMixin):
     def test_13_memory_budget(self):
         self.assert_memory_budget()
 
+    # ---- screenshots ----------------------------------------------------------------
+    def test_14_screenshots(self):
+        """/art/{id}/shot/{n}: the n-th of the screenshots /catalog counts (an empty string, a
+        number and an AVIF in the list are not counted), by the cover and hero rules."""
+        a = self.w.art
+        shots = [src("fx-tidewater-ps5", n) for n in ("shot.webp", "shot.jpg", "shot-tall.webp", "hero-2561.png")]
+        avif = src("fx-tidewater-ps5", "cover.avif")
+        firsts = []
+        for n in range(4):
+            r = self.c.get(art("fx-tidewater-ps5", f"shot/{n}"))
+            self.assert_pending(r)
+            firsts.append(r.elapsed)
+        self.assertLess(statistics.median(firsts), FIRST_REPLY_BUDGET, firsts)
+        self.assertEqual(self.assert_served("fx-tidewater-ps5", "shot/0", shots[0]), "webp")
+        self.assertEqual(self.assert_served("fx-tidewater-ps5", "shot/1", shots[1]), "jpeg")
+        self.assertEqual(self.assert_served("fx-tidewater-ps5", "shot/2", shots[2]), "webp")   # tall: any shape
+        self.assert_unknown(self.wait_art("fx-tidewater-ps5", "shot/3"))                       # the hero's pixel cap
+        self.assertIn("tvart: refused for fx-tidewater-ps5#shot3: image/png 2561x1441 is over the 3686400-pixel "
+                      "screenshot cap", self.w.log_text())
+        # cached: no second fetch
+        self.assert_image(self.c.get(art("fx-tidewater-ps5", "shot/0")), shots[0])
+        self.assertEqual([a.hits(p) for p in shots], [1, 1, 1, 1])
+        self.assertEqual(a.hits(avif), 0, "the AVIF is never fetched")
+        # 404 at once: past screenshotCount, a list that is an object, no screenshots, no game
+        before = sum(a.hits().values())
+        for gid, n in (("fx-tidewater-ps5", 4), ("fx-tidewater-ps5", 5), ("fx-tidewater-ps5", 9),
+                       ("fx-iron-meridian-ps5", 0), ("fx-neon-courier-ps5", 0), ("no-such-game-ps5", 0)):
+            with self.subTest(gid=gid, n=n):
+                r = self.c.get(art(gid, f"shot/{n}"))
+                self.assert_unknown(r)
+                self.assertLess(r.elapsed, NEVER_BLOCKS)
+        self.assertEqual(sum(a.hits().values()), before, "a 404 at once fetched something")
+        # n is one digit below 10; anything else is not a screenshot
+        for n in ("10", "01", "-1", "+1", "a", "1x", "shot"):
+            with self.subTest(n=n):
+                self.assert_unknown(self.c.get(art("fx-tidewater-ps5", "shot/" + n)))
+        self.assert_unknown(self.c.get(art("fx-tidewater-ps5", "shot")))
+        for path in (art("fx-tidewater-ps5", "shot/"), art("fx-tidewater-ps5", "shot/0/x")):
+            self.c.get(path).error(404, tc.S["not_available"])
+        # ten at most: shot/9 is the tenth listed (the eleventh is never offered)
+        self.assert_served("fx-vast-archive-ps5", "shot/9", src("fx-vast-archive-ps5-10", "shot.webp"))
+        # a game the TV catalogue hides (R9)
+        self.assert_served("fx-pixel-shell-homebrew", "shot/0", src("fx-pixel-shell-homebrew", "shot.jpg"))
+        for p, hdrs in a.requests:
+            if p in shots:
+                self.assertEqual(hdrs.get("Accept"), ACCEPT, p)
+
+    def test_15_refusals_per_kind(self):
+        """A refusal holds for the kind it was made for: fx-static-bloom-ps5's cover (a 1920x1080 PNG,
+        over the cover cap) and hero (square) are also its screenshots 0 and 1, which allow both."""
+        a = self.w.art
+        gid = "fx-static-bloom-ps5"
+        png, square = src(gid, "hero.png"), src(gid, "hero-square.webp")
+        # the screenshot served first, then the same URL refused as the cover: still served
+        self.assert_served(gid, "shot/0", png)
+        self.assert_unknown(self.wait_art(gid, "cover"))
+        self.assertIn(f"tvart: refused for {gid}#cover: image/png 1920x1080 is over the 1048576-pixel cover cap",
+                      self.w.log_text())
+        self.assert_image(self.c.get(art(gid, "shot/0")), png)
+        # the URL refused as the hero first: the screenshot is still fetched, and served
+        self.assert_unknown(self.wait_art(gid, "hero"))
+        self.assertIn(f"tvart: refused for {gid}#hero: hero 1080x1080 is not wide", self.w.log_text())
+        self.assert_served(gid, "shot/1", square)
+        # each refusal is still remembered for its own kind
+        for kind in ("cover", "hero"):
+            with self.subTest(kind=kind):
+                r = self.c.get(art(gid, kind))
+                self.assert_unknown(r)
+                self.assertLess(r.elapsed, NEVER_BLOCKS)
+        self.assertEqual((a.hits(png), a.hits(square)), (2, 2))
+
 
 # --------------------------------------------------------------------------- #
 def limits_catalog():
@@ -546,8 +627,8 @@ def sharp_art(url, width):
     return base + ("&" if "?" in base else "?") + f"w={width}"
 
 
-def py_url(url, hero):
-    """The URL policy on a public catalogue URL: the URL fetched, or None."""
+def py_url(url, width):
+    """The URL policy on a public catalogue URL (width: image.api.playstation.com w=): the URL fetched, or None."""
     if not url or len(url) >= 2048 or any(ord(ch) <= 0x20 or ord(ch) == 0x7F for ch in url):
         return None
     sp = urllib.parse.urlsplit(url)
@@ -556,7 +637,7 @@ def py_url(url, hero):
     if sp.path.lower().endswith((".avif", ".gif")):
         return None
     if sp.hostname == PS_IMAGE_HOST:
-        return sharp_art(url, 1920 if hero else 512)
+        return sharp_art(url, width)
     return url
 
 
@@ -575,11 +656,26 @@ def py_candidates(catalog):
         cand = ([cf, "" if shared else c] if bad else [c, cf]) + [h if h != c else "", hf if hf != cf else ""]
         urls = []
         for k, u in enumerate(cand):
-            v = py_url(u, k >= 2)
+            v = py_url(u, 1920 if k >= 2 else 512)
             if v and k % 2 and urls[k - 1] == v:
                 v = None
             urls.append(v)
         if any(urls):
+            out[gid] = urls
+    return out
+
+
+def py_shots(catalog):
+    """{gameId: [the URL fetched for shot/n]}: the first 10 strings of every game's screenshots
+    list that pass the URL policy (src/tvapi.h TV_ART_MAX_SHOTS), sized w=1920."""
+    out = {}
+    for g in catalog.get("games", []):
+        gid = g.get("id") or ""
+        shots = g.get("screenshots")
+        if not re.fullmatch(r"[A-Za-z0-9._-]{1,95}", gid) or gid in (".", "..") or not isinstance(shots, list):
+            continue
+        urls = [v for v in (py_url(u, 1920) for u in shots if isinstance(u, str)) if v][:10]
+        if urls:
             out[gid] = urls
     return out
 
@@ -592,17 +688,20 @@ class TvArtRealCatalogue(unittest.TestCase, ArtMixin):
         start_world(cls, "art-real", catalog="real", featured=None, art=False, files=None,
                     env={"HTTPS_PROXY": cls.DEAD, "HTTP_PROXY": cls.DEAD, "NO_PROXY": ""})
         cls.expect = py_candidates(cls.w.catalog)
+        cls.shots = py_shots(cls.w.catalog)
 
     @classmethod
     def tearDownClass(cls):
         cls.w.close()
 
     def test_1_index_matches_the_rule(self):
-        games, covers, heroes = (int(x) for x in self.index.groups())
+        games, covers, heroes, shots = (int(x) for x in self.index.groups())
         e = self.expect
-        self.assertEqual(games, len(e))
+        self.assertEqual(games, len(set(e) | set(self.shots)))
         self.assertEqual(covers, sum(1 for u in e.values() if u[0] or u[1]))
         self.assertEqual(heroes, sum(1 for u in e.values() if u[2] or u[3]))
+        self.assertEqual(shots, len(self.shots))
+        self.assertGreater(shots, 100, "the real catalogue lists screenshots")
 
     def _sample(self):
         """Keys whose candidates show every rule: PlayStation rewrites, two candidates,
@@ -650,6 +749,40 @@ class TvArtRealCatalogue(unittest.TestCase, ArtMixin):
             for u in urls:
                 if PS_IMAGE_HOST in u:
                     self.assertRegex(u, r"[?&]w=512$" if kind == "cover" else r"[?&]w=1920$")
+
+    def test_2b_screenshot_urls(self):
+        """A sample of screenshots: the one URL tried for shot/n (PlayStation's sized w=1920)."""
+        picks = {}
+        for want_ps in (True, False):
+            for gid in sorted(self.shots):
+                n = next((i for i, u in enumerate(self.shots[gid]) if (PS_IMAGE_HOST in u) == want_ps
+                          and len(u) <= 150), None)
+                # games with a cover too: test_3's cover-less games must stay unfetched
+                if n is not None and gid in self.expect and len(gid) <= 50 and (gid, n) not in picks:
+                    picks[(gid, n)] = self.shots[gid][n]
+                if sum(1 for u in picks.values() if (PS_IMAGE_HOST in u) == want_ps) >= 4:
+                    break
+        self.assertGreaterEqual(len(picks), 8, picks)
+        for gid, n in picks:
+            self.assertIn(self.c.get(art(gid, f"shot/{n}")).status, (202, 502))
+        for (gid, n), url in picks.items():
+            with self.subTest(gid=gid, n=n):
+                self.wait_art(gid, f"shot/{n}").error(502, tc.S["art_failed"])
+                lines = re.findall(rf"^\S+ WARN  tvart: could not fetch for {re.escape(gid)}#shot{n}: .*: (\S+)$",
+                                   self.w.log_text(), re.M)
+                self.assertEqual(lines, [url])
+                if PS_IMAGE_HOST in url:
+                    self.assertRegex(url, r"[?&]w=1920$")
+        # past the screenshots /catalog counts: 404 at once (an AVIF outside the URL policy is not one of them)
+        avif = {g["id"] for g in self.w.catalog["games"] if isinstance(g.get("screenshots"), list)
+                and any(isinstance(u, str) and u.lower().endswith(".avif") for u in g["screenshots"])}
+        past = [(g, len(u)) for g, u in sorted(self.shots.items()) if len(u) < 10 and len(g) <= 60]
+        self.assertTrue([p for p in past if p[0] in avif])
+        for gid, n in [p for p in past if p[0] in avif][:5] + past[:5]:
+            with self.subTest(gid=gid, n=n):
+                r = self.c.get(art(gid, f"shot/{n}"))
+                self.assert_unknown(r)
+                self.assertLess(r.elapsed, NEVER_BLOCKS)
 
     def test_3_no_candidate_is_404_at_once(self):
         ids = [g["id"] for g in self.w.catalog["games"]]

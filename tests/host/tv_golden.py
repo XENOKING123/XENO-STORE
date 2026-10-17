@@ -56,6 +56,14 @@ Ranks (newOnOrbitRank, 1..100): the featured feed's hero[] ids in feed order, sk
   ranked; at most 100 ranks. Ranks are computed over every exposed source: the enabled
   filter never renumbers them. Unranked options carry no newOnOrbitRank key.
 
+Popular ranks (popularRank, 1..gameCount): every TV-visible game id once, ordered by the
+  catalogue popularity the web UI ranks its Top PS5 / Trending rows and its showcase by
+  (a number as jv_dbl reads it: a bool is 0/1, anything else 0), highest first; at equal
+  popularity PS5 before PS4, then catalogue order, the tie rule of Trending and Top PS5
+  (the web showcase breaks ties by featured, metacritic, title instead). A repeated game id
+  takes its first TV-visible entry's popularity, platform and place. Like newOnOrbitRank,
+  computed over every exposed source (the enabled filter leaves gaps, it never renumbers).
+
 Fields, in this exact key order (CATALOG_KEYS; [..] = only when present):
   id            release id
   gameId        game id
@@ -69,6 +77,12 @@ Fields, in this exact key order (CATALOG_KEYS; [..] = only when present):
   releaseDate   game releaseDate when it is exactly [0-9]{4}-[0-9]{2}-[0-9]{2}, else ""
   addedAt       game addedAt + "T00:00:00Z" when it is exactly YYYY-MM-DD, else ""
   [newOnOrbitRank]  int 1..100 (see Ranks)
+  popularRank   int 1..gameCount (see Popular ranks)
+  [cheats]      the game's cheats (an integer member) when > 0
+  [screenshotCount] the number of strings in the game's screenshots list that pass the art URL
+                policy (shot_usable: so no .avif, .gif or non-https URL), at most 10 (MAX_SHOTS),
+                when > 0: GET /api/v1/art/{gameId}/shot/{n} serves the n-th of them, 0-based
+                (src/tvapi.h TV_ART_MAX_SHOTS)
   artworkLayout game artworkLayout
   provider, sourceId                  release fields
   format        release format; a ZIP (show_zip only) becomes "Unknown"
@@ -78,6 +92,8 @@ Fields, in this exact key order (CATALOG_KEYS; [..] = only when present):
   region        release region, else game region, else ""
   version       release version ("" when none)
   filename      release filename, else the percent-decoded last segment of the URL path
+  kind          "game" | "backport" | "update" | "dlc": the release kind, any other kind
+                reading as "game" (R2 still sorts it last, its notes get no prefix)
   notes         release notes, prefixed for kind update "Update {version}. Install the base
                 game first." ("Update. Install the base game first." without a version),
                 dlc "Add-on content. Needs the base game.", backport "Backport for older
@@ -85,7 +101,7 @@ Fields, in this exact key order (CATALOG_KEYS; [..] = only when present):
   sizeBytes     int
   browserAvailable  source kind == "browser"   (R6: never from browserUrl)
   directAvailable   source kind == "direct"
-Never sent: url, browserUrl, mirrors, hashes, password, health, art URLs.
+Never sent: url, browserUrl, mirrors, hashes, password, health, art and screenshot URLs.
 
 /sources (sources()): options = exposed sources with at least one TV-visible release, in
   catalogue order: {"id","label"=name,"releaseCount"=TV-visible releases whatever the enabled
@@ -116,15 +132,22 @@ SAFE_GAME_ID = re.compile(r"(?!\.\.?$)[A-Za-z0-9._-]{1,95}")
 TITLE_ID_RX = re.compile(r"(CUSA|PPSA|PLAS|PCAS|PCJS|PLJS|PLJM|PCJM)[0-9]{5}")
 DATE_RX = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")
 MAX_RANK = 100
+MAX_SHOTS = 10
+ART_URL_MAX = 2048
+# Host build: http art is allowed from XENO_HOST_ART_FIXTURE only; tvworld points it at the
+# world's {{ART}}, which is always http://127.0.0.1:<port>.
+ART_FIXTURE_HOST = "127.0.0.1"
+WIRE_KINDS = ("game", "backport", "update", "dlc")
 NOTICE_VERSION = 1
 NOTE_UPDATE = "Update {v}. Install the base game first."
 NOTE_UPDATE_NO_VERSION = "Update. Install the base game first."
 NOTE_DLC = "Add-on content. Needs the base game."
 NOTE_BACKPORT = "Backport for older firmware."
 CATALOG_KEYS = ("id", "gameId", "titleId", "platform", "title", "genre", "tagline", "description", "publisher",
-                "releaseDate", "addedAt", "newOnOrbitRank", "artworkLayout", "provider", "sourceId", "format",
-                "compression", "archiveContents", "extractedBytes", "region", "version", "filename", "notes",
-                "sizeBytes", "browserAvailable", "directAvailable")
+                "releaseDate", "addedAt", "newOnOrbitRank", "popularRank", "cheats", "screenshotCount",
+                "artworkLayout", "provider", "sourceId", "format", "compression", "archiveContents",
+                "extractedBytes", "region", "version", "filename", "kind", "notes", "sizeBytes",
+                "browserAvailable", "directAvailable")
 SOURCES_KEYS = ("enabled", "options", "acknowledged", "noticeVersion")
 OPTION_KEYS = ("id", "label", "releaseCount", "downloadReady")
 
@@ -206,6 +229,20 @@ def _i(obj, key):
         m = _C_INT.match(v)
         return int(m.group(1)) if m else 0
     return 0
+
+
+def _d(obj, key):
+    """Number member as src/json.c jv_dbl(v, 0) reads it: a number (strtod), a bool as 0/1,
+    anything else 0."""
+    v = obj.get(key)
+    if isinstance(v, bool):
+        return float(v)
+    if isinstance(v, (int, float)):
+        try:
+            return float(v)
+        except OverflowError:                  # an integer literal beyond a double: strtod gives inf
+            return float("inf") if v > 0 else float("-inf")
+    return 0.0
 
 
 # --------------------------------------------------------------------------- #
@@ -306,7 +343,54 @@ def ranks(ecat, featured, show_zip=False):
     return rank
 
 
-def _option(g, r, srcs, rank):
+def popular_ranks(ecat, show_zip=False):
+    """{gameId: popularRank} over every exposed source (enabled or not)."""
+    exposed = exposed_sources(ecat)
+    first = {}
+    for i, g in enumerate(ecat["games"]):
+        gid = _s(g, "id")
+        if gid not in first and any(visible(g, r, exposed, show_zip) for r in g["releases"]):
+            first[gid] = (-_d(g, "popularity"), _s(g, "platform") != "PS5", i)
+    order = sorted(first, key=first.get)
+    return {gid: n for n, gid in enumerate(order, 1)}
+
+
+def shot_usable(url):
+    """src/tvapi_art.c tvart_shot_usable (the art URL policy, PORT-SPEC 1.7): a string under
+    2048 bytes (read up to a NUL, as C does) without a byte <= 0x20 or 0x7F; https, or http
+    from the host build's art fixture; a host and no userinfo; a path (without its query) not
+    ending in .avif or .gif. Not mirrored, as no catalogue here has one: host_blocked's
+    address literals and local-only names, and the length limit after the w=1920 rewrite."""
+    if not isinstance(url, str):
+        return False
+    url = url.split("\0", 1)[0]
+    if not url or len(url.encode("utf-8")) >= ART_URL_MAX or any(ord(ch) <= 0x20 or ord(ch) == 0x7F for ch in url):
+        return False
+    try:
+        sp = urlsplit(url)
+        sp.port                                   # a bad port fails util_url_parse
+    except ValueError:
+        return False
+    if not sp.hostname or "@" in sp.netloc:
+        return False
+    if sp.scheme != "https" and not (sp.scheme == "http" and sp.hostname == ART_FIXTURE_HOST):
+        return False
+    return not sp.path.lower().endswith((".avif", ".gif"))
+
+
+def screenshot_count(game):
+    shots = game.get("screenshots")
+    if not isinstance(shots, list):
+        return 0
+    return min(sum(1 for u in shots if shot_usable(u)), MAX_SHOTS)
+
+
+def wire_kind(rel):
+    kind = _s(rel, "kind") or "game"
+    return kind if kind in WIRE_KINDS else "game"
+
+
+def _option(g, r, srcs, rank, popular):
     fmt = _s(r, "format")
     zipped = fmt == "ZIP"
     rd = _s(g, "releaseDate")
@@ -328,6 +412,13 @@ def _option(g, r, srcs, rank):
     }
     if g["id"] in rank:
         o["newOnOrbitRank"] = rank[g["id"]]
+    o["popularRank"] = popular[g["id"]]
+    cheats = _i(g, "cheats")
+    if cheats > 0:
+        o["cheats"] = cheats
+    shots = screenshot_count(g)
+    if shots:
+        o["screenshotCount"] = shots
     o["artworkLayout"] = _s(g, "artworkLayout")
     o["provider"] = _s(r, "provider")
     o["sourceId"] = _s(r, "sourceId")
@@ -339,6 +430,7 @@ def _option(g, r, srcs, rank):
     o["region"] = _s(r, "region") or _s(g, "region")
     o["version"] = _s(r, "version")
     o["filename"] = release_filename(r)
+    o["kind"] = wire_kind(r)
     o["notes"] = notes(r)
     o["sizeBytes"] = _i(r, "sizeBytes")
     o["browserAvailable"] = kind == "browser"
@@ -366,6 +458,7 @@ def build(catalog, featured=None, show_zip=False, enabled=None, acknowledged=Tru
     srcs = source_map(ecat)
     exposed = exposed_sources(ecat)
     rank = ranks(ecat, featured, show_zip)
+    popular = popular_ranks(ecat, show_zip)
     on = _enabled_set(ecat, enabled)
     out = []
     for g in ecat["games"]:
@@ -373,7 +466,7 @@ def build(catalog, featured=None, show_zip=False, enabled=None, acknowledged=Tru
         rels.sort(key=lambda t: sort_key(t[1], t[0], srcs))
         for _, r in rels:
             if _s(r, "sourceId") in on:
-                out.append(_option(g, r, srcs, rank))
+                out.append(_option(g, r, srcs, rank, popular))
     return out
 
 

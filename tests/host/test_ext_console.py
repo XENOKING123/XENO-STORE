@@ -6,7 +6,8 @@ registry), saves hub (users/list/backup/restore/transfer with zip content
 assertions and pre-backups), Save Data Store (index + compatibility against
 simulated installed versions, install through the simulated native engine,
 export → manifest → zip, upload adapters, submission), uninstall path
-allowlist, ghost icon cleaner, companion payloads (sha256 + ELF loader),
+allowlist (and the uninstall sheet without a Payload Manager checkbox),
+ghost icon cleaner, companion payloads (sha256 + ELF loader),
 homebrew listing parser on fixture HTML, enrichment cache + fail-soft, image
 proxy allowlist, library usage/clean/launch/uninstall and the mDNS packet
 builder.
@@ -908,6 +909,10 @@ class ConsoleTests(unittest.TestCase):
         self.assertFalse(dirs["OTHER-APP"]["isXenoStore"])
         self.assertIn("GHOST", dirs)
         self.assertFalse(dirs["GHOST"]["hasEboot"])
+        # deleting a folder only deletes the folder: an icon ShadowMountPlus
+        # already made stays (unless its auto_remove_missing_games is on)
+        self.assertNotIn("removes its icon", b["note"])
+        self.assertIn("Settings → Storage", b["note"])
         st, b = self.srv.api("POST", "/api/homebrew-dirs/delete", {"name": "GHOST"})
         self.assertEqual(st, 428)
         st, b = self.srv.api("POST", "/api/homebrew-dirs/delete", {"name": "NOT-LISTED", "confirm": "NOT-LISTED"})
@@ -1151,8 +1156,16 @@ class UninstallTests(unittest.TestCase):
         self.sim = os.path.join(self.data, "sim")
         self.decoy = os.path.join(self.tmp, "decoy")
         write(os.path.join(self.decoy, "keep.txt"), b"keep")
-        write(os.path.join(self.sim, "data", "homebrew", "XENO-STORE", "eboot.bin"), b"\x7fELF")
+        write(os.path.join(self.sim, "data", "homebrew", "XENO-STORE", "eboot.bin"), b"\x7fELF")   # the 1.0.0 folder layout
+        write(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg"), b"u" * 4096)   # the Games-row app since 1.2.0
+        write(os.path.join(self.sim, "data", "homebrew", "PPSA99500", "eboot.bin"), b"\x7fELF")   # the same app as a folder (copied by hand)
+        write(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg.part"), b"p" * 4096)   # left by an interrupted app install
         write(os.path.join(self.sim, "data", "homebrew", "OTHER-APP", "eboot.bin"), b"\x7fELF")
+        # registered home-screen titles (host: <data>/user/app): the app's tile,
+        # the XENO STORE Web shortcut and somebody else's game
+        self.user_app = os.path.join(self.data, "user", "app")
+        for tid in ("PPSA99500", "XENO00002", "PPSA01234"):
+            write(os.path.join(self.user_app, tid, "sce_sys", "param.json"), json.dumps({"titleId": tid}).encode())
         self.srv = harness.XenoServer(self.data).start()
         self.root = self.srv.default_root
         write(os.path.join(self.root, "xeno-store", "pkg", "a.pkg"), b"p" * 100)
@@ -1177,6 +1190,11 @@ class UninstallTests(unittest.TestCase):
         self.assertTrue(b["stopping"])
         removed = set(b["removed"])
         self.assertIn(os.path.join(self.sim, "data", "homebrew", "XENO-STORE"), removed)
+        self.assertIn(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg"), removed)
+        self.assertIn(os.path.join(self.sim, "data", "homebrew", "PPSA99500"), removed)   # else ShadowMountPlus registers it again
+        self.assertIn(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg.part"), removed)
+        self.assertIn(os.path.join(self.user_app, "PPSA99500"), removed)   # its tile, unregistered
+        self.assertIn(os.path.join(self.user_app, "XENO00002"), removed)   # the web shortcut
         self.assertIn(os.path.join(self.root, "xeno-store", "pkg"), removed)
         self.assertIn(os.path.join(self.root, "xeno-store", "files"), removed)
         for p in removed:
@@ -1188,6 +1206,12 @@ class UninstallTests(unittest.TestCase):
         # exact paths only: neighbours, user dumps, saves and client-supplied paths survive
         self.assertTrue(os.path.exists(os.path.join(self.sim, "data", "homebrew", "OTHER-APP", "eboot.bin")))
         self.assertFalse(os.path.exists(os.path.join(self.sim, "data", "homebrew", "XENO-STORE")))
+        self.assertFalse(os.path.exists(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg")))
+        self.assertFalse(os.path.exists(os.path.join(self.sim, "data", "homebrew", "PPSA99500")))
+        self.assertFalse(os.path.exists(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg.part")))
+        self.assertFalse(os.path.exists(os.path.join(self.user_app, "PPSA99500")))
+        self.assertFalse(os.path.exists(os.path.join(self.user_app, "XENO00002")))
+        self.assertTrue(os.path.exists(os.path.join(self.user_app, "PPSA01234", "sce_sys", "param.json")))
         self.assertTrue(os.path.exists(os.path.join(self.root, "homebrew", "user-dump.exfat")))
         self.assertTrue(os.path.exists(os.path.join(self.root, "xeno-store", "saves", "Player", "PPSA01234_ps5_20260101-0000.zip")))
         self.assertTrue(os.path.exists(os.path.join(self.decoy, "keep.txt")))
@@ -1205,10 +1229,96 @@ class UninstallTests(unittest.TestCase):
         self.assertFalse(os.path.exists(os.path.join(self.data, "settings.json")))
         self.assertTrue(os.path.exists(os.path.join(self.root, "xeno-store", "pkg", "a.pkg")))   # downloads kept
         self.assertTrue(os.path.exists(os.path.join(self.sim, "data", "homebrew", "XENO-STORE", "eboot.bin")) or not os.path.exists(self.sim))
+        # homebrew not selected: the app file and folder, the old folder and both tiles stay, listed as kept
+        kept = set(b["kept"])
+        for p in (os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg"), os.path.join(self.sim, "data", "homebrew", "PPSA99500"),
+                  os.path.join(self.sim, "data", "homebrew", "XENO-STORE"), os.path.join(self.user_app, "PPSA99500"), os.path.join(self.user_app, "XENO00002")):
+            self.assertIn(p, kept)
+            self.assertNotIn(p, b["removed"])
+            self.assertTrue(os.path.exists(p), p)
+        self.assertTrue(os.path.exists(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg.part")))
         deadline = time.time() + 10
         while time.time() < deadline and self.srv.proc.poll() is None:
             time.sleep(0.1)
         self.assertIsNotNone(self.srv.proc.poll())
+
+    def test_uninstall_kept_lists_only_what_exists(self):
+        # a console that never had the 1.0.0 folder, the app file or folder or the shortcut
+        # (a PPSA99500 folder without eboot.bin is not the app)
+        shutil.rmtree(os.path.join(self.sim, "data", "homebrew", "XENO-STORE"))
+        os.unlink(os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg"))
+        os.unlink(os.path.join(self.sim, "data", "homebrew", "PPSA99500", "eboot.bin"))
+        shutil.rmtree(os.path.join(self.user_app, "XENO00002"))
+        st, b = self.srv.api("POST", "/api/uninstall", {"payloadManager": True})
+        self.assertEqual(st, 200, b)
+        kept = set(b["kept"])
+        self.assertIn(os.path.join(self.user_app, "PPSA99500"), kept)
+        for p in (os.path.join(self.sim, "data", "homebrew", "XENO-STORE"), os.path.join(self.sim, "data", "homebrew", "PPSA99500.ffpkg"),
+                  os.path.join(self.sim, "data", "homebrew", "PPSA99500"), os.path.join(self.user_app, "XENO00002")):
+            self.assertNotIn(p, kept)
+            self.assertNotIn(p, b["removed"])
+
+
+
+UNINSTALL_SHEET_SCRIPT = r"""
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.XENO_PLAYWRIGHT);
+const base = process.argv[2];
+const browser = await chromium.launch();
+try {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await page.addInitScript(() => { localStorage.setItem('xs.wizardDone', 'true'); });
+  // what the sheet asks for, without stopping the store
+  let sent = null;
+  await page.route('**/api/uninstall', (r) => { sent = JSON.parse(r.request().postData() || '{}'); r.fulfill({ status: 200, contentType: 'application/json',
+    body: JSON.stringify({ ok: true, removed: [], kept: [], failed: [], removedCount: 0, failedCount: 0, stopping: true }) }); });
+  await page.goto(base + '/');
+  await page.waitForFunction(() => window.XS && XS.router && document.querySelector('#scr-discover'), null, { timeout: 30000 });
+  await page.evaluate(() => XS.router.go('settings'));
+  await page.click('#scr-settings [data-nav-id="uninstall-open"]');
+  await page.waitForSelector('.sheet [data-nav-id="un-data"]', { timeout: 15000 });
+  const out = await page.evaluate(() => {
+    const sheet = document.querySelector('[data-nav-id="un-data"]').closest('.sheet');
+    return { checks: Array.from(sheet.querySelectorAll('[role="checkbox"]')).map((r) => r.getAttribute('data-nav-id')), text: sheet.innerText };
+  });
+  await page.click('.sheet [data-nav-id="un-go"]');
+  await page.click('.dialog-wrap [data-nav-id="dlg-1"]');
+  await page.waitForFunction(() => document.querySelector('.uninstalled'), null, { timeout: 15000 });
+  out.sent = sent;
+  console.log(JSON.stringify(out));
+} finally {
+  await browser.close();
+}
+"""
+
+
+class UninstallSheetUiTests(unittest.TestCase):
+    """The uninstall sheet the console serves: the store never places a copy
+    for Payload Manager (Payload Manager downloads its own from the XENOKING
+    source), so there is no checkbox that would remove nothing; a note says
+    where that copy is removed instead."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pw = harness.playwright_module()
+        if not cls.pw:
+            raise unittest.SkipTest("node with Playwright is not installed")
+        cls.tmp = tempfile.mkdtemp(prefix="xeno-unsheet-")
+        cls.srv = harness.XenoServer(os.path.join(cls.tmp, "data")).start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.srv.stop()
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def test_no_payload_manager_checkbox(self):
+        out = harness.run_ui_script(self, self.pw, self.tmp, UNINSTALL_SHEET_SCRIPT, self.srv.base)
+        self.assertEqual(out["checks"], ["un-data", "un-homebrew", "un-keep"], out)
+        self.assertNotIn("Payload Manager copy", out["text"])
+        self.assertIn("Payload Manager keeps its own copy of XENO STORE", out["text"])
+        self.assertEqual(out["sent"], {"data": True, "homebrew": True, "downloads": False})
+        self.assertIsNone(self.srv.proc.poll(), "the request was answered by the page, the store keeps running")
 
 
 if __name__ == "__main__":

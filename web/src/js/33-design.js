@@ -55,6 +55,9 @@
     var active = document.querySelector('#tabs .tab.active');
     if (!active || !active.offsetWidth) { el.classList.remove('on'); return; }
     var bar = el.parentNode.getBoundingClientRect(), r = active.getBoundingClientRect();
+    /* tabs that scroll (a crowded top bar, 10-base.css .fit-scroll): no indicator while the active one is cut off */
+    var box = active.parentNode.getBoundingClientRect();
+    if (r.left < box.left - 1 || r.right > box.right + 1) { el.classList.remove('on'); return; }
     var x = r.left - bar.left, y = r.top - bar.top, w = Math.max(1, r.width);
     if (Math.abs(r.height - parseFloat(el.style.height || '0')) > .5) el.style.height = r.height + 'px';
     var first = !el.classList.contains('on');
@@ -65,6 +68,7 @@
   function scheduleInd() { if (!indRaf) indRaf = requestAnimationFrame(placeInd); }
   var tabs = document.getElementById('tabs');
   if (tabs && window.MutationObserver) new MutationObserver(scheduleInd).observe(tabs, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+  if (tabs) tabs.addEventListener('scroll', scheduleInd, { passive: true });
   window.addEventListener('resize', scheduleInd);
   scheduleInd();
   D.placeTabIndicator = scheduleInd;

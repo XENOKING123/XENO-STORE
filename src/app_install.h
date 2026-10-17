@@ -33,13 +33,35 @@
 #define APP_MIN_BYTES (APP_UFS2_MAGIC_OFFSET + 4)
 #define APP_MAX_BYTES (512LL << 20)
 
+/* <homebrew>/PPSA99500.ffpkg: where both paths put the app. */
+void app_install_pkg_path(char *out, size_t cap);
+
 /* Writes installed, path, size, version, job (running job id or ""),
- * lastJob, titleId, file, registered into the open object. */
+ * lastJob, titleId, file, registered into the open object, and for the web
+ * UI's card copy (app_install_state_name(): none | orbit | manual | folder |
+ * blocked), latestVersion (tv-app.json's release, "" before a read),
+ * updateAvailable (installed, not a folder copy nor blocked, its version known
+ * and older than latestVersion) and checking (a read of tv-app.json runs). */
 void app_install_status_json(jw *w);
+
+/* updates/tv-app.json next to the store's payloads.json feed (settings
+ * updates.feed, so a test or a fork that moves the feed moves both), else the
+ * project's own. Read by the TV app's release check and the web UI's card. */
+void app_install_feed_url(char *out, size_t cap);
+
+/* Reads tv-app.json on a thread of its own (cached in <data>/feeds/tv-app.json)
+ * for app_install_status_json(): when `force`, or when the last read is more
+ * than 6 h old. Returns at once; nothing runs while a read is under way. */
+void app_install_check_latest(int force);
 
 /* Starts the install job. Returns 0 and the job id, or -1 with code
  * (in_progress | downloads_unavailable | forbidden | io | oom | busy) and err. */
 int app_install_start(char *job_id, size_t idcap, char *code, size_t ccap, char *err, size_t errcap);
+
+/* Cancels the running install job of either path, if any, and waits up to
+ * timeout_ms for it to end (a cancelled job removes its .part). 0 when no job
+ * runs any more, -1 when one still does. */
+int app_install_cancel(int timeout_ms);
 
 /* What is in /data/homebrew now (the /api/v1/tv-app "installed" value),
  * checked in this order: <hb>/PPSA99500/eboot.bin exists -> FOLDER (an lstat
@@ -52,6 +74,24 @@ int app_install_state(char *version, size_t cap);
 /* The wire names: none | orbit | manual | folder | blocked (R11: "orbit"
  * means "installed by this store"). */
 const char *app_install_state_name(int state);
+
+/* 1 when the app can be started by its title id: its image or folder is in
+ * /data/homebrew (STORE, MANUAL or FOLDER above) and the title is registered
+ * on the home screen (<user/app>/PPSA99500). */
+int app_install_launchable(void);
+
+/* What a store that just came up opens on the TV (main.c, Settings →
+ * "Open XENO STORE when it starts"). tv_app: the TV app started this copy
+ * and is open already; wanted: the setting is on (and no --no-browser);
+ * recent: the browser was opened for the Games-row app moments ago;
+ * restarted: update_restarted(), Settings → Updates → Restart now started
+ * this copy from the console's own browser, which it opens again rather than
+ * the app over it;
+ * launchable: app_install_launchable(). NONE when any of the first three
+ * says so, else APP when launchable and not restarted, else BROWSER (main.c
+ * also falls back to the browser when the app does not start). */
+enum { APP_OPEN_NONE = 0, APP_OPEN_APP, APP_OPEN_BROWSER };
+int app_install_open_choice(int tv_app, int wanted, int recent, int restarted, int launchable);
 
 /* 1 when url may carry a pinned TV app release: APP_RELEASE_BASE + ... +
  * "/PPSA99500.ffpkg", no '?', '#', '\', ' ' or "..". Host build: also a

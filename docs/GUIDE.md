@@ -32,12 +32,14 @@ Every release has three things: `xeno-store.elf` (the store), `PPSA99500.ffpkg` 
 ### A. First time: send the ELF
 
 1. Send `xeno-store.elf` to your ELF loader / Payload Manager (port **9021**): **XENO TOOL → Payloads → Send file**, `nc -q0 <ps5-ip> 9021 < xeno-store.elf`, or etaHEN's payload menu.
-2. A toast says **XENO STORE ready · http://192.168.x.x:9095** and the store opens on the TV. (Settings → General → *Open XENO STORE when it starts* turns that off; then open the address in the PS5 browser or on your phone.)
-3. Open **Settings → Updates → Install the XENO STORE app**. It puts the app in place by itself, and **XENO STORE** appears under **Games**.
+2. A toast says **XENO STORE ready · http://192.168.x.x:9095** and the store opens on the TV in the PS5 browser. (Settings → General → *Open XENO STORE when it starts* turns that off; then open the address in the PS5 browser or on your phone.)
+3. Open **Settings → Updates → XENO STORE app** and press **Install the app**. It puts the app in place by itself, and **XENO STORE** appears under **Games**.
    Rather do it by hand? Copy `PPSA99500.ffpkg` to `/data/homebrew/` (XENO TOOL → Files, FTP or USB) and ShadowMountPlus mounts it.
 4. If the toast says **XENO STORE already running on :9095**, a copy is already up — just open the address.
 
 The app needs kstuff + ShadowMountPlus, like every `.ffpkg` app.
+
+Once the app is installed, a store that starts on its own (an ELF you send, Payload Manager) opens the **XENO STORE app** instead of the browser, when the app's `.ffpkg` (or its `PPSA99500` folder) is in `/data/homebrew` and its tile is on the home screen; the pairing-code and *ready* toasts are left out then, since the app shows the code itself. The browser opens as before when the app isn't installed or doesn't start. Nothing opens when the TV app started the store, when *Open XENO STORE when it starts* is off, or within 15 s of the Games-row app opening the browser. The log says which: *start-up: opened the XENO STORE app (PPSA99500)* or *start-up: the XENO STORE app did not open (…), opening the browser*.
 
 ### B. After that: the XENO STORE tile
 
@@ -49,6 +51,7 @@ The app is a UFS2 image (title id `PPSA99500`, 512×512 XENO icon) built by `too
 
 Add `https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/payloads.json` as a source, pick **XENO STORE** and enable auto-start.
 CI writes the sha256 of every released ELF into that file, so the manager verifies the download. Settings → Setup shows the same URL as a QR code.
+With *Open XENO STORE when it starts* on, the store opens the XENO STORE app (or the browser, without the app) at every boot; turn it off if you would rather nothing opened.
 
 ### D. PC or phone
 
@@ -74,8 +77,9 @@ The welcome sheet has three steps (all skippable, all editable later in Settings
 |:--|:--|
 | **Discover** | Hero spotlight (owner-curated picks first, then the newest art), rails: New on XENO, owner-curated rows, Latest releases, Trending, Verified & fast, Backports, Light downloads (< 10 GB), Massive worlds (> 80 GB), PS4 classics, Critically acclaimed, Your favorites, Continue downloading, Recently viewed, New community saves, Homebrew essentials, Popular genres, Surprise me, All games. |
 | **Browse** | Search with ranking (exact → prefix → word → fuzzy) and "Did you mean", quick chips (PS5 · PS4 · Under 20 GB · Verified · New this week · Has updates · Direct only · Backports), facets with live counts (platform, source, format, region, genre, year, size, publisher, verified, updates, DLC, compat, features), presets you can save, 8 sort orders, a virtualized grid with Load more and a pager. |
+| **Saves** | The Save Data Store: community saves (the XenoKing collection and the GitHub index) with sharer credit, categories, version checks and one-press install; **Upload my save**; entries to the **Saves hub** (your backups, restore, transfer) and to the Save Store options. |
 | **Homebrew** | Apps, emulators and tools from pkg-zone: Essentials, Emulators, Tools, New versions, categories, search; app page with Install, "Installed · Update available". |
-| **Library** | Storage bars per drive with a **Disk analyzer** (games, dumps, packages, saves, partials) and *Clean up partials*; installed titles with **Play** and **Uninstall**; files on drives with Install / Delete / Copy or move to another drive / Scan with ShadowMount; **Updates center** (newer updates and backports for what you have); **Saves hub**; **Community Saves**. |
+| **Library** | Storage bars per drive with a **Disk analyzer** (games, dumps, packages, saves, partials) and *Clean up partials*; installed titles with **Play** and **Uninstall**; files on drives with Install / Delete / Copy or move to another drive / Scan with ShadowMount; **Updates center** (newer updates and backports for what you have); shortcuts to the **Saves hub** and **Community Saves**. |
 | **Downloads** | Summary strip (speed, remaining, ETA, free space, keep-awake / rest-mode pill, lifetime stats), tabs Active · Queued · Finished · Failed · Cancelled, rows with segment visual and sparkline, install-set groups with "Install set paused at: …", per-state actions, retry countdowns, errors with the fix. |
 | **Settings** | General, Accessibility, Downloads, Debrid, Sources, Catalog, Saves, Accounts, Setup, Pair a device, Updates, Notifications, Diagnostics, Uninstall, About. |
 
@@ -87,7 +91,7 @@ Controls are in the README. **Safe mode** (hold **L2** while the store opens, or
 
 1. Open a game page. Read the **Info panel** (developer, publisher, release date, Metacritic, firmware compat parsed from release names, what is included, sizes by format) and the gallery.
 2. Press **Download** (or **Download best**, which picks: works on your firmware → verified direct → newest version → smallest, honouring Settings → Downloads → *Preferred format*).
-3. In the **Download options** sheet: pick the release (grouped Game · Backports · Updates · DLC · Pages), **Save to** (free / after queue / after this, fits ✓/✗), **Connections** (1–16), **Verify hash**, **Auto-install** (PKG), **Download using** (Direct / a connected debrid service / Auto), **Speed test** (probes mirrors), and the **Also download** checkboxes that make an install set.
+3. In the **Download options** sheet: pick the release (grouped Game · Backports · Updates · DLC · Pages), **Save to** (free / after queue / after this, fits ✓/✗), **Connections** (1–16), **Verify hash**, **Auto-install** (PKG: it starts as Settings → Downloads → *Auto-install PKG* says, and this download's choice is the one that counts), **Download using** (Direct / a connected debrid service / Auto), **Speed test** (probes mirrors), and the **Also download** checkboxes that make an install set.
 4. **Start download**. The job appears in Downloads; the console stays awake while anything downloads (Settings → Downloads → *Keep console awake*).
 
 What the engine does for you:
@@ -95,6 +99,7 @@ What the engine does for you:
 * **Segments** — when the server honours `Range`, the file is split into chunks of at least 16 MB that up to 16 connections pull with work-stealing, so a slow connection never stalls the end. The per-host window shrinks on 429/5xx and grows again after 64 MB of clean transfer.
 * **Turbo start** — with two or more mirrors the first 1 MB is raced from up to three of them and the fastest becomes primary (`job.turbo` in the API).
 * **Resume** — every job keeps a `.xpart.json` sidecar (done ranges, ETag / Last-Modified). After a pause, a crash or a rest-mode wake the validators are re-probed and every segment continues from its checkpoint. A changed file on the server is reported as **source_changed** instead of being appended to.
+* **After a restart** — Settings → Downloads → *Resume after a restart* (on by default): downloads that were running (connecting, downloading or verifying) when XENO STORE stopped — a store update, *Restart download service* in the TV app, *Stop XENO STORE*, a crash, a power cut or a reboot — are queued again on the next start as *Resuming after XENO STORE restarted* and start one after another in queue order, under *Simultaneous downloads* (the TV app's *Restart download service* confirmation says so too). Downloads already queued simply start; a download you paused stays paused. An archive that was being extracted comes back finished, with **Extract** to press, and a Verify that was cut short on a complete file comes back finished as *Verification interrupted* instead of downloading again. If the store stopped by itself soon after its last start (a safe start), nothing starts by itself: running and queued downloads wait, paused, as *Not resumed: XENO STORE restarted after a problem* until you resume them or the next normal start picks them up. With the setting off they come back paused (*Stopped when XENO STORE closed*).
 * **Failover** — 401/403/404/410 on the primary URL tries the next mirror (same format and size), and the job message says which one it switched to.
 * **Retries** — 5, 15, 45, 120, 300 s backoff up to 8 attempts, honouring `Retry-After`; a rest-mode sleep/wake never consumes an attempt.
 * **Schedule** — Settings → Downloads → *Schedule window* ("22:00"–"07:00"): outside it jobs wait as *Scheduled for 22:00*; **Start now anyway** overrides per job.
@@ -118,7 +123,7 @@ Destinations under the chosen drive (`<root>` is `/data`, `/mnt/ext0`, `/mnt/usb
 | PKG · FPKG | `<root>/xeno-store/pkg/<filename>` | auto-install (see below) |
 | ZIP | `<root>/xeno-store/files/<filename>` | extracted on the console: a folder dump goes to `<root>/homebrew/<name>/`, a single image straight to the image file; the archive is deleted after success (Settings → Downloads → *Extract ZIP* / *Delete archive after extract*) |
 | RAR · 7z · anything else | `<root>/xeno-store/files/<filename>` | nothing — no RAR/7z engine on the console; extract with XENO TOOL on a PC and send the result |
-| Save backups | `<root>/xeno-store/saves/<userName>/<TITLEID>_<ps5|ps4>_<YYYYMMDD-HHMM>.zip` | restore from Library → Saves hub |
+| Save backups | `<root>/xeno-store/saves/<userName>/<TITLEID>_<ps5|ps4>_<YYYYMMDD-HHMM>.zip` | restore from Saves → Saves hub |
 | Community saves (file only) | `<root>/xeno-store/saves/community/<title>/…zip` | reachable from a PC through XENO TOOL / FTP |
 | In-progress file | `<final>.xpart` + `<final>.xpart.json` | removed on completion; *Clean up partials* removes orphans |
 
@@ -131,10 +136,14 @@ Full schemas: [`FORMATS.md`](FORMATS.md).
 
 **(console only — the host build simulates success after 3 s)**
 
-1. When a `.pkg` / `.fpkg` finishes and **Auto-install** is on, the store reads the package header (`\x7FCNT` or a PS5 fake package `\x7FFIH`), records the content ID, and calls the native installer (`sceAppInstUtilInstallByPackage` with the local path).
+1. When a `.pkg` / `.fpkg` finishes and its download has **Auto-install** on, the store reads the package header (`\x7FCNT` or a PS5 fake package `\x7FFIH`), records the content ID, and calls the native installer (`sceAppInstUtilInstallByPackage` with the local path).
 2. If the native call is refused, it falls back to the package installer daemon on `127.0.0.1:9040` (XENO TOOL's `ezremote-dpi`, listed in Companions), then to etaHEN's DPI on `127.0.0.1:12800` (served through the store's own `/pkgsrv/<token>` loopback URL).
 3. The housekeeping thread polls `/user/app/<TITLEID>` every 2 s for up to 30 minutes, then toasts **✓ <title> installed** and shows a gold **Play** button.
 4. Nothing worked → *Install failed* with the hex code and the hint. Press **Install** on the job to retry after fixing the setup (Settings → Setup explains which installer is missing).
+
+**Auto-install per download**: the Download options switch decides, and Settings → Downloads → *Auto-install PKG* is only the default it starts with. A download set to off never installs by itself, even while the setting is on, and one set to on installs while the setting is off; turning the setting on later does not install packages already in the queue. Press **Install** on the job to install one by hand.
+
+**Delete the PKG after installing** (Settings → Downloads, off by default) frees the space of a downloaded package once it has installed: the store deletes that download's own `.pkg` (only that file), the row shows **Installed** and **Package removed**, and *Verify hash* and *Open location* are no longer offered. On the console the package goes only once the installer has reported this install in progress and then complete; the job may read *Installed* earlier, since `/user/app/<TITLEID>` exists as soon as an install starts (and before it for an update or a DLC). The package is kept (the job log says *package kept: …*) when the console does not report install progress, the install reports an error, nothing is confirmed within 60 s, it still reports progress after 2 hours, or the store restarts before the install is confirmed. A failed install never deletes its package, and a **Library → Install** of a file found on a drive is never deleted.
 
 **Install sets** (Download options → *Also download*): the game, the latest update, the DLCs and — when your firmware is below the game's requirement — the matching backport are queued as one group. Auto-install waits for the whole group and installs **in order** (`Settings → Downloads → Install order`, default `game,backport,update,dlc`), one package at a time, polling each until it is installed. A failed step pauses the set; Downloads shows *Install set paused at: <step>* with **Retry**. Image dumps in a set trigger a single ShadowMount scan after the last file.
 
@@ -184,7 +193,7 @@ Errors are plain language: "Real-Debrid says this host is not supported", "Your 
 
 ## Saves hub
 
-Library → **Saves hub** **(console only)** lists the console's profiles and every save folder (`/user/home/<uid>/savedata_prospero/<TITLEID>/` for PS5, `/user/home/<uid>/savedata/<TITLEID>/` for PS4).
+Saves → **Saves hub** (also from Library) **(console only)** lists the console's profiles and every save folder (`/user/home/<uid>/savedata_prospero/<TITLEID>/` for PS5, `/user/home/<uid>/savedata/<TITLEID>/` for PS4).
 
 * **Back up** — a ZIP per title (image files + `sce_sys/`) into `<backup drive>/xeno-store/saves/<userName>/`. Runs as a job with progress and cancel. *Back up all saves now* does every title.
 * **Restore** — picks a backup; the current save is zipped first as `.pre-restore` automatically (Settings → Saves → *Auto-backup before restore/transfer*).
@@ -194,7 +203,7 @@ Library → **Saves hub** **(console only)** lists the console's profiles and ev
 
 ## Save Data Store
 
-PS5 titles only (PPSA). Entry points: the **Saves (n)** tab on a PS5 game page and Library → **Community Saves**.
+PS5 titles only (PPSA). Entry points: the **Saves** tab in the top bar (right after Browse, also on the phone bar) and the **Saves (n)** tab on a PS5 game page.
 
 **Compatibility check** on every card: installed? (`/user/app/<titleId>`), installed version (read from the console's app metadata), region (exact title ID — a save never loads on a different title ID; other regions are shown under *Other regions* with a warning), and version compare: ✓ *Matches your 01.004.000*, ⚠ *Made on 01.004.000, you have 01.000.000 — update the game first* (one tap opens the game's updates), ✗ *Game not installed*. Incompatible saves are hidden unless you toggle **Show all**. PS4 → PS5 conversion is not offered; the UI says so.
 
@@ -212,7 +221,7 @@ PS5 titles only (PPSA). Entry points: the **Saves (n)** tab on a PS5 game page a
 
 ### Upload my save (one-click share)
 
-Library → Community Saves → **Upload my save**: pick profile → pick an installed PS5 title with saves → pick the save dir → the engine exports it (account ID stripped, no sealed keys ever included) → ZIP + `xeno-save.json` manifest → upload to **XenoKing** (the default: the owner's save site; or pixeldrain, catbox ≤ 200 MB, or your own endpoint) → fill category, name, description, tags, nickname → **Submit**.
+Saves → **Upload my save**: pick profile → pick an installed PS5 title with saves → pick the save dir → the engine exports it (account ID stripped, no sealed keys ever included) → ZIP + `xeno-save.json` manifest → upload to **XenoKing** (the default: the owner's save site; or pixeldrain, catbox ≤ 200 MB, or your own endpoint) → fill category, name, description, tags, nickname → **Submit**.
 Uploaded to XenoKing, the save is added to the site's community collection, credited to your nickname, and is live on the site and in every store at once. Without the site backend (or when the site refuses it) the console shows a QR + short link to a prefilled GitHub issue so you finish on your phone; the owner approves it and it appears for everyone.
 Privacy: no account IDs, console IDs or usernames leave the console; the nickname is what you typed.
 
@@ -243,7 +252,7 @@ Apps, emulators and tools from **pkg-zone.com**. The console fetches the listing
 
 Settings → Setup → **Payloads** lists the owner-curated catalog from `updates/companions.json`: ShadowMountPlus, the package installer daemon, kstuff, NP fake sign-in, the app dumper and Garlic Save Manager. **Install** downloads the ELF to `/data/xeno-store/payloads/<id>.elf`, checks its sha256 and **Launch** sends the bytes to the local ELF loader on `127.0.0.1:9021`. XENO STORE never loads code in-process. Every entry is the author's own release, pinned by sha256 and never rehosted; an entry whose author publishes no downloadable asset (NP fake sign-out — sign out from the console's Settings → Users and Accounts → Other → Sign out instead) is listed as unavailable and never installs. **Launch** on Garlic Save Manager starts it the way the save engine does and never sends a second copy while one is running.
 
-**Ghost icon cleaner** (same screen) lists every `/data/homebrew/*` folder with size and whether it has an `eboot.bin` / icon and lets you delete leftovers after a double confirm. ShadowMountPlus re-registers whatever folder exists there, so deleting the folder is what removes the icon.
+**Ghost icon cleaner** (same screen) lists every `/data/homebrew/*` folder with size and whether it has an `eboot.bin` / icon and lets you delete leftovers after a double confirm. Deleting a folder stops ShadowMountPlus from registering it again, but an icon it already made stays: delete that icon in the PS5's Settings → Storage (ShadowMountPlus only drops it by itself when its `auto_remove_missing_games` option is on; it is off by default).
 
 ---
 
@@ -257,30 +266,41 @@ So that only devices in the room can change anything, a phone proves itself with
 
 1. The console generates a random 6-digit code at start and shows it as a PS5 toast. **Pair a device → Show code** re-shows it (30-second cooldown).
 2. On the phone, open the store and enter the code.
-3. The phone receives a 64-character bearer token (up to 16 are remembered, persisted to `/data/pairing.json`). From then on the phone acts without re-entering anything; its requests carry `Authorization: Bearer <token>`.
+3. The phone receives a 64-character bearer token (persisted to `/data/xeno-store/pairing.json`). From then on the phone acts without re-entering anything; its requests carry `Authorization: Bearer <token>`.
 
-The literal code is only ever returned to the console's own browser (loopback), so a device that cannot see the screen cannot read it — `GET /api/pair` answers `"code":""` for a LAN caller. The console browser trusts itself automatically through `/api/session`. An optional 4-digit **PIN** (Settings → Pairing) adds a second gate, sent as the `X-XENO-PIN` header on every change; the UI remembers it after the first entry. A paired token or the PIN satisfies the gate; the GET endpoints stay open so browsing never needs either.
+The literal code is only ever returned to the console's own browser (loopback), so a device that cannot see the screen cannot read it — `GET /api/pair` answers `"code":""` for a LAN caller. The console browser and the TV app share the console's own session through `/api/session` (and `/api/v1/session`); it is kept apart from the paired devices and never listed, unpaired or replaced. An optional 4-digit **PIN** (Settings → Pairing) adds a second gate, sent as the `X-XENO-PIN` header on every change; the UI remembers it after the first entry. A paired token or the PIN satisfies the gate. Browsing (GET requests) needs neither, unless the request carries a token the console no longer knows: then every request is refused with `not_paired` (below).
+
+### Paired devices
+
+Settings → **Pair a device** → **Paired devices** lists every paired phone and PC with its name, taken from its browser when it paired ("iPhone Safari", "Windows Chrome", "Android Firefox", "XENO STORE Desktop", "PS5 browser"; *Unknown device* when nothing is known; an iPad's Safari says it is a Mac and is listed as "Mac Safari"), **Last seen** (when it last used the store from the network) and a **This device** chip on the one you are using. **Unpair** (with a confirm) removes one; **Unpair all other devices** removes every phone and PC but this one (from the console's own browser, all of them). The XENO STORE app and the console's own browser are not on the list and keep working.
+
+Up to **16** phones and PCs stay paired. Pairing one more replaces the device unused the longest (the oldest last seen, then the oldest pairing), and the new device's Link page names the one that made room. Devices paired before this list existed show *Not used since XENO STORE was updated* until they next connect, and are the first to make room.
+
+An unpaired (or replaced) device is cut off at once: its next request gets `403 not_paired`, and the web UI goes to the **Link to your PS5** page and says why, whether the store is open at that moment or the next time it is opened. Unpairing the browser you are using takes it straight to the Link page. **XENO STORE Desktop** checks its token whenever it loads the store; when the PS5 no longer knows it, the Desktop opens its own link page (*This PC was unpaired on the PS5…*). A code typed into the store's Link page inside the Desktop also becomes the PC's new token, and linking from the Desktop's page names the device that made room when all slots were taken.
 
 ---
 
 ## Updating
 
-Settings → **Updates** → **Check** reads `updates/payloads.json` (fallback: the GitHub release API + `SHA256SUMS`). **Install update** downloads the new `xeno-store.elf` to `/data/xeno-store/xeno-store.elf.new`, verifies the sha256 and renames it to `/data/xeno-store/xeno-store.elf` (its version is written next to it). **Restart now** hands it to the ELF loader right away. Otherwise the next start picks it up: whichever copy starts — the XENO STORE app, Payload Manager or an ELF you send — hands over to the newer downloaded version before it opens. If that version stopped right after its last start, the older copy keeps running instead, so the console stays usable. The catalog and the feeds update on their own every 6 hours and never need an ELF update.
+Settings → **Updates** → **Check** reads `updates/payloads.json` (fallback: the GitHub release API + `SHA256SUMS`). **Install update** downloads the new `xeno-store.elf` to `/data/xeno-store/xeno-store.elf.new`, verifies the sha256 and renames it to `/data/xeno-store/xeno-store.elf` (its version is written next to it). **Restart now** hands it to the ELF loader right away; your downloads continue afterwards (Settings → Downloads → *Resume after a restart*). Pressed in the console's own browser, the new version opens that browser again; pressed on a phone, a PC or XENO STORE Desktop, it opens the XENO STORE app when it is installed (nobody is at the console's browser). Otherwise the next start picks it up: whichever copy starts — the XENO STORE app, Payload Manager or an ELF you send — hands over to the newer downloaded version before it opens, and the new version then opens the app as at any start ([Install](#install)). If that version stopped right after its last start, the older copy keeps running instead, so the console stays usable. The catalog and the feeds update on their own every 6 hours and never need an ELF update.
+
+The **XENO STORE app** card on the same page shows whether the app is installed and its version. When `updates/tv-app.json` (published next to the store's update feed) names a newer app, the card shows **Update available: <version>** and its button reads **Update the app**; it runs the same install as *Install the app* (the latest release's `PPSA99500.ffpkg`, checked against its `SHA256SUMS`), and the new app opens the next time you start it. The card reads that file every 6 hours while *Check automatically* is on (not in safe mode) and at once when you press **Check for updates**. An app installed as the folder `/data/homebrew/PPSA99500` gets a hint instead of a button, since an install there would add a second copy. The TV app updates itself from **App settings → Updates → TV app**.
 
 ---
 
 ## Uninstall
 
-Settings → **Uninstall XENO STORE** opens a confirm sheet with four checkboxes:
+Settings → **Uninstall XENO STORE** opens a confirm sheet with three checkboxes:
 
 | Checkbox | Removes | Default |
 |:--|:--|:--|
 | Settings, queue and cache | `/data/xeno-store/` | on |
-| Home-screen app | `/data/homebrew/XENO-STORE/` | on |
-| Payload Manager copy | only the copy the store created itself | on |
+| Home-screen app | `/data/homebrew/PPSA99500.ffpkg` (and a `PPSA99500/` folder copy or the old `XENO-STORE/` folder, if there), plus the **XENO STORE** and **XENO STORE Web** tiles; an app install still running is cancelled first | on |
 | Downloaded games | `<root>/homebrew/*` and `<root>/xeno-store/*` created by the store | **off** (keep your games) |
 
-The store deletes exactly those paths (`POST /api/uninstall` returns the list), toasts and stops. It never registers itself with ShadowMount and never writes outside its data dir, its homebrew folder and the download roots, so there are no ghost icons to chase.
+The store never places a copy for Payload Manager, so the sheet offers none: Payload Manager keeps its own copy of XENO STORE. To stop it from starting the store again, remove XENO STORE in Payload Manager.
+
+The store deletes exactly those paths and takes its two tiles off the home screen (`POST /api/uninstall` returns the list), toasts and stops. It never writes outside its data dir, its app in `/data/homebrew` and the download roots, so no ghost icons are left behind. If a tile is listed under **Could not remove** (for example while the XENO STORE app is still open), close the app and delete the tile in the PS5's Settings → Storage.
 
 ---
 
@@ -308,10 +328,12 @@ The store deletes exactly those paths (`POST /api/uninstall` returns the list), 
 | Save install / export / transfer: *title_running* | The game is running or suspended (its save is mounted) | Close the game — not just suspend it — and try again. |
 | Save install: *invalid_save* | The ZIP is not a decrypted save (no `sce_sys/param.sfo` at its root), it holds a sealed raw image, or a raw backup has no `sdimg_<dir>` image at its top level | Community saves must be decrypted exports; a raw backup only restores on the console and profile it came from. Nothing was changed. |
 | Save transfer: *resign_unavailable* | Moving a PS5 save needs Garlic Save Manager to re-sign it for the other profile | Start Garlic Save Manager, or **copy** instead of move (the copy is not re-signed). |
-| Save restore / install / transfer: *busy* | Another restore, install or transfer of the same title (or another transfer) is still running | Wait for it to finish. |
+| Save backup / restore / install / transfer: *busy* | Another backup, restore, install or transfer of the same title (or another transfer) is still running; **Back up all** lists such saves as not backed up | Wait for it to finish. |
 | Accounts: *registry_unavailable* | Registry API missing on this firmware | Not supported on this firmware; nothing was changed. |
 | Phone cannot open `xeno.local` | Browser/OS without mDNS or an isolated Wi-Fi | Use the IP; disable "client isolation" on the router. |
 | Phone gets *pinRequired* | A pairing PIN is set | Enter the PIN once; the UI keeps it. |
+| Phone or PC is back on **Link to your PS5** (*The PS5 no longer knows this browser*) | It was unpaired in Settings → Pair a device, or replaced when all 16 slots were taken | Link it again with a new code (**Show code on my PS5**). |
+| The store opens the browser at start although the app is installed | The app's `.ffpkg` is not in `/data/homebrew`, its tile is not registered, or the launch failed (the log says *the XENO STORE app did not open*) | Reinstall it from Settings → Updates → *XENO STORE app*; *Restart now* from the console's own browser opens the browser on purpose. |
 | UI looks stale after an update | Cached bundle | Reload once; the ETag changes with every build. |
 | Want the raw log | — | Settings → Diagnostics (last 400 lines) or `/data/xeno-store/log.txt`. |
 
@@ -322,7 +344,7 @@ The store deletes exactly those paths (`POST /api/uninstall` returns the list), 
 CI builds the ELF on every push (`make ps5`), but a console is needed to verify the Sony calls. Before a release the owner walks this list on real hardware and notes the firmware:
 
 1. Send `xeno-store.elf`; the toast and the browser appear; `GET /api/status` shows `platform:"ps5"`, the firmware and `downloadsAvailable:true`. After a few minutes Settings → Diagnostics still shows no crash report.
-2. Settings → Updates → **Install the XENO STORE app**: the XENO STORE tile appears under Games with the XENO icon; pressing it opens the store full screen (and starts it first when it was not running).
+2. Settings → Updates → XENO STORE app → **Install the app**: the XENO STORE tile appears under Games with the XENO icon; pressing it opens the store full screen (and starts it first when it was not running). Stop the store and send the ELF again: the app opens, not the browser, and no pairing or *ready* toast appears.
 3. Download a small verified Archive.org release with 8 connections; pause, close the browser, reopen, resume; hash verifies; toast arrives with the icon.
 4. Put the console in rest mode mid-download; wake it; the job goes `connecting` → `downloading` without a failed attempt.
 5. PKG auto-install (native), then with the native path blocked, the DPI fallback; `/user/app/<id>` appears; **Play** launches the title.

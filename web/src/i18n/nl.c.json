@@ -48,7 +48,9 @@
     "autoResign": "Automatisch opnieuw ondertekend voor je account en in de game gezet",
     "worksHere": "Werkt met je games",
     "allSaves": "Alle community-saves",
-    "browse": "Saves bekijken"
+    "browse": "Saves bekijken",
+    "options": "Opties van de savewinkel",
+    "optionsDesc": "Back-upschijf, bijnaam, savefeeds en uploadhost"
   },
   "link": {
     "title": "Koppel je PS5",
@@ -66,6 +68,8 @@
     "bad": "Die code klopt niet — controleer de melding op je PS5",
     "locked": "Te veel pogingen — wacht {n} s",
     "done": "Gekoppeld! XENO STORE wordt geopend…",
+    "replaced": "{name} is ontkoppeld om ruimte te maken — het was het apparaat dat het langst niet is gebruikt.",
+    "forgotten": "De PS5 kent deze browser niet meer: hij is ontkoppeld, of een ander apparaat heeft zijn plek ingenomen toen alle koppelplaatsen bezet waren. Koppel hem opnieuw om XENO STORE te blijven gebruiken.",
     "note": "Alleen gekoppelde apparaten kunnen je store bedienen. Je doet dit één keer per browser."
   },
   "discover4": {
@@ -88,6 +92,9 @@
     "installing": "Bezig met installeren…",
     "install": "App installeren",
     "reinstall": "Opnieuw installeren / bijwerken",
+    "update": "App bijwerken",
+    "updateAvailable": "Update beschikbaar: {v}",
+    "folderCopy": "Geïnstalleerd als de map /data/homebrew/PPSA99500, die XENO STORE niet bijwerkt. Verwijder die map om de versie hier te installeren, of werk hem zelf bij.",
     "cancel": "Annuleren",
     "cancelled": "Installatie geannuleerd",
     "version": "Versie {v}",
@@ -103,7 +110,7 @@
     "hintText": "Installeer de app één keer en open de store vanaf zijn eigen tegel — zonder FTP of browseradres.",
     "notNow": "Niet nu",
     "openOnStart": "XENO STORE openen bij het starten",
-    "openOnStartHint": "Opent de store op de tv telkens als hij start. Zet dit uit als de store automatisch start bij het opstarten.",
+    "openOnStartHint": "Opent de XENO STORE-app op de tv telkens als de store start, of de browser als de app niet geïnstalleerd is. Zet dit uit als de store automatisch start bij het opstarten.",
     "err": {
       "sha256_mismatch": "De download komt niet overeen met de controlesom — er is niets geïnstalleerd. Probeer het opnieuw.",
       "sha256_unavailable": "Deze versie heeft nog geen controlesom — probeer het over een paar minuten opnieuw.",
@@ -112,5 +119,27 @@
       "too_large": "De download is groter dan verwacht — er is niets geïnstalleerd.",
       "download_failed": "Downloaden mislukt. Controleer de internetverbinding van de console en probeer het opnieuw."
     }
+  },
+  "pairdev": {
+    "title": "Gekoppelde apparaten",
+    "loading": "Gekoppelde apparaten laden…",
+    "loadFailed": "Kan de gekoppelde apparaten niet laden.",
+    "none": "Er is nog geen telefoon of pc gekoppeld.",
+    "unknown": "Onbekend apparaat",
+    "ps5Browser": "PS5-browser",
+    "thisDevice": "Dit apparaat",
+    "lastSeen": "Laatst gezien: {when}",
+    "notSeen": "Niet gebruikt sinds de update van XENO STORE",
+    "unpair": "Ontkoppelen",
+    "unpairTitle": "{name} ontkoppelen?",
+    "unpairText": "{name} heeft dan een nieuwe code van de PS5 nodig om XENO STORE weer te bedienen.",
+    "unpairSelfText": "Deze browser heeft dan een nieuwe code van de PS5 nodig om XENO STORE weer te bedienen.",
+    "unpaired": "{name} ontkoppeld",
+    "unpairOthers": "Alle andere apparaten ontkoppelen",
+    "unpairOthersHint": "Elke telefoon en pc behalve deze moet opnieuw koppelen",
+    "unpairOthersText": "Alle andere telefoons en pc's hebben dan een nieuwe code van de PS5 nodig om XENO STORE weer te bedienen. De XENO STORE-app en de browser van de console blijven werken.",
+    "unpairOthersGo": "Alles ontkoppelen",
+    "unpairedN": "{n, plural, one{# apparaat ontkoppeld} other{# apparaten ontkoppeld}}",
+    "slots": "Tot {max} telefoons en pc's blijven gekoppeld. Koppel je er nog een, dan vervangt die het apparaat dat het langst niet is gebruikt."
   }
 }

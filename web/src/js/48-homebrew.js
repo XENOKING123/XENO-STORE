@@ -314,11 +314,6 @@
     show: function (params) { renderApp(params); },
     current: function () { return current; }
   });
-  /* Nav order per SPEC §17.21: Discover · Browse · Homebrew · … (the router mounts tabs in registration order). */
-  (function reorder() {
-    var o = XS.router.order, i = o.indexOf('homebrew'), b = o.indexOf('browse');
-    if (i > 0 && b >= 0 && i !== b + 1) { o.splice(i, 1); o.splice(b + 1, 0, 'homebrew'); }
-  })();
   var lastKey = '';
   S.on('queue', function () { if (appRoot && appRoot.classList.contains('active') && current) { var job = S.activeJobFor(current.id); var key = job ? job.id + ':' + job.state + ':' + Math.floor(U.pct(job.written, job.total)) : 'none'; if (key !== lastKey) { lastKey = key; renderApp({ id: current.id }); } } });
   XS.homebrew = { load: load, essentials: essentials, rail: rail, card: card, byId: byId, install: installFlow, cardFromGame: function (g, prefix) { return card(byId(g.id) || normalize(g), prefix); } };
