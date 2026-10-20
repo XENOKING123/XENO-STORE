@@ -446,6 +446,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1333470/ss_46fb35fada33e41da483f4513328633a116407de.1920x1080.jpg?t=1769520399"
    ]
   },
+  "aliens dark descent": {
+   "about": "In Aliens: Dark Descent, command a squad of hardened Colonial Marines to stop a terrifying Xenomorph outbreak on Planet Lethe. Lead your soldiers in real-time combat against iconic Xenomorphs, rogue operatives from the insatiable Weyland-Yutani Corporation, and a host of horrifying creatures new to the Alien franchise. \n\nYou are the commander. They are your weapon.",
+   "ageRating": null,
+   "appId": 1150440,
+   "developer": "Tindalos Interactive",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:50:39Z",
+   "genres": [
+    "Action",
+    "Strategy"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Latin America",
+    "Traditional Chinese",
+    "Japanese"
+   ],
+   "metacritic": 75,
+   "name": "Aliens: Dark Descent",
+   "publisher": "Focus Entertainment",
+   "releaseDate": "2023-06-19",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1150440/ss_613cab01d11c191e5edf899e45218282ba231b6c.1920x1080.jpg?t=1757943677",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1150440/ss_7947e366afc7b13a627e7773092e00a06a88201f.1920x1080.jpg?t=1757943677",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1150440/ss_0b85b226de1d88cb57b34a91bc5329d535a0ca2e.1920x1080.jpg?t=1757943677",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1150440/ss_509fb1ba0eba05ed227b39d6c2acd715fa080017.1920x1080.jpg?t=1757943677",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1150440/ss_b9e3cf7d5d2ed50062abf030c9c42aeb1ffe2184.1920x1080.jpg?t=1757943677",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1150440/ss_92938d31a27e6b8c2bc96b8da9a222222aefc090.1920x1080.jpg?t=1757943677",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1150440/ss_f07c797da1b6541c013296b76d60c0481b814ad4.1920x1080.jpg?t=1757943677",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1150440/ss_5f163428a73c159202886237d4dc8baf069368d2.1920x1080.jpg?t=1757943677"
+   ]
+  },
   "alone in the dark": {
    "about": "Alone in the Dark weaves a chilling tapestry of psychological horror and Southern Gothic charm, reimagining the iconic game that set the benchmark for the genre. We invite you to join us on a journey into madness, where each encounter could be your last. With each step you take closer to unravelling Derceto's mystery, the eyes that watch from the darkness grow hungrier. Every bullet means the difference between survival and an unthinkable end.",
    "ageRating": null,
@@ -581,6 +624,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/813230/ss_347d933516de26f0abaed5b1ea09a04c0355319e.1920x1080.jpg?t=1788379439",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/813230/ss_45cb26b3f9085f32577f97ad4b7ccdbf2b69a491.1920x1080.jpg?t=1788379439"
    ]
+  },
+  "anno 1800 console edition": {
+   "fetchedAt": "2026-10-20T04:50:41Z",
+   "miss": true
   },
   "ape academy 2": {
    "fetchedAt": "2026-10-14T17:23:59Z",
@@ -1048,6 +1095,48 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1492310/ss_32d597aa34f2644bf75e51a644fe1abb00ffb406.1920x1080.jpg?t=1753887254"
    ]
   },
+  "asterix and obelix slap them all 2": {
+   "about": "A double helping of slaps!\n\nThe humble country life of Asterix, Obelix and the other villagers is interrupted by the sudden arrival of Justforkix, who has come seeking help. He reveals that his father, Doublehelix, has been imprisoned for a theft he did not commit...\n\nThe Lutetia Eagle, the precious golden emblem of the Roman legions, has just been stolen, and an innocent man has been thrown in jail! Asterix promises to investigate and asks Justforkix to stay safe in the village.",
+   "ageRating": null,
+   "appId": 2360250,
+   "developer": "Mr. Nutz Studio",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:50:46Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Sports",
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Dutch",
+    "Portuguese - Brazil",
+    "Portuguese - Portugal",
+    "Czech"
+   ],
+   "metacritic": null,
+   "name": "Asterix & Obelix Slap Them All! 2",
+   "publisher": "Microids",
+   "releaseDate": "2023-11-17",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2360250/ss_058218b31ed593c38733e09054d6c3b5c4fa929a.1920x1080.jpg?t=1787561743",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2360250/ss_44c2174d04d47329f59cfd2aded20dce65f61ac1.1920x1080.jpg?t=1787561743",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2360250/ss_cbe78520a4ba726145e9f692aa43d269d06196cd.1920x1080.jpg?t=1787561743",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2360250/ss_8ba43fdd97511484ac7ae45b36a3fb98769ca04d.1920x1080.jpg?t=1787561743",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2360250/ss_9d08d03749c9b37b2c55ed1b0a4dbd45e1c5654b.1920x1080.jpg?t=1787561743"
+   ]
+  },
   "asterix and obelix xxl 2": {
    "about": "By Toutatis! The indomitable Gauls are back with a new video game!\nMore than 10 years following their last appearance on games consoles and PC, Asterix and Obelix are back and in better shape than ever! Asterix & Obelix XXL 2 is a superb blend of action and adventure for all ages, with a winning combination of comedy and brawling.\nBut where has Getafix gone? The long-bearded druid has disappeared after betraying his own people for Julius Caesar! The Gaulish village is in uproar!",
    "ageRating": null,
@@ -1334,6 +1423,42 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2840770/894849eb55a6870c0ad3cf6dfe1d8b772abe578c/ss_894849eb55a6870c0ad3cf6dfe1d8b772abe578c.1920x1080.jpg?t=1778598692",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2840770/36d908bb5f643c5b7e9c450b168bcc021fce9db0/ss_36d908bb5f643c5b7e9c450b168bcc021fce9db0.1920x1080.jpg?t=1778598692",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2840770/aae462048e7aefe5e05108b3202527dc2a417a1b/ss_aae462048e7aefe5e05108b3202527dc2a417a1b.1920x1080.jpg?t=1778598692"
+   ]
+  },
+  "avatar the last airbender quest for balance": {
+   "about": "Team Avatar is back in this action-adventure game! Relive the epic adventure of the original Avatar: The Last Airbender series, as you play as Aang and his friends and master the elements, explore the most unique locations from the series, solve challenging environmental puzzles and experience the most heart touching moments of Aang’s story.​ Play the story solo or with a friend through the game’s unique two-player co-op mode. Embrace Your Destiny and experience Aang’s original adventure.",
+   "ageRating": null,
+   "appId": 1620030,
+   "developer": "Bamtang Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:50:52Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Dutch"
+   ],
+   "metacritic": null,
+   "name": "Avatar: The Last Airbender - Quest for Balance",
+   "publisher": "GameMill Entertainment",
+   "releaseDate": "2023-09-22",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1620030/ss_ec4afd398b21f0c24621c853c341f717f0a36af8.1920x1080.jpg?t=1746025140",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1620030/ss_1423516e9a9bb85e9ebf95228aeb27089196594a.1920x1080.jpg?t=1746025140",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1620030/ss_25bcddfebcf112e045a6866259a84c36ab9aa297.1920x1080.jpg?t=1746025140",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1620030/ss_c5c27840976eeb6d2e8e426f5c703abb886320a6.1920x1080.jpg?t=1746025140",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1620030/ss_4256c13b8237444e5fb54e699c4b24ebdbb8daa8.1920x1080.jpg?t=1746025140"
    ]
   },
   "axiom verge 2": {
@@ -2372,6 +2497,99 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2161050/ss_56a73f457f37cd513933fa5fb67de96dc1c56e5b.1920x1080.jpg?t=1790097202"
    ]
   },
+  "bramble the mountain king": {
+   "about": "Bramble The Mountain King takes you on a gripping and unsettling journey through stunning environments. Take on the role of Olle, a young boy setting off to rescue his sister, kidnapped by a dreaded troll.\n\nNot everything in Bramble is exactly how it seems - in this strange land with creatures big and small, you must be careful when to approach and when to hide. Many hungry and spiteful beasts lurk in these forests and caves. Watch your step....",
+   "ageRating": null,
+   "appId": 1623940,
+   "developer": "Dimfrost Studio",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:50:57Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Japanese",
+    "Portuguese - Portugal",
+    "Russian",
+    "Simplified Chinese",
+    "Turkish",
+    "Finnish",
+    "Norwegian",
+    "Swedish",
+    "Korean",
+    "Polish",
+    "Traditional Chinese",
+    "Ukrainian"
+   ],
+   "metacritic": null,
+   "name": "Bramble: The Mountain King",
+   "publisher": "Max Ent Games Ltd",
+   "releaseDate": "2023-04-27",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1623940/ss_5f7e80cd42199d60c1b1fdb3d67a39a1e76d5b4c.1920x1080.jpg?t=1787164429",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1623940/ss_b22e285d4e478ed12633610b8e9caeb28c8d1a07.1920x1080.jpg?t=1787164429",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1623940/ss_b8b6546a5038ce007f0e8400ce6a49469cf898c0.1920x1080.jpg?t=1787164429",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1623940/ss_bed248c06cbd7800a83136884f2263a11c4af89e.1920x1080.jpg?t=1787164429",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1623940/ss_669e1c472823c64995e0ae7318453d579f507a88.1920x1080.jpg?t=1787164429",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1623940/ss_cbd57d7325ad610b1b2f6ca3ef903b5e02144f2a.1920x1080.jpg?t=1787164429",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1623940/ss_7c71093666329f9063e70c4d9ab8c4c6ec86fa7b.1920x1080.jpg?t=1787164429",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1623940/ss_e9bc34eb998fd6abbc5589179136b41c94db52ca.1920x1080.jpg?t=1787164429"
+   ]
+  },
+  "breathedge": {
+   "about": "Breathedge is an ironic outer space survival adventure game. Take on the role of a simple guy called the Man who is just carrying his grandpa's ashes to a galactic funeral and suddenly finds himself in the middle of a universal conspiracy.Welcome to Space\n\nA massive space hearse suffers a wreck in the deep space, leaving the area filled with debris, coffins, dead passengers and yourself.",
+   "ageRating": null,
+   "appId": 738520,
+   "developer": "RedRuins Softworks",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:50:12Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Simulation",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Russian",
+    "French",
+    "German",
+    "Simplified Chinese",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Spanish - Latin America",
+    "Turkish"
+   ],
+   "metacritic": 71,
+   "name": "Breathedge",
+   "publisher": "HypeTrain Digital, RedRuins Softworks",
+   "releaseDate": "2021-02-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738520/ss_be835729e27b73bdd38394c3aed1b4e1faa5258a.1920x1080.jpg?t=1788188445",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738520/ss_e81cfce7684ed47116e7b38acb950cd2dfc50cb7.1920x1080.jpg?t=1788188445",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738520/ss_d37ef9a75a94e7b3212698d2ca2d562d29809e10.1920x1080.jpg?t=1788188445",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738520/ss_61161823f629462c8c11a0d20359b800095f9288.1920x1080.jpg?t=1788188445",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738520/ss_0e913fa7a9fcb944e7233c722c19863357a07b98.1920x1080.jpg?t=1788188445",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738520/ss_b0b310d37164551e90d42a9e8bc1432a43c0729b.1920x1080.jpg?t=1788188445",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738520/ss_6de3d55921eafd2f374d91a7f2d5a592b5355f57.1920x1080.jpg?t=1788188445",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738520/ss_683b836e322e9c86d20d4d64b1161987dd93b722.1920x1080.jpg?t=1788188445"
+   ]
+  },
   "brothers a tale of two sons remake": {
    "about": "Guide two brothers on an epic fairy tale filled with discovery, loss, adventure, and mystery. \n\nWith their father suffering from a deadly illness, two brothers must bravely set out to find the “Water of Life,” the one cure that can save him. With no option for failure the brothers must rely on each other using their individual skills to protect one another and overcome the obstacles ahead in this unforgettable journey.",
    "ageRating": null,
@@ -2415,6 +2633,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2153350/ss_ad122fc675edd4282d003556963ed69c53ca6fd9.1920x1080.jpg?t=1727773982",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2153350/ss_aae6cc4e6b48931916a18a9272a6c3e23020cf76.1920x1080.jpg?t=1727773982",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2153350/ss_e0a1eb49ff8bedc6a4a0771afc60e6b1a7eda74c.1920x1080.jpg?t=1727773982"
+   ]
+  },
+  "bud spencer terence hill slaps and beans 2": {
+   "about": "Bud Spencer and Terence Hill are back again! The new game is a sequel to the first game and just like a movie saga. The story picks up where it left off at the end of the first Slaps and Beans. Our heroes will experience adventures in new places with new events and will also meet many new characters along the way.",
+   "ageRating": null,
+   "appId": 2142330,
+   "developer": "Trinity Team",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:51:02Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Japanese",
+    "Portuguese - Brazil",
+    "Hungarian"
+   ],
+   "metacritic": null,
+   "name": "Bud Spencer & Terence Hill - Slaps And Beans 2",
+   "publisher": "Buddy Productions GmbH",
+   "releaseDate": "2023-09-22",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2142330/ss_bc890877afc9e894bc44676a24c47924336f8c94.1920x1080.jpg?t=1754042908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2142330/ss_0764144e4c42118bbc150021f5ae22bceb216943.1920x1080.jpg?t=1754042908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2142330/ss_8847b508f1aaef95649a7e6d03b5ef87303c0c43.1920x1080.jpg?t=1754042908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2142330/ss_c44f86c56b81ebfd8b0aae05562f6f06067a7bdb.1920x1080.jpg?t=1754042908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2142330/ss_a4bbf8bc34a70e5601482633a52d509d1cfe2166.1920x1080.jpg?t=1754042908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2142330/ss_187b6e058e5c0cf9fe28d2896c9b260c644048a6.1920x1080.jpg?t=1754042908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2142330/ss_b2424cc28d47b9e61dff2fe5903a4420115379f9.1920x1080.jpg?t=1754042908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2142330/ss_cd63352918177af94978462fbed33d0c13f2bc00.1920x1080.jpg?t=1754042908"
    ]
   },
   "bum simulator": {
@@ -3715,6 +3976,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/462780/ss_66707cdb7f0b188bbea0fafa7434aeff0dd1233a.1920x1080.jpg?t=1754079044"
    ]
   },
+  "daymare 1994 sandcastle": {
+   "about": "Daymare: 1994 Sandcastle is a third-person story-driven survival horror game Prequel to the critically acclaimedDaymare: 1998. Step into the shoes of special agent Dalila Reyes, a former government spy now in the service of a unit called H.A.D.E.S. (Hexacore Advanced Division for Extraction and Search), and get ready to enter the most advanced experimental research center in the United States of America.",
+   "ageRating": null,
+   "appId": 1530470,
+   "developer": "Invader Studios",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:51:06Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Turkish"
+   ],
+   "metacritic": null,
+   "name": "Daymare: 1994 Sandcastle",
+   "publisher": "Leonardo Interactive, 4Divinity",
+   "releaseDate": "2023-08-30",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1530470/ss_593b2dbfab7f0ec9f604cf87f1853f4508d459fb.1920x1080.jpg?t=1726479730",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1530470/ss_5d0b41cc672b29fe9bc8d8c7c203f0893451843c.1920x1080.jpg?t=1726479730",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1530470/ss_647f6d2609b48bd87350dd7dbc4301e37f5d5bf9.1920x1080.jpg?t=1726479730",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1530470/ss_9e51f0b376cf34dff94bf3c06b66c727839f6215.1920x1080.jpg?t=1726479730",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1530470/ss_7cda524c4c2cd91f8fb8e9dadd2a1420adee485f.1920x1080.jpg?t=1726479730",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1530470/ss_9ed85b3491d100d256cd632ca93a6f9b8b3554ba.1920x1080.jpg?t=1726479730",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1530470/ss_c6db01e803d7e9f387f0d8d63bd927ba98960066.1920x1080.jpg?t=1726479730",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1530470/ss_da3d9ee469b4a279e816b6aaa5376698388373f3.1920x1080.jpg?t=1726479730"
+   ]
+  },
   "days gone remastered": {
    "fetchedAt": "2026-10-16T04:32:20Z",
    "miss": true
@@ -4038,6 +4342,45 @@
   "directive 8020": {
    "fetchedAt": "2026-10-16T04:33:25Z",
    "miss": true
+  },
+  "disgaea 7 vows of the virtueless": {
+   "about": "Join protagonist Fuji for a Disgaea adventure that’s bigger and better than ever before! Dive into the demonic realm of Hinomoto where the bushido code is out, and the Hinomoto Code of Destruction is in! Consisting of a myriad of netherworlds, Hinomoto is home to a multitude of demons, each with their own beliefs. Enter bushido fan-girl Pirilika, a naive and rich young lady who manages to convince Fuji to protect her as she pursues her ambitions.",
+   "ageRating": 13,
+   "appId": 2250600,
+   "developer": "Nippon Ichi Software, Inc., Systemsoft beta, Inc.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:51:12Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Strategy"
+   ],
+   "languages": [
+    "English",
+    "Japanese",
+    "French",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Korean"
+   ],
+   "metacritic": null,
+   "name": "Disgaea 7: Vows of the Virtueless",
+   "publisher": "NIS America, Inc.",
+   "releaseDate": "2023-10-03",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2250600/ss_0d9faa0e53c5034f51251b19697be931158833d6.1920x1080.jpg?t=1732584391",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2250600/ss_8afb5340225f38ea369a3cc77c4b7dfefa5a00f9.1920x1080.jpg?t=1732584391",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2250600/ss_5ed75df654b7e7820472b82f263e44df7dc40983.1920x1080.jpg?t=1732584391",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2250600/ss_6306b02a3a36c77096e13ff67cb1752394dff5ff.1920x1080.jpg?t=1732584391",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2250600/ss_ff868db0ad532835e74cdf62787c9c7d5644da7e.1920x1080.jpg?t=1732584391",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2250600/ss_e31bcca6f1eeabe55795d162548c400bc3020821.1920x1080.jpg?t=1732584391",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2250600/ss_86869605a7867795e756a2d4cbaff5fbd37e7722.1920x1080.jpg?t=1732584391",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2250600/ss_14ecf7346342a8fb70b4d9079395cf94daa7df85.1920x1080.jpg?t=1732584391"
+   ]
   },
   "dishonored 2": {
    "about": "Game Description\n\nReprise your role as a supernatural assassin in Dishonored 2. \n\nPraised by PC Gamer as “brilliant”, IGN as “amazing” and “a superb sequel”, declared a “masterpiece” by Eurogamer, and hailed “a must-play revenge tale among the best in its class” by Game Informer, Dishonored 2 is the follow up to Arkane Studio's first-person action blockbuster and winner of more than 100 'Game of the Year' awards, Dishonored. \n\nPlay your way in a world where mysticism and industry collide.",
@@ -6227,6 +6570,48 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2680010/ss_682391ad60984846d57831130c84c7856df72a93.1920x1080.jpg?t=1776936760"
    ]
   },
+  "five nights at freddys help wanted 2": {
+   "about": "Find out if you have what it takes to be a Fazbear Entertainment Superstar!\n\r\n\n\r\nFive Nights at Freddy’s: Help Wanted 2 is the sequel to the terrifying VR experience that brought new life to the iconic horror franchise. As a brand new Fazbear employee you’ll have to prove you have what it takes to excel in all aspects of Pizzeria management and maintenance.",
+   "ageRating": null,
+   "appId": 2287520,
+   "developer": "Steel Wool Studios",
+   "features": [
+    "Single-player",
+    "Controller support",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-20T04:51:16Z",
+   "genres": [
+    "Simulation",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Spanish - Latin America",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Five Nights at Freddy's: Help Wanted 2",
+   "publisher": "ScottGames",
+   "releaseDate": "2023-12-14",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2287520/ss_c7004609fcd48c4e6a11323684897b0862894aca.1920x1080.jpg?t=1718900946",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2287520/ss_2124bfad06307e392e3f386a57be92165be88303.1920x1080.jpg?t=1718900946",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2287520/ss_c16af526bb2334d9463192ae3bfa0f25824b4523.1920x1080.jpg?t=1718900946",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2287520/ss_4f746405eb42ba5211feefd7a247cc16291733c0.1920x1080.jpg?t=1718900946",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2287520/ss_af2e2649ea11936267f7b604f5c663ed621c0388.1920x1080.jpg?t=1718900946",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2287520/ss_2d515a38c49eb5f76538508a0bed5f78d6159554.1920x1080.jpg?t=1718900946",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2287520/ss_313dea001969f6f0fe8853622cc38a76fe6bd340.1920x1080.jpg?t=1718900946"
+   ]
+  },
   "flashback 2": {
    "about": "TOTAL WAR HAS BEGUN... RISE TO THE CHALLENGE!\n\nIn 1992, Flashback revolutionized action gaming and gained legendary status, ranking among the 100 best video games in history.\nToday, Paul Cuisset, the creator of the original game, invites you to play again as Conrad B. Hart, the young agent of the GBI (Galactic Bureau of Investigation).",
    "ageRating": null,
@@ -6363,6 +6748,47 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1680880/ss_a9e691a3022a3e1de5cb084523c51489acc14db0.1920x1080.jpg?t=1775104702"
    ]
   },
+  "fort solis": {
+   "about": "Welcome to Fort Solis\n\nResponding to an unusual alarm call from a remote mining base, Jack arrives at the dark and desolate Fort Solis. With storm warnings imminent, he heads inside to make desperate contact. As the night grows longer, events escalate, spiral out of control and the mystery of what happened to the crew begins to reveal itself. The storms is approching, limiting Jack’s escape as he looks to hold out until morning arrives.",
+   "ageRating": null,
+   "appId": 1931730,
+   "developer": "Fallen Leaf, Black Drakkar Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:51:22Z",
+   "genres": [
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Polish",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Portuguese - Brazil",
+    "Japanese",
+    "Italian"
+   ],
+   "metacritic": null,
+   "name": "Fort Solis",
+   "publisher": "Dear Villagers",
+   "releaseDate": "2023-08-22",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1931730/ss_a5d10c3d41eec484450debbbfd8918c2eefc60bb.1920x1080.jpg?t=1745509581",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1931730/ss_fb0b23df74290cfa34722244e7076ed54122479d.1920x1080.jpg?t=1745509581",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1931730/ss_d7448332c3fca1eee2531c954b9ba249703d2a35.1920x1080.jpg?t=1745509581",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1931730/ss_10ca3fd1274b80a20e7f98227207250f2a4da786.1920x1080.jpg?t=1745509581",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1931730/ss_9abdaf330bf3367f5ca8b873f4df03045fbff4bf.1920x1080.jpg?t=1745509581",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1931730/ss_2b3bc79500bc5ac5bb2df75267b80470da5c860c.1920x1080.jpg?t=1745509581",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1931730/ss_858a092a0912b00e0311f95b1366bc469e673709.1920x1080.jpg?t=1745509581",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1931730/ss_84366efabc0d7fc6e72ae6cdfd40bef58c577436.1920x1080.jpg?t=1745509581"
+   ]
+  },
   "forza horizon 5": {
    "about": "Your Ultimate Horizon Adventure awaits! Explore the vibrant and ever-evolving open world landscapes of Mexico with limitless, fun driving action in hundreds of the world’s greatest cars.\n\nThis is Your Horizon Adventure\nLead breathtaking expeditions across the vibrant and ever-evolving open world landscapes of Mexico with limitless, fun driving action in hundreds of the world’s greatest cars.\n\nThis is a Diverse Open World\nExplore a world of striking contrast and beauty.",
    "ageRating": null,
@@ -6461,6 +6887,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1601580/ss_6f2482822403b80bc3f310278cc33a103d908ee6.1920x1080.jpg?t=1792058316"
    ]
   },
+  "gamedec definitive edition": {
+   "about": "Gamedec is a single-player non-combat cyberpunk isometric RPG. You are a game detective, who solves crimes inside virtual worlds. Use your wits to gather info from your witnesses and suspects, get to the bottom of deceptive schemes, save lives, and investigate the extraordinary relationships between virtual worlds and their inhabitants. The game continually adapts to your choices and never judges – You are the sum of your choices. \n \n\nWelcome to Warsaw City of the 22nd century.",
+   "ageRating": null,
+   "appId": 917720,
+   "developer": "Anshar Studios",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:51:27Z",
+   "genres": [
+    "Adventure",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Polish",
+    "German",
+    "Simplified Chinese",
+    "Russian",
+    "French",
+    "Spanish - Spain",
+    "Traditional Chinese",
+    "Korean",
+    "Turkish",
+    "Japanese"
+   ],
+   "metacritic": 72,
+   "name": "Gamedec - Definitive Edition",
+   "publisher": "Anshar Publishing",
+   "releaseDate": "2021-09-16",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/917720/ss_579fbe24596262c7c33d3355999fd203982c238e.1920x1080.jpg?t=1790856304",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/917720/ss_fabdc472ca32350e5c3fe2b2484cdb7d97cacbfc.1920x1080.jpg?t=1790856304",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/917720/ss_11de309cf6040bb08301069c0418940f0c1b6a8b.1920x1080.jpg?t=1790856304",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/917720/ss_ea059b1a38420136f0446fa369e1b4a8c7ad427b.1920x1080.jpg?t=1790856304",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/917720/ss_47ad85bf0db630ee738f01f20dbca41af4fbb222.1920x1080.jpg?t=1790856304",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/917720/ss_a22915e634f5611872fc213fc1de09518e7f961a.1920x1080.jpg?t=1790856304",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/917720/ss_e5fca96b46874c8207b200bdddd79db7bb5e0645.1920x1080.jpg?t=1790856304",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/917720/ss_e5484f8b47ddc37dcce9abc57d1ecdcbdc9b1044.1920x1080.jpg?t=1790856304"
+   ]
+  },
   "garfield kart 2 all you can drift": {
    "about": "",
    "ageRating": null,
@@ -6550,6 +7019,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2523720/b21ae794fd14288dbe007f070ba85297a9cf4496/ss_b21ae794fd14288dbe007f070ba85297a9cf4496.1920x1080.jpg?t=1757024702",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2523720/96509d8098a99acee2ba2fb5eb74dc55d0ae3c62/ss_96509d8098a99acee2ba2fb5eb74dc55d0ae3c62.1920x1080.jpg?t=1757024702"
    ]
+  },
+  "gene rain": {
+   "fetchedAt": "2026-10-20T04:50:14Z",
+   "miss": true
   },
   "gex trilogy": {
    "about": "Exploding into the modern era like a pro wrestler from the top rope—it’s GEX! The fast-talking gecko who doesn’t want to sell you insurance! That’s right, the greatest gaming hero of the 1990s has returned for the 2020s through the raw, unbridled power of the Carbon Engine. \n\nGEX Trilogy reproduces all three original games in exacting detail, precisely the way you remember them.",
@@ -6820,6 +7293,98 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1475810/ss_184714a58ea7d64df0d00efc8b60961b4d938289.1920x1080.jpg?t=1750779600",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1475810/ss_b59b7c16cb92dece04459303befb1f256fe928ea.1920x1080.jpg?t=1750779600",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1475810/ss_ead0ef8ed714f359508a48749d5a4bfa24df0dba.1920x1080.jpg?t=1750779600"
+   ]
+  },
+  "gigantosaurus dino kart": {
+   "about": "Please note: Controller required for 2-4 player split screen mode. \n\nPlay as Bill, Mazu, Rocky, Tiny and more Gigantosaurus friends.\n\nRace around Cretacia in a prehistoric kart championship for up to 4 players of all ages, where you can play as your favorite dino friends and even bump into the mysterious Gigantosaurus himself! \n\nUp to 4 players can compete in split-screen play\n\nThis racing adventure is full of awesome obstacles and power-ups found only in the world of dinosaurs.",
+   "ageRating": null,
+   "appId": 1770500,
+   "developer": "3DClouds",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:51:31Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Racing",
+    "Sports"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Arabic",
+    "Danish",
+    "Dutch",
+    "Finnish",
+    "Norwegian",
+    "Polish",
+    "Portuguese - Brazil",
+    "Spanish - Latin America",
+    "Swedish"
+   ],
+   "metacritic": null,
+   "name": "Gigantosaurus: Dino Kart",
+   "publisher": "Outright Games Ltd.",
+   "releaseDate": "2023-02-17",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1770500/ss_2b6a23598cd247b2c3086aa80abd31ff206ed834.1920x1080.jpg?t=1727089497",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1770500/ss_b371e6561550ce4debd90487dca0610f3906defd.1920x1080.jpg?t=1727089497",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1770500/ss_4b82e50954b60c108ecd1b1bff7c2dc0c4b03b6b.1920x1080.jpg?t=1727089497",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1770500/ss_9fb86dd4ed2db2c9fdcf418fb504a3198fa14f64.1920x1080.jpg?t=1727089497",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1770500/ss_ea28d37bbb50c84f5b28253b3dfdbb39143c3063.1920x1080.jpg?t=1727089497",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1770500/ss_1fe6c66ec23405166dcfafc7552db78e609c1332.1920x1080.jpg?t=1727089497",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1770500/ss_89163fab1d273edbaaff2e6b662a1b807586d5b2.1920x1080.jpg?t=1727089497"
+   ]
+  },
+  "god of rock": {
+   "about": "The mysterious God of Rock has revived the souls of the universe’s greatest musicians to clash for his entertainment. Revitalized with new bodies and new powers, each musician will become a contestant in his game, battling it out with each other for musical supremacy on a global stage. \n\nGod of Rock blends rhythm-based gameplay with fighting game mechanics in tense 1v1 matches. Choose from a dozen unique fighters, each with their own design, mechanics, and harmonic attacks.",
+   "ageRating": null,
+   "appId": 1851030,
+   "developer": "Maximum Entertainment",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Cross-platform multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:51:37Z",
+   "genres": [
+    "Action",
+    "Strategy",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "God of Rock",
+   "publisher": "Maximum Entertainment",
+   "releaseDate": "2023-04-17",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1851030/ss_3e9575ab520b08f6a2c1def084911bc484156b42.1920x1080.jpg?t=1725489162",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1851030/ss_d220124846d12086c993666bcc7137292f26413a.1920x1080.jpg?t=1725489162",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1851030/ss_f6c6e9a6952442b7196c3453800a665ea84169ad.1920x1080.jpg?t=1725489162",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1851030/ss_ee2bc08ac2f4dada6ceef498e4a5627f8289ed23.1920x1080.jpg?t=1725489162",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1851030/ss_7eab3f404463cba5bff15f4815d536097ddf4105.1920x1080.jpg?t=1725489162",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1851030/ss_53190aba95cac969c7a42771e92190c1684282ab.1920x1080.jpg?t=1725489162"
    ]
   },
   "god of war ragnarok": {
@@ -7178,6 +7743,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1997660/3b03cc8c1b8a8f2653f60b764ae480304d998ce4/ss_3b03cc8c1b8a8f2653f60b764ae480304d998ce4.1920x1080.jpg?t=1778173541"
    ]
   },
+  "greyhill incident abducted edition": {
+   "fetchedAt": "2026-10-20T04:51:39Z",
+   "miss": true
+  },
   "gylt": {
    "about": "Shape your fears… Fear the shapes.\nSet in a creepy and melancholic world, GYLT is an eerie story mixing fantasy and reality in a surrealist place where your nightmares become reality. Hide from terrible creatures or confront them as you find your way through the challenges of this wicked world.\n\nLive the story of Sally, a little girl living in Bethelwood, Maine. Her life is not easy, and it has become even worse since her little cousin Emily disappeared.",
    "ageRating": null,
@@ -7531,6 +8100,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1030300/d20b045b8bdaea6ace2ca4170875772b439c2c2e/ss_d20b045b8bdaea6ace2ca4170875772b439c2c2e.1920x1080.jpg?t=1776125736"
    ]
   },
+  "horizon call of the mountain": {
+   "fetchedAt": "2026-10-20T04:51:41Z",
+   "miss": true
+  },
   "horizon chase 2": {
    "fetchedAt": "2026-10-14T17:23:34Z",
    "miss": true
@@ -7846,6 +8419,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1315210/ss_d09e7d7d2cb739ebb9525f022168a8e1efbd5716.1920x1080.jpg?t=1766132504"
    ]
   },
+  "incredible adventures of van helsing extended edition 2": {
+   "fetchedAt": "2026-10-20T04:50:24Z",
+   "miss": true
+  },
   "indiana jones and the great circle": {
    "about": "Uncover one of history’s greatest mysteries in Indiana Jones and the Great Circle™, a first-person, single-player adventure set between the events of Raiders of the Lost Ark™ and The Last Crusade™. The year is 1937, sinister forces are scouring the globe for the secret to an ancient power connected to the Great Circle, and only one person can stop them - Indiana Jones™.",
    "ageRating": null,
@@ -8012,6 +8589,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2353060/9d5d38a9da4d3e91f26827dfd0406227cbaecbb5/ss_9d5d38a9da4d3e91f26827dfd0406227cbaecbb5.1920x1080.jpg?t=1791844002",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2353060/938fb7144cc582fc80b688dbee383640f0e7e7de/ss_938fb7144cc582fc80b688dbee383640f0e7e7de.1920x1080.jpg?t=1791844002",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2353060/688eec7b85ff4d3902f9c4caab680d1afa701530/ss_688eec7b85ff4d3902f9c4caab680d1afa701530.1920x1080.jpg?t=1791844002"
+   ]
+  },
+  "jagged alliance 3": {
+   "about": "Grand Chien, a nation of rich natural resources and deep political divides, is thrown into chaos when the elected president goes missing and a paramilitary force known as “The Legion” seizes control of the countryside. Now, the President’s family has pulled together all their resources, including an arrangement with the powerful Adonis corporation, to hire a group of skilled mercenaries tasked with finding the President and bringing order back to the country.",
+   "ageRating": null,
+   "appId": 1084160,
+   "developer": "Haemimont Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:51:46Z",
+   "genres": [
+    "Action",
+    "Strategy"
+   ],
+   "languages": [
+    "English",
+    "German",
+    "Russian",
+    "French",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Traditional Chinese",
+    "Simplified Chinese",
+    "Polish",
+    "Indonesian"
+   ],
+   "metacritic": 81,
+   "name": "Jagged Alliance 3",
+   "publisher": "THQ Nordic",
+   "releaseDate": "2023-07-14",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1084160/ss_0edc29526ad201a59357234cd77a34a5ba507208.1920x1080.jpg?t=1725000793",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1084160/ss_7fd8325b9d792ca626b5bf9e9cf9487a42970a63.1920x1080.jpg?t=1725000793",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1084160/ss_af05dad044e27cfa9332ed6090fc2287df78c0aa.1920x1080.jpg?t=1725000793",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1084160/ss_30b636d395cf1eaaddc0a825aa9c3999fcbb0e02.1920x1080.jpg?t=1725000793",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1084160/ss_5000430704e37b574645a70fae140a4184e9bcac.1920x1080.jpg?t=1725000793",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1084160/ss_534762fc9c4f500e4919ecbb396868e4678fc542.1920x1080.jpg?t=1725000793",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1084160/ss_5843abf41f73b167926cc3af5202025fb194d02f.1920x1080.jpg?t=1725000793",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1084160/ss_8d7a6691f282b21045f885121f0eaa8339cf26a6.1920x1080.jpg?t=1725000793"
    ]
   },
   "jet kave adventure": {
@@ -8205,6 +8825,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2958130/553274db48033db5b10b1ef6b20260225dafcce9/ss_553274db48033db5b10b1ef6b20260225dafcce9.1920x1080.jpg?t=1790687062",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2958130/0c6a8edc2c5d7c90afe30cb30538d58709fc7908/ss_0c6a8edc2c5d7c90afe30cb30538d58709fc7908.1920x1080.jpg?t=1790687062",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2958130/4130c6319fcce477b556b0e156c10db98d546df4/ss_4130c6319fcce477b556b0e156c10db98d546df4.1920x1080.jpg?t=1790687062"
+   ]
+  },
+  "jusant": {
+   "about": "Jusant is a brand-new action-puzzle climbing game and a meditative journey to the top of a tall tower. Challenge yourself at your own pace, explore different paths, and unravel the secrets from a bygone civilization.\n\n \n\nMaster your climbing tools and watch your stamina meter to successfully navigate this mysterious and changing tower. As you go higher and hone your skills, you’ll have to figure out how best to use the tools at your disposal to get to where you want to go.",
+   "ageRating": null,
+   "appId": 1977170,
+   "developer": "DON'T NOD",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:51:51Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": 83,
+   "name": "Jusant",
+   "publisher": "DON'T NOD",
+   "releaseDate": "2023-10-31",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1977170/ss_cb8d2e6f82291e22aa0f58a943d355c67b0c33af.1920x1080.jpg?t=1771331092",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1977170/ss_e67326ddf0d3409ef0cde09d78e67a7b09872bf1.1920x1080.jpg?t=1771331092",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1977170/ss_6f917526327053f0eed0f0f9cad418f63df909be.1920x1080.jpg?t=1771331092",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1977170/ss_63d8b664496f63336f755312508fdac4b117e2ff.1920x1080.jpg?t=1771331092",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1977170/ss_2a2aacbd9110b701cb65b7d6baead26edc73c801.1920x1080.jpg?t=1771331092",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1977170/ss_a0afced7958efd91d0bc584ff1d5d4cf85d870ff.1920x1080.jpg?t=1771331092",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1977170/ss_7232c8d9a147a80fa31cb6811099ee8510adf6a2.1920x1080.jpg?t=1771331092",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1977170/ss_9f131f1e9e4925625753fccf68ef3490b2e71f72.1920x1080.jpg?t=1771331092"
    ]
   },
   "just cause 3": {
@@ -10124,6 +10787,14 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/764790/ss_875fe259c26f29d959efba0eca47e1b63d844c75.1920x1080.jpg?t=1751460481",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/764790/ss_1e3c0e79c6f85bd6700c617a219169851cee9619.1920x1080.jpg?t=1751460481"
    ]
+  },
+  "metal gear solid 2 sons of liberty master collection": {
+   "fetchedAt": "2026-10-20T04:51:54Z",
+   "miss": true
+  },
+  "metal gear solid 3 snake eater master collection": {
+   "fetchedAt": "2026-10-20T04:51:56Z",
+   "miss": true
   },
   "metal gear solid master collection vol 1": {
    "fetchedAt": "2026-10-18T18:44:13Z",
@@ -15029,6 +15700,52 @@
    "fetchedAt": "2026-10-18T11:04:44Z",
    "miss": true
   },
+  "snowrunner": {
+   "about": "SnowRunner puts you in the driver’s seat of powerful vehicles as you conquer extreme open environments with the most advanced terrain simulation ever, by the makers of multi-million seller MudRunner.\n\nOvercome mud, torrential waters, snow, and frozen lakes powered by Saber Interactive’s best-in-class terrain physics engine. Traverse wild environments inspired by North American and Eurasian wilderness that accurately react to your trucks’ weight, speed and momentum.",
+   "ageRating": null,
+   "appId": 1465360,
+   "developer": "Saber Interactive",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:50:07Z",
+   "genres": [
+    "Adventure",
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Czech",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "SnowRunner",
+   "publisher": "Focus Entertainment",
+   "releaseDate": "2021-05-17",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1465360/ss_940259cd3dc33743bc06f2e686f2b6878b961b14.1920x1080.jpg?t=1791469409",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1465360/ss_e81a1d783f9f32bdb5c9ff8b3fc761fcb09ab805.1920x1080.jpg?t=1791469409",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1465360/ss_0851d89715e625f0f316012d1d84e85a882b6099.1920x1080.jpg?t=1791469409",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1465360/ss_b1bb888101b715fa25f730741ab044afb4858ce6.1920x1080.jpg?t=1791469409",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1465360/ss_8f0215990d1ac3afe02b0b745825245e2ada2c07.1920x1080.jpg?t=1791469409",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1465360/ss_7d4c05e9201a8e891428b735d557b19c74f62219.1920x1080.jpg?t=1791469409",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1465360/ss_ae2416a02c4581fd9f3a6d00ea419d7cf599fecd.1920x1080.jpg?t=1791469409",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1465360/ss_8b7d5be8de0e50fd27317c4faf5dbb16faf61a40.1920x1080.jpg?t=1791469409"
+   ]
+  },
   "sonic frontiers": {
    "about": "EXPERIENCE SONIC LIKE NEVER BEFORE\n\nIn search of the missing Chaos Emeralds, Sonic becomes stranded on an ancient island teeming with unusual creatures. Accelerate to new heights and explore vast open zones as you race across the massive Starfall Islands! Battle hordes of powerful enemies with an action-packed combat system, uncover the island's mysteries, and save Sonic's Friends.",
    "ageRating": null,
@@ -15070,6 +15787,47 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237320/ss_e115f40d130f010908ba4208ac769ad695d91406.1920x1080.jpg?t=1783493175",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237320/ss_2b77ee8ba5497f29409d1110dd3010161be3da91.1920x1080.jpg?t=1783493175",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237320/ss_9817ace7705cf9096bde3fae0141055d170fbf66.1920x1080.jpg?t=1783493175"
+   ]
+  },
+  "sonic mania": {
+   "about": "Experience the ultimate celebration of past and future in Sonic Mania, an all-new 2D Sonic adventure running at a crisp 60FPS with stunning HD retro-style graphics.\n\nMultiple playable characters give you the ability to go explosively fast as Sonic, soar as Tails, or power through tough obstacles with Knuckles’ brute strength.\n\nRe-live the Sonic of the past with an exciting new twist on classic zones while fighting against new bosses and Dr. Eggman’s evil robot army.",
+   "ageRating": null,
+   "appId": 584400,
+   "developer": "Christian Whitehead, Headcannon",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:50:19Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": 84,
+   "name": "Sonic Mania",
+   "publisher": "SEGA",
+   "releaseDate": "2017-08-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/584400/ss_27efb8f61892a9bd732952c76dae9dd7ad1b6748.1920x1080.jpg?t=1785856230",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/584400/ss_93ee106db863c16e00989ad9d51bcbea4af91ab0.1920x1080.jpg?t=1785856230",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/584400/ss_72b7374ba1d4978c2b5e7c74c2e56aecc33b0d3c.1920x1080.jpg?t=1785856230",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/584400/ss_5168ae3cd4e0ccac9808325242ccb2e6760ee2f0.1920x1080.jpg?t=1785856230",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/584400/ss_1e19c5bd7aaada51a7811f8468f5fb71cf42f3f7.1920x1080.jpg?t=1785856230"
    ]
   },
   "sonic origins": {
@@ -15468,6 +16226,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2001120/68558ed4d5bcc06d2e46f8fae7e9a3dde23b8170/ss_68558ed4d5bcc06d2e46f8fae7e9a3dde23b8170.1920x1080.jpg?t=1763484567",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2001120/15a4fc0f9c14f8a0389a35e15a358617fcfcc32d/ss_15a4fc0f9c14f8a0389a35e15a358617fcfcc32d.1920x1080.jpg?t=1763484567"
    ]
+  },
+  "spongebob squarepants battle for bikini bottom rehydrated": {
+   "fetchedAt": "2026-10-20T04:50:21Z",
+   "miss": true
   },
   "spongebob squarepants titans of the tide": {
    "about": "How do you stop the two biggest egos of the Seven Seas from fighting? A clash between the Flying Dutchman and King Neptune has unleashed ghostly mayhem all over Bikini Bottom. SpongeBob and Patrick will need all their skills, bravery and - dare I say - wit, to return life to what passes for normal in their undersea home.",
@@ -16433,6 +17195,45 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1049410/ss_ff02982d53521a255cdb49a893d80be7963c7019.1920x1080.jpg?t=1755294276"
    ]
   },
+  "surge": {
+   "about": "A catastrophic event has knocked you out during the first day on the job… you wake up equipped with a heavy-grade exoskeleton, in a destroyed section of the complex. Robots gone haywire, insane augmented co-workers and rogue AI - everything wants you dead. \n\nDefy deadly enemies and huge bosses in tight, visceral melee combat. Target and slice specific limbs off your foes, with a next-gen loot system where you loot what you dismember.",
+   "ageRating": 17,
+   "appId": 378540,
+   "developer": "Deck13",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:50:29Z",
+   "genres": [
+    "Action",
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Korean",
+    "Simplified Chinese",
+    "Japanese"
+   ],
+   "metacritic": 72,
+   "name": "The Surge",
+   "publisher": "Focus Entertainment",
+   "releaseDate": "2017-05-15",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378540/ss_faace05d10643e6cb9d418947eb8f1a1e79e48bd.1920x1080.jpg?t=1727864911",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378540/ss_0cd37d1648f24ce1c7c2d4366e03a9701d66e9ef.1920x1080.jpg?t=1727864911",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378540/ss_bf8cd91c8ffa3167c2aba00ece2f0baacadb3b57.1920x1080.jpg?t=1727864911",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378540/ss_d837c0053d057be7ca8bca40415ad89c210d1e75.1920x1080.jpg?t=1727864911",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378540/ss_a84bfa49e85abb6102aeae368c70ac347d547ab4.1920x1080.jpg?t=1727864911"
+   ]
+  },
   "surge 2": {
    "about": "On the way to Jericho City, your plane is shot down by a mysterious storm and crash-lands in the outskirts. You wake up weeks later in a derelict detention facility inside the city. Armor-clad soldiers enforce Martial Law, robots are on a rampage, and a dark, expanding nanostorm looms over the cityscape...",
    "ageRating": null,
@@ -17255,6 +18056,44 @@
    "fetchedAt": "2026-10-19T23:41:50Z",
    "miss": true
   },
+  "titanfall 2": {
+   "about": "Call down your Titan and get ready for an exhilarating first-person shooter experience in Titanfall® 2! The sequel introduces a new single player campaign that explores the bond between Pilot and Titan. Or blast your way through an even more innovative and intense multiplayer experience - featuring 6 new Titans, deadly new Pilot abilities, expanded customization, new maps, modes, and much more. \n\nKEY FEATURES\n\nExperience a captivating single player story.",
+   "ageRating": null,
+   "appId": 1237970,
+   "developer": "Respawn Entertainment",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:50:34Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Polish",
+    "Portuguese - Portugal",
+    "Russian",
+    "Spanish - Latin America",
+    "Traditional Chinese"
+   ],
+   "metacritic": 86,
+   "name": "Titanfall® 2",
+   "publisher": "Electronic Arts",
+   "releaseDate": "2020-06-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237970/ss_d5c13576c0ab4e6ca93b51aa39aa74271672e75f.1920x1080.jpg?t=1779987598",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237970/ss_9ed56a85aef47554156999dfbd4091d225da2a47.1920x1080.jpg?t=1779987598",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237970/ss_f4a8464ce43962b76fa6f2156b341eee28ad6494.1920x1080.jpg?t=1779987598",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237970/ss_9e89b335e17df4e5049ffd30a558ddf50a8e36af.1920x1080.jpg?t=1779987598",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237970/ss_18550193debe4e3461e9f5daac9eb4e399dcebab.1920x1080.jpg?t=1779987598"
+   ]
+  },
   "tokyo xtreme racer": {
    "about": "Countless souls wander the ring road at night.\n\nThe title of “fastest” never fades, no matter how times change.\n\nThe stage of battle is a sealed future Tokyo.\n\nRace through the night highways weaving through the city in your customized machine.\n\nDefeat the countless rivals and aim to become the fastest on the Shuto Expressway.\n\nA One-of-a-Kind SP Battle\n\nA unique system that sets itself apart from other racing games.",
    "ageRating": null,
@@ -17694,6 +18533,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3375780/27e315bcd4e577e1abf901eb191ecd4e24c97d61/ss_27e315bcd4e577e1abf901eb191ecd4e24c97d61.1920x1080.jpg?t=1791225209",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3375780/ss_64b82bed57876005ea52cb38f045e1244e1526f4.1920x1080.jpg?t=1791225209",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3375780/0b0c14124beade271d8ecf516b4492ee839830c5/ss_0b0c14124beade271d8ecf516b4492ee839830c5.1920x1080.jpg?t=1791225209"
+   ]
+  },
+  "train sim world 3": {
+   "about": "MASTER THE MACHINE  \n\nConquer American mountains as you haul incredible tonnage with the workhorses of industry, get the British capital’s commuters to work in record time and race state-to-state aboard German high-speed traction. Play your own way with creative tools. Master the machine with Train Sim World 3.  \n\nRAW POWER  \n\nHaul hundreds of containers through California deserts and mountains with the ES44C4, a 4400-horsepower beast dressed in bold BNSF livery.",
+   "ageRating": null,
+   "appId": 1944790,
+   "developer": "Dovetail Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-20T04:50:02Z",
+   "genres": [
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Russian",
+    "Simplified Chinese",
+    "Italian",
+    "Polish"
+   ],
+   "metacritic": null,
+   "name": "Train Sim World® 3",
+   "publisher": "Dovetail Games - TSW",
+   "releaseDate": "2022-09-06",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_433d077e9d01366f732ca9e8f9822193d20dc0a7.1920x1080.jpg?t=1764602266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_e4fb4fb2f8adf94002c8cd7ac88362ace7ee7336.1920x1080.jpg?t=1764602266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_cdff63c4ef1c07fc9c57d4773cbd13594d55edc7.1920x1080.jpg?t=1764602266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_0e37de307dc2a0acd8510b24da7c2aa4d6133c1b.1920x1080.jpg?t=1764602266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_1ea90345281f42a64feb864b437e55becd03947d.1920x1080.jpg?t=1764602266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_46dc027be102517e729b85f7ca909e4010db7559.1920x1080.jpg?t=1764602266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_3599ebccafb53952681e37a76e1820f420ee8e82.1920x1080.jpg?t=1764602266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_64a53eb6312a03c81eb6c3a3d9360d12055e2ee2.1920x1080.jpg?t=1764602266"
    ]
   },
   "transformers galactic trials": {
@@ -18977,6 +19854,6 @@
    ]
   }
  },
- "updatedAt": "2026-10-19T23:43:43Z",
+ "updatedAt": "2026-10-20T04:51:56Z",
  "version": 1
 }
