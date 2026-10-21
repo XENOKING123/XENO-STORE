@@ -512,6 +512,45 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1449320/ss_13aa08f782daac550f50bb0fe7bb8aa2524ed72c.1920x1080.jpg?t=1736876975"
    ]
   },
+  "alien isolation": {
+   "about": "HOW WILL YOU SURVIVE?\n\nDiscover the true meaning of fear in Alien: Isolation, a survival horror set in an atmosphere of constant dread and mortal danger. Fifteen years after the events of Alien™, Ellen Ripley’s daughter, Amanda enters a desperate battle for survival, on a mission to unravel the truth behind her mother's disappearance.",
+   "ageRating": 16,
+   "appId": 214490,
+   "developer": "Creative Assembly, Feral Interactive (Mac)",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:51:08Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Czech",
+    "Polish",
+    "Russian",
+    "Portuguese - Brazil"
+   ],
+   "metacritic": 81,
+   "name": "Alien: Isolation",
+   "publisher": "SEGA, Feral Interactive (Mac)",
+   "releaseDate": "2014-10-06",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/214490/ss_5ff8ca35914eca8f51f3303cf5d94a9f85279e2a.1920x1080.jpg?t=1763647113",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/214490/ss_e514869415e3bd913be3f6c0e419cea9f0be17a3.1920x1080.jpg?t=1763647113",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/214490/ss_af3b9b789a57497e300e0a4c962badf513387a69.1920x1080.jpg?t=1763647113",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/214490/ss_90419f0e549d54138abfeb3c7b78e4b5427afdb0.1920x1080.jpg?t=1763647113",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/214490/ss_c2de38e43dfc8c977061a56e5b087c2183aecef3.1920x1080.jpg?t=1763647113",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/214490/ss_b82b51fd2e63fb802c784f7a3fbe1e65148ad6e1.1920x1080.jpg?t=1763647113",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/214490/ss_c57e1d21eca518001e25e83f271c20448683d082.1920x1080.jpg?t=1763647113",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/214490/ss_b1e245fecbcb2b93f48d76f4031f303076b4a6bc.1920x1080.jpg?t=1763647113"
+   ]
+  },
   "aliens dark descent": {
    "about": "In Aliens: Dark Descent, command a squad of hardened Colonial Marines to stop a terrifying Xenomorph outbreak on Planet Lethe. Lead your soldiers in real-time combat against iconic Xenomorphs, rogue operatives from the insatiable Weyland-Yutani Corporation, and a host of horrifying creatures new to the Alien franchise. \n\nYou are the commander. They are your weapon.",
    "ageRating": null,
@@ -692,6 +731,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1601570/b286bf66faef32679e6e44509a2add2846b4ce71/ss_b286bf66faef32679e6e44509a2add2846b4ce71.1920x1080.jpg?t=1789118254",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1601570/338dd0f40d3de28872a808d3650a773283368f0e/ss_338dd0f40d3de28872a808d3650a773283368f0e.1920x1080.jpg?t=1789118254"
    ]
+  },
+  "amazing spider man 2": {
+   "fetchedAt": "2026-10-21T13:51:40Z",
+   "miss": true
   },
   "animal well": {
    "about": "Hatch from your flower and spelunk through the beautiful and sometimes haunting world of Animal Well, a pixelated wonder rendered in intricate audio and visual detail. Encounter lively creatures small and large, helpful and ominous as you discover unconventional upgrades and unravel the well’s secrets. This is a truly unique experience that can make you laugh in fear, surprise, or delight.",
@@ -2808,6 +2851,42 @@
    "fetchedAt": "2026-10-14T21:53:12Z",
    "miss": true
   },
+  "bloodrayne betrayal fresh bites": {
+   "about": "Original developer WayForward has upgraded its 2011 classic 2D hack ‘n slash platformer with high resolution visuals, modern features, and all-new voice acting performed by original BloodRayne cast members Laura Bailey (Rayne) and Troy Baker (Kagan). Bloodrayne Betrayal: Fresh Bites distills the best parts of the BloodRayne series into a bloody, twitchy, action-packed 2D hack ‘n slash adventure through fifteen challenging stages.",
+   "ageRating": null,
+   "appId": 1550260,
+   "developer": "WayForward",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:51:38Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "BloodRayne Betrayal: Fresh Bites",
+   "publisher": "Ziggurat",
+   "releaseDate": "2021-09-08",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1550260/ss_cc52fd16220f7866e0cf7a86fb55bee036d96667.1920x1080.jpg?t=1658935580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1550260/ss_3091bb52b2284e9b062b79387f9492e2d970b7d9.1920x1080.jpg?t=1658935580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1550260/ss_fb8281e3fcc14de48bce9bebb5f34d69345c455c.1920x1080.jpg?t=1658935580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1550260/ss_36c9c9e0f8f06b62fba9b02f092a7a115ae5324e.1920x1080.jpg?t=1658935580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1550260/ss_3064c5653fa07d417481b7f05d9e5617bbde89ef.1920x1080.jpg?t=1658935580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1550260/ss_7d27fee9c65fd3fb08cd7054fc03ab1f703773b2.1920x1080.jpg?t=1658935580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1550260/ss_46cad4389446c921c9917fc4761df255e425f67f.1920x1080.jpg?t=1658935580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1550260/ss_a063ca11bee16adb269301ab6a31f4434f1a67ac.1920x1080.jpg?t=1658935580"
+   ]
+  },
   "bloodrayne revamped": {
    "fetchedAt": "2026-10-14T21:53:14Z",
    "miss": true
@@ -3509,6 +3588,52 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/311210/ss_3a84113daacead987f549fbc3bd95fa9e66a833b.1920x1080.jpg?t=1780963650",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/311210/ss_dfcf315c0c02ae7b62b47306c4b9ae774c2b14d0.1920x1080.jpg?t=1780963650",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/311210/ss_44b153c469da3d79a03221e11b51c59807f3b6e7.1920x1080.jpg?t=1780963650"
+   ]
+  },
+  "call of duty black ops cold war": {
+   "about": "Includes:\n\r\n\n\r\n- Call of Duty®: Black Ops Cold War game\n\r\n- Confrontation Weapons Pack - includes 2 weapon blueprints\n\r\n- Legendary Captain Price Operator Skin*\n\r\n\n\r\nBlack Ops Cold War, the direct sequel to Call of Duty®: Black Ops, will drop fans into the depths of the Cold War’s volatile geopolitical battle of the early 1980s.",
+   "ageRating": 18,
+   "appId": 1985810,
+   "developer": "Treyarch, Raven Software",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Cross-platform multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:51:13Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Arabic",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Spanish - Latin America",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Call of Duty®: Black Ops Cold War",
+   "publisher": "Activision",
+   "releaseDate": "2023-03-08",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1985810/ss_0c583d1dabc814361085c1a796aee2baeb4ca425.1920x1080.jpg?t=1780964053",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1985810/ss_bba1a7eb49bac760ae4a9b2d9d111df49d5c8f59.1920x1080.jpg?t=1780964053",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1985810/ss_200b4f2519eab2df8ced3cddce6b0fbf74a2b262.1920x1080.jpg?t=1780964053",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1985810/ss_6e474d59cb62e345e2a39de3f4e3b830494ba4e7.1920x1080.jpg?t=1780964053",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1985810/ss_fd687859f6a06bb333025f347eced945d3ffe69a.1920x1080.jpg?t=1780964053",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1985810/ss_5e4167a93d8170cd8324c81fe1b97b6af159f907.1920x1080.jpg?t=1780964053",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1985810/ss_9e94fd7cad7c201636efda67cdc54b5b0cb5b1c4.1920x1080.jpg?t=1780964053",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1985810/ss_253a2e5668f61406621832029de2c3b26bbea719.1920x1080.jpg?t=1780964053"
    ]
   },
   "call of duty ghosts": {
@@ -4246,6 +4371,43 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1378990/ss_d115bbf4da2f0a16cb824f4f044a92fe84fbdee7.1920x1080.jpg?t=1755191015"
    ]
   },
+  "creature in the well": {
+   "about": "Creature in the Well is a top-down, pinball-inspired, hack-and-slash dungeon crawler. As the last remaining BOT-C unit, venture deep into a desert mountain to restore power to an ancient facility, haunted by a desperate Creature. Uncover and upgrade powerful gear in order to free the city of Mirage from a deadly sandstorm.\n\nPinball with swords: Charge up energy orbs, then bounce and ricochet them to reactivate dormant machinery and stop the sandstorm.",
+   "ageRating": null,
+   "appId": 852300,
+   "developer": "Flight School Studio, MWM Interactive",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:51:18Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Simplified Chinese",
+    "Korean",
+    "Spanish - Latin America",
+    "Japanese",
+    "Portuguese - Brazil"
+   ],
+   "metacritic": 82,
+   "name": "Creature in the Well",
+   "publisher": "Flight School Studio",
+   "releaseDate": "2019-09-06",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/852300/ss_2339488e2b7c88722ef783b2f320ddfb0fa393dc.1920x1080.jpg?t=1669135919",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/852300/ss_63833b5c45dfc23cf32c3e452e5b8c928607c0b2.1920x1080.jpg?t=1669135919",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/852300/ss_f3b26e62f1383f6aaa70b17f09d508a5a10297b1.1920x1080.jpg?t=1669135919",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/852300/ss_e9a78d16891f50fd3addbf1f7a4490c4489f34b2.1920x1080.jpg?t=1669135919",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/852300/ss_427327206aec333ff6f09ccd47ab28d5ad1fa121.1920x1080.jpg?t=1669135919",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/852300/ss_153ce9112fa81fe6609034038f08d6f40f27b1da.1920x1080.jpg?t=1669135919"
+   ]
+  },
   "crimson desert": {
    "about": "A plentiful adventure with the Deluxe Pack!\nEnjoy a diverse adventure with more armor, horse tack, and cosmetics for Kliff!\n\n[Deluxe Pack]\n\n● Kairos Plate Helm\n\n● Kairos Plate Gloves\n\n● Kairos Plate Boots\n\n● Kairos Cloak\n\n● Kairos Plate Armor\n\n● Balgran Shield\n\n● Exclaire Champron\n\n● Exclaire Barding\n\n● Exclaire Saddle\n\n● Exclaire Stirrups",
    "ageRating": null,
@@ -4518,6 +4680,10 @@
   },
   "cusa 00265": {
    "fetchedAt": "2026-10-17T12:15:35Z",
+   "miss": true
+  },
+  "cusa 25882": {
+   "fetchedAt": "2026-10-21T13:52:15Z",
    "miss": true
   },
   "cyberpunk 2077": {
@@ -7714,6 +7880,48 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1902690/ss_6b4967d47e21ea49022a94e6691ae11c4c389206.1920x1080.jpg?t=1760594680"
    ]
   },
+  "final fantasy": {
+   "about": "A remodeled 2D take on the first game in the world-renowned FINAL FANTASY series! Enjoy the timeless story told through charming retro graphics. All the magic of the original, with improved ease of play.\n\nEarth, fire, water, wind... The light that once shone within the four Crystals was lost. Darkness covered the land, until the only hope for humanity rested in legends past. Become the Warriors of Light and embark on your own journey to restore power to the Crystals and save the world.",
+   "ageRating": null,
+   "appId": 1173770,
+   "developer": "Square Enix",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:51:23Z",
+   "genres": [
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Thai",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "FINAL FANTASY",
+   "publisher": "Square Enix",
+   "releaseDate": "2021-07-28",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1173770/ss_7e34ab09960bc0f761461c06433386e68c0a0174.1920x1080.jpg?t=1773222642",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1173770/ss_d2d0f16f03c1d5808c7666768c0f4b3f822683c3.1920x1080.jpg?t=1773222642",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1173770/ss_35551b170f0eac25af077787d39f65b913c4c12a.1920x1080.jpg?t=1773222642",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1173770/ss_2e1b382a2bb6186a604a78ee4f88d2280898b7b0.1920x1080.jpg?t=1773222642",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1173770/ss_270e296a9a7eb3d385eee10b5457b3529d793f78.1920x1080.jpg?t=1773222642",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1173770/ss_d2737df16972378af59d067bf917efe0b1ee4749.1920x1080.jpg?t=1773222642",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1173770/ss_5f578a9131df9c58679819be0edc86d8d7663c90.1920x1080.jpg?t=1773222642",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1173770/ss_52db92b8ee280b1ff1d6d3750e7f79f378bf2e38.1920x1080.jpg?t=1773222642"
+   ]
+  },
   "final fantasy 7": {
    "about": "The world has fallen under the dominion of the Shinra Electric Power Company, a sinister corporation that has monopolized the planet's very life force as Mako energy. In the urban megalopolis of Midgar, an anti-Shinra rebel group calling themselves Avalanche have stepped up their campaign of resistance.",
    "ageRating": null,
@@ -9679,6 +9887,58 @@
    "fetchedAt": "2026-10-14T17:25:07Z",
    "miss": true
   },
+  "hitman absolution hd": {
+   "fetchedAt": "2026-10-21T13:51:48Z",
+   "miss": true
+  },
+  "hitman blood money hd": {
+   "fetchedAt": "2026-10-21T13:51:50Z",
+   "miss": true
+  },
+  "hoa": {
+   "about": "Hoa is a beautiful puzzle-platforming game that features breathtaking hand-painted art, lovely music, and a peaceful, relaxing atmosphere. Experience the magic of nature and imagination as you play the main character, Hoa, on her journey through breathtaking environments back to where it all began.",
+   "ageRating": null,
+   "appId": 1484900,
+   "developer": "Skrollcat Studio",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:52:20Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Simplified Chinese",
+    "Vietnamese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Thai",
+    "Traditional Chinese",
+    "Turkish"
+   ],
+   "metacritic": null,
+   "name": "Hoa",
+   "publisher": "PM Studios, inc., CE-Asia",
+   "releaseDate": "2021-08-24",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1484900/ss_7c49a691d177045c13d01fec1b43df258576599b.1920x1080.jpg?t=1726253553",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1484900/ss_660b067fc56dded439d49b03a13e0172d9ff3dec.1920x1080.jpg?t=1726253553",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1484900/ss_1060f98101303c1ef58e83eebc085f2037899f7e.1920x1080.jpg?t=1726253553",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1484900/ss_3a71154ac5bee3ed3e7780bcb96d9cf02a51b995.1920x1080.jpg?t=1726253553",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1484900/ss_82707afb1c11bd43990b16cfe2877e4d81b389ca.1920x1080.jpg?t=1726253553"
+   ]
+  },
   "hogwarts legacy": {
    "about": "Hogwarts Legacy is an open-world action RPG set in the world first introduced in the Harry Potter books. Embark on a journey through familiar and new locations as you explore and discover magical beasts, customize your character and craft potions, master spell casting, upgrade talents and become the wizard you want to be. \n\nExperience Hogwarts in the 1800s. Your character is a student who holds the key to an ancient secret that threatens to tear the wizarding world apart.",
    "ageRating": null,
@@ -9720,6 +9980,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/990080/ss_94058497bf0f8fabdde17ee8d59bece609a60663.1920x1080.jpg?t=1790708992",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/990080/ss_8e08976236d29b1897769257ac3c64e9264792a5.1920x1080.jpg?t=1790708992",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/990080/ss_d4930d675af053dc1e61a876a34fc003e85e261f.1920x1080.jpg?t=1790708992"
+   ]
+  },
+  "hollow knight": {
+   "about": "Hollow Knight Expands with Free Content\n\nGodmaster - Take your place amongst the Gods. New Characters and Quest. New Boss Fights. Available Now! \n\nLifeblood - A Kingdom Upgraded! New Boss. Upgraded Bosses. Tweaks and Refinements across the whole game. \n\nThe Grimm Troupe - Light the Nightmare Lantern. Summon the Troupe. New Major Quest. New Boss Fights. New Charms. New Enemies. New Friends. \n\nHidden Dreams - Mighty new foes emerge! New Boss fights. New Upgrades. New Music.",
+   "ageRating": null,
+   "appId": 367520,
+   "developer": "Team Cherry",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:50:25Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Korean",
+    "Simplified Chinese",
+    "Italian",
+    "Portuguese - Brazil",
+    "Russian",
+    "Japanese",
+    "Traditional Chinese"
+   ],
+   "metacritic": 87,
+   "name": "Hollow Knight",
+   "publisher": "Team Cherry",
+   "releaseDate": "2017-02-24",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/367520/ss_5384f9f8b96a0b9934b2bc35a4058376211636d2.1920x1080.jpg?t=1776125684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/367520/ss_d5b6edd94e77ba6db31c44d8a3c09d807ab27751.1920x1080.jpg?t=1776125684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/367520/ss_a81e4231cc8d55f58b51a4a938898af46503cae5.1920x1080.jpg?t=1776125684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/367520/ss_62e10cf506d461e11e050457b08aa0e2a1c078d0.1920x1080.jpg?t=1776125684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/367520/ss_bd76bd88bc5334ee56ae3d5f0d8dec4455e8e3b8.1920x1080.jpg?t=1776125684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/367520/ss_33a645903d6dd9beec39f272a3daf57174a6cc26.1920x1080.jpg?t=1776125684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/367520/ss_47f3523dbea462aff2ca4bc9f605faaf80a792b2.1920x1080.jpg?t=1776125684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/367520/ss_92c7e8f34c00bdb455070ecdd5b746f0d2f6d808.1920x1080.jpg?t=1776125684"
    ]
   },
   "hollow knight silksong": {
@@ -10082,6 +10385,47 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1315210/ss_602b78c311a278d8cfe67a8dc1514f25cc4c01b1.1920x1080.jpg?t=1766132504",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1315210/ss_3d0c9fea7af89ad2bb01049f8c3ca658da18ced6.1920x1080.jpg?t=1766132504",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1315210/ss_d09e7d7d2cb739ebb9525f022168a8e1efbd5716.1920x1080.jpg?t=1766132504"
+   ]
+  },
+  "immortal realms vampire wars": {
+   "about": "Immortal Realms: Vampire Wars is an engaging strategy game set in a dark vampire world in turmoil, that combines empire management and turn-based combat with unique card-game elements. Descend into a mythical world filled with horrors and legends – and hurl yourself into a compelling gothic epos paired with a challenging game experience.\n\nFor as long as historians can remember, the ancient Dracul bloodline has ruled over the mysterious lands of Warmont – Realm of the Bloodthrone.",
+   "ageRating": 17,
+   "appId": 1024480,
+   "developer": "Palindrome Interactive",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-21T13:51:55Z",
+   "genres": [
+    "Action",
+    "RPG",
+    "Strategy"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Russian",
+    "Simplified Chinese",
+    "Korean",
+    "Traditional Chinese",
+    "Japanese"
+   ],
+   "metacritic": 70,
+   "name": "Immortal Realms: Vampire Wars",
+   "publisher": "Kalypso Media",
+   "releaseDate": "2020-08-28",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1024480/ss_c3ce3311c24d8a860c502c7da4c5162d32cde80e.1920x1080.jpg?t=1743413613",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1024480/ss_68316e6eabfbe3a9195d18c2d388440dbc3907bd.1920x1080.jpg?t=1743413613",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1024480/ss_9b96099e1daa558b788a88635f6bdf019ac4663d.1920x1080.jpg?t=1743413613",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1024480/ss_8c24f28d6052c25bd1a4c7fca894716cb20c859a.1920x1080.jpg?t=1743413613",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1024480/ss_c80055fe386779c48941716a253fa0f568ce5bc0.1920x1080.jpg?t=1743413613",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1024480/ss_718a6bb4f0bd8272f4b06e19b1d70f5e3578a876.1920x1080.jpg?t=1743413613",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1024480/ss_fc105bd16d514b60288e03cf58f923482a384da1.1920x1080.jpg?t=1743413613",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1024480/ss_2d1a0e3216431ddebf8089187c9d7d88dbec77bd.1920x1080.jpg?t=1743413613"
    ]
   },
   "in nightmare": {
@@ -11023,6 +11367,10 @@
    "fetchedAt": "2026-10-21T00:41:24Z",
    "miss": true
   },
+  "king of fighters xiv": {
+   "fetchedAt": "2026-10-21T13:52:08Z",
+   "miss": true
+  },
   "king of fighters xv": {
    "about": "THE KING OF FIGHTERS XV Standard Edition[Product Contents]\n- \"THE KING OF FIGHTERS XV\" Base game\n\n[Special Bonus]\n- Exclusive Bonus\nKOF XV DLC Costume \"CLASSIC LEONA\"\n\n------------------\n \nTHE KING OF FIGHTERS XV Deluxe Edition[Product Contents] \n - \"THE KING OF FIGHTERS XV\" Base game \n- KOF XV DLC Characters \"Team GAROU\" \n- KOF XV DLC Characters \"Team SOUTH TOWN\" \n\n[Special Bonus]\n\n- Exclusive Bonus \nKOF XV DLC Costume \"CLASSIC LEONA\" \n \n------------------ \n\nTHE KING OF FIGHTERS XV Ultimate…",
    "ageRating": null,
@@ -11117,6 +11465,53 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1771300/ss_77abcbc203685b38a50a8cee383bd7f47488f090.1920x1080.jpg?t=1777975568"
    ]
   },
+  "kitaria fables": {
+   "about": "Kitaria Fables is a delightfully cute action adventure RPG with farming and crafting! Enter the cute world of Kitaria and take on the quests of your animal neighbours as they face a rising tide of darkness. Real time combat, exploration and dungeoneering sit alongside farming for provisions and the crafting of weapons and armour, and forging new spells to increase your power.\n\nA peaceful land where nature lives in harmony - until now.",
+   "ageRating": null,
+   "appId": 1356280,
+   "developer": "Twin Hearts, Secret Level Studios",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:51:45Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Russian",
+    "Korean",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Portuguese - Brazil",
+    "Italian",
+    "Indonesian"
+   ],
+   "metacritic": null,
+   "name": "Kitaria Fables",
+   "publisher": "PQube",
+   "releaseDate": "2021-09-01",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1356280/ss_c8d484f8e76b5e4cf0f29efabc23df0d4c4df239.1920x1080.jpg?t=1792075431",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1356280/ss_4ad92234ab23c79377143c074fdd2dbcfefddc9f.1920x1080.jpg?t=1792075431",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1356280/ss_873f94cf8add0fb6c8920a03db7acdb71f5845fb.1920x1080.jpg?t=1792075431",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1356280/ss_bf4bbdeaf070409e11f5892f7d5242cfe2a9266c.1920x1080.jpg?t=1792075431",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1356280/ss_fa3c41bdef0d9275f0b67aba332915de83510044.1920x1080.jpg?t=1792075431",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1356280/ss_504f5205e125274f69832bf39e241a6419d8e116.1920x1080.jpg?t=1792075431",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1356280/ss_144aafa4128953b14f6016728eb22560ce0a7b82.1920x1080.jpg?t=1792075431",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1356280/ss_b23f00a602a8261d7b4ad76fc27716f2e831716a.1920x1080.jpg?t=1792075431"
+   ]
+  },
   "kong survivor instinct": {
    "about": "A sudden Titan attack prompts massive evacuation efforts-but not everyone makes it to safety before the devastation ensues. Caught in the crossfire between battling monsters, many residents become trapped in the collapsing city—your only daughter among them!\n\nKong: Survivor Instinct is a 2.5D action-adventure game that combines realistic platforming, challenging combat, and metroidvania-style exploration during a thrilling quest of survival worthy of the Monsterverse franchise.",
    "ageRating": null,
@@ -11158,6 +11553,47 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2769080/ss_54f7a68f015336e845c479bdcd668c737f2ef5c8.1920x1080.jpg?t=1760966155",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2769080/ss_cd25f8ef96563e23edfee416a704521553900b0f.1920x1080.jpg?t=1760966155",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2769080/ss_fe19635f02b46df1120c0e55c2e7847020f18b4b.1920x1080.jpg?t=1760966155"
+   ]
+  },
+  "lara croft and the temple of osiris": {
+   "about": "Lara Croft and the Temple of Osiris is the sequel to the critically-acclaimed Lara Croft and the Guardian of Light, and the first-ever four-player co-op experience with Lara Croft. Featuring stunning visuals and a brand-new story, players must work together to explore the temple, defeat hordes of enemies from the Egyptian underworld, solve devious puzzles, and avoid deadly traps. All the while, players will compete for treasure, powerful artifacts, and ultimate bragging rights.",
+   "ageRating": 13,
+   "appId": 289690,
+   "developer": "Crystal Dynamics",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:52:00Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Russian"
+   ],
+   "metacritic": 73,
+   "name": "LARA CROFT AND THE TEMPLE OF OSIRIS™",
+   "publisher": "Crystal Dynamics",
+   "releaseDate": "2014-12-08",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/289690/ss_638b4abfdfc8bb17a46de95f1e26fbdad63464b5.1920x1080.jpg?t=1729011550",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/289690/ss_1ede475a844521f19930c7a095d894b3a7f0b988.1920x1080.jpg?t=1729011550",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/289690/ss_6aa1aec43aaeabaddadc46087d16fc46dacb7c2c.1920x1080.jpg?t=1729011550",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/289690/ss_365714a0f76d8eb4b6c99bc964fbc1c3f7e81728.1920x1080.jpg?t=1729011550",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/289690/ss_05baae1756d01d0f87588205425678dc07540498.1920x1080.jpg?t=1729011550",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/289690/ss_b58025a0c05e03360d814df2048bb65b5fe9643a.1920x1080.jpg?t=1729011550",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/289690/ss_b1b05aa6e63d74b2ba23f66b68b6d1bb38e8ed4c.1920x1080.jpg?t=1729011550",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/289690/ss_79fbf5c94490c9ce227625c924fecd5884555b6d.1920x1080.jpg?t=1729011550"
    ]
   },
   "last of us part i": {
@@ -12189,6 +12625,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2322560/ss_eca81b34dd2d9f91630cd345d9c31aff48e42b29.1920x1080.jpg?t=1777556172",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2322560/ss_2fe085b0b8064cde2e8f1b588add0df3ecc7116f.1920x1080.jpg?t=1777556172",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2322560/ss_c8426b666d2d370ee92413f2333ef0d59cd1c842.1920x1080.jpg?t=1777556172"
+   ]
+  },
+  "lumberjacks dynasty": {
+   "about": "A unique life simulation where you are a lumberjack building up a business and founding a lasting dynasty for generations to come.\n\nLumberjack's Dynasty is a mix of forestry, logging, business- and life-simulation with role playing elements. You start at a run-down logging camp which you slowly take over from your aunt and uncle as you restore it to its former glory.",
+   "ageRating": null,
+   "appId": 968970,
+   "developer": "UMEO Studios",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:50:30Z",
+   "genres": [
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "German",
+    "French",
+    "Italian",
+    "Spanish - Spain",
+    "Russian",
+    "Traditional Chinese",
+    "Turkish",
+    "Simplified Chinese",
+    "Portuguese - Brazil",
+    "Japanese",
+    "Dutch",
+    "Polish"
+   ],
+   "metacritic": null,
+   "name": "Lumberjack's Dynasty",
+   "publisher": "Toplitz Productions",
+   "releaseDate": "2021-02-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/968970/ss_a00a88f5484e2627608a1f864d84181bdc648172.1920x1080.jpg?t=1776247271",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/968970/ss_5fc08167ff261c2b878c0272deb761c7d1e5da71.1920x1080.jpg?t=1776247271",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/968970/ss_14071e6dc1623828f986664f2160937c3c255d20.1920x1080.jpg?t=1776247271",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/968970/ss_30940a1f111f72116ebabef544692c191284e1aa.1920x1080.jpg?t=1776247271",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/968970/ss_3fee24529e6ecb87429d59264a01d505ffeaa8eb.1920x1080.jpg?t=1776247271",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/968970/ss_f698a40a56bf029fbc8da7e646f71e313a6401ad.1920x1080.jpg?t=1776247271",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/968970/ss_b21f847a3333c05f78661c911dbe3375f5ba25fc.1920x1080.jpg?t=1776247271",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/968970/ss_e8793d2640fce53306076d867acaa177c864936b.1920x1080.jpg?t=1776247271"
    ]
   },
   "lunar lander beyond": {
@@ -13313,6 +13792,45 @@
    "fetchedAt": "2026-10-17T18:33:17Z",
    "miss": true
   },
+  "miraculous rise of the sphinx": {
+   "about": "Be Strong…Be Brave…Be Miraculous!\n\r\n\n\r\nParis needs a hero! Once again, the city of lights is in trouble as it faces a new menace—the most threatening sentimonster ever created is about to take control! As you take on the personas of the globally renowned superheroez Ladybug and Cat Noir, you’ll need to unveil the diabolical plan hatched by archvillain Hawk Moth—and squash it!",
+   "ageRating": null,
+   "appId": 1740660,
+   "developer": "Magic Pockets",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:50:35Z",
+   "genres": [
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Dutch"
+   ],
+   "metacritic": null,
+   "name": "Miraculous: Rise of the Sphinx",
+   "publisher": "GameMill Entertainment",
+   "releaseDate": "2022-10-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740660/ss_a645299e849b17b7b27bd63afe4f4d118dd9e056.1920x1080.jpg?t=1746026219",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740660/ss_a23f337d6c7d836aab0d13be1f4e78add4695518.1920x1080.jpg?t=1746026219",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740660/ss_d72945dbce5d95e60d34992e3f0c0b81beaa3ecb.1920x1080.jpg?t=1746026219",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740660/ss_234630a5602c5c4a1c40f2d3dc0f584e89c7615e.1920x1080.jpg?t=1746026219",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740660/ss_314ebb721836b2e878c741b06f8e6121a7d3c4e7.1920x1080.jpg?t=1746026219",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740660/ss_ef011c5934646c4651b295e4379bcd16cc3ced17.1920x1080.jpg?t=1746026219",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740660/ss_46df6fa560ca093ccb48621bd0a68e83e29f3a75.1920x1080.jpg?t=1746026219",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740660/ss_cb4492922065b9e3882ef72a97d71fb7cd687d2f.1920x1080.jpg?t=1746026219"
+   ]
+  },
   "monster boy and the cursed kingdom": {
    "about": "A legendary series returns with a grand new adventure!\nEnjoy a colorful action-adventure game made alongside Ryuichi Nishizawa, creator of the original Wonder Boy in Monster World series.\nMonster Boy and the Cursed Kingdom borrows the best from the classic series to deliver a fresh, modern adventure with fun gameplay, memorable music and gorgeous hand drawn animations.\n\nCan Jin save Monster World Kingdom?",
    "ageRating": null,
@@ -14236,6 +14754,43 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/589360/ss_66ed09feb099d948a3c4f30d917b06f7408b4044.1920x1080.jpg?t=1718968277"
    ]
   },
+  "ni no kuni wrath of the white witch remastered": {
+   "about": "REMASTERED VISUALS\nImproved graphics and performance on Steam\n\nALL-STAR PRODUCTION\nLEVEL-5's mastery of the RPG genre is combined with Studio Ghibli's world-class animation and music composed by the renowned Joe Hisaishi\n\nCAPTIVATING STORY\nA charming yet tragic tale unfolds through the use of animation storyboarded and created by Studio Ghibli with English and Japanese voice-overs\n\nROLE-PLAYING MASTERY\nA rich mixture of familiar RPG elements, expertly crafted and designed, and featuring dozens…",
+   "ageRating": null,
+   "appId": 798460,
+   "developer": "LEVEL5 Inc., QLOC",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:51:28Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Russian",
+    "Spanish - Latin America"
+   ],
+   "metacritic": 82,
+   "name": "Ni no Kuni Wrath of the White Witch™ Remastered",
+   "publisher": "BANDAI NAMCO Entertainment",
+   "releaseDate": "2019-09-19",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/798460/ss_927a350f64c6e2be8a35df3e64e2110a6d725be4.1920x1080.jpg?t=1771958172",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/798460/ss_fbff13a7ce41a8d16fb86ada2448c949ce3f44f4.1920x1080.jpg?t=1771958172",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/798460/ss_735d5f82c30474999fee3e3b4cf7489ea091f39a.1920x1080.jpg?t=1771958172",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/798460/ss_6f7373dc36b55a37b70a81d65b8bba182e5c2207.1920x1080.jpg?t=1771958172",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/798460/ss_93a2a8394b90880781e30e8f40778ba60d524c89.1920x1080.jpg?t=1771958172"
+   ]
+  },
   "nickelodeon all star brawl": {
    "about": "Brawl it out as your favorite Nickelodeon characters in bombastic platform battles! With a power-packed cast of heroes from the Nickelodeon universe, face-off with all-stars from SpongeBob Squarepants, Teenage Mutant Ninja Turtles, The Loud House, Danny Phantom, Aaahh!!! Real Monsters, The Wild Thornberrys, Hey Arnold!, Rugrats, and more to determine ultimate animation dominance.",
    "ageRating": null,
@@ -14635,6 +15190,52 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1744330/ss_aaae1b9993b6bcf9988869e4cf6d97d9b3126cd3.1920x1080.jpg?t=1738960181",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1744330/ss_067f76b54a495f816feae984d1cf7899aaba606d.1920x1080.jpg?t=1738960181",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1744330/ss_14b0a24760b24547cfa5b6ed1113e126cca4eaad.1920x1080.jpg?t=1738960181"
+   ]
+  },
+  "nobody saves the world": {
+   "about": "When the ancient Calamity re-awakens, who can save the world? Nobody! (That’s you, you’re Nobody.) Master the art of transformation to become a Slug, Ghost, Dragon, and more in this new take on Action RPGs from the creators of Guacamelee! \n\nComplete quests to discover and swap between 15+ varied and distinct Forms. Mix and match abilities in unexpected ways to unlock and complete even MORE challenging quests.",
+   "ageRating": null,
+   "appId": 1432050,
+   "developer": "Drinkbox Studios",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:51:33Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Korean",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Latin America",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Nobody Saves the World",
+   "publisher": "Drinkbox Studios",
+   "releaseDate": "2022-01-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1432050/ss_c102795bd96a046e9592c226a64395f536accf06.1920x1080.jpg?t=1771966069",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1432050/ss_8d29da188ac9c70cdc28cfb13eb8380c77f6b96b.1920x1080.jpg?t=1771966069",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1432050/ss_7b08dee57dfcf4507bb86823d813154fde26b17c.1920x1080.jpg?t=1771966069",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1432050/ss_d3a50810e033f0b675aa256f3bfb41552e507e60.1920x1080.jpg?t=1771966069",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1432050/ss_e3f0be87ac2a734e9739245501b0402f4594a6ba.1920x1080.jpg?t=1771966069",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1432050/ss_330c1652ccb5a82038a0cb773fd57b1ad97888dc.1920x1080.jpg?t=1771966069",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1432050/ss_62e5e37afe3dd27c15d997b9c4845457d7e9c9b9.1920x1080.jpg?t=1771966069",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1432050/ss_c39e5b6b67c2e83b029bca6fef8ec201be52fcb8.1920x1080.jpg?t=1771966069"
    ]
   },
   "oddworld soulstorm": {
@@ -15123,6 +15724,47 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1920490/ss_52332311d07d24c79b0ec59f0f3fa8cb6e1d3ec2.1920x1080.jpg?t=1780589157"
    ]
   },
+  "outlast": {
+   "about": "Hell is an experiment you can't survive in Outlast, a first-person survival horror game developed by veterans of some of the biggest game franchises in history. As investigative journalist Miles Upshur, explore Mount Massive Asylum and try to survive long enough to discover its terrible secret... if you dare.\n\nSynopsis:\n\nIn the remote mountains of Colorado, horrors wait inside Mount Massive Asylum.",
+   "ageRating": null,
+   "appId": 238320,
+   "developer": "Red Barrels",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:52:05Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Russian",
+    "Polish",
+    "Portuguese - Brazil",
+    "Japanese"
+   ],
+   "metacritic": 80,
+   "name": "Outlast",
+   "publisher": "Red Barrels",
+   "releaseDate": "2013-09-04",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238320/ss_de19e8b1f41d9594bf64d02424a0ec5046c733f5.1920x1080.jpg?t=1666817106",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238320/ss_1b4cc24b78f404c69fa18d42e5d5b00873c8852f.1920x1080.jpg?t=1666817106",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238320/ss_c629aed2b6d7751222acb9bef1022338f9bc6b03.1920x1080.jpg?t=1666817106",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238320/ss_bb9dffa1b9be7b4b4e27ac810f49ea62bf98f907.1920x1080.jpg?t=1666817106",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238320/ss_21900922e7f1352eb85be881a6346b759d9a7fb7.1920x1080.jpg?t=1666817106",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238320/ss_97dfd31784f9c51d2c603ac3f36ae52fac401de3.1920x1080.jpg?t=1666817106",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238320/ss_1b8e6a3a5e06f29ef028946d1d2c6d74574cbb1f.1920x1080.jpg?t=1666817106",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238320/ss_4f899a81061c6acedd6a2682ebd380eff8a24788.1920x1080.jpg?t=1666817106"
+   ]
+  },
   "overpass 2": {
    "about": "The only simulation that blends racing and obstacles is back with new content and game modes.\n\nPut your skills to the test in 5 game modes in which you have to come to grips with demanding challenges: off-road sprint, off-road circuit, hill climb, obstacle course, closed circuit.\n\nYour results will depend on how well you can analyse the course and pick the best routes.",
    "ageRating": null,
@@ -15262,6 +15904,48 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368130/ss_d11910a5e0d46c30289dfc0545c885aa7f4bdda4.1920x1080.jpg?t=1727343145",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368130/ss_db0b8761dda44ad4e272950671acf8551f508333.1920x1080.jpg?t=1727343145",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1368130/ss_d7a8a6db9d39824164f78860f5fb6760b265a1ad.1920x1080.jpg?t=1727343145"
+   ]
+  },
+  "pathfinder wrath of the righteous": {
+   "about": "DISCOVER THE STORY\n\nYour path will lead you to the Worldwound, where the opening of a rift to the Abyss has unleashed all-consuming terror across the land. For over a century, the neighboring nations have fought fearlessly, trying to drive the enemy back — but to little avail. \n\nNow, you have the chance to put an end to this conflict, but the path to salvation is far from clear-cut. Will you become a shining angel, backed by noble paladins?",
+   "ageRating": null,
+   "appId": 1184370,
+   "developer": "Owlcat Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:50:40Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Strategy",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Russian",
+    "Simplified Chinese",
+    "Italian",
+    "Portuguese - Brazil"
+   ],
+   "metacritic": 83,
+   "name": "Pathfinder: Wrath of the Righteous - Enhanced Edition",
+   "publisher": "META Publishing, Owlcat Games",
+   "releaseDate": "2021-09-02",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1184370/ss_4f34b17018e09d16731c85cce5e13eb13a66d488.1920x1080.jpg?t=1781096468",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1184370/ss_fbdd180f0b51efe2bac9d41f30a18113d125b346.1920x1080.jpg?t=1781096468",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1184370/ss_a91350b93f566e63bebcfdc094cef21d3cd4bca7.1920x1080.jpg?t=1781096468",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1184370/ss_59f87eaf54b344855d6ed44bd890ccb4e40b9b92.1920x1080.jpg?t=1781096468",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1184370/ss_cd15311919ad49b0f5372ba728b1eb21dbefcae2.1920x1080.jpg?t=1781096468",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1184370/ss_29929b5be3232f1010a544100c5c9152fa73fdca.1920x1080.jpg?t=1781096468",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1184370/ss_6cc6a73cafd15cf25428be6103f759c26c4fab25.1920x1080.jpg?t=1781096468",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1184370/ss_56b2f8822f5eff04f98377c0702ab5347326df7a.1920x1080.jpg?t=1781096468"
    ]
   },
   "paw patrol grand prix": {
@@ -17467,6 +18151,38 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1599660/ss_41185d31926c4348e396f6261f54a387cc258929.1920x1080.jpg?t=1750957508"
    ]
   },
+  "saga frontier remastered": {
+   "about": "The beloved 1998 RPG Classic, SaGa Frontier, is reborn with improved graphics, additional features, and a new main character!\n\nExperience this role-playing adventure as one of the eight heroes, each with their own storyline and goals. With the Free Scenario system, unfold your own unique journey.",
+   "ageRating": null,
+   "appId": 1295270,
+   "developer": "Square Enix, Bullets",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:50:48Z",
+   "genres": [
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "SaGa Frontier Remastered",
+   "publisher": "Square Enix",
+   "releaseDate": "2021-04-15",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1295270/ss_d994cb0320527982e54a8a59d0e78dd5a0994c5b.1920x1080.jpg?t=1777013612",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1295270/ss_03bdc5142bac4dbac9feed048dd26cc4232e35f6.1920x1080.jpg?t=1777013612",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1295270/ss_aa2056cf5991c6ba1da804a411daee12edd9eb52.1920x1080.jpg?t=1777013612",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1295270/ss_e715bc3f4f86918ccf500e5f6709b6441b8354cc.1920x1080.jpg?t=1777013612",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1295270/ss_abfd9510eae3b427df1b2693dccae7a479583829.1920x1080.jpg?t=1777013612",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1295270/ss_3350a1d36729a236b6de78c05366ba852a055466.1920x1080.jpg?t=1777013612",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1295270/ss_4b78eb1cc572f5158c934c5d1cd9554c3d0c8ea0.1920x1080.jpg?t=1777013612",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1295270/ss_17c86552dcedb8bc6724f409dc45e3f1c5086025.1920x1080.jpg?t=1777013612"
+   ]
+  },
   "saga of sins": {
    "about": "Saga of Sins is an unholy action-adventure featuring a mystical storyline and rewarding arcade gameplay! Immerse into a world of stained glass inspired by the Dutch painter Hieronymus Bosch (1450-1516) that is stained by sin.\n\nPlay as the righteous cleric Cecil - who can enter people’s minds by transforming into four unique demonic creatures such as a howling werewolf or a fierce gargoyle - to fight the seven deadly sins and free the plague infested village of Sinwell.",
    "ageRating": null,
@@ -17634,6 +18350,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1979440/ss_5c53e3cab9e9b162de5bbf9a6a8fe50b4eb8c07d.1920x1080.jpg?t=1744601452",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1979440/ss_199c55bc55e3b5bf6078fa9863c6c784880cce89.1920x1080.jpg?t=1744601452"
    ]
+  },
+  "saros": {
+   "fetchedAt": "2026-10-21T13:50:43Z",
+   "miss": true
   },
   "scarlet nexus": {
    "about": "In the far distant future, a psionic hormone was discovered in the human brain, granting people extra-sensory powers and changed the world as we knew it. As humanity entered this new era, deranged mutants known as Others began to descend from the sky with a hunger for human brains. Highly resistant to conventional attack methods, extreme measures needed to be taken to battle the overwhelming threat and preserve humanity.",
@@ -19870,6 +20590,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2111170/ss_bddc983a3f4d3150ead44ebc6e1e877c04514741.1920x1080.jpg?t=1743091775"
    ]
   },
+  "story of seasons friends of mineral town": {
+   "about": "Your farming life begins in Mineral Town, a charming village surrounded by nature. You've returned after many years to restore your late grandfather's farm to its former glory. Care for crops, livestock, and more as your very own story of seasons unfolds.\n\nTend to the Farm!\nA menagerie of fruits, veggies, and livestock are waiting for you.",
+   "ageRating": null,
+   "appId": 978780,
+   "developer": "Marvelous Inc.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:50:53Z",
+   "genres": [
+    "RPG",
+    "Simulation",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Traditional Chinese",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "STORY OF SEASONS: Friends of Mineral Town",
+   "publisher": "XSEED Games, Marvelous USA, Inc.",
+   "releaseDate": "2020-07-14",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/978780/ss_ccc9ae5cf9f9e303399137a41dca952190b239d8.1920x1080.jpg?t=1743091853",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/978780/ss_35056591d0b87b29517905b760fb20942b35a723.1920x1080.jpg?t=1743091853",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/978780/ss_13a2f34f57b24077e88cd90e49d5e9c89ea3f705.1920x1080.jpg?t=1743091853",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/978780/ss_e73451ea174eee988338ef01a21a9eef8c995d82.1920x1080.jpg?t=1743091853",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/978780/ss_edcf617498786e51dd58f073ce198fe902e9ebd8.1920x1080.jpg?t=1743091853",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/978780/ss_6da1ac83e1300d1db3d1af5ccc35adff1ab0a0dc.1920x1080.jpg?t=1743091853",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/978780/ss_15bbcf54691663ea119dfb8c132fd0a446487fe1.1920x1080.jpg?t=1743091853",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/978780/ss_b58a203dab001fd9774e537d1d7b116fff5ae034.1920x1080.jpg?t=1743091853"
+   ]
+  },
   "stranger of paradise final fantasy origin": {
    "about": "With the memory of their struggle buried deep in their hearts...\n\r\n\n\r\nFight your way through fierce battles with a variety of means to defeat your enemies. With multiple difficulty options and a wide selection of jobs and weapons available to customize your party, you can choose exactly how you want to play.\n\r\n\n\r\nWill restoring the crystals' light usher in peace or a new form of darkness?",
    "ageRating": 17,
@@ -21309,6 +22069,51 @@
    "fetchedAt": "2026-10-19T23:41:50Z",
    "miss": true
   },
+  "titan quest": {
+   "about": "For its 10 year anniversary, Titan Quest will shine in new splendour. This Anniversary Edition combines both Titan Quest and Titan Quest Immortal Throne in one game, and has been given a massive overhaul for the ultimate ARPG experience.Anniversary Edition update\n\nRestored and improved multiplayer functionality, including new features like a built-in voice chat and NAT resolving for best multiplayer connectivity\n\nSupport for more resolutions, larger camera distance and scaleable UI…",
+   "ageRating": null,
+   "appId": 475150,
+   "developer": "Iron Lore Entertainment, THQ Nordic",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-21T13:51:00Z",
+   "genres": [
+    "Action",
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Czech",
+    "Polish",
+    "Russian",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Ukrainian"
+   ],
+   "metacritic": null,
+   "name": "Titan Quest Anniversary Edition",
+   "publisher": "THQ Nordic",
+   "releaseDate": "2016-08-31",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/475150/ss_e57fbc3736ff02e541e8a9f927788e95f77b7c12.1920x1080.jpg?t=1725002025",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/475150/ss_f6441346a3c58145a09847e29f668aa077a8feaa.1920x1080.jpg?t=1725002025",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/475150/ss_f577dc04ced7cc2e4aee11bc37ce30b7d4920ef6.1920x1080.jpg?t=1725002025",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/475150/ss_3ddc7d874f190ddaf28dd2b3190918cb4d8f4122.1920x1080.jpg?t=1725002025",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/475150/ss_1628bb7dfc5a88b811c37103e60066d8403cd69b.1920x1080.jpg?t=1725002025",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/475150/ss_9170dcaa1222fa39219cb631dbabbe11a22f2778.1920x1080.jpg?t=1725002025",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/475150/ss_b2338ea7ba02933f9db8b72eefe36b8f465d31e8.1920x1080.jpg?t=1725002025",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/475150/ss_067104b511f47dabc9f481805959a9360eb492c5.1920x1080.jpg?t=1725002025"
+   ]
+  },
   "titanfall 2": {
    "about": "Call down your Titan and get ready for an exhilarating first-person shooter experience in Titanfall® 2! The sequel introduces a new single player campaign that explores the bond between Pilot and Titan. Or blast your way through an even more innovative and intense multiplayer experience - featuring 6 new Titans, deadly new Pilot abilities, expanded customization, new maps, modes, and much more. \n\nKEY FEATURES\n\nExperience a captivating single player story.",
    "ageRating": null,
@@ -21863,6 +22668,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_64a53eb6312a03c81eb6c3a3d9360d12055e2ee2.1920x1080.jpg?t=1764602266"
    ]
   },
+  "transformers devastation": {
+   "fetchedAt": "2026-10-21T13:52:10Z",
+   "miss": true
+  },
   "transformers earthspark expedition": {
    "about": "Battle and explore as Bumblebee in an adventure to stop his nemesis, Mandroid, from becoming the ultimate evil cyborg!\n\nBumblebee is facing his greatest mission – reclaim the ancient Cybertronian technology scattered across the globe before Mandroid and his henchbots can use them to destroy Earth’s cities.",
    "ageRating": null,
@@ -22174,6 +22983,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405830/ss_a4df60c6da750511522233b1ea10870c4127e799.1920x1080.jpg?t=1774276494",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405830/ss_8b66ec482f53895f93d7bc94c43288e57b572501.1920x1080.jpg?t=1774276494"
    ]
+  },
+  "turok remastered": {
+   "fetchedAt": "2026-10-21T13:52:13Z",
+   "miss": true
   },
   "two point museum": {
    "about": "Two Point Museum Includes:\n\nDesign, manage and develop incredible museums\n\n5 unique main museum locations to Two Point County:\n\n- Prehistory - Memento Mile\n\n- Aquarium - Passwater Cove\n\n- Supernatural - Wailon Lodge\n\n- Science - Bungle Wasteland\n\n- Space - Pebberley Heights\n\n3 Pop up museums with set tasks and challenges\n\nSandbox mode to build your very own MEGA MUSEUMS!\n\n6 main exhibit types and 30+ sub categories of exhibits\n\nYou’ll adventure through 5 different expedition maps with 100+…",
@@ -23127,6 +23940,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3717070/0b40c23c3aaf1d1aa1139162e48117c8b5e7058c/ss_0b40c23c3aaf1d1aa1139162e48117c8b5e7058c.1920x1080.jpg?t=1791395117"
    ]
   },
+  "xiii": {
+   "fetchedAt": "2026-10-21T13:51:03Z",
+   "miss": true
+  },
   "yakuza 0 directors cut": {
    "about": "Yakuza 0 Director's Cut is the definitive edition of the critically acclaimed prequel to the Yakuza series. \n\nFight like hell through Tokyo and Osaka entertainment districts as yakuza Kazuma Kiryu and cabaret club manager Goro Majima in an epic crime drama of intertwined fates that created legends.\n\n■ CREATIVELY CRUSH ENEMIES \nKiryu and Majima each have three unique fighting styles to dynamically switch between to creatively crack skulls with your fists, makeshift weapons and more.",
    "ageRating": 17,
@@ -23170,6 +23987,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2988580/8181c3d831eb56cfa6808750800e3e310d982964/ss_8181c3d831eb56cfa6808750800e3e310d982964.1920x1080.jpg?t=1783041339",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2988580/98ee943d515416b55fc0e8532da176e88845ad1b/ss_98ee943d515416b55fc0e8532da176e88845ad1b.1920x1080.jpg?t=1783041339"
    ]
+  },
+  "yakuza 3": {
+   "fetchedAt": "2026-10-21T13:50:55Z",
+   "miss": true
   },
   "yakuza kiwami": {
    "about": "Kazuma Kiryu takes the fall for a murder and emerges from prison 10 years later to yakuza clans on the brink of a war that hurtles you on an intense journey of love, humanity, and betrayal, fueled by your fists and unyielding resolve, set against a bustling red-light district in modern-day Japan.",
@@ -23462,6 +24283,6 @@
    ]
   }
  },
- "updatedAt": "2026-10-21T07:41:58Z",
+ "updatedAt": "2026-10-21T13:52:20Z",
  "version": 1
 }
