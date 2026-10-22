@@ -94,17 +94,6 @@ bool folded_contains(std::string_view text, std::string_view query)
     return false;
 }
 
-void pop_character(std::string &text)
-{
-    while (!text.empty())
-    {
-        const unsigned char c = static_cast<unsigned char>(text.back());
-        text.pop_back();
-        if ((c & 0xC0) != 0x80)
-            break;
-    }
-}
-
 // How long ago the Library was read.
 std::string checked_time(double unix)
 {

@@ -11,6 +11,7 @@
  "preferredStorage": "internal",
  "deleteArchives": true,
  "concurrentDownloads": 1,
+ "autoInstallPkg": true,
  "httpPort": "<port>",
  "safeMode": false
 }

@@ -29,7 +29,10 @@ XenoKing site (a Supabase project), through supabase_mock.SupabaseMock:
   * the console never writes anything else to the site (no update / delete,
     no other table, no download counter, no Garlic "list"), and the anon key
     goes to the site's origin only (never to another host, never across a
-    redirect).
+    redirect);
+  * the Community Saves screen's refresh button (the real UI in Chromium,
+    when node and Playwright are installed) has the console list the site
+    again (refresh=1), and a mashed button does not do it twice.
 
 Everything is loopback: the backend URL comes from the published file or
 settings; XENO_SAVES_INDEX_BASE serves the default GitHub index locally and
@@ -969,6 +972,72 @@ class TemplateTests(Base):
         self.assertEqual([e["path"] for e in calls], ["/rest/v1/rpc/increment_downloads"])
         self.assertEqual(json.loads(calls[0]["body"]), {"id": self.pub["id"]})
         self.assertEqual(self.pub["downloads"], 1)
+
+
+# ---------------------------------------------------------------------------
+# the Community Saves screen's refresh button, in the UI the console serves
+# ---------------------------------------------------------------------------
+
+REFRESH_SCRIPT = r"""
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.XENO_PLAYWRIGHT);
+const base = process.argv[2];
+const isStore = (u) => new URL(u).pathname === '/api/saves/store';
+const browser = await chromium.launch();
+try {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await page.addInitScript(() => { localStorage.setItem('xs.wizardDone', 'true'); });   // no first-run wizard over the screen
+  const asked = [];
+  page.on('request', (r) => { if (isStore(r.url())) asked.push(new URL(r.url()).search); });
+  await page.goto(base + '/');
+  await page.waitForFunction(() => window.XS && XS.router && document.querySelector('#scr-discover'), null, { timeout: 30000 });
+  await page.evaluate(() => XS.router.go('saves'));
+  const btn = '#scr-saves [data-nav-id="sv-refresh"]';
+  const loaded = () => page.waitForFunction(() => { const s = document.querySelector('#scr-saves'); return s && s.querySelector('[data-nav-id="sv-refresh"]') && !s.querySelector('.busy-row'); }, null, { timeout: 30000 });
+  await loaded();
+  await page.waitForTimeout(500);
+  const before = asked.length;
+  await page.click(btn);
+  await loaded();
+  for (let i = 0; i < 6; i++) { await page.click(btn, { timeout: 5000 }); await page.waitForTimeout(150); }
+  await loaded();
+  await page.waitForTimeout(1000);
+  console.log(JSON.stringify(asked.slice(before)));
+} finally {
+  await browser.close();
+}
+"""
+
+
+class RefreshButtonTests(Base):
+    @classmethod
+    def setUpClass(cls):
+        cls.pw = harness.playwright_module()
+        if not cls.pw:
+            raise unittest.SkipTest("node with Playwright is not installed")
+        cls.files = Files()
+        cls.site = SupabaseMock(ANON).start()
+        cls.site.add_row(title_id=TITLE, game="Test Game", shared_by="alice", notes="On the site.", file_path="garlic:700",
+                         file_name="x.zip", garlic_id=700)
+        cls.files.add("/saves.json", json.dumps({"schemaVersion": 1, "saves": []}))
+        cls.files.add("/none.json", "{}")
+        cls.files.add("/saves-backend.json", json.dumps(published(cls.site.base)))
+        cls.start_console(cls.files)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.srv.stop()
+        cls.site.stop()
+        cls.files.close()
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def test_01_refresh_lists_the_site_again_once(self):
+        self.assertTrue(any(s["id"].startswith("sb:") for s in self.store()["saves"]))   # the console has its copy
+        listed = len(self.site.requests("GET", "/rest/v1/ps5_save_collection"))
+        asked = harness.run_ui_script(self, self.pw, self.tmp, REFRESH_SCRIPT, self.srv.base)
+        self.assertEqual([q for q in asked if "refresh=1" in q], ["?refresh=1"], asked)   # the first click; the others are throttled
+        self.assertEqual(len(self.site.requests("GET", "/rest/v1/ps5_save_collection")) - listed, 1)
 
 
 if __name__ == "__main__":

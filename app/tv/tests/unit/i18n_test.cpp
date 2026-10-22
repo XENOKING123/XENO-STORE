@@ -151,6 +151,7 @@ TEST_F(I18nTest, NumbersMatchIntlNumberFormat)
     EXPECT_EQ(i18n::decimal(9.96), "10.0");
     EXPECT_EQ(i18n::percent(12.5), "12.5%");
     EXPECT_EQ(i18n::unit(true), "GB");
+    EXPECT_EQ(i18n::kilo_unit(), "KB");
 
     use("de");
     EXPECT_EQ(i18n::count(1234), "1.234");
@@ -173,9 +174,11 @@ TEST_F(I18nTest, NumbersMatchIntlNumberFormat)
     EXPECT_EQ(i18n::count(1234), "1 234");
     EXPECT_EQ(i18n::unit(true), "Go");
     EXPECT_EQ(i18n::unit(false), "Mo");
+    EXPECT_EQ(i18n::kilo_unit(), "Ko");
     use("ru");
     EXPECT_EQ(i18n::decimal(1420.0), "1 420,0");
     EXPECT_EQ(i18n::unit(true), "ГБ");
+    EXPECT_EQ(i18n::kilo_unit(), "КБ");
     EXPECT_EQ(i18n::percent(12.5), "12,5 %");
     use("tr");
     EXPECT_EQ(i18n::count(1234), "1.234");

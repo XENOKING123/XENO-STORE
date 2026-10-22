@@ -2,6 +2,7 @@
   "nav": {
     "discover": "Discover",
     "browse": "Browse",
+    "saves": "Saves",
     "library": "Library",
     "downloads": "Downloads",
     "search": "Search",
@@ -395,7 +396,7 @@
     "verifyHashes": "Verify hashes",
     "verifyHashesHint": "Check SHA-256 after download when the catalog knows it",
     "autoInstall": "Auto-install PKG",
-    "autoInstallHint": "Install packages as soon as they finish",
+    "autoInstallHint": "Install packages as soon as they finish. The default for new downloads; each download can choose for itself.",
     "shadowScan": "ShadowMount scan",
     "shadowScanHint": "Ask ShadowMountPlus to rescan after an image download",
     "keepAwake": "Keep console awake",
@@ -578,6 +579,7 @@
     "not_found": "Not found on the console",
     "forbidden": "The host refused the request",
     "pin_required": "This console needs the PIN before it accepts changes",
+    "not_paired": "This browser was unpaired from the PS5. Link it again to keep using XENO STORE.",
     "rate_limited": "The host is rate-limiting us — retrying with fewer connections",
     "transport": "The connection dropped — retrying automatically",
     "fix": {

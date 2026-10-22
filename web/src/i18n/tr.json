@@ -2,6 +2,7 @@
   "nav": {
     "discover": "Keşfet",
     "browse": "Gözat",
+    "saves": "Kayıtlar",
     "library": "Kütüphane",
     "downloads": "İndirmeler",
     "search": "Ara",
@@ -395,7 +396,7 @@
     "verifyHashes": "Hash'leri doğrula",
     "verifyHashesHint": "Katalog biliyorsa indirmeden sonra SHA-256'yı denetle",
     "autoInstall": "PKG'yi otomatik kur",
-    "autoInstallHint": "Paketleri biter bitmez kur",
+    "autoInstallHint": "Paketleri biter bitmez kur. Yeni indirmeler için varsayılandır; her indirme kendi seçimini yapabilir.",
     "shadowScan": "ShadowMount taraması",
     "shadowScanHint": "İmaj indirmesinden sonra ShadowMountPlus'tan yeniden taramasını iste",
     "keepAwake": "Konsolu uyanık tut",
@@ -578,6 +579,7 @@
     "not_found": "Konsolda bulunamadı",
     "forbidden": "Sunucu isteği reddetti",
     "pin_required": "Bu konsol değişiklikleri kabul etmeden önce PIN istiyor",
+    "not_paired": "Bu tarayıcının PS5 ile eşlemesi kaldırıldı. XENO STORE'u kullanmaya devam etmek için yeniden bağla.",
     "rate_limited": "Sunucu hızımızı sınırlıyor — daha az bağlantıyla tekrar deneniyor",
     "transport": "Bağlantı koptu — otomatik tekrar deneniyor",
     "fix": {

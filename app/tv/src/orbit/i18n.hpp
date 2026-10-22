@@ -50,6 +50,8 @@ std::string decimal(double value);
 std::string percent(double value);
 // GB and MB as the language writes them (ГБ in Russian, Go in French).
 std::string_view unit(bool giga);
+// XENO STORE: KB as the language writes it (КБ in Russian, Ko in French).
+std::string_view kilo_unit();
 // Drive and location names from Orbit and ShadowMount, numbered ones too.
 std::string place(std::string_view name);
 // Catalogue genres combine names: "Adventure / Action".

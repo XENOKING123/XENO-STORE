@@ -1,10 +1,13 @@
-// XENO STORE TV app - Settings: the simultaneous downloads stepper.
+// XENO STORE TV app - Settings: the simultaneous downloads stepper, source chips, About and Sounds.
 // Copyright (C) 2026 XENO STORE contributors
 // SPDX-License-Identifier: GPL-3.0-or-later
 //
 // XENO STORE runs 1 to 4 downloads at once. The stepper in Settings, Storage
 // stops at 4, the API client refuses anything outside 1..4, and a larger
-// limit reported by an older backend steps down into that range.
+// limit reported by an older backend steps down into that range. Download
+// sources wrap onto more rows rather than running off the page. About names
+// both versions, the source and the licences. Sounds (More settings) silences
+// the app, and the choice is kept on the console (or says why it is not).
 
 #include "fixture.hpp"
 #include "orbit/api.hpp"
@@ -13,9 +16,15 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <array>
 #include <cmath>
+#include <cstdlib>
+#include <fstream>
 #include <string>
 #include <vector>
+
+#include <stdlib.h>
 
 namespace orbit
 {
@@ -31,6 +40,7 @@ struct SettingsHarness
     test::FakeSink sink;
     test::ScriptedTransport transport;
     int limit;
+    std::string sources;             // GET /api/v1/sources, when set
     std::vector<std::string> posted; // bodies of POST /api/v1/settings/downloads
     Store store{transport};
     ArtCache art{backend, sink};
@@ -38,12 +48,15 @@ struct SettingsHarness
     App app{context};
     Feedback feedback;
 
-    explicit SettingsHarness(int start) : limit(start)
+    explicit SettingsHarness(int start, std::string source_list = {})
+        : limit(start), sources(std::move(source_list))
     {
         transport.reply = [this](const http::Request &request)
         {
             if (request.path == "/api/v1/storage")
                 return test::json_reply(200, "[]");
+            if (request.path == "/api/v1/sources" && request.method == "GET" && !sources.empty())
+                return test::json_reply(200, sources);
             if (request.path == "/api/v1/settings/downloads" && request.method == "POST")
             {
                 posted.push_back(request.body);
@@ -152,6 +165,229 @@ TEST(SettingsStepper, ALargerLimitFromAnOlderBackendStepsDownIntoRange)
     h.settle(3);
     EXPECT_EQ(h.posted, std::vector<std::string>({R"({"concurrentDownloads":4})"}));
     EXPECT_EQ(h.store.state().system.concurrent_downloads, 4);
+}
+
+// Download sources: a chip that would cross the 940 px pane starts a new row
+// (from Orbit Store 1.3.5), so four sources with long names stay on the page.
+TEST(SettingsSources, ChipsWrapInsideThePane)
+{
+    SettingsHarness h(1, R"({"enabled":["archive"],"acknowledged":true,"noticeVersion":1,"options":[
+        {"id":"mirrors","label":"XENO mirrors","releaseCount":40,"downloadReady":true},
+        {"id":"feed","label":"Verified catalog feed","releaseCount":900,"downloadReady":true},
+        {"id":"archive","label":"Archive.org","releaseCount":15,"downloadReady":true},
+        {"id":"vikingfile","label":"Vikingfile","releaseCount":2,"downloadReady":true}]})");
+    ASSERT_EQ(h.store.state().sources.options.size(), 4u);
+    h.app.open_settings(SettingsScreen::Section::sources, true);
+    h.settle();
+    Frame drawn;
+    h.app.settings().draw(drawn, true);
+    float right = 0.0f;
+    for (const auto &instance : drawn.scene.instances())
+        right = std::max(right, instance.rect[0] + instance.rect[2]);
+    EXPECT_LE(right, 600.0f + 940.0f + 24.0f); // the pane, and a focus ring's glow
+}
+
+// ---- About: the version, credits, licence and where the source is ----
+
+std::size_t settings_glyphs(SettingsHarness &h)
+{
+    Frame drawn;
+    h.app.settings().draw(drawn, true);
+    std::size_t glyphs = 0;
+    for (const auto &instance : drawn.scene.instances())
+        glyphs += instance.params[3] == static_cast<float>(hui::gfx::Shape::glyph) ? 1u : 0u;
+    return glyphs;
+}
+
+// The glyphs a draw list shows, in order: each one's font slot and atlas cell.
+std::vector<std::array<float, 5>> glyph_cells(const hui::gfx::DrawList &list)
+{
+    std::vector<std::array<float, 5>> cells;
+    for (const auto &instance : list.instances())
+    {
+        if (instance.params[3] == static_cast<float>(hui::gfx::Shape::glyph))
+            cells.push_back({instance.params[2], instance.extra[0], instance.extra[1],
+                             instance.extra[2], instance.extra[3]});
+    }
+    return cells;
+}
+
+// Whether the section shows this text (in the body font), wherever it wraps.
+bool settings_show(SettingsHarness &h, std::string_view text)
+{
+    Frame drawn;
+    h.app.settings().draw(drawn, true);
+    hui::gfx::DrawList line;
+    ui::text(line, h.context.type.regular, text, 0.0f, 0.0f, 21.0f, ui::color::text);
+    const auto shown = glyph_cells(drawn.scene);
+    const auto wanted = glyph_cells(line);
+    return !wanted.empty() &&
+           std::search(shown.begin(), shown.end(), wanted.begin(), wanted.end()) != shown.end();
+}
+
+bool hinted(const Screen &screen, hui::ui::Button button)
+{
+    for (const hui::ui::Hint &hint : screen.hints())
+        if (hint.button == button)
+            return true;
+    return false;
+}
+
+TEST(SettingsAbout, AboutFollowsMoreSettingsAndNamesTheVersionTwice)
+{
+    std::size_t glyphs[2] = {};
+    for (int i = 0; i < 2; ++i)
+    {
+        SettingsHarness h(1);
+        h.context.app_version = i == 0 ? "01.003.001" : "01.013.001"; // 1.3.1, then 1.13.1
+        h.app.open_settings(SettingsScreen::Section::more);
+        h.settle();
+        h.frame(Direction::down);
+        ASSERT_EQ(h.app.settings().section(), SettingsScreen::Section::about);
+        h.frame(Direction::down); // the last section
+        EXPECT_EQ(h.app.settings().section(), SettingsScreen::Section::about);
+        EXPECT_FALSE(hinted(h.app.settings(), hui::ui::Button::cross)); // nothing to select
+        h.frame(Direction::right); // the focus stays on the sections
+        h.frame(Direction::up);
+        EXPECT_EQ(h.app.settings().section(), SettingsScreen::Section::more);
+        h.frame(Direction::down);
+        h.settle();
+        glyphs[i] = settings_glyphs(h);
+    }
+    // One more digit in the TV app's version row and one in the source archive's name.
+    EXPECT_EQ(glyphs[1], glyphs[0] + 2);
+}
+
+// XENO STORE's version is the running store's (Updates installs the two parts
+// apart). The source is on the project's releases page, and NOTICE names each
+// component's licence (not every text is in app/tv/licenses).
+TEST(SettingsAbout, AboutNamesTheRunningStoreAndWhereTheSourceAndLicencesAre)
+{
+    std::size_t glyphs[2] = {};
+    for (int i = 0; i < 2; ++i)
+    {
+        SettingsHarness h(1);
+        const auto reply = h.transport.reply;
+        h.transport.reply = [reply, i](const http::Request &request)
+        {
+            http::Response response = reply(request);
+            const std::string key = "\"version\":\"";
+            const auto at = response.body.find(key);
+            if (request.path == "/api/v1/system" && at != std::string::npos)
+                response.body.replace(at + key.size(), response.body.find('"', at + key.size()) - at - key.size(),
+                                      i == 0 ? "1.4.0" : "1.14.0");
+            return response;
+        };
+        h.store.poll_once();
+        h.app.open_settings(SettingsScreen::Section::about);
+        h.settle();
+        ASSERT_EQ(h.store.state().system.version, i == 0 ? "1.4.0" : "1.14.0");
+        glyphs[i] = settings_glyphs(h);
+        if (i > 0)
+            continue;
+        EXPECT_TRUE(settings_show(h, "github.com/XENOKING123/XENO-STORE/releases"));
+        EXPECT_TRUE(settings_show(h, "XENO-STORE-1.2.1-tv-sources.tar.gz")); // the TV app's release (01.002.001)
+        EXPECT_TRUE(settings_show(h, "app/tv/NOTICE"));
+        EXPECT_FALSE(settings_show(h, "app/tv/licenses"));
+    }
+    EXPECT_EQ(glyphs[1], glyphs[0] + 1); // one more digit in XENO STORE's version
+}
+
+// ---- Sounds: the app's own setting, in a file of the title's storage ----
+
+struct PrefsDir
+{
+    std::string path;
+    PrefsDir()
+    {
+        char name[] = "/tmp/xeno-tv-prefs-XXXXXX";
+        path = mkdtemp(name);
+    }
+    ~PrefsDir()
+    {
+        std::system(("rm -rf '" + path + "'").c_str());
+    }
+};
+
+TEST(SettingsSounds, SoundsAreOnUntilTurnedOffAndTheChoiceIsKept)
+{
+    PrefsDir dir;
+    const std::string file = dir.path + "/xeno-store/settings.json"; // its folder is made
+    Prefs prefs;
+    prefs.load(file);
+    EXPECT_TRUE(prefs.sounds()); // nothing saved yet
+    EXPECT_EQ(prefs.set_sounds(false), "");
+    EXPECT_FALSE(prefs.sounds());
+    Prefs reopened; // the next time the app starts
+    reopened.load(file);
+    EXPECT_FALSE(reopened.sounds());
+    EXPECT_EQ(reopened.set_sounds(true), "");
+    Prefs again;
+    again.load(file);
+    EXPECT_TRUE(again.sounds());
+    // An unreadable file gives the default.
+    std::ofstream(file, std::ios::binary | std::ios::trunc) << "{\"sounds\":";
+    Prefs broken;
+    broken.load(file);
+    EXPECT_TRUE(broken.sounds());
+    // In memory only (previews and tests): nothing to save.
+    Prefs memory;
+    memory.load("");
+    EXPECT_EQ(memory.set_sounds(false), "");
+    EXPECT_FALSE(memory.sounds());
+}
+
+TEST(SettingsSounds, TurningSoundsOffSilencesTheAppUntilTurnedOnAgain)
+{
+    PrefsDir dir;
+    const std::string file = dir.path + "/settings.json";
+    SettingsHarness h(1);
+    h.context.prefs.load(file);
+    h.app.open_settings(SettingsScreen::Section::more, true); // Turn sounds off has the focus
+    h.settle();
+    h.press(Action::confirm);
+    EXPECT_FALSE(h.context.prefs.sounds());
+    EXPECT_TRUE(h.feedback.cues.empty()); // not even this press
+    Prefs saved;
+    saved.load(file);
+    EXPECT_FALSE(saved.sounds());
+    h.press(Action::back); // out of the section, then out of App settings: silent
+    EXPECT_TRUE(h.feedback.cues.empty());
+    h.press(Action::back);
+    EXPECT_TRUE(h.feedback.cues.empty());
+    h.settle();
+    h.frame(Direction::right); // a tab moves, quietly
+    EXPECT_TRUE(h.feedback.cues.empty());
+    h.app.open_settings(SettingsScreen::Section::more, true);
+    h.settle();
+    h.press(Action::confirm); // Turn sounds on
+    EXPECT_TRUE(h.context.prefs.sounds());
+    EXPECT_FALSE(h.feedback.cues.empty());
+    saved.load(file);
+    EXPECT_TRUE(saved.sounds());
+}
+
+// A choice this console does not let the app save holds until the app closes,
+// and More settings says so, with the reason.
+TEST(SettingsSounds, AChoiceThatCannotBeSavedSaysSo)
+{
+    PrefsDir dir;
+    std::ofstream(dir.path + "/file") << "not a folder";
+    SettingsHarness h(1);
+    h.context.prefs.load(dir.path + "/file/settings.json");
+    h.app.open_settings(SettingsScreen::Section::more, true); // Turn sounds off has the focus
+    h.settle();
+    const char *said = "Changed until the app closes. The choice could not be saved on this console.";
+    EXPECT_FALSE(settings_show(h, said));
+    h.press(Action::confirm);
+    h.settle();
+    EXPECT_FALSE(h.context.prefs.sounds());
+    EXPECT_TRUE(settings_show(h, said));
+    EXPECT_TRUE(settings_show(h, "Not a directory"));
+    h.press(Action::confirm); // Turn sounds on: not saved either
+    h.settle();
+    EXPECT_TRUE(h.context.prefs.sounds());
+    EXPECT_TRUE(settings_show(h, said));
 }
 
 TEST(SettingsStepper, TheClientAcceptsOnlyOneToFour)

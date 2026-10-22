@@ -140,6 +140,8 @@ int main()
 
     orbit::http::SocketTransport transport(kBackend, kPort);
     orbit::http::SocketTransport art_transport(kBackend, kPort, 30000);
+    // XENO STORE: the community saves wait up to 15 s for the store's first list.
+    orbit::http::SocketTransport saves_transport(kBackend, kPort, 30000);
     // When Orbit isn't running, the app starts it through the jailbreak's ELF
     // loader: the copy Orbit saved, or the one in this package if newer.
     orbit::starter::LoaderStarter starter({}, [](const std::string &line)
@@ -154,12 +156,15 @@ int main()
         hui::sys::log("[XENO-TV] language %s unavailable; using English", language.c_str());
     hui::sys::log("[XENO-TV] language=%s system=%d", orbit::i18n::language().data(), system_language);
 
-    orbit::Store store(transport, &starter);
+    orbit::Store store(transport, &starter, &saves_transport);
     orbit::ArtCache art(art_transport, textures);
     store.start();
     art.start();
 
     orbit::Context context(type, fonts, store, art);
+    // XENO STORE: the app's own settings (Sounds), kept in its storage.
+    context.prefs.load(orbit::kPrefsPath);
+    sys::log("[XENO-TV] sounds=%d", context.prefs.sounds() ? 1 : 0);
     context.mark = mark;
     context.loader_mark = loader_mark;
     context.today = today();

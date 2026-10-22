@@ -321,6 +321,11 @@ def c_literals(toks, macros=None):
                     break
                 parts.append(value)
                 k += 1
+            if not parts:
+                # A string macro whose body names something that is not a
+                # string ("/user/app/" LI_TITLE_ID): no literal starts here.
+                k += 1
+                continue
             try:
                 out.add(b"".join(parts).decode("utf-8"))
             except UnicodeDecodeError:  # bytes such as a file signature, not a sentence

@@ -182,6 +182,17 @@ void refuse(Feedback &feedback, const InputFrame &input)
         feedback.play(hui::audio::Cue::error, 1.0f, 0.0f, 0.45f);
 }
 
+void pop_character(std::string &text)
+{
+    while (!text.empty())
+    {
+        const unsigned char c = static_cast<unsigned char>(text.back());
+        text.pop_back();
+        if ((c & 0xC0) != 0x80)
+            break;
+    }
+}
+
 hui::ui::Theme keyboard_theme()
 {
     hui::ui::Theme theme = hui::ui::themes()[0];

@@ -149,9 +149,22 @@
     row.get = function () { return row.classList.contains('on'); };
     return row;
   };
+  /* Entry tile (Library, Saves): icon, label, one-line description, then a count badge or a chevron. */
+  cb.entryTile = function (nav, icon, label, desc, onClick, badge) {
+    var el = h('button.lib-tile', { nav: nav, data: { hints: 'open' } }, [h('span.ic', { html: U.icon(icon) }), h('span.grow', [h('span.l', { text: label }), h('span.d', { text: desc })]), badge ? h('span.chip.sm.gold', { text: String(badge) }) : ui.svg('chevR')]);
+    el.addEventListener('click', onClick);
+    return el;
+  };
   cb.busy = function (text) { return h('div.panel.busy-row', [h('div.row', [h('span.skel', { style: { width: '18px', height: '18px', borderRadius: '50%', flex: '0 0 auto' } }), h('span.dim', { text: text })])]); };
   cb.spinnerBtn = function (btn, on) { if (!btn) return; btn.classList.toggle('busy', !!on); if (on) btn.setAttribute('aria-disabled', 'true'); else btn.removeAttribute('aria-disabled'); };
   cb.okToast = function (title, desc) { return ui.toast({ cls: 'good', title: title, desc: desc || '' }); };
+  /* "Back up all": the saves whose backup did not start (another backup, restore, install or transfer holds them),
+     with the console's reason. A dialog, so the toasts of the backups that did start cannot push it away. */
+  cb.backupSkipped = function (r) {
+    var s = (r && r.skipped) || [];
+    if (s.length) ui.dialog({ title: t('lib2.backupAllSkipped', { n: s.length }), body: s.slice(0, 6).map(function (x) { return h('p.dim', { text: x.message || x.titleId }); }).concat(s.length > 6 ? [h('p.dim', { text: '…' })] : []), buttons: [{ label: t('common.close'), primary: true, autofocus: true }] });
+    return s.length;
+  };
   /* Two confirmations in a row for destructive, irreversible actions (uninstall game, delete folder). */
   cb.doubleConfirm = function (title, text, okLabel, secondText) {
     return ui.confirm(title, text, okLabel, true).then(function (ok) {
@@ -285,6 +298,7 @@
       else html.removeAttribute('data-safe-mode');
       if (g.controllerSwapConfirm) html.setAttribute('data-swap-confirm', '1'); else html.removeAttribute('data-swap-confirm');
       cb.remap.fixLegend();
+      if (XS.router.fitChrome) XS.router.fitChrome();   /* large text needs more room on the top bar */
     }
   };
   /* L2 held while the store opens → safe mode for this session (Gamepad API only; the PS5 browser exposes it). */
@@ -396,9 +410,10 @@
   };
 
   /* ---------- Command palette (Ctrl/Cmd+K): screens, settings, recent games, catalog search ---------- */
+  /* in tab order, then the other screens; `also` is a second name the screen is found by (the Saves tab's page title) */
   var SCREENS = [
-    { id: 'discover', icon: 'compass' }, { id: 'browse', icon: 'grid' }, { id: 'homebrew', icon: 'box' }, { id: 'downloads', icon: 'download' }, { id: 'library', icon: 'library' },
-    { id: 'saves', icon: 'shield' }, { id: 'updates', icon: 'refresh' }, { id: 'saveshub', icon: 'folder' }, { id: 'setup', icon: 'check' }, { id: 'settings', icon: 'settings' }
+    { id: 'discover', icon: 'compass' }, { id: 'browse', icon: 'grid' }, { id: 'saves', icon: 'shield', also: 'saves.title' }, { id: 'downloads', icon: 'download' }, { id: 'library', icon: 'library' },
+    { id: 'homebrew', icon: 'box' }, { id: 'updates', icon: 'refresh' }, { id: 'saveshub', icon: 'folder' }, { id: 'setup', icon: 'check' }, { id: 'settings', icon: 'settings' }
   ];
   var SETTING_GROUPS = ['general', 'downloads', 'debrid', 'sources', 'catalog', 'saves', 'accounts', 'setup', 'pair', 'updates', 'notifications', 'diagnostics', 'about', 'uninstall'];
   cb.groupLabel = function (gid) { return XS.i18n.has('set.group.' + gid) ? t('set.group.' + gid) : (XS.i18n.has('settings2.group.' + gid) ? t('settings2.group.' + gid) : gid); };
@@ -408,8 +423,8 @@
     var items = [];
     SCREENS.forEach(function (s) {
       if (!XS.router.defs[s.id]) return;
-      var label = screenLabel(s.id);
-      if (!q || label.toLowerCase().indexOf(q) >= 0 || s.id.indexOf(q) >= 0) items.push({ kind: 'screen', icon: s.icon, label: label, sub: t('palette.kind.screen'), run: function () { XS.router.go(s.id); } });
+      var label = screenLabel(s.id), also = s.also ? t(s.also).toLowerCase() : '';
+      if (!q || label.toLowerCase().indexOf(q) >= 0 || s.id.indexOf(q) >= 0 || (also && also.indexOf(q) >= 0)) items.push({ kind: 'screen', icon: s.icon, label: label, sub: t('palette.kind.screen'), run: function () { XS.router.go(s.id); } });
     });
     SETTING_GROUPS.forEach(function (g) {
       var label = cb.groupLabel(g);

@@ -23,6 +23,9 @@ template <typename T> struct Result
     T value{};
     int status = 0;    // HTTP status, 0 when the backend was not reached
     std::string error; // empty on success: the backend's message, or a transport reason
+    // XENO STORE: the refusal's code where the reply has one (the Save Data
+    // Store's routes outside /api/v1 answer {"error": code, "message": ...}).
+    std::string code;
     int retry_after = -1;
 
     bool ok() const
@@ -139,11 +142,25 @@ class Client
     // from the console unless a PIN is set (401).
     Result<bool> legacy_stop();
 
+    // XENO STORE: the Save Data Store (docs/API.md "/api/saves/..."), with
+    // the same session token. The first list can take the store 15 s (it
+    // builds its index): give these calls a transport that waits that long.
+    // A store without it answers the list with 404.
+    Result<SaveListing> save_store(bool refresh = false);
+    Result<std::vector<SaveProfile>> save_users();
+    // Installs a community save for a profile (0: the signed-in one), always
+    // backing up the profile's current save first. The value is the job.
+    Result<SaveJob> install_save(std::string_view save_id, std::uint32_t user);
+    Result<SaveJob> save_job(std::string_view job_id);
+    Result<SaveJob> cancel_save_job(std::string_view job_id);
+
   private:
     Result<BrowserSession> browser_request(std::string body = {});
     http::Response send(const char *method, std::string path, std::string body = {},
                         std::size_t max_bytes = 0);
     template <typename T> bool fail(const http::Response &response, Result<T> *result);
+    template <typename T> bool fail_saves(const http::Response &response, Result<T> *result);
+    Result<SaveJob> save_job_request(const char *method, std::string path, std::string body);
 
     http::Transport &transport_;
     std::string token_;
@@ -151,5 +168,8 @@ class Client
 
 // Characters allowed in IDs placed into request paths.
 bool safe_path_segment(std::string_view value);
+// A community save's ID as one path segment ("sb:<uuid>" -> "sb%3A<uuid>");
+// empty when it is empty or longer than the store accepts.
+std::string save_path_segment(std::string_view id);
 
 } // namespace orbit::api

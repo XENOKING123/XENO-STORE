@@ -25,13 +25,26 @@ garlic-savemgr src/main.c route by route, single recv() per request included):
   * profile-to-profile transfer re-signed through Garlic (export for the
     source profile, import for the destination; a move removes the source),
     and refused while the title runs;
+  * a backup takes the same (profile, title) claim as an install or restore:
+    refused (busy) while one runs, skipped with its reason by "back up all",
+    and given back whether the backup worked or failed; both "Back up all"
+    buttons of the UI (Saves hub, Settings) show the skipped saves with the
+    console's reason (the real UI in Chromium, when node and Playwright are
+    installed);
   * Garlic down: status/setup report it, POST /api/saves/garlic/start sends
     the pinned companion release (downloaded, sha256 checked) to a fake ELF
     loader and waits for the port, and falls back to an ELF on the console
     only when the release cannot be downloaded; never a second copy while one
     answers (start or payload Launch); a foreign program on the port is not
     mistaken for Garlic; a running title blocks its save install, transfer
-    and export.
+    and export;
+  * a companions list whose sha256 is a placeholder ("FILLED-BY-OWNER", as
+    1.2.1 cached it): the payload is listed as not available and refuses to
+    install, and Garlic is never downloaded against it (the host build pins
+    no release URL, so a copy on the console is started instead); with a
+    pinned URL (XENO_GARLIC_BASE serves a stand-in for the release) the pin
+    takes the Garlic entry's place: listed, installed and started from the
+    pinned URL and digest, never from the entry's.
 
 The native tier simulation is off (XENO_SIM_NATIVE=0) and every port is a test
 port (XENO_PORT_GARLIC / XENO_PORT_LOADER), so nothing touches /data or the
@@ -141,11 +154,13 @@ EXPECTED_UPLOADS = {"game.dat": len(GAME_DAT), "data/sub/file.bin": len(BIN_DAT)
 
 class Files(http.server.BaseHTTPRequestHandler):
     routes = {}
+    log = []
 
     def log_message(self, *a):
         pass
 
     def _send(self, head):
+        self.log.append(self.path.split("?", 1)[0])
         r = self.routes.get(self.path.split("?", 1)[0])
         if r is None:
             r = (404, "application/json", b'{"error":"not found"}')
@@ -169,7 +184,8 @@ class Files(http.server.BaseHTTPRequestHandler):
 class FilesServer:
     def __init__(self):
         self.routes = {}
-        handler = type("FilesH", (Files,), {"routes": self.routes})
+        self.log = []
+        handler = type("FilesH", (Files,), {"routes": self.routes, "log": self.log})
         self.srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
         self.srv.daemon_threads = True
         self.port = self.srv.server_address[1]
@@ -207,12 +223,7 @@ class Base(unittest.TestCase):
         cls.files = FilesServer()
         cls.companion_elf = b"\x7fELF" + b"GARLIC-FROM-RELEASE" + bytes(range(256)) * 32
         cls.files.add("/garlic.elf", cls.companion_elf)
-        cls.files.add("/companions.json", json.dumps({"payloads": [
-            {"id": "garlic-save-manager", "name": "Garlic Save Manager", "kind": "saves", "version": "1.7",
-             "url": cls.files.base + "/garlic.elf", "sha256": hashlib.sha256(cls.companion_elf).hexdigest()},
-            {"id": "np-fake-signout", "name": "NP fake sign-out", "kind": "np-signout", "url": "", "unavailable": True,
-             "unavailableReason": "no upstream asset"},
-        ]}), "application/json")
+        cls.files.add("/companions.json", json.dumps({"payloads": cls.companions()}), "application/json")
         rows = []
         for sid, title, dirname, entries in cls.zips():
             z = make_zip(entries)
@@ -222,7 +233,7 @@ class Base(unittest.TestCase):
         cls.files.add("/saves.json", json.dumps({"schemaVersion": 1, "saves": rows}), "application/json")
         env = {"XENO_SIM_NATIVE": "0", "XENO_PORT_GARLIC": str(cls.garlic_port), "XENO_PORT_LOADER": str(cls.loader.port),
                "XENO_PORT_DPI": "1", "XENO_PORT_ETAHEN": "1", "XENO_PORT_SHADOWMOUNT": "1"}
-        env.update(cls.extra_env)
+        env.update({k: v.format(files=cls.files.base) for k, v in cls.extra_env.items()})
         cls.srv = harness.XenoServer(cls.data, env=env).start()
         st, b = cls.srv.api("PUT", "/api/settings", {
             "catalog": {"companionsUrl": cls.files.base + "/companions.json", "featuredUrl": cls.files.base + "/none.json",
@@ -245,6 +256,13 @@ class Base(unittest.TestCase):
     @classmethod
     def on_payload(cls, data):
         pass
+
+    @classmethod
+    def companions(cls):
+        return [{"id": "garlic-save-manager", "name": "Garlic Save Manager", "kind": "saves", "version": "1.7",
+                 "url": cls.files.base + "/garlic.elf", "sha256": hashlib.sha256(cls.companion_elf).hexdigest()},
+                {"id": "np-fake-signout", "name": "NP fake sign-out", "kind": "np-signout", "url": "", "unavailable": True,
+                 "unavailableReason": "no upstream asset"}]
 
     @classmethod
     def zips(cls):
@@ -635,6 +653,53 @@ class GarlicFlowTests(Base):
         self.assertEqual(self.job_of(b)["state"], "done")
         self.assertEqual(len(self.since(m, "/api/create_pfs")), 2)          # the install's and the guest's restore
 
+    def test_13d_backups_take_the_save_claim(self):
+        # a backup zips the folder a restore or install swaps: while an install holds (PLAYER, TITLE) it is refused
+        self.garlic.delay = {"/api/create_pfs": 2.0}
+        try:
+            m = self.mark()
+            st, b = self.srv.api("POST", "/api/saves/store/sv_plain/install", {"user": PLAYER, "backupFirst": False})
+            self.assertEqual(st, 200, b)
+            deadline = time.time() + 20
+            while not self.since(m, "/api/create_pfs") and time.time() < deadline:
+                time.sleep(0.05)
+            self.assertTrue(self.since(m, "/api/create_pfs"))
+            st1, one = self.srv.api("POST", "/api/saves/backup", {"user": PLAYER, "titleId": TITLE})
+            st2, every = self.srv.api("POST", "/api/saves/backup", {"user": PLAYER, "all": True})
+        finally:
+            self.garlic.delay = {}
+        self.assertEqual(self.job_of(b)["state"], "done")
+        backups = [self.job_of({"job": {"id": jid}}) for jid in every.get("jobs", [])]
+        if st1 == 200:
+            backups.append(self.job_of(one))
+        self.assertEqual(st1, 429, one)
+        self.assertEqual(one.get("error"), "busy", one)
+        self.assertIn("still running", one.get("message", ""))
+        # backup all: the held title is skipped with its reason, the others start
+        self.assertEqual(st2, 200, every)
+        self.assertEqual([(s["titleId"], s["error"]) for s in every["skipped"]], [(TITLE, "busy")], every)
+        self.assertIn("still running", every["skipped"][0]["message"])
+        self.assertEqual(every["started"], len(every["jobs"]))
+        self.assertEqual([j["state"] for j in backups], ["done"] * len(backups))
+        # the claim is given back on every exit path: a finished backup, then a failed one, then a restore runs
+        st, b = self.srv.api("POST", "/api/saves/backup", {"user": PLAYER, "titleId": TITLE, "wait": True})
+        self.assertEqual(st, 200, b)
+        done = self.job_of(b)
+        self.assertEqual(done["state"], "done", done)
+        dest = os.path.dirname(done["result"]["zipPath"])
+        os.rename(dest, dest + ".off")
+        write(dest, b"not a folder")
+        try:
+            st, b = self.srv.api("POST", "/api/saves/backup", {"user": PLAYER, "titleId": TITLE, "wait": True})
+            self.assertEqual(st, 200, b)
+            failed = self.job_of(b)
+        finally:
+            os.unlink(dest)
+            os.rename(dest + ".off", dest)
+        self.assertEqual(failed["state"], "failed", failed)
+        st, r = self.srv.api("POST", "/api/saves/restore", {"user": PLAYER, "zipPath": done["result"]["zipPath"], "overwrite": True})
+        self.assertEqual(st, 200, r)
+
     def test_14_garlic_without_the_import_api_is_not_used(self):
         self.garlic.no_import_api = True
         try:
@@ -845,6 +910,185 @@ class GarlicStartTests(Base):
         with open(img, "rb") as f:
             self.assertEqual(f.read(), b"PLAYER-IMAGE")                 # the source keeps its loadable save
         self.assertFalse(os.path.exists(os.path.join(self.home(GUEST), "savedata_prospero", TITLE)))
+
+
+# ---------------------------------------------------------------------------
+# a companions list with placeholder hashes (what a 1.2.1 console cached)
+# ---------------------------------------------------------------------------
+
+class PlaceholderCompanionTests(Base):
+    garlic_running_at_start = False
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.files.add("/garlic-placeholder.elf", cls.companion_elf)          # served; only its hash is unknown
+        cls.files.add("/shadowmount.elf", b"\x7fELF" + b"SHADOWMOUNT" + bytes(range(256)))
+        cls.console_elf = b"\x7fELF" + b"GARLIC-ON-THE-CONSOLE" + bytes(range(256)) * 32
+        cls.console_path = os.path.join(cls.sim, "data", "homebrew", "Garlic SaveMgr", "Garlic-SaveMgr.ELF")
+
+    @classmethod
+    def companions(cls):
+        return [{"id": "garlic-save-manager", "name": "Garlic Save Manager", "kind": "saves", "version": "1.0",
+                 "url": cls.files.base + "/garlic-placeholder.elf", "sha256": "FILLED-BY-OWNER"},
+                {"id": "shadowmount-plus", "name": "ShadowMountPlus", "kind": "shadowmount", "version": "1.0",
+                 "url": cls.files.base + "/shadowmount.elf", "sha256": "FILLED-BY-OWNER"}]
+
+    @classmethod
+    def on_payload(cls, data):
+        if data[:4] == b"\x7fELF" and not cls.garlic.running():
+            cls.garlic.start()
+
+    def start_garlic(self):
+        st, b = self.srv.api("POST", "/api/saves/garlic/start", {"wait": True})
+        self.assertEqual(st, 200, b)
+        return self.job_of(b)
+
+    def test_01_payload_is_not_available(self):
+        st, b = self.srv.api("GET", "/api/payloads")
+        self.assertEqual(st, 200, b)
+        sm = {p["id"]: p for p in b["payloads"]}["shadowmount-plus"]
+        self.assertFalse(sm["available"], sm)
+        self.assertIn("placeholder", sm["unavailableReason"])
+        st, b = self.srv.api("POST", "/api/payloads/shadowmount-plus/install", {})
+        self.assertEqual(st, 422, b)
+        self.assertEqual(b.get("error"), "unavailable", b)
+        self.assertIn("placeholder", b.get("message", ""))
+        self.assertNotIn("/shadowmount.elf", self.files.log)
+
+    def test_02_garlic_is_never_downloaded_against_a_placeholder(self):
+        # the host build pins no release URL, so the placeholder entry leaves nothing to download
+        st, b = self.srv.api("GET", "/api/saves/garlic")
+        self.assertEqual(st, 200, b)
+        self.assertNotEqual(b["garlic"].get("source"), "download", b)
+        self.assertFalse(b["garlic"]["canStart"], b)
+        j = self.start_garlic()
+        self.assertEqual(j["state"], "failed", j)
+        self.assertIn("not available for download", j["error"])
+        self.assertNotIn("sha256 mismatch", j["error"])
+        # a copy on the console is started instead
+        write(self.console_path, self.console_elf)
+        j = self.start_garlic()
+        self.assertEqual(j["state"], "done", j)
+        self.assertEqual(self.loader.received, [self.console_elf])
+        self.assertNotIn("/garlic-placeholder.elf", self.files.log)
+
+
+PINNED_SHA = "124051ab3a762474720ae53187d2920bc96d6be1d69aa298e715667efc385a2f"   # CX_GARLIC_ELF_SHA256
+
+
+class PinnedPlaceholderTests(Base):
+    garlic_running_at_start = False
+    extra_env = {"XENO_GARLIC_BASE": "{files}/pin"}
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # served at the pinned URL but not the pinned file: its sha256 check fails once it is downloaded
+        cls.files.add("/pin/garlic-savemgr.elf", b"\x7fELF" + b"STAND-IN-FOR-THE-PINNED-RELEASE" + bytes(range(256)))
+        cls.files.add("/garlic-placeholder.elf", cls.companion_elf)
+
+    @classmethod
+    def companions(cls):
+        return [{"id": "garlic-save-manager", "name": "Garlic Save Manager", "kind": "saves", "version": "1.0",
+                 "url": cls.files.base + "/garlic-placeholder.elf", "sha256": "FILLED-BY-OWNER"}]
+
+    def test_01_the_pin_is_listed_installed_and_started(self):
+        pin = self.files.base + "/pin/garlic-savemgr.elf"
+        st, b = self.srv.api("GET", "/api/payloads")
+        self.assertEqual(st, 200, b)
+        g = {p["id"]: p for p in b["payloads"]}["garlic-save-manager"]
+        self.assertEqual((g["available"], g["version"], g["url"], g["sha256"]), (True, "1.7", pin, PINNED_SHA), g)
+        st, b = self.srv.api("GET", "/api/saves/garlic")
+        self.assertEqual(st, 200, b)
+        self.assertEqual((b["garlic"].get("source"), b["garlic"].get("version"), b["garlic"]["canStart"]), ("download", "1.7", True), b)
+        # the payload install and the Garlic start both download the pinned URL against the pinned digest
+        st, b = self.srv.api("POST", "/api/payloads/garlic-save-manager/install", {})
+        self.assertEqual(st, 200, b)
+        j = self.job_of(b)
+        self.assertEqual(j["state"], "failed", j)
+        self.assertIn("sha256 mismatch", j["error"])
+        st, b = self.srv.api("POST", "/api/saves/garlic/start", {"wait": True})
+        self.assertEqual(st, 200, b)
+        j = self.job_of(b)
+        self.assertEqual(j["state"], "failed", j)
+        self.assertIn("sha256 mismatch", j["error"])
+        self.assertEqual(self.files.log.count("/pin/garlic-savemgr.elf"), 2)
+        self.assertNotIn("/garlic-placeholder.elf", self.files.log)
+        self.assertEqual(self.loader.received, [])
+
+
+# ---------------------------------------------------------------------------
+# "Back up all" in the UI the console serves: the skipped saves are shown
+# ---------------------------------------------------------------------------
+
+BACKUP_ALL_SCRIPT = r"""
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.XENO_PLAYWRIGHT);
+const base = process.argv[2];
+const answers = JSON.parse(process.argv[3]);
+const browser = await chromium.launch();
+try {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await page.addInitScript(() => { localStorage.setItem('xs.wizardDone', 'true'); });   // no first-run wizard over the screen
+  // the console's answers while another operation holds a save (test_13d checks the console's side)
+  let n = 0;
+  await page.route('**/api/saves/backup', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(answers[n++]) }));
+  await page.goto(base + '/');
+  await page.waitForFunction(() => window.XS && XS.router && document.querySelector('#scr-discover'), null, { timeout: 30000 });
+  const backUpAll = async (button) => {
+    await page.click(button);
+    const answered = page.waitForResponse((r) => new URL(r.url()).pathname === '/api/saves/backup');
+    await page.click('.dialog-wrap [data-nav-id="dlg-1"]');                   // the confirmation
+    await answered;
+    await page.waitForTimeout(1000);
+    const shown = await page.evaluate(() => ({
+      dialogs: Array.from(document.querySelectorAll('.dialog-wrap .dialog')).map((d) => d.innerText),
+      toasts: Array.from(document.querySelectorAll('#toasts .toast')).map((d) => d.innerText),
+    }));
+    await page.evaluate(() => { document.querySelectorAll('#toasts .toast').forEach((e) => e.remove()); });
+    if (shown.dialogs.length) await page.click('.dialog-wrap [data-nav-id="dlg-0"]');
+    await page.waitForTimeout(500);
+    return shown;
+  };
+  const out = {};
+  await page.evaluate(() => XS.router.go('saveshub'));
+  await page.waitForSelector('#scr-saveshub [data-nav-id^="sh-user-"]', { timeout: 30000 });
+  out.hub = await backUpAll('#scr-saveshub [data-nav-id="sh-backup-all"]');
+  await page.evaluate(() => XS.router.go('settings'));
+  out.settings = await backUpAll('#scr-settings [data-nav-id="sv-backupall"]');
+  console.log(JSON.stringify(out));
+} finally {
+  await browser.close();
+}
+"""
+
+
+class BackupAllUiTests(Base):
+    @classmethod
+    def setUpClass(cls):
+        cls.pw = harness.playwright_module()
+        if not cls.pw:
+            raise unittest.SkipTest("node with Playwright is not installed")
+        super().setUpClass()
+
+    def test_01_skipped_saves_are_shown_with_the_reason(self):
+        busy = {"titleId": TITLE, "kind": "ps5", "error": "busy",
+                "message": "another backup, restore, install or transfer of the %s save is still running — wait for it to finish" % TITLE}
+        answers = [{"ok": True, "jobs": [], "started": 0, "skipped": [busy]},                      # the only save is held
+                   {"ok": True, "jobs": ["j-other"], "started": 1, "skipped": [busy]}]             # one started, one held
+        out = harness.run_ui_script(self, self.pw, self.tmp, BACKUP_ALL_SCRIPT, self.srv.base, json.dumps(answers))
+        hub, settings = out["hub"], out["settings"]
+        # the Saves hub: no "Nothing to back up", the held save and why
+        self.assertEqual(len(hub["dialogs"]), 1, hub)
+        self.assertIn("1 save was not backed up", hub["dialogs"][0])
+        self.assertIn(busy["message"], hub["dialogs"][0])
+        self.assertFalse([x for x in hub["toasts"] if "Nothing to back up" in x], hub)
+        # Settings: the backup that started and the one that did not
+        self.assertEqual(len(settings["dialogs"]), 1, settings)
+        self.assertIn(busy["message"], settings["dialogs"][0])
+        self.assertTrue([x for x in settings["toasts"] if "1 backup started" in x], settings)
 
 
 if __name__ == "__main__":

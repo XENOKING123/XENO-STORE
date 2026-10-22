@@ -23,4 +23,30 @@ export function register({ route, state }) {
     if (String((body && body.code) || '') !== CODE) throw new ApiError(403, 'bad_code', 'Pairing failed. Check the code shown on the console.');
     return { ok: true, token: TOKEN, paired: true };
   });
+  /* Settings → Pair a device: the paired list (this browser is the iPhone once linked), unpair one / all others.
+   * Like the console, only the console itself or a linked browser may look or unpair. */
+  const now = Math.floor(Date.now() / 1000);
+  let devices = [
+    { id: '3f9a1c2b7d4e5a60', name: 'iPhone Safari', firstSeen: now - 9 * 86400, lastSeen: now - 40, token: TOKEN },
+    { id: 'a07c5e12b9d84f31', name: 'Windows Chrome', firstSeen: now - 30 * 86400, lastSeen: now - 3 * 3600 },
+    { id: '5d2e8b40c1f7a963', name: 'XENO STORE Desktop', firstSeen: now - 12 * 86400, lastSeen: now - 4 * 86400 },
+    { id: 'c48b0f6e2a9d1735', name: '', firstSeen: 0, lastSeen: 0 }
+  ];
+  const caller = (req) => { if (remote && bearer(req) !== TOKEN) throw new ApiError(403, 'not_paired', 'Pair this device first.'); return bearer(req); };
+  const listing = (self) => ({ devices: devices.map((d) => ({ id: d.id, name: d.name, firstSeen: d.firstSeen, lastSeen: d.lastSeen, current: !!d.token && d.token === self })), max: 16 });
+  route('GET', /^\/api\/pair\/devices$/, (q, body, mm, req) => Object.assign({ ok: true }, listing(caller(req))));
+  route('POST', /^\/api\/pair\/unpair$/, (q, body, mm, req) => {
+    const self = caller(req);
+    const id = String((body && body.id) || '');
+    if (!id) throw new ApiError(400, 'bad_request', 'id is required');
+    if (!devices.some((d) => d.id === id)) throw new ApiError(404, 'not_found', 'No paired device has that id.');
+    devices = devices.filter((d) => d.id !== id);
+    return Object.assign({ ok: true, unpaired: true }, listing(self));
+  });
+  route('POST', /^\/api\/pair\/unpair-others$/, (q, body, mm, req) => {
+    const self = caller(req);
+    const before = devices.length;
+    devices = devices.filter((d) => d.token && d.token === self);
+    return Object.assign({ ok: true, unpaired: before - devices.length }, listing(self));
+  });
 }

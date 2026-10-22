@@ -2,6 +2,7 @@
   "nav": {
     "discover": "Odkrywaj",
     "browse": "Przeglądaj",
+    "saves": "Zapisy",
     "library": "Biblioteka",
     "downloads": "Pobierania",
     "search": "Szukaj",
@@ -395,7 +396,7 @@
     "verifyHashes": "Weryfikuj hashe",
     "verifyHashesHint": "Sprawdzaj SHA-256 po pobraniu, gdy katalog go zna",
     "autoInstall": "Automatycznie instaluj PKG",
-    "autoInstallHint": "Instaluj pakiety, gdy tylko się zakończą",
+    "autoInstallHint": "Instaluj pakiety, gdy tylko się zakończą. Domyślne dla nowych pobrań; każde pobieranie może wybrać samo.",
     "shadowScan": "Skan ShadowMount",
     "shadowScanHint": "Poproś ShadowMountPlus o ponowny skan po pobraniu obrazu",
     "keepAwake": "Nie usypiaj konsoli",
@@ -578,6 +579,7 @@
     "not_found": "Nie znaleziono na konsoli",
     "forbidden": "Host odrzucił żądanie",
     "pin_required": "Ta konsola potrzebuje PIN-u, zanim przyjmie zmiany",
+    "not_paired": "Ta przeglądarka została odłączona od PS5. Połącz ją ponownie, aby dalej korzystać z XENO STORE.",
     "rate_limited": "Host nas ogranicza – ponawianie z mniejszą liczbą połączeń",
     "transport": "Połączenie zostało zerwane – automatyczne ponawianie",
     "fix": {

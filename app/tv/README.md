@@ -23,7 +23,7 @@ provenance, every licence and every changed file.
   without `/api/v1` (1.2.x) on the port is named on the opening screen,
   with **Replace it now** and **Open browser version**.
 - **Install** as `app/README.md` ("How people install it") describes: the
-  store's **Install the XENO STORE app**, or `PPSA99500.ffpkg` copied to
+  store's **Settings → Updates → XENO STORE app → Install the app**, or `PPSA99500.ffpkg` copied to
   `/data/homebrew/`.
 - **Log:** `/download0/hui/dev/app.log` in the app's sandbox, that is
   `/mnt/sandbox/PPSA99500_000/download0/hui/dev/app.log` over FTP while it
@@ -51,19 +51,23 @@ It follows the browser storefront's design and rules (`src/`)
 screen for screen:
 
 - **Discover** (the opening page): the focused game's art behind the hero,
-  then New on Orbit, Latest releases and an All games grid, largest downloads first,
-  with 96 games per page.
+  then New on Orbit, Latest releases and an All games grid, largest downloads first:
+  one grid of every game, no pages; L2 / R2 jump 16 rows.
 - **Browse**: search, All games or Favourites, Source,
   Platform, Format, Region, Download size and Sort by (release date, newest first, by default),
   Reset filters, and a grid of covers with each game's state.
 - **Quick favourites**: press Square on the selected game in Browse or Discover
-  to save it or remove it from your favourites.
+  to save it or remove it from your favourites. A toast with a heart confirms
+  it, wherever a favourite is saved in the app.
 - **Library**: the games ShadowMount reports on the console and its drives,
   with the status views, search, Location and Format; a game's details with
   Mount/Unmount and Copy/Move to drive (the same confirmations as the web);
   Storage with each drive's games and Measure game sizes; Scan for games.
 - **Downloads**: Active, Finished, Failed and Cancelled, with pause, resume,
   retry, cancel (keep or delete the partial file) and remove from history.
+  A PKG that XENO STORE installs once it is downloaded reads Installing (with
+  nothing to press until it ends), then Installed (a badge); a failed install
+  is under Failed with Retry install, and the focus follows the row to Finished.
 - **Game page**: full-width artwork, the tagline and description, a primary
   download button, Favourite and About. The primary opens Download options;
   Source, Download using and Save to each open a choice panel. Back restores
@@ -71,7 +75,8 @@ screen for screen:
   View download / View in Library / Download another copy, storage estimates,
   metadata and Vikingfile instructions remain available.
 - **App settings** (the gear in the top bar): Download sources, Storage (the
-  default drive), Pair a device, Game catalogue and Updates. See below.
+  default drive), Pair a device, Game catalogue, Updates, More settings and
+  About. See below.
 
 Connect TorBox in the browser's **App settings → Debrid**, then select
 **Download using → TorBox** on a supported game's native download page.
@@ -128,7 +133,17 @@ right (Right or Cross to enter it, Circle or Left to leave).
     Orbit doesn't answer within 15 seconds). Without a loader it says to run
     `/data/orbit-store/orbit_store.elf` from a payload manager, and
     reconnects by itself. A toast names the version that came back.
-- **More settings**: Open browser version, and both versions side by side.
+- **More settings**: Open browser version; **Sounds**, which turns the
+  app's interface sounds off or on (kept on this console, in
+  `/download0/xeno-store/settings.json` of the app's storage; if that file
+  can't be written, the choice holds until the app closes and the section
+  says so); both versions side by side.
+- **About**: XENO STORE's version (the running download service) and the TV
+  app's; that the app is based on Orbit Store's TV app and BlackBearReloaded's
+  ps5-homebrew-ui; the GPL-3.0 notice (no warranty); where its source is
+  (`XENO-STORE-<TV app version>-tv-sources.tar.gz` on
+  github.com/XENOKING123/XENO-STORE/releases); and the third-party components
+  of `NOTICE`, which names each one's licence and where its text is.
 
 When the app opens it asks Orbit to look for updates of both parts (the
 same automatic check the browser makes, with a shared six-hour cooldown).
@@ -194,7 +209,8 @@ Keep `downloadDataSize` in `sce_sys/param.json` at 256, the kit's package value.
 
 The app writes only its own log (`/download0/hui/dev/app.log` inside its
 sandbox; `/mnt/sandbox/PPSA99177_000/download0/hui/dev/app.log` over FTP
-while it runs). Close it with the PS button and Close Application.
+while it runs) and its own settings file (`/download0/xeno-store/settings.json`,
+also inside its sandbox). Close it with the PS button and Close Application.
 
 ## Interface language
 
@@ -212,6 +228,7 @@ The interface translations share `i18n/` with the browser. The build packages th
 | L1 / R1 | Previous / next tab |
 | Square | On a selected Browse or Discover game: toggle Favourite. In search: delete. In Browse's field: clear the search. In Library: cancel a running copy or move. On a game page: About. |
 | Triangle | In search: space. In the Browse grid: search again. On a game page: toggle Favourite. |
+| L2 / R2 | In the Browse and Discover game grids: jump 16 rows (96 games) up / down, keeping the column |
 
 Dropdowns (filters, Save to, a copy's destination) open with Cross; move with
 the D-pad, choose with Cross, close with Circle.

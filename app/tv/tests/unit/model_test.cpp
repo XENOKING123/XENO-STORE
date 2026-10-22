@@ -74,6 +74,75 @@ TEST(Model, ArchivePasswordRetryUsesBackendCapability)
     EXPECT_FALSE(parse_jobs(value).front().can_enter_archive_password);
 }
 
+TEST(Model, GridJumpKeepsTheColumnAndStopsAtTheEnds)
+{
+    EXPECT_EQ(grid_jump(1, 250, 6, 16), 97);
+    EXPECT_EQ(grid_jump(193, 250, 6, 16), 247); // the last row, same column
+    EXPECT_EQ(grid_jump(5, 250, 6, 100), 249);  // a short last row ends on its final tile
+    EXPECT_EQ(grid_jump(151, 250, 6, -16), 55);
+    EXPECT_EQ(grid_jump(55, 250, 6, -16), 1);
+    EXPECT_EQ(grid_jump(3, 4, 6, 16), 3); // one row: nowhere to go
+    EXPECT_EQ(grid_jump(0, 0, 6, 16), 0);
+}
+
+// XENO STORE: a finished PKG's install, as the store reports it on a
+// complete row. A failed install needs attention: it shows under Failed.
+TEST(Model, AFinishedDownloadsInstallState)
+{
+    json::Value value;
+    ASSERT_TRUE(json::parse(R"([
+        {"id":"a","status":"complete","installState":"installing","order":1},
+        {"id":"b","status":"complete","installState":"installed","order":2},
+        {"id":"c","status":"complete","installState":"failed","error":"Install failed: Not a PS4/PS5 package.","order":3},
+        {"id":"d","status":"complete","installState":"pending","order":4},
+        {"id":"e","status":"complete","order":5},
+        {"id":"f","status":"error","installState":"failed","error":"Download failed.","order":6}])",
+                            &value));
+    const auto jobs = parse_jobs(value);
+    ASSERT_EQ(jobs.size(), 6u);
+    EXPECT_EQ(jobs[0].install_state, "installing");
+    EXPECT_EQ(jobs[4].install_state, ""); // an older store says nothing
+    EXPECT_EQ(job_install(jobs[0]), JobInstall::installing);
+    EXPECT_EQ(job_install(jobs[1]), JobInstall::installed);
+    EXPECT_EQ(job_install(jobs[2]), JobInstall::failed);
+    EXPECT_EQ(job_install(jobs[3]), JobInstall::none); // an install set waits for its other files
+    EXPECT_EQ(job_install(jobs[4]), JobInstall::none);
+    EXPECT_EQ(job_install(jobs[5]), JobInstall::none); // only a complete row has one
+    EXPECT_EQ(job_view(jobs[0]), JobView::finished);
+    EXPECT_EQ(job_view(jobs[1]), JobView::finished);
+    EXPECT_EQ(job_view(jobs[2]), JobView::failed);
+    EXPECT_EQ(job_view(jobs[4]), JobView::finished);
+    // The row says "Install failed"; the line under it gives the store's reason.
+    EXPECT_EQ(install_failure(jobs[2]), "Not a PS4/PS5 package.");
+    EXPECT_EQ(install_failure(jobs[5]), "");
+}
+
+// XENO STORE: the download sheet leaves out "installation is separate" for a
+// PKG the store installs by itself.
+TEST(Model, APkgInstallsByItselfWhileTheStoreSaysSo)
+{
+    json::Value value;
+    ASSERT_TRUE(json::parse("{}", &value));
+    const System older = parse_system(value);
+    EXPECT_FALSE(older.auto_install_pkg);
+    ASSERT_TRUE(json::parse(R"({"autoInstallPkg":true})", &value));
+    const System system = parse_system(value);
+    EXPECT_TRUE(system.auto_install_pkg);
+    Release pkg;
+    pkg.format = "PKG";
+    Release fpkg;
+    fpkg.format = "FPKG";
+    Release image;
+    image.format = "FFPFSC";
+    Release zipped = pkg;
+    zipped.compression = "zip"; // extracted, not installed
+    EXPECT_TRUE(installs_by_itself(pkg, system));
+    EXPECT_TRUE(installs_by_itself(fpkg, system));
+    EXPECT_FALSE(installs_by_itself(image, system));
+    EXPECT_FALSE(installs_by_itself(zipped, system));
+    EXPECT_FALSE(installs_by_itself(pkg, older));
+}
+
 TEST(Model, DownloadLimitDefaultsAndReadsSharedConsoleSetting)
 {
     json::Value value;
@@ -582,6 +651,15 @@ TEST(Model, TheAppsVersionComesFromItsContentVersion)
     EXPECT_EQ(app_release_version("01.00a.000"), "");
     EXPECT_EQ(app_release_version("01-000-000"), "");
     EXPECT_EQ(app_release_version(""), "");
+}
+
+// XENO STORE: each release attaches the TV app's complete source under this
+// name (.github/workflows/build.yml); App settings, About names it.
+TEST(Model, TheSourceArchiveOfARelease)
+{
+    EXPECT_EQ(tv_source_archive("1.3.1"), "XENO-STORE-1.3.1-tv-sources.tar.gz");
+    EXPECT_EQ(tv_source_archive(app_release_version("01.012.000")), "XENO-STORE-1.12.0-tv-sources.tar.gz");
+    EXPECT_EQ(tv_source_archive(""), "XENO-STORE-<version>-tv-sources.tar.gz");
 }
 
 TEST(Model, AgesAndChecksAreRelativeToNow)

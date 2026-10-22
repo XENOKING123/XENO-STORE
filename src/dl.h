@@ -49,6 +49,7 @@ typedef struct dl_install {
   char via[24];
   time_t startedAt;
   int rc;
+  int pkgDeleted;       /* downloads.deletePkgAfterInstall removed the .pkg once it installed */
 } dl_install;
 
 /* Turbo start (SPEC §17.5): the first 1 MiB of up to 3 mirrors is raced. */
@@ -117,6 +118,7 @@ typedef struct dl_job {
   dl_extract extract;
   double peakSpeed;                    /* best 1 s sample of this job (stats) */
   int restResumes;                     /* sleep/wake cycles survived (no attempts consumed) */
+  int stopPaused;                      /* paused by dl_pause_all_for_stop(), not by the user: queued again on the next start */
   /* runtime (never persisted) */
   volatile int rest_hit;               /* a wake-up event interrupted the transfer */
   int last_err_class;                  /* XHTTP_ERR_* of the last network error */
@@ -152,6 +154,10 @@ typedef struct dl_job {
   int probe_status;
   int url_replaced;
   void *seg_conns[DL_MAX_SEGMENTS];    /* xhttp_conn* per slot for prompt abort */
+  /* downloads.deletePkgAfterInstall: this install may remove the .pkg once its
+   * status showed it in progress (of pkg_del_total bytes) and then complete */
+  int pkg_del_wait, pkg_del_seen;
+  int64_t pkg_del_total;
 } dl_job;
 
 typedef struct dl_add_req {
@@ -211,6 +217,14 @@ typedef struct dl_brief {
   int verified, synthetic, running, cancel, removePending, restHit, move, priority, index;
 } dl_brief;
 
+/* Loads queue.json. A download that was running when the store stopped (an
+ * update, a restart, a crash) or that the TV app's stop paused is queued again
+ * while downloads.resumeAfterRestart is on (the scheduler starts it under the
+ * concurrent-jobs limit), else it comes back paused. A safe start
+ * (g_cfg.safe_mode) starts nothing by itself: running and queued downloads
+ * come back paused, and the next normal start resumes them. One the user
+ * paused stays paused; one whose whole file is in place (a stopped Verify)
+ * comes back finished. */
 int dl_init(const char *data_dir, int port);
 /* Stops every running job (at most ~5 s), holds the scheduler and saves
  * queue.json a last time. */
@@ -234,6 +248,7 @@ int dl_state_healthy(void);
  * Returns the number of jobs paused (>= 0) once the queue is saved, or -1 when
  * it could not be saved: then every job is put back as it was (a job whose
  * worker was already told to stop goes back to queued) and nothing is held.
+ * The paused jobs are marked stopPaused, so the next start queues them again.
  * Returns DL_PAUSE_INSTALLING, changing nothing, while a package install is
  * being started or reads its package from /pkgsrv/ (etaHEN DPI :12800): the
  * token lives only in this process, so a stop would break that install. */

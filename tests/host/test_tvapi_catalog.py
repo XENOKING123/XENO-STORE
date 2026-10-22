@@ -22,11 +22,14 @@ native TV app talks to (PORT-SPEC 1.5.1, 1.5.2, 1.5.5 "Stop", 1.6.1, 1.9, 1.10):
                      == golden/catalog.json; the R1/R2/R6 rules spot-checked; [] until
                      acknowledged; POST /sources (filter, empty list, reference
                      validation order, only the exposed ids written, a failed save
-                     changes nothing); /catalog/updates; the TV_SHOW_ZIP variant.
-  TvCatalogRealData  the embedded revision-10 catalogue with updates/featured.json:
-                     == tv_golden.build() (4292 options, 2593 games, 2,364,377 bytes),
+                     changes nothing); /catalog/updates; the TV_SHOW_ZIP variant;
+                     popularRank, cheats, screenshotCount and kind as the backend
+                     sends them (the source filter never renumbers popularRank).
+  TvCatalogRealData  the embedded catalogue with updates/featured.json: == tv_golden.build()
+                     (revision 12: 4291 options, 2594 games, about 2.6 MB),
                      strict JSON, every item meets the contract, /catalog < 500 ms
-                     and the index walk (the only catalog_mu hold) < 100 ms.
+                     and the index walk (the only catalog_mu hold) < 100 ms; every
+                     game a distinct popularRank, the web UI's popular order.
   TvCatalogRefresh   POST /catalog/updates against a local revision.json + catalogue
                      server: 400, busy during a web UI refresh (catalog_refreshing),
                      202 then 409 while busy, the new revision everywhere (system,
@@ -597,6 +600,35 @@ class TvCatalogFixture(unittest.TestCase):
             s = tvworld.TvClient(w.port).get("/api/v1/sources").check()
             self.assertEqual(s, w.golden_sources())
 
+    def test_11_popularity_cheats_screenshots_kind(self):
+        _, body = self.catalog()
+        games = {}
+        for o in body:
+            games.setdefault(o["gameId"], o)
+        pop = {g: o["popularRank"] for g, o in games.items()}
+        self.assertEqual(sorted(pop.values()), list(range(1, len(games) + 1)))
+        self.assertEqual(sorted(pop, key=pop.get)[:7],
+                         ["fx-tidewater-ps5", "fx-neon-courier-ps5", "fx-quiet-harbour-ps4", "fx-iron-meridian-ps5",
+                          "fx-frostline-ps4", "fx-ember-hollow-ps5", "fx-aurora-drift-ps5"])
+        for o in body:                                                      # a game-level field on every option
+            self.assertEqual(o["popularRank"], pop[o["gameId"]], o["id"])
+        self.assertEqual({g: o["cheats"] for g, o in games.items() if "cheats" in o},
+                         {"fx-tidewater-ps5": 12, "fx-copper-coast-ps4": 2})
+        self.assertEqual({g: o["screenshotCount"] for g, o in games.items() if "screenshotCount" in o},
+                         {"fx-tidewater-ps5": 4, "fx-vast-archive-ps5": 10})
+        self.assertEqual([(o["id"], o["kind"]) for o in body if o["gameId"] == "fx-tidewater-ps5"],
+                         [("fx-tidewater-ffpfsc", "game"), ("fx-tidewater-backport", "backport"),
+                          ("fx-tidewater-update", "update"), ("fx-tidewater-dlc", "dlc")])
+        self.assertEqual({o["kind"] for o in body}, {"game", "backport", "update", "dlc"})
+        try:
+            self.set_sources(["vikingfile"])
+            vf = self.catalog()[1]
+            self.assertTrue(vf)
+            self.assertEqual({o["gameId"]: o["popularRank"] for o in vf}, {o["gameId"]: pop[o["gameId"]] for o in vf},
+                             "the source filter never renumbers popularRank")
+        finally:
+            self.set_sources(["archive", "vikingfile"])
+
 
 # --------------------------------------------------------------------------- #
 # The real revision-10 catalogue
@@ -617,7 +649,7 @@ class TvCatalogRealData(unittest.TestCase):
         t0 = time.monotonic()
         r = self.c.get("/api/v1/catalog")
         cold = time.monotonic() - t0
-        body = tc.strict_json(r.body)                        # the app's parser rules on 2.36 MB
+        body = tc.strict_json(r.body)                        # the app's parser rules on about 2.6 MB
         r.check()                                            # transport + every item against the contract
         want = self.w.golden_catalog()
         # Counts come from the catalogue the binary embeds (revision 10 had 4292 options, 2593 games,
@@ -632,11 +664,20 @@ class TvCatalogRealData(unittest.TestCase):
         ranked = sorted({o["gameId"]: o["newOnOrbitRank"] for o in body if "newOnOrbitRank" in o}.items(), key=lambda t: t[1])
         self.assertEqual(len(ranked), self.stats["ranked"])
         self.assertEqual(ranked[0][0], "ghost-of-yotei-ps5")
+        # popularRank: every game once, in the order of the catalogue's popularity (the web UI's)
+        pop = {o["gameId"]: o["popularRank"] for o in body}
+        self.assertEqual(sorted(pop.values()), list(range(1, len(pop) + 1)))
+        popularity = {g["id"]: g.get("popularity", 0) for g in reversed(self.w.catalog["games"])}
+        order = sorted(pop, key=pop.get)
+        self.assertEqual([popularity[g] for g in order], sorted((popularity[g] for g in order), reverse=True))
+        self.assertGreater(sum(1 for o in body if o.get("cheats")), 0, "the real catalogue has cheat counts")
+        self.assertGreater(sum(1 for o in body if o.get("screenshotCount")), 0, "the real catalogue has screenshots")
+        self.assertTrue(all(o["kind"] in ("game", "backport", "update", "dlc") for o in body))
 
     def test_2_budget_and_lock_hold(self):
         self.c.get("/api/v1/catalog").check(transport=False, profile="app")
         times = timed(lambda: self.c.get("/api/v1/catalog"), 4)
-        assert_budget(self, times, 0.5, "GET /catalog (2.36 MB)")
+        assert_budget(self, times, 0.5, "GET /catalog (about 2.6 MB)")
         walks = [int(m) for m in re.findall(r"TV catalogue index: .* \(walk (\d+) ms", self.w.log_text())]
         self.assertTrue(walks, "the index build is logged")
         self.assertLess(max(walks), 100, f"catalog_mu held {max(walks)} ms by the index walk")

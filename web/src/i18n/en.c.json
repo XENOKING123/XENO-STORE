@@ -48,7 +48,9 @@
     "autoResign": "Re-signed to your account and placed in the game automatically",
     "worksHere": "Works with your games",
     "allSaves": "All community saves",
-    "browse": "Browse saves"
+    "browse": "Browse saves",
+    "options": "Save Store options",
+    "optionsDesc": "Backup drive, nickname, save feeds and upload host"
   },
   "link": {
     "title": "Link to your PS5",
@@ -66,6 +68,8 @@
     "bad": "That code isn't right — check the notification on your PS5",
     "locked": "Too many tries — wait {n} s",
     "done": "Linked! Opening XENO STORE…",
+    "replaced": "{name} was unpaired to make room — it was the device unused the longest.",
+    "forgotten": "The PS5 no longer knows this browser: it was unpaired, or another device took its place when every pairing slot was in use. Link it again to keep using XENO STORE.",
     "note": "Only devices you link can control your store. You do this once per browser."
   },
   "discover4": {
@@ -88,6 +92,9 @@
     "installing": "Installing…",
     "install": "Install the app",
     "reinstall": "Reinstall / update",
+    "update": "Update the app",
+    "updateAvailable": "Update available: {v}",
+    "folderCopy": "Installed as the folder /data/homebrew/PPSA99500, which XENO STORE does not update. Remove that folder to install the published version here, or keep updating it yourself.",
     "cancel": "Cancel",
     "cancelled": "Install cancelled",
     "version": "Version {v}",
@@ -103,7 +110,7 @@
     "hintText": "Install the app once and open the store from its own tile — no FTP, no browser address.",
     "notNow": "Not now",
     "openOnStart": "Open XENO STORE when it starts",
-    "openOnStartHint": "Opens the store on the TV each time it starts. Turn it off if you auto-start the store at boot.",
+    "openOnStartHint": "Opens the XENO STORE app on the TV each time the store starts, or the browser when the app isn't installed. Turn it off if you auto-start the store at boot.",
     "err": {
       "sha256_mismatch": "The download didn't match its checksum — nothing was installed. Try again.",
       "sha256_unavailable": "The release has no checksum yet — try again in a few minutes.",
@@ -112,5 +119,27 @@
       "too_large": "The download is larger than expected — nothing was installed.",
       "download_failed": "The download failed. Check the console's internet connection and try again."
     }
+  },
+  "pairdev": {
+    "title": "Paired devices",
+    "loading": "Loading paired devices…",
+    "loadFailed": "Could not load the paired devices.",
+    "none": "No phone or PC is paired yet.",
+    "unknown": "Unknown device",
+    "ps5Browser": "PS5 browser",
+    "thisDevice": "This device",
+    "lastSeen": "Last seen {when}",
+    "notSeen": "Not used since XENO STORE was updated",
+    "unpair": "Unpair",
+    "unpairTitle": "Unpair {name}?",
+    "unpairText": "{name} will need a new code from the PS5 before it can control XENO STORE again.",
+    "unpairSelfText": "This browser will need a new code from the PS5 before it can control XENO STORE again.",
+    "unpaired": "{name} unpaired",
+    "unpairOthers": "Unpair all other devices",
+    "unpairOthersHint": "Every phone and PC except this one has to pair again",
+    "unpairOthersText": "Every other phone and PC will need a new code from the PS5 before it can control XENO STORE again. The XENO STORE app and the console's own browser keep working.",
+    "unpairOthersGo": "Unpair all",
+    "unpairedN": "{n, plural, one{# device unpaired} other{# devices unpaired}}",
+    "slots": "Up to {max} phones and PCs stay paired. Pairing one more replaces the device unused the longest."
   }
 }

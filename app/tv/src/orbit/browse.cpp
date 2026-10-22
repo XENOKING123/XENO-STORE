@@ -38,18 +38,6 @@ constexpr float kKeyboardTop = 560.0f;
 constexpr const char *kRegions[] = {"", "EUR", "USA", "JPN", "ASIA", "unknown"};
 constexpr const char *kChips[] = {/* i18n */ "All games", /* i18n */ "Favourites"};
 
-// Removes the last UTF-8 character.
-void pop_character(std::string &text)
-{
-    while (!text.empty())
-    {
-        const unsigned char c = static_cast<unsigned char>(text.back());
-        text.pop_back();
-        if ((c & 0xC0) != 0x80)
-            break;
-    }
-}
-
 float chip_width(const ui::Type &type, int chip)
 {
     (void)type;
@@ -236,6 +224,7 @@ void BrowseScreen::return_to(const std::string &game_id)
 Intent BrowseScreen::update(const InputFrame &input, float dt, Feedback &feedback, bool focused)
 {
     Intent intent;
+    bool cut = false; // an L2 / R2 jump moves the page without sliding
     const Snapshot &state = ctx_.store.state();
     if (catalog_serial_ != state.catalog_serial ||
         (filters_.favourites && favourites_serial_ != state.serial))
@@ -385,6 +374,19 @@ Intent BrowseScreen::update(const InputFrame &input, float dt, Feedback &feedbac
                 area_ = Area::filters;
                 break;
             }
+            if (input.is_pressed(Action::jump_prev) || input.is_pressed(Action::jump_next))
+            {
+                const int jump = grid_jump(index_, count, kColumns,
+                                           input.is_pressed(Action::jump_next) ? kGridJumpRows : -kGridJumpRows);
+                if (jump != index_)
+                {
+                    index_ = jump;
+                    cut = true;
+                    feedback.play(hui::audio::Cue::focus);
+                }
+                else
+                    refuse(feedback, input);
+            }
             int next = index_;
             if (input.nav == Direction::left)
                 next = index_ % kColumns == 0 ? -1 : index_ - 1;
@@ -471,6 +473,8 @@ Intent BrowseScreen::update(const InputFrame &input, float dt, Feedback &feedbac
         target = std::min(target, std::max(0.0f, top - 140.0f));
     }
     scroll_.target = target;
+    if (cut)
+        scroll_.snap(target);
     scroll_.update(dt, 10.0f);
     for (int i = 0; i < static_cast<int>(tile_focus_.size()); ++i)
     {
@@ -652,6 +656,7 @@ std::vector<hui::ui::Hint> BrowseScreen::hints() const
                                                       : tr("Add to favourites")});
         }
         hints.push_back({hui::ui::Button::triangle, tr("Search")});
+        hints.push_back({hui::ui::Button::l2, tr("Jump"), hui::ui::Button::r2});
         hints.push_back({hui::ui::Button::l1, tr("Tabs"), hui::ui::Button::r1});
         return hints;
     }

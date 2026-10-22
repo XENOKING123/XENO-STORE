@@ -266,6 +266,11 @@ int install_poll(const char *titleId, const char *contentId, time_t startedAt, c
   if (cap) msg[0] = 0;
 #ifdef XENO_HOST
   (void)contentId;
+  const char *dc = getenv("XENO_HOST_INSTALL_DIRCHECK");   /* tests: the console's /user/app check */
+  if (dc && strcmp(dc, "1") == 0 && titleId && *titleId && storage_title_installed(titleId)) {
+    xsnprintf(msg, cap, "Installed");
+    return 1;
+  }
   const char *secs = getenv("XENO_HOST_INSTALL_SECS");   /* tests: a longer simulated install */
   if (now - startedAt < (secs && *secs ? atoi(secs) : 3)) return 0;
   if (titleId && *titleId) {
@@ -294,6 +299,30 @@ int install_poll(const char *titleId, const char *contentId, time_t startedAt, c
     return -1;
   }
   return 0;
+#endif
+}
+
+int install_progress(const char *contentId, time_t startedAt, int64_t *total) {
+  *total = 0;
+#ifdef XENO_HOST
+  (void)contentId;
+  const char *e = getenv("XENO_HOST_INSTALL_STATUS");
+  if (e && strcmp(e, "none") == 0) return INSTALL_NO_STATUS;
+  if (e && strcmp(e, "error") == 0) return INSTALL_ERROR;
+  *total = 1LL << 30;
+  if (e && strcmp(e, "done") == 0) return INSTALL_DONE;
+  const char *secs = getenv("XENO_HOST_INSTALL_SECS");
+  return util_now() - startedAt <= (secs && *secs ? atoi(secs) : 3) ? INSTALL_RUNNING : INSTALL_DONE;
+#else
+  (void)startedAt;
+  if (!g_get_status_probed || !g_get_status || !contentId || !*contentId) return INSTALL_NO_STATUS;
+  AppInstStatus st;
+  memset(&st, 0, sizeof st);
+  if (g_get_status(contentId, &st) != 0) return INSTALL_UNKNOWN;
+  if (st.error_code != 0) return INSTALL_ERROR;
+  if (st.total_size <= 0 || st.downloaded_size < 0) return INSTALL_UNKNOWN;
+  *total = st.total_size;
+  return st.downloaded_size >= st.total_size ? INSTALL_DONE : INSTALL_RUNNING;
 #endif
 }
 

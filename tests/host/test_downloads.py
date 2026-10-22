@@ -5,11 +5,14 @@ segmented integrity (sha256), pause/resume, cancel+restart, mirror failover,
 provider_page, source_changed (validator and tail-check variants), hash
 mismatch + verified hash, retry on 429/Retry-After, connection drops,
 sequential (no Range) servers, PKG auto-install simulation, queue
-persistence across a restart, bandwidth limit, link replacement, move/clear.
+persistence across a restart, bandwidth limit, link replacement, move/clear,
+the PKG removed only after a confirmed install, and what a restart resumes
+(not in a safe start, a stop pause of an older store, never a finished file).
 """
 import json
 import os
 import shutil
+import signal
 import sys
 import tempfile
 import time
@@ -305,6 +308,10 @@ class DownloadTests(unittest.TestCase):
         self.assert_clean_final(j, self.sha["mid.bin"])
 
     def test_15_queue_persistence_across_restart(self):
+        # Settings → Downloads → Resume after a restart off: the download comes back paused
+        # (test_22 covers the default)
+        self.addCleanup(lambda: self.srv.api("PUT", "/api/settings", {"downloads": {"resumeAfterRestart": True}}))
+        self.srv.api("PUT", "/api/settings", {"downloads": {"resumeAfterRestart": False}})
         job = self.srv.add(gameId="persist-ps5", releaseId="r")
         jid = job["id"]
         self.wait_written(jid, 2 * MiB)
@@ -397,6 +404,217 @@ class DownloadTests(unittest.TestCase):
         time.sleep(0.3)
         self.assertFalse(os.path.exists(j["path"]))
         self.assertIsNone(self.srv.job(job["id"]))
+
+    def test_20_per_download_auto_install_wins(self):
+        # The download sheet's Auto-install choice wins over Settings → Downloads, both ways.
+        self.addCleanup(self.srv.api, "PUT", "/api/settings", {"downloads": {"autoInstallPkg": True}})
+        self.srv.api("PUT", "/api/settings", {"downloads": {"autoInstallPkg": True}})
+        off = self.srv.add(url=f"{self.rs}/ok/tiny.pkg", filename="PPSA01234 Keep.pkg", format="PKG", autoInstall=False, size=2 * MiB)
+        self.assertFalse(off["autoInstall"])
+        self.srv.wait_job(off["id"], None, timeout=60, until=lambda x: x["state"] in ("done", "installing", "installed"))
+        time.sleep(1.5)
+        j = self.srv.job(off["id"])
+        self.assertEqual(j["state"], "done", "Auto-install off for this download: the package must not install")
+        self.assertEqual(j["install"]["state"], "idle")
+        self.assertTrue(os.path.exists(j["path"]))
+        self.srv.api("PUT", "/api/settings", {"downloads": {"autoInstallPkg": False}})
+        on = self.srv.add(url=f"{self.rs}/ok/tiny.pkg", filename="PPSA01234 Auto.pkg", format="PKG", autoInstall=True, size=2 * MiB)
+        self.assertTrue(on["autoInstall"])
+        j = self.srv.wait_job(on["id"], "installed", timeout=60)
+        self.assertEqual(j["install"]["state"], "installed")
+        # without a choice the setting decides (off here)
+        dflt = self.srv.add(url=f"{self.rs}/ok/tiny.pkg", filename="PPSA01234 Default.pkg", format="PKG", size=2 * MiB)
+        self.assertFalse(dflt["autoInstall"])
+        self.srv.wait_job(dflt["id"], None, timeout=60, until=lambda x: x["state"] in ("done", "installing", "installed"))
+        time.sleep(1.5)
+        self.assertEqual(self.srv.job(dflt["id"])["state"], "done")
+
+    def test_21_delete_pkg_after_install(self):
+        st, s = self.srv.api("GET", "/api/settings")
+        self.assertIs(s["settings"]["downloads"]["deletePkgAfterInstall"], False, "off by default")
+        self.addCleanup(self.srv.api, "PUT", "/api/settings", {"downloads": {"deletePkgAfterInstall": False}})
+        st, s = self.srv.api("PUT", "/api/settings", {"downloads": {"deletePkgAfterInstall": True}})
+        self.assertEqual(st, 200)
+        self.assertIs(s["settings"]["downloads"]["deletePkgAfterInstall"], True)
+        # a file of the same folder that is not this job's stays
+        other = os.path.join(self.root, "xeno-store", "pkg", "PPSA01234 Neighbour.pkg")
+        os.makedirs(os.path.dirname(other), exist_ok=True)
+        with open(other, "wb") as f:
+            f.write(b"\x7fCNT" + bytes(252))
+        job = self.srv.add(url=f"{self.rs}/ok/tiny.pkg", filename="PPSA01234 Remove.pkg", format="PKG", autoInstall=True, size=2 * MiB)
+        j = self.srv.wait_job(job["id"], None, timeout=60,
+                              until=lambda x: x["state"] == "installed" and x["install"].get("pkgDeleted"))
+        self.assertEqual(j["install"]["state"], "installed")
+        self.assertEqual(j["message"], "Installed · package removed")
+        self.assertFalse(os.path.exists(j["path"]), "the installed package is removed")
+        self.assertTrue(os.path.exists(other), "only the job's own file is removed")
+        st, lg = self.srv.api("GET", f"/api/queue/{job['id']}/log")
+        self.assertTrue(any("package removed" in ln for ln in lg["lines"]), lg["lines"])
+        # a failed install keeps its file: not a package at all
+        bad = self.srv.add(url=f"{self.rs}/ok/small.bin", filename="PPSA01234 Broken.pkg", format="PKG", autoInstall=True, size=8 * MiB)
+        j = self.srv.wait_job(bad["id"], None, timeout=60, until=lambda x: x["install"]["state"] == "failed")
+        time.sleep(2.5)
+        j = self.srv.job(bad["id"])
+        self.assertFalse(j["install"].get("pkgDeleted"))
+        self.assertTrue(os.path.exists(j["path"]), "a failed install never deletes the package")
+
+    def test_22_running_downloads_resume_after_restart(self):
+        # The store stops (an update, a restart, a crash): what was running or queued comes
+        # back by itself, one at a time under the concurrent-jobs limit; what the user paused
+        # stays paused.
+        st, s = self.srv.api("GET", "/api/settings")
+        self.assertIs(s["settings"]["downloads"]["resumeAfterRestart"], True, "on by default")
+        a = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="resume-a.bin", format="BIN", connections=1, size=8 * MiB)
+        b = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="resume-b.bin", format="BIN", connections=1, size=8 * MiB)
+        c = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="resume-c.bin", format="BIN", connections=1, size=8 * MiB)
+        self.wait_written(a["id"], 1 * MiB)
+        self.assertEqual(self.srv.action(c["id"], "pause")[0], 200)
+        self.srv.stop()
+        DownloadTests.srv = harness.XenoServer(self.data, port=self.srv.port).start()
+        self.assertEqual(self.srv.job(c["id"])["state"], "paused")
+        seen_active = 0
+        deadline = time.time() + 90
+        while time.time() < deadline:
+            st, q = self.srv.api("GET", "/api/queue")
+            mine = {x["id"]: x for x in q["jobs"] if x["id"] in (a["id"], b["id"])}
+            active = [x for x in mine.values() if x["state"] in ("connecting", "downloading", "verifying")]
+            self.assertLessEqual(len(active), 1, "concurrentJobs is 1: one download at a time")
+            seen_active += len(active)
+            if len(mine) == 2 and all(x["state"] == "done" for x in mine.values()):
+                break
+            time.sleep(0.1)
+        ja, jb, jc = self.srv.job(a["id"]), self.srv.job(b["id"]), self.srv.job(c["id"])
+        self.assertEqual((ja["state"], jb["state"]), ("done", "done"), (ja["message"], jb["message"]))
+        self.assertGreater(seen_active, 0)
+        self.assert_clean_final(ja, self.sha["small.bin"])
+        self.assert_clean_final(jb, self.sha["small.bin"])
+        self.assertEqual(jc["state"], "paused", "a download the user paused stays paused")
+        self.assertEqual(jc["message"], "Paused")
+        st, lg = self.srv.api("GET", f"/api/queue/{a['id']}/log")
+        self.assertTrue(any("resumed after XENO STORE restarted" in ln for ln in lg["lines"]), lg["lines"])
+        self.srv.action(c["id"], "remove", {"deleteFiles": True})
+
+    # downloads.deletePkgAfterInstall on the console: /user/app/<TITLEID> exists as soon as an
+    # install starts, and before it for an update or a DLC, so "installed" is no proof there.
+    # The package goes only once the install status (sceAppInstUtilGetInstallStatus, simulated
+    # through XENO_HOST_INSTALL_STATUS) showed this install in progress and then complete.
+    def pkg_update_store(self, name, env):
+        """A store of its own (the simulation reads its environment) that reads "installed"
+        from the title folder like the console, with PPSA01234 installed already: the PKG is
+        an update. Returns the store and the job once it reads "installed"."""
+        data = os.path.join(self.tmp, name)
+        os.makedirs(os.path.join(data, "user", "app", "PPSA01234"))
+        srv = harness.XenoServer(data, env=dict(env, XENO_HOST_INSTALL_DIRCHECK="1")).start()
+        self.addCleanup(srv.stop)
+        srv.api("PUT", "/api/settings", {"downloads": {"deletePkgAfterInstall": True, "turboStart": False}})
+        job = srv.add(url=f"{self.rs}/ok/tiny.pkg", filename="PPSA01234 Update.pkg", format="PKG", autoInstall=True, size=2 * MiB)
+        return srv, srv.wait_job(job["id"], "installed", timeout=60)
+
+    def test_23_pkg_removed_once_its_install_completes(self):
+        srv, j = self.pkg_update_store("data-del-update", {"XENO_HOST_INSTALL_SECS": "8"})
+        time.sleep(1.5)
+        j = srv.job(j["id"])
+        self.assertTrue(os.path.exists(j["path"]), "the install still runs: its package must stay")
+        self.assertFalse(j["install"]["pkgDeleted"])
+        j = srv.wait_job(j["id"], None, timeout=30, until=lambda x: x["install"]["pkgDeleted"])
+        self.assertFalse(os.path.exists(j["path"]))
+        self.assertEqual(j["message"], "Installed · package removed")
+
+    def test_24_pkg_kept_when_its_install_is_not_confirmed(self):
+        # the install reports an error (the game's folder reads "installed" anyway) ...
+        srv, j = self.pkg_update_store("data-del-error", {"XENO_HOST_INSTALL_STATUS": "error"})
+        # ... or this console reports no install status at all
+        srv2, j2 = self.pkg_update_store("data-del-nostatus", {"XENO_HOST_INSTALL_STATUS": "none"})
+        time.sleep(5)
+        for s, x in ((srv, j), (srv2, j2)):
+            x = s.job(x["id"])
+            self.assertTrue(os.path.exists(x["path"]), x["path"])
+            self.assertFalse(x["install"]["pkgDeleted"])
+            self.assertEqual(x["message"], "Installed")
+        st, lg = srv2.api("GET", f"/api/queue/{j2['id']}/log")
+        self.assertTrue(any("package kept: this console does not report install progress" in ln for ln in lg["lines"]), lg["lines"])
+
+    def restart_with_queue(self, edit):
+        """Stops the store, lets edit(queue) change queue.json, starts it again."""
+        self.srv.stop()
+        qp = os.path.join(self.data, "queue.json")
+        with open(qp) as f:
+            q = json.load(f)
+        edit(q)
+        with open(qp, "w") as f:
+            json.dump(q, f)
+        DownloadTests.srv = harness.XenoServer(self.data, port=self.srv.port).start()
+
+    def test_25_safe_start_leaves_interrupted_downloads_paused(self):
+        # A crash soon after a start (maybe caused by the download itself) makes the next start
+        # a safe one, which starts no download by itself: a crash loop ends there. A later
+        # normal start resumes them (the user did not pause them).
+        job = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="crash-loop.bin", format="BIN", connections=1, size=8 * MiB)
+        nxt = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="crash-next.bin", format="BIN", connections=1, size=8 * MiB)
+        self.wait_written(job["id"], 1 * MiB)
+        # queue.json is saved every 5 s: it may still say "queued" for the one that runs
+        self.srv.proc.send_signal(signal.SIGSEGV)
+        self.srv.proc.wait(timeout=20)
+        self.srv.stop()
+        DownloadTests.srv = harness.XenoServer(self.data, port=self.srv.port).start()
+        st, s = self.srv.api("GET", "/api/status")
+        self.assertIs(s["safeMode"], True)
+        time.sleep(1.5)
+        for x in (job, nxt):
+            j = self.srv.job(x["id"])
+            self.assertEqual(j["state"], "paused", j["message"])
+            self.assertEqual(j["restart"], "held")
+            self.assertEqual(j["message"], "Not resumed: XENO STORE restarted after a problem")
+            st, lg = self.srv.api("GET", f"/api/queue/{x['id']}/log")
+            self.assertTrue(any("not resumed: safe start" in ln for ln in lg["lines"]), lg["lines"])
+        # the next start is a normal one
+        self.srv.stop()
+        DownloadTests.srv = harness.XenoServer(self.data, port=self.srv.port).start()
+        st, s = self.srv.api("GET", "/api/status")
+        self.assertIs(s["safeMode"], False)
+        for x in (job, nxt):
+            j = self.srv.wait_job(x["id"], "done", timeout=90)
+            self.assert_clean_final(j, self.sha["small.bin"])
+
+    def test_26_a_stop_pause_by_an_older_store_resumes(self):
+        # The first update to this version: the stop of the older store marked its pause only
+        # with the message (no stopPaused, no stopMarks in queue.json).
+        a = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="legacy-stop.bin", format="BIN", connections=1, size=8 * MiB)
+        b = self.srv.add(url=f"{self.rs}/slow/small.bin", filename="legacy-mine.bin", format="BIN", connections=1, size=8 * MiB)
+        self.wait_written(a["id"], 1 * MiB)
+        self.assertEqual(self.srv.action(b["id"], "pause")[0], 200)
+
+        def older(q):
+            q.pop("stopMarks", None)
+            for x in q["jobs"]:
+                x.pop("stopPaused", None)
+                if x["id"] == a["id"]:
+                    x["state"], x["message"] = "paused", "Paused for the XENO STORE restart"
+        self.restart_with_queue(older)
+        j = self.srv.wait_job(a["id"], None, timeout=10, until=lambda x: x["state"] != "paused")
+        self.assertIn(j["state"], ("queued", "connecting", "downloading"), j["message"])
+        j = self.srv.wait_job(a["id"], "done", timeout=60)
+        self.assert_clean_final(j, self.sha["small.bin"])
+        self.assertEqual(self.srv.job(b["id"])["state"], "paused", "a download the user paused stays paused")
+        self.srv.action(b["id"], "remove", {"deleteFiles": True})
+
+    def test_27_a_stopped_verify_of_a_finished_file_is_not_downloaded_again(self):
+        job = self.srv.add(url=f"{self.rs}/ok/small.bin", filename="verify-stop.bin", format="BIN", size=8 * MiB)
+        j = self.srv.wait_job(job["id"], "done", timeout=60)
+        mtime = os.stat(j["path"]).st_mtime_ns
+
+        def stopped_verify(q):
+            # the stop paused a Verify of the finished file, and the drain's last save did not happen
+            for x in q["jobs"]:
+                if x["id"] == job["id"]:
+                    x["state"], x["message"], x["stopPaused"] = "paused", "Paused for the XENO STORE restart", True
+        self.restart_with_queue(stopped_verify)
+        time.sleep(2)
+        j = self.srv.job(job["id"])
+        self.assertEqual((j["state"], j["message"]), ("done", "Verification interrupted"))
+        self.assertEqual(j["written"], 8 * MiB)
+        self.assertEqual(os.stat(j["path"]).st_mtime_ns, mtime, "the finished file is not downloaded again")
+        self.assertFalse(os.path.exists(j["path"] + ".xpart"))
 
 
 if __name__ == "__main__":

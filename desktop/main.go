@@ -162,7 +162,44 @@ func (a *app) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/__desktop/", http.StatusFound)
 			return
 		}
+		// The store page itself: when the PS5 says this PC's token was unpaired (Settings → Pair a
+		// device), link again from this app's own page rather than sending a dead token forever.
+		if p == "/" && r.Method == http.MethodGet && a.unpaired(c) {
+			a.dropToken(c)
+			http.Redirect(w, r, "/__desktop/?unpaired=1", http.StatusFound)
+			return
+		}
 		a.proxy(c).ServeHTTP(w, r)
+	}
+}
+
+// unpaired is true only when the PS5 answers that c.Token is no longer paired (not when it does not answer).
+func (a *app) unpaired(c config) bool {
+	var info map[string]any
+	if st, err := a.ps5(c, "GET", "/api/pair", nil, &info); err != nil || st != http.StatusOK {
+		return false
+	}
+	linked, ok := info["linked"].(bool)
+	return ok && !linked
+}
+
+// dropToken forgets c.Token, unless another console or token was picked meanwhile.
+func (a *app) dropToken(c config) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	if a.cfg.PS5 == c.PS5 && a.cfg.Token == c.Token {
+		a.cfg.Token = ""
+		a.save()
+	}
+}
+
+// keepToken makes tok this PC's token for the console c points at, unless another one was picked meanwhile.
+func (a *app) keepToken(c config, tok string) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	if a.cfg.PS5 == c.PS5 {
+		a.cfg.Token = tok
+		a.save()
 	}
 }
 
@@ -180,6 +217,27 @@ func (a *app) proxy(c config) http.Handler {
 		}
 		r.Header.Del("Referer")
 		r.Header.Set("Authorization", "Bearer "+c.Token)
+		r.Header.Set("User-Agent", "XENO-STORE-Desktop/"+version) // the name Settings → Pair a device shows
+	}
+	// Unpaired while the store is open, the store's own Link page takes a new code: the token it
+	// hands out becomes this PC's, or every later request would still carry the dead one.
+	rp.ModifyResponse = func(res *http.Response) error {
+		if res.Request.Method != http.MethodPost || res.Request.URL.Path != "/api/pair" || res.StatusCode != http.StatusOK {
+			return nil
+		}
+		b, err := io.ReadAll(res.Body)
+		res.Body.Close()
+		if err != nil {
+			return err
+		}
+		res.Body = io.NopCloser(bytes.NewReader(b))
+		var out struct {
+			Token string `json:"token"`
+		}
+		if json.Unmarshal(b, &out) == nil && out.Token != "" {
+			a.keepToken(c, out.Token)
+		}
+		return nil
 	}
 	rp.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
 		writeJSON(w, http.StatusBadGateway, map[string]any{"ok": false, "error": "ps5_unreachable",
@@ -213,6 +271,7 @@ func (a *app) ps5(c config, method, path string, body any, out any) (int, error)
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
+	req.Header.Set("User-Agent", "XENO-STORE-Desktop/"+version) // the name Settings → Pair a device shows
 	if c.Token != "" {
 		req.Header.Set("Authorization", "Bearer "+c.Token)
 	}
@@ -293,7 +352,11 @@ func (a *app) api(w http.ResponseWriter, r *http.Request, name string) {
 			a.cfg.Token = tok
 			a.save()
 			a.mu.Unlock()
-			writeJSON(w, 200, map[string]any{"ok": true, "linked": true})
+			res := map[string]any{"ok": true, "linked": true}
+			if gone, ok := out["replaced"].(string); ok { // all slots were taken: the device that made room ("" = no name)
+				res["replaced"] = gone
+			}
+			writeJSON(w, 200, res)
 			return
 		}
 		writeJSON(w, st, out)

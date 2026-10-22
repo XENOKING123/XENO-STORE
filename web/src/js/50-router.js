@@ -6,6 +6,9 @@
   R.stack = [];
   R.screens = {};
   R.tabs = [];
+  /* Top tabs left to right, also the L1/R1 cycle: Discover · Browse · Saves (the Save Data Store, §17.22) · Downloads ·
+     Library · Homebrew (§17.21). A tab screen missing here follows in registration order. */
+  R.tabOrder = ['discover', 'browse', 'saves', 'downloads', 'library', 'homebrew'];
   var scrolls = {}, pendingTab = null, polling = { queue: 0, status: 0, catalog: 0 }, prevJobs = {}, bannerEls = {}, dismissedUpdate = U.store.get('dismissedUpdate', '');
   /* ---- History model ----
      Every screen above the base tab and every open layer (sheet/menu/dialog) owns one history entry carrying
@@ -44,8 +47,9 @@
       main.appendChild(el);
       R.screens[id] = el;
       if (def.mount) def.mount(el);
-      if (def.tab) R.tabs.push(id);
     });
+    R.tabs = R.tabOrder.filter(function (id) { return R.defs[id] && R.defs[id].tab; })
+      .concat(R.order.filter(function (id) { return R.defs[id].tab && R.tabOrder.indexOf(id) < 0; }));
     renderTabs(); renderPhonebar(); renderChrome();
     XS.nav.actions = {
       back: function () { R.back(); },
@@ -68,6 +72,7 @@
     });
     window.addEventListener('hashchange', function () { routeHash(false); });
     window.addEventListener('resize', U.debounce(function () { renderChrome(); }, 150));
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitKey = ''; R.fitChrome(); });
     window.addEventListener('online', updateBanners); window.addEventListener('offline', updateBanners);
     setInterval(tick, 1000);
   };
@@ -94,11 +99,12 @@
     requestAnimationFrame(function () { if (!ui.layers.length) XS.nav.restore(el); });
   }
 
-  /* go(id, params): tabs replace the base entry; sub-screens (game) push. */
+  /* go(id, params, opts): tabs (and Settings) replace the base entry; sub-screens (game) push. opts.push opens Settings
+     above the current screen instead, so Back returns there (Saves tab → Save Store options). */
   R.go = function (id, params, opts) {
     params = params || {}; opts = opts || {};
     var def = R.defs[id]; if (!def) return;
-    var isTab = !!def.tab || id === 'settings';
+    var isTab = !opts.push && (!!def.tab || id === 'settings');
     if (isTab) {
       if (depth() > 0 && !opts.noHistory) {
         /* Collapse everything above the base through history so the browser's stack matches ours.
@@ -220,15 +226,54 @@
   function renderPhonebar() {
     var box = U.$('#phonebar'); U.clear(box);
     var cur = R.current().id;
-    var items = [{ id: 'discover', icon: 'compass' }, { id: 'browse', icon: 'grid' }, { id: 'search', icon: 'search' }, { id: 'downloads', icon: 'download' }, { id: 'library', icon: 'library' }];
+    /* five places: a sixth does not fit 360 px in every language; search keeps its top-bar button */
+    var items = [{ id: 'discover', icon: 'compass' }, { id: 'browse', icon: 'grid' }, { id: 'saves', icon: 'shield' }, { id: 'downloads', icon: 'download' }, { id: 'library', icon: 'library' }];
     items.forEach(function (it) {
-      var b = h('button.pb' + (it.id === cur ? '.active' : ''), { nav: 'pb:' + it.id }, [ui.svg(it.icon), h('span', { text: it.id === 'search' ? t('nav.search') : R.defs[it.id].label() })]);
+      var b = h('button.pb' + (it.id === cur ? '.active' : ''), { nav: 'pb:' + it.id }, [ui.svg(it.icon), h('span.ellipsis', { text: R.defs[it.id].label() })]);
       if (it.id === 'downloads') b.appendChild(h('span.badge', { 'data-dl-badge': '', hidden: true }));
-      b.addEventListener('click', function () { if (it.id === 'search') XS.search.toggle(); else R.go(it.id); });
+      b.addEventListener('click', function () { R.go(it.id); });
       box.appendChild(b);
     });
     updateBadge();
   }
+  /* Room on the bars. The top bar keeps Search and Settings on screen whatever the width, language, text size or
+     status chips: while they would be pushed past its edge it gives up room step by step (FIT, in order), and as a
+     last resort the tabs scroll. The phone bar keeps its places at their natural width (equal where they can be) and
+     cuts labels with an ellipsis only when five whole labels do not fit. Steps are worked out again from none when
+     the window, language, look or set of chips changes; otherwise (a speed or badge text ticking) only added. */
+  var FIT = ['fit-ip', 'fit-free', 'fit-tabs', 'fit-brand', 'fit-speed', 'fit-scroll'], fitRaf = 0, fitKey = '';
+  function pushedOut(bar, right) {
+    var b = bar.getBoundingClientRect(), r = right.getBoundingClientRect(), cs = getComputedStyle(bar);
+    return cs.direction === 'rtl' ? r.left < b.left + parseFloat(cs.paddingLeft) - 1 : r.right > b.right - parseFloat(cs.paddingRight) + 1;
+  }
+  function phonebarTooNarrow(box) {
+    var sum = 0; U.$$('.pb', box).forEach(function (b) { sum += b.getBoundingClientRect().width; });
+    return box.clientWidth > 0 && sum > box.clientWidth + 1;
+  }
+  function fitChrome() {
+    fitRaf = 0;
+    var bar = U.$('#topbar'), right = U.$('#topbar-right'), pbar = U.$('#phonebar'), html = document.documentElement;
+    if (!bar || !right) return;
+    var chips = U.$$('#status-chips .schip').map(function (c) { return c.className; }).join(',');
+    var key = [window.innerWidth, XS.i18n.locale, html.getAttribute('data-theme'), html.getAttribute('data-pack'), html.getAttribute('data-large-text'), chips].join('|');
+    var level = 0, was = bar.className;
+    if (key !== fitKey) {
+      fitKey = key;
+      FIT.forEach(function (c) { bar.classList.remove(c); });
+      if (pbar) pbar.classList.remove('squeeze');
+    } else {
+      while (level < FIT.length && bar.classList.contains(FIT[level])) level++;
+    }
+    while (level < FIT.length && pushedOut(bar, right)) bar.classList.add(FIT[level++]);
+    if (pbar && !pbar.classList.contains('squeeze') && phonebarTooNarrow(pbar)) pbar.classList.add('squeeze');
+    var tabs = U.$('#tabs'), act = U.$('#tabs .tab.active');
+    if (act && bar.classList.contains('fit-scroll')) {   /* scrolling tabs: keep the active one in view (L1/R1 do not move focus) */
+      var tr = tabs.getBoundingClientRect(), ar = act.getBoundingClientRect();
+      if (ar.left < tr.left) tabs.scrollLeft -= tr.left - ar.left + 32; else if (ar.right > tr.right) tabs.scrollLeft += ar.right - tr.right + 32;
+    }
+    if (bar.className !== was && XS.design && XS.design.placeTabIndicator) XS.design.placeTabIndicator();
+  }
+  R.fitChrome = function () { if (!fitRaf) fitRaf = requestAnimationFrame(fitChrome); };
   function renderChrome() {
     var right = U.$('#topbar-right'); U.clear(right);
     right.appendChild(h('div.status-chips#status-chips'));
@@ -248,12 +293,14 @@
     if (r) box.appendChild(h('span.schip.free' + (r.free < 20e9 ? '.warn' : ''), { html: U.icon('hdd') + '<span>' + U.escapeHtml(t('status.free', { n: U.fmtBytes(r.free, 0), label: r.label })) + '</span>', title: r.path }));
     if (st && st.ip) box.appendChild(h('span.schip.ip', { html: U.icon('wifi') + '<span>' + U.escapeHtml(st.ip + ':' + st.port) + '</span>', title: t('status.ipHint') }));
     if (!S.data.serverOk) box.appendChild(h('span.schip.bad', { html: U.icon('alert') + '<span>' + U.escapeHtml(t('status.offline')) + '</span>' }));
+    R.fitChrome();
   }
   function updateBadge() {
     var jobs = S.data.queue.jobs, active = [], w = 0, tot = 0;
     jobs.forEach(function (j) { if (['downloading', 'connecting', 'verifying', 'installing', 'queued'].indexOf(j.state) >= 0) { active.push(j); w += j.written || 0; tot += j.total || 0; } });
     var txt = active.length ? (active.length + (tot ? ' · ' + Math.floor(w / tot * 100) + '%' : '')) : '';
     U.$$('[data-dl-badge]').forEach(function (b) { b.hidden = !txt; b.textContent = txt; b.classList.toggle('pulse', S.data.queue.summary && S.data.queue.summary.speed > 0); });
+    R.fitChrome();
   }
   var HINTS = { open: ['cross', 'legend.open'], select: ['cross', 'legend.select'], toggle: ['cross', 'legend.toggle'], remove: ['cross', 'legend.remove'], jobmenu: ['cross', 'legend.actions'], fav: ['square', 'legend.favorite'] };
   var legendRaf = null;
@@ -378,7 +425,7 @@
     XS.sound.setEnabled(g.sounds !== false);
     var want = XS.i18n.resolve(g.language || 'auto');
     if (want !== XS.i18n.locale) { XS.i18n.setLocale(g.language || 'auto'); if (R.tabs.length) { renderTabs(); renderPhonebar(); renderChrome(); var def = R.defs[R.current().id]; if (def && def.refresh) def.refresh(); else if (def && def.show) def.show(R.current().params); } }
-    updateLegend();
+    updateLegend(); R.fitChrome();
   };
   A.toggleFavorite = function (id) {
     var was = S.isFav(id);

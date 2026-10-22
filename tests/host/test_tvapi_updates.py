@@ -925,6 +925,27 @@ class TvUpdates(unittest.TestCase):
             s2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s2.bind(("127.0.0.1", w.port))
 
+    def test_19b_downloads_the_stop_paused_resume_on_the_next_start(self):
+        # "Restart download service": what the stop paused starts again with the next copy;
+        # a download the user paused before stays paused.
+        w = self.world("upd-stop-resume", files="own")
+        c = w.client()
+        job = w.srv.add(url=w.file_url("big.bin", "slow"), filename="stop-resume.bin", size=64 * MiB)
+        mine = w.srv.add(url=w.file_url("small.bin", "slow"), filename="stop-resume-mine.bin", size=8 * MiB)
+        w.srv.wait_job(job["id"], None, timeout=60, until=lambda j: j["state"] == "downloading" and j["written"] > 0)
+        self.assertEqual(w.srv.action(mine["id"], "pause")[0], 200)
+        self.stop_or_skip(c).check(status=202)
+        self.assertEqual(w.srv.proc.wait(timeout=30), 0, w.log_text()[-3000:])
+        with open(os.path.join(w.data, "queue.json")) as f:
+            jobs = {j["id"]: j for j in json.load(f)["jobs"]}
+        self.assertEqual(jobs[job["id"]]["state"], "paused")
+        w.restart()
+        j = w.srv.wait_job(job["id"], None, timeout=30, until=lambda x: x["state"] in ("connecting", "downloading"))
+        self.assertGreater(j["written"], 0, "it continues from its partial")
+        m = w.srv.job(mine["id"])
+        self.assertEqual((m["state"], m["message"]), ("paused", "Paused"))
+        self.assertIn("1 queued again", w.log_text())
+
     def test_20_stop_refused_when_the_queue_cannot_be_saved(self):
         w = self.world("upd-stop-ro", files="own")
         c = w.client()

@@ -16,7 +16,7 @@ namespace orbit
 namespace
 {
 
-constexpr const char *kTabs[] = {/* i18n */ "Discover", /* i18n */ "Browse", /* i18n */ "Library", /* i18n */ "Downloads"}; // by tab::
+constexpr const char *kTabs[] = {/* i18n */ "Discover", /* i18n */ "Browse", /* i18n */ "Saves", /* i18n */ "Library", /* i18n */ "Downloads"}; // by tab::
 constexpr int kTabCount = tab::count;
 constexpr int kSearchItem = kTabCount;
 constexpr int kSettingsItem = kTabCount + 1;
@@ -93,8 +93,8 @@ int active_jobs(const Snapshot &state)
 } // namespace
 
 App::App(Context &context)
-    : ctx_(context), discover_(context), browse_(context), library_(context), downloads_(context),
-      game_(context), settings_(context)
+    : ctx_(context), discover_(context), browse_(context), saves_(context), library_(context),
+      downloads_(context), game_(context), settings_(context)
 {
     top_focus_.resize(kTopItems);
     backdrop_in_.snap(1.0f);
@@ -106,6 +106,8 @@ Screen &App::screen()
     {
     case tab::discover:
         return discover_;
+    case tab::saves:
+        return saves_;
     case tab::library:
         return library_;
     case tab::downloads:
@@ -122,8 +124,8 @@ const Screen &App::screen() const
 
 bool App::content_blocked() const
 {
-    // Library and Downloads don't depend on the download sources or the catalogue.
-    if (tab_ == tab::downloads || tab_ == tab::library)
+    // Library, Downloads and Saves don't depend on the download sources or the catalogue.
+    if (tab_ == tab::downloads || tab_ == tab::library || tab_ == tab::saves)
         return false;
     const Snapshot &state = ctx_.store.state();
     return state.setup_needed() || (state.have_catalog && state.games.empty());
@@ -163,12 +165,35 @@ bool App::update_badge() const
     return tv || (state.have_service_update && state.service.update_available);
 }
 
-void App::show_toast(std::string text, float seconds, bool update)
+void App::show_toast(std::string text, float seconds, ToastKind kind, std::string detail)
 {
     toast_ = std::move(text);
+    toast_detail_ = std::move(detail);
     toast_time_ = seconds;
     toast_length_ = seconds;
-    toast_update_ = update;
+    toast_kind_ = kind;
+}
+
+// XENO STORE: a save install that ended while its details were not on screen
+// (closed, another tab, a game page or App settings over them) says how it
+// ended: the save, then the outcome its details would show. The card keeps
+// the outcome until those details are seen.
+void App::tell_save_install()
+{
+    const SaveInstall &install = ctx_.store.saves().install();
+    if (!install.ended() || install.run == save_told_)
+        return;
+    save_told_ = install.run;
+    if (tab_ == tab::saves && !game_open_ && !settings_open_ && !provider_open_ &&
+        saves_.showing(install.save_id))
+        return;
+    const std::string name = !install.name.empty() ? install.name
+                             : !install.game.empty() ? install.game
+                                                     : std::string(tr("Untitled save"));
+    const ToastKind kind = install.succeeded()   ? ToastKind::done
+                           : install.cancelled() ? ToastKind::note
+                                                 : ToastKind::problem;
+    show_toast(name, install.succeeded() ? 5.0f : 9.0f, kind, install.outcome());
 }
 
 void App::handle_intent(const Intent &intent, Feedback &feedback)
@@ -221,6 +246,15 @@ void App::handle_intent(const Intent &intent, Feedback &feedback)
         library_.focus();
         library_.show_game(intent.id, intent.detail);
         break;
+    case Intent::Kind::show_saves:
+        // XENO STORE: a game page's Community saves.
+        game_open_ = false;
+        tab_ = tab::saves;
+        area_ = Area::content;
+        saves_.focus();
+        saves_.show_game(intent.id);
+        feedback.play(hui::audio::Cue::tab);
+        break;
     default:
         break;
     }
@@ -231,6 +265,15 @@ void App::handle_intent(const Intent &intent, Feedback &feedback)
 }
 
 void App::update(const InputFrame &input, float dt, Feedback &feedback)
+{
+    update_frame(input, dt, feedback);
+    // XENO STORE: with Sounds off (App settings, More settings) the app is
+    // silent; the controller still rumbles.
+    if (!ctx_.prefs.sounds())
+        feedback.cues.clear();
+}
+
+void App::update_frame(const InputFrame &input, float dt, Feedback &feedback)
 {
     ctx_.clock += dt;
     ctx_.store.tick();
@@ -294,12 +337,30 @@ void App::update(const InputFrame &input, float dt, Feedback &feedback)
                    4.5f);
         ctx_.store.dismiss_restart();
     }
+    // A favourite confirms itself wherever it was saved (the browser version
+    // does too); the count before the request and after it says whether it was
+    // added or removed. The count is held while the request is out, so a
+    // refresh that brings the new list first doesn't hide the notice.
+    if (ctx_.store.favourite_action().busy)
+        favourite_waiting_ = true;
+    if (ctx_.store.favourite_action().serial != favourite_serial_)
+    {
+        favourite_serial_ = ctx_.store.favourite_action().serial;
+        if (ctx_.store.favourite_action().error.empty() && state.favourites.size() != favourite_count_)
+            show_toast(state.favourites.size() > favourite_count_ ? tr("Added to favourites")
+                                                                  : tr("Removed from favourites"),
+                       2.8f, ToastKind::favourite);
+        favourite_waiting_ = false;
+    }
+    if (!favourite_waiting_)
+        favourite_count_ = state.favourites.size();
     // An update for either part shows once, then waits under App settings.
     if (!update_told_ && update_badge() && !settings_open_)
     {
         update_told_ = true;
-        show_toast(tr("An update is available in App settings"), 4.5f, true);
+        show_toast(tr("An update is available in App settings"), 4.5f, ToastKind::update);
     }
+    tell_save_install();
 
     // Recover active verification after reopening the native app. Historical
     // terminal results never reopen themselves or undo a dismissal.
@@ -835,24 +896,56 @@ void App::draw(Frame &frame) const
     {
         const float alpha = std::min(1.0f, toast_time_ / 0.3f) *
                             std::min(1.0f, (toast_length_ - toast_time_) / 0.2f);
-        const float width = type.medium.measure(toast_, 23.0f) + 110.0f;
-        const ui::Rect pill{960.0f - width * 0.5f, 900.0f, width, 64.0f};
+        // XENO STORE: a detail wraps under the line, up to three lines, and
+        // the toast grows upward from where a one-line toast sits.
+        constexpr float kDetailWidth = 1240.0f;
+        std::vector<std::string> detail;
+        if (!toast_detail_.empty())
+            detail = type.regular.font->wrap(toast_detail_, 20.0f, kDetailWidth);
+        const int lines = std::min(3, static_cast<int>(detail.size()));
+        float width = type.medium.measure(toast_, 23.0f);
+        if (lines > 0)
+            width = std::min(width, kDetailWidth);
+        for (int i = 0; i < lines; ++i)
+            width = std::max(width, std::min(type.regular.measure(detail[static_cast<std::size_t>(i)],
+                                                                  20.0f),
+                                             kDetailWidth));
+        width += 110.0f;
+        const float height = 64.0f + (lines > 0 ? 12.0f + 28.0f * static_cast<float>(lines) : 0.0f);
+        const ui::Rect pill{960.0f - width * 0.5f, 964.0f - height, width, height};
+        const float mark_y = lines > 0 ? pill.y + 32.0f : pill.cy();
         overlay.push_opacity(std::clamp(alpha, 0.0f, 1.0f));
         overlay.shadow({pill.x, pill.y + 10.0f, pill.w, pill.h}, 32.0f, 30.0f,
                        ui::color::shadow.with_alpha(0.5f));
         overlay.rounded_rect(pill, 32.0f, ui::color::night3);
-        if (toast_update_)
+        if (toast_kind_ == ToastKind::update)
         {
-            overlay.circle(pill.x + 40.0f, pill.cy(), 16.0f, ui::color::action);
-            ui::icon_download(overlay, pill.x + 40.0f, pill.cy(), 18.0f, ui::color::action_ink);
+            overlay.circle(pill.x + 40.0f, mark_y, 16.0f, ui::color::action);
+            ui::icon_download(overlay, pill.x + 40.0f, mark_y, 18.0f, ui::color::action_ink);
+        }
+        else if (toast_kind_ == ToastKind::favourite)
+        {
+            // A favourite added or removed: a heart on gold.
+            overlay.circle(pill.x + 40.0f, mark_y, 16.0f, ui::color::action);
+            ui::icon_heart(overlay, pill.x + 40.0f, mark_y, 18.0f, ui::color::action_ink);
+        }
+        else if (toast_kind_ == ToastKind::done)
+        {
+            overlay.circle(pill.x + 40.0f, mark_y, 16.0f, ui::color::ok);
+            ui::icon_check(overlay, pill.x + 40.0f, mark_y, 16.0f, ui::color::night1, 3.0f);
         }
         else
         {
-            overlay.circle(pill.x + 40.0f, pill.cy(), 16.0f, ui::color::ok);
-            ui::icon_check(overlay, pill.x + 40.0f, pill.cy(), 16.0f, ui::color::night1, 3.0f);
+            overlay.circle(pill.x + 40.0f, mark_y, 16.0f,
+                           toast_kind_ == ToastKind::problem ? ui::color::bad : ui::color::text2);
+            ui::text(overlay, type.semibold, "!", pill.x + 40.0f, mark_y + 7.0f, 20.0f,
+                     ui::color::night1, ui::Align::center);
         }
-        ui::text(overlay, type.medium, toast_, pill.x + 70.0f, pill.cy() + 8.0f, 23.0f,
-                 ui::color::text);
+        ui::text_fit(overlay, type.medium, toast_, pill.x + 70.0f, mark_y + 8.0f, 23.0f,
+                     pill.w - 110.0f, ui::color::text);
+        if (lines > 0)
+            ui::paragraph(overlay, type.regular, toast_detail_, pill.x + 70.0f, mark_y + 44.0f, 20.0f,
+                          kDetailWidth, 28.0f, ui::color::text2, lines);
         overlay.pop_opacity();
     }
 

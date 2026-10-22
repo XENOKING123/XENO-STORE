@@ -87,7 +87,17 @@ p { margin: 0; }
 .tab .badge::after { content: ""; position: absolute; inset: 0; border-radius: 999px; box-shadow: 0 0 0 3px var(--gold-soft), 0 0 16px var(--gold-glow); opacity: 0; pointer-events: none; }
 .tab .badge.pulse::after { animation: glow-pulse 1.8s ease-in-out infinite; }
 
-.topbar-right { margin-inline-start: auto; display: flex; align-items: center; gap: 10px; }
+.topbar-right { margin-inline-start: auto; display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
+/* room on a crowded top bar (fitChrome in 50-router.js adds these in order while Search and Settings would be pushed
+   off the edge): the IP chip, the free-space chip, tighter tabs, the brand word, the speed text, then scrolling tabs */
+.topbar.fit-ip .schip.ip, .topbar.fit-free .schip.free, .topbar.fit-brand .brand-word, .topbar.fit-speed .schip.speed > span { display: none; }
+.topbar.fit-tabs { gap: 14px; }
+html .topbar.fit-tabs .tab { padding: 0 10px; }
+html:not([data-pack="arcade"]) .topbar.fit-tabs .tab { letter-spacing: .06em; }
+.topbar.fit-tabs .tab.active::after { left: 10px; right: 10px; }
+.topbar.fit-scroll .tabs { min-width: 0; overflow-x: auto; overflow-y: hidden;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); }
+[dir="rtl"] .topbar.fit-scroll .tabs { -webkit-mask-image: linear-gradient(270deg, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(270deg, #000 calc(100% - 32px), transparent); }
 .status-chips { display: flex; gap: 8px; align-items: center; }
 .schip {
   position: relative; display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 999px;

@@ -12,8 +12,9 @@ real host backend, in a deterministic test world, with automatic checks
 
 For every scenario group of tools/tv/scenarios.json (and every language):
   1. world.py builds a temp world (catalogue, feeds, settings, Library files,
-     the starter's copies) and starts what the group needs: the backend
-     (build/host/xeno-store), the fake ELF loader, the sentinel loader on the
+     the starter's copies, the Save Data Store's community saves) and starts
+     what the group needs: the backend (build/host/xeno-store), the XenoKing
+     site's stand-in, the fake ELF loader, the sentinel loader on the
      backend's own XENO_PORT_LOADER and the recording proxy;
   2. the seeder (below) drives /api/v1 like the app to put the world in its state
      (pairing, sources, the six Downloads rows, a Library copy, ...);
@@ -27,10 +28,11 @@ Then the six checks run, <out>/report.json and <out>/index.html are written,
 and the exit status is 0 when every check passed (1 on a failure, 2 when the
 run could not start). The checks (README.md has the details):
   1 captures   every expected picture exists and is not blank
-  2 state      TVSTATE has no unexpected linkError/libraryError/downloadsError,
-               and nothing the app showed says "unreadable"
-  3 backend    no 5xx on /api/v1 (but art 502, and 503 while stopping) and no
-               request to /zero/companion
+  2 state      TVSTATE has no unexpected linkError/libraryError/downloadsError/
+               savesError, nothing the app showed says "unreadable", and the
+               saves listed and the save install ended as the scenario expects
+  3 backend    no 5xx on /api/v1 or /api/saves (but art 502, and 503 while
+               stopping) and no request to /zero/companion
   4 loader     the fake loader received what each scenario sends (cold start
                1, crash fallback 2 with copy=saved then copy=bundled, restart 1
                with the drain in the store log); the store never relaunched itself
@@ -84,8 +86,8 @@ STOPPING_TEXT = "is stopping"   # check 3: the 503 a stopping store answers (TV_
 COMPARE_FLAG = 6.0        # --compare: mean absolute luma difference that flags a picture
 CHECKS = {
     "captures": "1. every capture exists and is not blank",
-    "state": "2. no unexpected error in TVSTATE, nothing unreadable",
-    "backend": "3. no 5xx on /api/v1 (art 502 and stopping 503 aside), no /zero/companion",
+    "state": "2. no unexpected error in TVSTATE, nothing unreadable, saves as expected",
+    "backend": "3. no 5xx on /api/v1 or /api/saves (art 502 and stopping 503 aside), no /zero/companion",
     "loader": "4. loader sends match, drain on restart, no self-relaunch",
     "art": "5. Discover art fetched, no failed art cache entry",
     "timing": "6. scenarios within their time limits, no wait ran out",
@@ -875,9 +877,17 @@ def check_group(gr, table, results):
             fail("state", f"{tag}: no TVSTATE line (the scenario did not finish)")
         else:
             for key, allow in (("linkError", "linkError"), ("libraryError", "libraryError"),
-                               ("downloadsError", "downloadsError")):
+                               ("downloadsError", "downloadsError"), ("savesError", "savesError")):
                 if st.get(key) and not exp.get(allow):
                     fail("state", f"{tag}: {key} {st.get(key)!r}")
+            # The Save Data Store: how many saves the app listed, and how the
+            # scenario's install ended ("done", "cancelled", "failed:<code>").
+            for key in ("savesCount", "saveInstall"):
+                if key in exp and st.get(key) != exp[key]:
+                    fail("state", f"{tag}: {key} {st.get(key)!r}, expected {exp[key]!r}")
+            # A toast the scenario must have shown (part of its text).
+            if exp.get("toastHas") and not any(exp["toastHas"] in t for t in st.get("toasts", [])):
+                fail("state", f"{tag}: no toast with {exp['toastHas']!r} (toasts {st.get('toasts', [])!r})")
             texts = list(st.get("toasts", [])) + [e.get("error", "") for e in st.get("errorsSeen", [])] + \
                 [str(v) for k, v in st.items() if k.endswith("Error") and v]
             for t in texts:
@@ -893,7 +903,7 @@ def check_group(gr, table, results):
             path = r.get("path", "")
             if "/zero/companion" in path:
                 fail("backend", f"{tag}: {r['method']} {path} (the Zero code is removed)")
-            if path.startswith("/api/v1/") and r.get("status", 0) >= 500:
+            if path.startswith(("/api/v1/", "/api/saves/", "/api/saves?")) and r.get("status", 0) >= 500:
                 if path.startswith("/api/v1/art/") and r["status"] == 502:
                     continue
                 if r["status"] == 503 and exp.get("allow503") and STOPPING_TEXT in r.get("body", ""):

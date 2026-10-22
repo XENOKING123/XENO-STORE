@@ -18,7 +18,8 @@
  *   GET  /api/queue (summary.restMode/schedule/groups/lifetime as dl.c + a virtual scheduled job) · POST /api/queue/{id}/startNow
  *   fallbacks for /api/debrid, /api/saves/users and /api/saves?user= when part A's mock is absent
  * Seeds: an install set paused at its update step, a downloading install set, turbo results on the running job,
- * a debrid job, a copy job, a backup job, a ZIP being extracted, a scheduled job, Phase 2 settings defaults.
+ * a debrid job, a copy job, a backup job, a ZIP being extracted, an installed PKG whose package was removed,
+ * a download a safe start left paused, a scheduled job, Phase 2 settings defaults.
  */
 import { randomBytes } from 'node:crypto';
 
@@ -57,15 +58,22 @@ export function register({ route, state }) {
   }, 250);
   route('GET', /^\/api\/saves\/jobs$/, () => ({ ok: true, jobs: cxJobs.map(pubCx) }));
   route('GET', /^\/api\/saves\/jobs\/([^/]+)$/, (q, body, m) => { const j = cxJobs.find((x) => x.id === m[1]); if (!j) throw new ApiError(404, 'not_found', 'No such job'); return { ok: true, job: pubCx(j) }; });
-  /* The Games-row app (PPSA99500): GET /api/app/status, POST /api/app/install (a cx job). */
-  const gameApp = { installed: false, size: 0, version: '', job: '' };
-  route('GET', /^\/api\/app\/status$/, () => ({ ok: true, titleId: 'PPSA99500', file: 'PPSA99500.ffpkg', path: '/data/homebrew/PPSA99500.ffpkg',
+  /* The Games-row app (PPSA99500): GET /api/app/status (latestVersion = updates/tv-app.json's release; ?check=1 reads it
+   * again; copy = none | orbit | manual | folder | blocked, no update offered for a folder copy), POST /api/app/install
+   * (a cx job). POST /api/__mock/app {installed, version, latest, copy} sets the state (verify scripts). */
+  const gameApp = { installed: false, size: 0, version: '', job: '', latest: '', copy: '' };
+  const verParts = (v) => String(v || '').replace(/^v/, '').split('.').map((x) => parseInt(x, 10));
+  const newerApp = (a, b) => { const x = verParts(a), y = verParts(b); if (x.length !== 3 || y.length !== 3 || x.concat(y).some(isNaN)) return false; for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] > y[i]; return false; };
+  route('GET', /^\/api\/app\/status$/, (q) => (q.check === '1' && log('info', 'app status: tv-app.json read again (?check=1)'), { ok: true, titleId: 'PPSA99500', file: 'PPSA99500.ffpkg', path: '/data/homebrew/PPSA99500.ffpkg',
     installed: gameApp.installed, registered: gameApp.installed, size: gameApp.size, version: gameApp.version,
-    job: gameApp.job && cxJobs.some((j) => j.id === gameApp.job && (j.state === 'running' || j.state === 'queued')) ? gameApp.job : '', lastJob: gameApp.job }));
+    job: gameApp.job && cxJobs.some((j) => j.id === gameApp.job && (j.state === 'running' || j.state === 'queued')) ? gameApp.job : '', lastJob: gameApp.job,
+    copy: gameApp.copy || (gameApp.installed ? 'orbit' : 'none'), latestVersion: gameApp.latest,
+    updateAvailable: gameApp.installed && gameApp.copy !== 'folder' && gameApp.copy !== 'blocked' && newerApp(gameApp.latest, gameApp.version), checking: false }));
+  route('POST', /^\/api\/__mock\/app$/, (q, body) => { for (const k of ['installed', 'version', 'latest', 'copy']) if (body && body[k] !== undefined) gameApp[k] = body[k]; if (gameApp.installed && !gameApp.size) gameApp.size = 17825792; return { ok: true }; });
   route('POST', /^\/api\/app\/install$/, () => {
     if (gameApp.job && cxJobs.some((j) => j.id === gameApp.job && (j.state === 'running' || j.state === 'queued'))) throw new ApiError(409, 'in_progress', 'The XENO STORE app is already being installed');
     const size = 17825792;
-    const job = cxStart('app-install', 'XENO STORE app (Games row)', size, 6 * 1024 * 1024, () => { gameApp.installed = true; gameApp.size = size; gameApp.version = '1.2.1'; },
+    const job = cxStart('app-install', 'XENO STORE app (Games row)', size, 6 * 1024 * 1024, () => { gameApp.installed = true; gameApp.size = size; gameApp.version = gameApp.latest || '1.2.1'; },
       { path: '/data/homebrew/PPSA99500.ffpkg', size, sha256: 'c0ffee'.repeat(10) + 'abcd', scan: 'ShadowMountPlus asked to rescan' });
     gameApp.job = job.id;
     return { ok: true, id: job.id, job: pubCx(job) };
@@ -149,7 +157,7 @@ export function register({ route, state }) {
     { name: 'Old-Dump-Tool', title: 'Old Dump Tool', size: 640 * 1024, hasEboot: false, hasIcon: true, isXenoStore: false, mtime: now() - 86400 * 200 },
     { name: 'RetroArch', title: 'RetroArch', size: 96 * MB, hasEboot: true, hasIcon: true, isXenoStore: false, mtime: now() - 86400 * 12 }
   ];
-  route('GET', /^\/api\/homebrew-dirs$/, async () => { await sleep(300); return { ok: true, dirs: hbDirs.map((d) => ({ name: d.name, path: `/data/homebrew/${d.name}`, title: d.title, size: Math.round(d.size), hasEboot: d.hasEboot, hasIcon: d.hasIcon, isXenoStore: d.isXenoStore, mtime: d.mtime })), root: '/data/homebrew', note: 'ShadowMountPlus registers every folder here as a home-screen icon; deleting a folder removes its icon on the next scan.' }; });
+  route('GET', /^\/api\/homebrew-dirs$/, async () => { await sleep(300); return { ok: true, dirs: hbDirs.map((d) => ({ name: d.name, path: `/data/homebrew/${d.name}`, title: d.title, size: Math.round(d.size), hasEboot: d.hasEboot, hasIcon: d.hasIcon, isXenoStore: d.isXenoStore, mtime: d.mtime })), root: '/data/homebrew', note: 'ShadowMountPlus registers every folder here as a home-screen icon. Deleting a folder does not remove the icon ShadowMountPlus already made for it; delete that icon in the PS5\'s Settings → Storage (ShadowMountPlus only drops it by itself when auto_remove_missing_games is on).' }; });
   route('POST', /^\/api\/homebrew-dirs\/delete$/, async (q, body) => {
     const name = String(body.name || '');
     if (!name || name.indexOf('/') >= 0 || name[0] === '.') throw new ApiError(400, 'bad_request', 'invalid folder name');
@@ -167,7 +175,7 @@ export function register({ route, state }) {
     /* same path rules as cx_uninstall(): home-screen app, the Payload Manager copy we recorded, recorded downloads +
        <root>/xeno-store/pkg|files on every drive (save backups are never deleted), and the data dir last */
     const removed = [], kept = [], failed = [];
-    (sel.homebrew ? removed : kept).push('/data/homebrew/XENO-STORE');
+    for (const p of ['/data/homebrew/XENO-STORE', '/data/homebrew/PPSA99500', '/data/homebrew/PPSA99500.ffpkg', '/user/app/PPSA99500', '/user/app/XENO00002']) (sel.homebrew ? removed : kept).push(p);
     if (sel.payloadManager) removed.push('/data/etaHEN/payloads/xeno-store.elf');
     if (sel.downloads) {
       for (const j of state.jobs) if (j.path && (j.state === 'done' || j.state === 'installed' || j.state === 'extracted' || j.written > 0)) removed.push(j.path + (j.written > 0 && j.state !== 'done' && j.state !== 'installed' && j.state !== 'extracted' ? '.xpart' : ''));
@@ -525,7 +533,7 @@ export function register({ route, state }) {
   function seedSettings() {
     const st = state.settings;
     Object.assign(st.general, { largeText: false, highContrast: false, safeMode: false, screensaver: true, screensaverMinutes: 3, controllerSwapConfirm: false, mdns: true });
-    Object.assign(st.downloads, { preferFormat: 'auto', turboStart: true, autoInstallSets: true, installOrder: 'game,backport,update,dlc', restModeAutoResume: true, extractZip: true, deleteArchiveAfterExtract: true, scheduleStart: st.downloads.scheduleStart || '', scheduleEnd: st.downloads.scheduleEnd || '' });
+    Object.assign(st.downloads, { preferFormat: 'auto', turboStart: true, autoInstallSets: true, installOrder: 'game,backport,update,dlc', restModeAutoResume: true, extractZip: true, deleteArchiveAfterExtract: true, deletePkgAfterInstall: false, resumeAfterRestart: true, scheduleStart: st.downloads.scheduleStart || '', scheduleEnd: st.downloads.scheduleEnd || '' });
     st.debrid = st.debrid || { realdebrid: { apiKey: 'rd-mock-key-7f3a9c2e' }, alldebrid: { apiKey: '' }, torbox: { apiKey: '' }, premiumize: { apiKey: '' }, preferred: 'auto' };
     st.catalog.featuredUrl = st.catalog.featuredUrl || ''; st.catalog.messagesUrl = st.catalog.messagesUrl || ''; st.catalog.companionsUrl = st.catalog.companionsUrl || ''; st.catalog.savesBackendUrl = st.catalog.savesBackendUrl || '';
     st.saves = st.saves || { backupRoot: '', autoBackup: true, indexUrls: ['https://raw.githubusercontent.com/XENOKING123/XENO-STORE/main/updates/saves.json'], backend: { kind: 'github', url: '', anonKey: '', bucket: 'ps5-saves', garlicFunction: 'garlic-savedb' }, uploadHost: 'site', uploadEndpoint: '', submitEndpoint: '', nickname: '' };
@@ -614,7 +622,24 @@ export function register({ route, state }) {
       zj._extractStart = Date.now() - 2000; zj._extractUntil = Date.now() + 14000;
       jobs.push(zj); state.jlog(zj, 'download complete → extracting on the console');
     }
-    /* 8. scheduled download (virtual: never enters the simulation until Start now) */
+    /* 8. an installed PKG whose package was removed after the install (downloads.deletePkgAfterInstall) */
+    g = take((x) => direct(x));
+    if (g) {
+      const r = direct(g);
+      const pj = state.makeJob(g, { ...r, format: 'PKG', filename: `${(g.titleIds || [])[0] || 'PPSA00000'} ${g.title}.pkg` }, { root: '/data', autoInstall: true });
+      pj.state = 'installed'; pj.written = pj.total; pj.segments.forEach((s) => { s[2] = s[1]; }); pj.finishedAt = now() - 7200; pj.message = 'Installed · package removed';
+      pj.install = { state: 'installed', message: 'Installed', contentId: `EP0001-${pj.titleId || 'PPSA00000'}_00-XENOSTOREMOCK000`, pkgDeleted: true };
+      jobs.push(pj); state.jlog(pj, 'package removed after the install');
+    }
+    /* 9. a download a safe start left paused (the last run crashed soon after its start): job.restart "held" */
+    g = take((x) => direct(x));
+    if (g) {
+      const r = direct(g); const hj = state.makeJob(g, r, { root: '/data' });
+      hj.state = 'paused'; hj.written = Math.floor(hj.total * 0.4); hj.segments.forEach((s) => { s[2] = Math.min(s[1], s[0] + Math.floor((s[1] - s[0]) * 0.4)); }); hj.attempts = 1;
+      hj.message = 'Not resumed: XENO STORE restarted after a problem'; hj.restart = 'held';
+      jobs.push(hj); state.jlog(hj, 'not resumed: safe start after a crash');
+    }
+    /* 10. scheduled download (virtual: never enters the simulation until Start now) */
     g = take((x) => direct(x));
     if (g) {
       const r = direct(g);

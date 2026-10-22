@@ -140,7 +140,8 @@ Targets (all run from the repository root):
 Compiler flags: `-std=gnu11 -Wall -Wextra -Werror -O2 -fstack-protector-strong -D_FILE_OFFSET_BITS=64 -DXENO_VERSION=\"$(VERSION)\"`.
 PS5 link set (proven to load): `-lSceSystemService -lSceUserService -lSceAppInstUtil -lSceNotification -lkernel_sys`.
 **Do NOT direct-link** `-lSceNet -lSceSsl -lSceHttp2` — resolve them at runtime (§4.2).
-There is one ELF: it opens the PS5 browser at start when the `general.openOnStart` setting is on (default).
+There is one ELF: it opens the XENO STORE app (or, without it, the PS5 browser) at start when the `general.openOnStart`
+setting is on (default; §3.2).
 
 ---
 
@@ -155,6 +156,7 @@ There is one ELF: it opens the PS5 browser at start when the `general.openOnStar
   - `catalog.json` (refreshed copy, only when newer revision than embedded) + `catalog.meta.json`
   - `log.txt` (rotated at 2 MiB → `log.1.txt`)
   - `xeno-store.elf` (self-update staging; `xeno-store.elf.new` → rename on verified)
+  - `pairing.json` (paired devices and the console's own session, §6.6), `handoff.pending` (hand-off marker, §3.2)
 - Storage roots (download destinations), discovered at start and on `/api/storage` call:
   `/data` (Internal), `/mnt/ext0`, `/mnt/ext1` (M.2), `/mnt/usb0` … `/mnt/usb7` (USB).
   A root is listed if it `stat`s as a directory and `statvfs` works; `writable` is tested
@@ -172,11 +174,31 @@ There is one ELF: it opens the PS5 browser at start when the `general.openOnStar
 
 ### 3.2 Startup order
 log → data dir → settings load → catalog load (embedded, then cached if newer) → storage scan →
-queue load (jobs that were running become `paused` with message "Stopped when XENO STORE closed") →
+queue load (jobs that were running are queued again while `downloads.resumeAfterRestart` is on, else `paused`
+with message "Stopped when XENO STORE closed"; a safe start resumes nothing; §7.5) →
 server bind → housekeeping thread → up to 2 s waiting for the TV app's first `/api/v1` request (§19.3) →
-(`general.openOnStart`: open `http://127.0.0.1:9095/?tv=1`, unless the Games-row app just asked for it or the TV app
-is polling) → toast "XENO STORE ready · http://<ip>:9095" (ip from `getifaddrs`, first non-loopback IPv4; skipped
-when the TV app is polling).
+what to open on the TV (`app_install_open_choice`) → pairing-code toast and toast "XENO STORE ready · http://<ip>:9095"
+(ip from `getifaddrs`, first non-loopback IPv4; both skipped when the TV app is polling or the app was opened).
+
+What opens, with `general.openOnStart` on:
+- **nothing** when the TV app is polling (it started this copy and is the screen), the setting is off,
+  `--no-browser` was given, or the Games-row app opened the browser within the last 15 s;
+- **the XENO STORE app** (`PPSA99500`) when it can be launched: its `.ffpkg` image or its `PPSA99500/` folder (with
+  `eboot.bin`) is in `/data/homebrew` and the title is registered (`/user/app/PPSA99500`). The launch is the
+  Library's Play call (`sceLncUtilLaunchApp`); the app finds this copy running. Log: "start-up: opened the XENO STORE
+  app (PPSA99500)". No toast covers it (the app shows the pairing code itself);
+- **the PS5 browser** (`http://127.0.0.1:9095/?tv=1`) otherwise, when the launch fails ("start-up: the XENO STORE app
+  did not open (…), opening the browser"), and after Settings → Updates → *Restart now* asked for in the console's own
+  browser, which the new copy reopens instead of the app.
+
+*Restart now* (`POST /api/update/restart`) and a copy that hands over to a downloaded update at its start
+(`update_handoff_newer`) write `<data>/handoff.pending` = `"<unix time> <version that handed off> <why>"` before
+sending the ELF: `restart` (Restart now from the console's own browser, loopback), `remote` (Restart now from a
+phone, a PC or XENO STORE Desktop) or `start`. The new copy treats it as a restart only when the marker is younger
+than 90 s, comes from another build and says `restart`; a marker without a reason (written by an older build, e.g.
+Payload Manager's copy, which is never updated and hands over at every start) is not one, so the app opens. The
+marker is removed once the new copy's server is up. Host test hooks: `XENO_HOST_LAUNCH_FAIL` makes the simulated
+launch fail; `GET /api/debug/open-choice` (host build only) answers the decision for given inputs.
 
 ---
 
@@ -261,7 +283,8 @@ UI reloads via `/catalog.json` ETag change. Auto every 6 h when `settings.catalo
   any job is `downloading` and `settings.downloads.keepAwake`.
 - `sys_fw_version()`: `kernel_get_fw_version()` from `<ps5/kernel.h>` → "13.60".
 - `sys_launch_browser(url)`: `sceUserServiceInitialize` + `sceSystemServiceLaunchWebBrowser`; used at start
-  (`general.openOnStart`) and by `POST /api/launcher/open` (the Games-row app; repeats within 8 s are ignored).
+  (`general.openOnStart`, when the XENO STORE app is not opened, §3.2) and by `POST /api/launcher/open` (the Games-row
+  app; repeats within 8 s are ignored).
 - `sys_local_ip(char*, size_t)`: `getifaddrs`.
 ### 4.9 json.c
 Writer: growable buffer with `json_obj_begin/end`, `json_key`, `json_str` (escapes \" \\ \n \r \t and <0x20 as \u00XX; valid UTF-8 passthrough),
@@ -323,17 +346,20 @@ Job object:
  "total":156011528192,"written":12345678,"speed":52428800,"eta":2740,"connections":8,"segments":[[0,100,100],[100,200,50]],
  "sha256":"","sha256Expected":"","verified":false,"verify":"size"|"sha256"|"none",
  "addedAt":1760000000,"startedAt":0,"finishedAt":0,"attempts":1,"nextRetryAt":0,"priority":0,
- "autoInstall":true,"install":{"state":"idle"|"installing"|"installed"|"failed","message":"","contentId":""},
- "resumable":true,"etag":"","lastModified":""}
+ "autoInstall":true,"install":{"state":"idle"|"installing"|"installed"|"failed","message":"","contentId":"","pkgDeleted":false},
+ "resumable":true,"etag":"","lastModified":"","restart":""|"resumed"|"held"}
 ```
 States: `queued` → `connecting` → `downloading` → `verifying` → `done`; side states `paused`, `failed`,
 `cancelled`, `installing` (for PKG after done when autoInstall), `installed`. `phase` is free text for sub-steps.
+`install.pkgDeleted`: §8; `restart`: §7.5 (API.md §4).
 
 - `GET /api/queue` → `{ok, jobs:[...], summary:{active, queued, paused, failed, done, speed, remaining, eta, keepAwake:bool}}`
 - `POST /api/queue {gameId, releaseId, root, connections?, verify?, autoInstall?, url?}` →
   validates release exists (or accepts a raw `url` + `filename` + `format` for "Enter file link"), checks the
   destination (free space ≥ total + 256 MiB; not already queued; final file absent or `overwrite:true`),
   creates job → `{ok, job}`; errors: `no_space`, `exists`, `bad_release`, `root_unavailable`, `downloads_unavailable`.
+  `job.autoInstall` is fixed here: the request's `autoInstall` (true/false) when given, otherwise
+  `settings.downloads.autoInstallPkg` at this moment (the TV app's `/api/v1/downloads` never sends one).
 - `POST /api/queue/{id}/pause|resume|cancel|retry|remove|restart|install|verify|move {direction:"up"|"down"|"top"|"bottom"}` → `{ok, job}`
   - `cancel`: stops, keeps the partial unless `{deleteFiles:true}`; state `cancelled`.
   - `remove`: forgets the entry; `{deleteFiles:true}` also deletes partial/final+sidecar (only job-owned paths).
@@ -365,6 +391,32 @@ States: `queued` → `connecting` → `downloading` → `verifying` → `done`; 
 
 ### 6.6 Pairing
 - `GET /api/pair` → `{ok, url:"http://192.168.1.20:9095/", ip, port, qr:"<svg string>"}` (server renders a simple QR as SVG using a tiny QR encoder in C? **No** — keep C small: the UI renders the QR with the vendored JS. The endpoint returns `url` only.)
+- `POST /api/pair {code}` → `{ok, token, paired:true}`: a 64-hex bearer token for a new device, named from its
+  `User-Agent` ("iPhone Safari", "Windows Chrome", "XENO STORE Desktop", "PS5 browser"…, `""` when unknown). Up to
+  **16 device slots**: with all of them taken, the device unused the longest (oldest last seen, then oldest pairing,
+  then the first listed) is unpaired to make room and the reply adds `replaced` (its name, `""` = none). Errors:
+  `403 bad_code`, `429 locked_out` (`retryAfter`), `503 save_failed`; there is no "slots full" refusal.
+- `GET /api/pair/devices` → `{ok, devices:[{id, name, firstSeen, lastSeen, current}], max:16}` in pairing order;
+  `id` = first 16 hex of SHA-256(token) (tokens never leave the console), times in Unix seconds (0 = unknown),
+  `current` = the caller's own Bearer token. `POST /api/pair/unpair {id}` → `{ok, unpaired:true, devices, max}`
+  (`400 bad_request`, `404 not_found`, `503 save_failed`). `POST /api/pair/unpair-others` → `{ok, unpaired:n, devices,
+  max}`: every device but the caller's (from the console itself, every listed device). The three answer
+  `403 not_paired` unless the caller is loopback or carries a valid Bearer token (the `/api/pair*` routes skip the
+  PIN gate; a PIN alone is not enough).
+- A request from the LAN with a device's Bearer token moves its last seen (saved at most once a minute) and names an
+  unnamed device from its `User-Agent`; requests from the console itself never touch a device. A non-`/api/v1`
+  request from the LAN whose Bearer token the console no longer knows gets `403 not_paired` on any route, GET
+  included (not for `/api/pair*`, loopback callers or requests without a token).
+- **The console's own session** (`GET /api/session`, `GET /api/v1/session`, loopback only; shared by the console
+  browser and the TV app) is kept apart from the 16 slots: never listed, unpaired or replaced. From loopback the TV
+  dialect accepts only this session (`tv_authed`): a device's token gets `paired:false` and `401`, so a 1.3.x TV app
+  holding the old first token asks `/api/v1/session` again.
+- `<data>/pairing.json` v2: `{"v":2, "local":"<64 hex>", "devices":[{"token","name","first","last"}], "tokens":[…]}`.
+  `tokens` is the legacy list for a downgrade (`local` first, then the devices; with 16 devices the one unused the
+  longest is left out, since an older store reads 16 entries and hands out the first as its session). A v1 file
+  (`{"v":1,"tokens":[…]}`) is migrated by listing every token as a device with no name and times 0 (the first to be
+  replaced; the web UI says "Not used since XENO STORE was updated"); a new console session is created on the first
+  `/api/session` or `/api/v1/session`.
 
 ---
 
@@ -411,14 +463,32 @@ fetch of the same bytes before continuing (tail check).
    Mismatch → `failed`/`hash_mismatch` (partial kept for inspection).
 2. Rename `.xpart` → final, delete sidecar, `fsync` dir.
 3. Toast "✓ <title> downloaded (<size>)" if `settings.notifications.toasts`.
-4. If format is `pkg|fpkg` and (`job.autoInstall` or `settings.downloads.autoInstallPkg`) → §8.
+4. If format is `pkg|fpkg` and `job.autoInstall` → §8. The job's value decides alone (it was fixed when the job was
+   added, §6.3): the setting never installs a package whose download said no, and turning it on later does not
+   install packages already queued.
 5. If format is an image and `settings.downloads.shadowMountScan` → `POST /api/shadowmount/scan` best-effort.
 6. `settings.downloads.keepAwake` tick stops when no job is downloading.
 
 ### 7.5 Queue persistence
-`queue.json` = `{"v":1,"jobs":[...]}` written atomically on every state change and every 5 s during
-transfers. On load: `downloading|connecting|verifying` → `paused` ("Stopped when XENO STORE closed");
-`installing` → re-check install status once.
+`queue.json` = `{"v":1,"stopMarks":true,"jobs":[...]}` written atomically on every state change and every 5 s during
+transfers. A job paused by a stop (the TV app's stop, API.md §13.9) carries `"stopPaused":true` (persisted only, never
+in `/api/queue`); the next start or any user action on the job clears it. On load:
+- **Running when the store stopped**: jobs that were `connecting|downloading|verifying|extracting`, jobs marked
+  `stopPaused`, and, in a `queue.json` without the top-level `stopMarks` (written by an older store), jobs paused with
+  the message "Paused for the XENO STORE restart". A job the user paused never counts.
+- `downloads.resumeAfterRestart` on (default) and a normal start: those jobs go back to `queued` with message
+  "Resuming after XENO STORE restarted" (job log "resumed after XENO STORE restarted"); the scheduler starts them by
+  priority, then queue order, under `downloads.concurrentJobs`. Jobs already queued simply start.
+- Setting off: they stay `paused`, a running one with "Stopped when XENO STORE closed" (the old behaviour).
+- **Safe start** (`g_cfg.safe_mode`: the previous run crashed within 300 s of its start): no download starts by
+  itself. Running, stop-paused and queued jobs (queue.json lags up to 5 s, so a queued job may be the one that ran)
+  come back `paused` with "Not resumed: XENO STORE restarted after a problem" and `stopPaused` set, so the next
+  normal start resumes them (subject to the setting); a warning is logged.
+- A running or stop-paused download whose final file is complete (no `.xpart`, size = `total`, e.g. a stopped
+  Verify) comes back `done` (or `installed`) with "Verification interrupted" instead of downloading again.
+- A stopped extraction comes back `done` with "Extraction stopped when XENO STORE closed — press Extract to retry";
+  `installing` → re-check install status once.
+The job's `restart` field (API.md §4) is `resumed` / `held` while its message is one of the two notes above.
 
 ---
 
@@ -437,6 +507,19 @@ Return 0 → `installing`; the housekeeping thread polls `/user/app/<TITLEID>` e
 2. etaHEN DPI on `127.0.0.1:12800` (if present): same line protocol with `http://127.0.0.1:9095/pkgsrv/<token>`.
 3. Give up → `install.state:"failed"` with the hex error and a hint ("Install it from XENO TOOL → Install, or etaHEN").
 Host build: simulates success after 3 s (for UI tests).
+
+**`downloads.deletePkgAfterInstall`** (default false): once a download's PKG/FPKG is installed, the housekeeping tick
+removes that job's own `.pkg` (only that file, outside the queue lock; never a folder, a copy job or a Library install
+of a file found on a drive, i.e. a synthetic job) and sets `install.pkgDeleted:true` (persisted), message "Installed ·
+package removed", job log "package removed after the install". "Installed" (`/user/app/<TITLEID>` exists) is early for
+an update or a DLC, so only the delete waits for proof: `sceAppInstUtilGetInstallStatus` for the content id must have
+shown this install in progress and then report it complete (downloaded ≥ total, error 0, same total). The package is
+kept, with job log "package kept: <reason>", when the status call does not resolve or the package has no content id,
+the status reports an error, nothing is confirmed within 60 s of the install start, the install still reports
+progress after 2 h, or the store restarts before the confirmation (the wait is not persisted). A failed install never
+deletes. The web row shows the chip "Package removed" and no longer offers Verify hash or Open location. Host build:
+`XENO_HOST_INSTALL_STATUS=none|error|done` simulates the status call, `XENO_HOST_INSTALL_DIRCHECK=1` reads "installed"
+from the title folder like the console.
 
 ---
 
@@ -557,11 +640,13 @@ Phone (< 820 px): bottom tab bar, no legend, 2–3 column grids, sheets become f
    ShadowMount); filters: root/format/installed; search.
 6. **Settings** (grouped list, each item a row with a value + sheet/menu):
    General (Language, Theme, Card size, Reduce motion, Sounds, Button hints, Show PS4), Downloads (Default drive,
-   Connections, Simultaneous, Speed limit, Verify hashes, Auto-install PKG, ShadowMount scan, Keep console awake,
-   Schedule window), Sources (toggles + notice acknowledgement), Catalog (revision, last sync, Refresh now, Auto-refresh,
-   custom URL), Pair a device (QR + URL + "Phones on this Wi-Fi can open this address"), Updates (current, latest,
-   Check, Install update, Stop XENO STORE to restart), Notifications, Diagnostics (log viewer, export/import settings,
-   system info), About (version, credits: ps5-payload-dev SDK, CheatRunner/maj0r,
+   Connections, Simultaneous, Speed limit, Verify hashes, Auto-install PKG (the default for new downloads), Delete the
+   PKG after installing, ShadowMount scan, Keep console awake, Resume after a restart, Schedule window), Sources
+   (toggles + notice acknowledgement), Catalog (revision, last sync, Refresh now, Auto-refresh, custom URL), Pair a
+   device (QR + URL + "Phones on this Wi-Fi can open this address"; Paired devices with Unpair, "Unpair all other
+   devices" and the 16-slot note), Updates (current, latest, Check, Install update, Stop XENO STORE to restart; the
+   XENO STORE app card with "Update available: <v>" / "Update the app"), Notifications, Diagnostics (log viewer,
+   export/import settings, system info), About (version, credits: ps5-payload-dev SDK, CheatRunner/maj0r,
    cheat creators, hejran7; license GPL-3.0; disclaimer).
 7. **Search overlay** (△ or /): big input, instant results (title, title ID, publisher), recent searches, suggestions.
 8. **First-run**: welcome sheet → choose sources + acknowledge notice → pick default drive → done (skippable).
@@ -608,15 +693,16 @@ Every error names the problem and the fix in one line (no raw codes except in Di
 ---
 
 ## 12. Packaging & distribution
-- `xeno-store.elf`: the store (one ELF; opens the PS5 browser at start unless `general.openOnStart` is off).
+- `xeno-store.elf`: the store (one ELF; opens the XENO STORE app, or without it the PS5 browser, at start unless
+  `general.openOnStart` is off; §3.2).
 - `PPSA99500.ffpkg`: the Games-row app, a UFS2 image that ShadowMountPlus mounts from `/data/homebrew/`: the native
   TV app (`eboot.bin`, `sce_module/libc.prx`, `assets/`, `licenses/`, `sce_sys/`) with the store in
   `xeno/xeno-store.elf` + `xeno/version.txt` (§19, FORMATS §10). The store can put it in place itself (Settings →
-  Updates → Install the XENO STORE app, or the TV app's Settings → Updates → TV app).
+  Updates → XENO STORE app → Install the app, or the TV app's App settings → Updates → TV app).
 - `XENO-STORE-<VERSION>-tv-sources.tar.gz`: the TV app's complete corresponding source (GPL-3.0): `git archive` of
   the release commit plus every pinned upstream source archive, hash-checked (`tools/tv/make_source_bundle.py`).
-- `updates/tv-app.json`: the TV app feed the store's `/api/v1/tv-app` check reads (FORMATS §8), written by the
-  release job.
+- `updates/tv-app.json`: the TV app feed the store's `/api/v1/tv-app` check and the web UI's app card
+  (`GET /api/app/status`) read (FORMATS §8), written by the release job.
 - XENO STORE Desktop archives (Windows, macOS, Linux).
 - `updates/payloads.json` (Payload Manager repo format, one entry: `xeno-store.elf`):
 ```json
@@ -658,7 +744,8 @@ Every error names the problem and the fix in one line (no raw codes except in Di
 
 ## 15. Security
 - Server binds all interfaces (phones must reach it) but every mutating endpoint is same-LAN by nature; optional
-  `pairing.pin` (4 digits) required as `X-XENO-PIN` header when set (UI stores it after first entry).
+  `pairing.pin` (4 digits) required as `X-XENO-PIN` header when set (UI stores it after first entry); a paired
+  device's Bearer token (§6.6) satisfies it. A token the console no longer knows is refused with `403 not_paired`.
 - Allowlist for `/api/links/resolve` outbound hosts (dlpsgame.com, archive.org, raw.githubusercontent.com, github.com,
   api.github.com, prosperopatches.com, orbispatches.com, vikingfile.com) — never an open proxy.
 - Downloads accept only `http(s)://` URLs without credentials; final filenames sanitized (§5).
@@ -830,11 +917,17 @@ Supported-host lists are fetched once a day (`/hosts/domains`, `/v4/hosts`, `/ap
 
 ### 17.16 Clean uninstall, ghost icons, companion payloads, copy/move
 - Settings → **Uninstall XENO STORE**: confirm sheet with checkboxes: remove settings/queue/cache (`/data/xeno-store/`), remove the home-screen app
-  (`/data/homebrew/XENO-STORE/`), remove the Payload Manager copy it created (only if we created it), **keep downloaded games** (default on). Then stops the server.
+  (`/data/homebrew/PPSA99500.ffpkg`, a `PPSA99500/` folder copy with an `eboot.bin`, the old `XENO-STORE/` folder, a leftover `PPSA99500.ffpkg.part`, and
+  the PPSA99500 and XENO00002 tiles, unregistered with `sceAppInstUtilAppUnInstall` like the Library's uninstall; a running app install is cancelled
+  first), **keep downloaded games** (default on). Then stops the server. The store never places a copy for Payload Manager (Payload Manager
+  downloads its own from `payloads.json`), so the sheet offers none and notes: "Payload Manager keeps its own copy of XENO STORE. To stop it
+  from starting the store again, remove XENO STORE in Payload Manager."
   `POST /api/uninstall {data:bool, homebrew:bool, payloadManager:bool, downloads:bool}` → performs deletions (only those exact paths) → `{ok, removed:[...]}` → exit.
-  XENO STORE never registers itself with ShadowMount and never writes outside `/data/xeno-store`, `/data/homebrew/XENO-STORE` and the chosen download roots, so no ghost icons.
+  `payloadManager` (no longer sent by the web UI) only deletes a copy recorded in `<data>/payload-manager.json`, which this store never writes.
+  XENO STORE never writes outside `/data/xeno-store`, its app in `/data/homebrew` and the chosen download roots, and the uninstall takes its own tiles away, so no ghost icons.
 - **Ghost icon cleaner** (Settings → Setup): lists `/data/homebrew/*` folders (name, size, has eboot.bin/icon) and lets the user delete any with a double confirm,
-  explaining that ShadowMountPlus re-registers whatever folder exists there.
+  explaining that deleting a folder stops ShadowMountPlus registering it again but that an icon it already made stays until it is deleted in the PS5's
+  Settings → Storage (ShadowMountPlus drops it by itself only with `auto_remove_missing_games` on, off by default).
 - **Companion payloads** (Settings → Setup → Payloads): a small catalog (`updates/companions.json`, owner-curated: name, version, url, sha256, notes) of scene payloads
   that make XENO STORE one-click (ShadowMountPlus, etaHEN DPI helper, kstuff…). XENO STORE downloads a payload to `/data/xeno-store/payloads/<name>.elf` (sha256 checked)
   and sends it to the local ELF loader (`127.0.0.1:9021`, raw bytes) — `POST /api/payloads/{id}/install`, `POST /api/payloads/{id}/launch`, `GET /api/payloads`.
@@ -899,7 +992,7 @@ enumerated with `sceUserServiceGetLoginUserIdList` / `sceUserServiceGetUserName`
 - **Safe mode**: holding L2 while opening the store disables animations/sounds/enrichment (for struggling consoles); also a Settings toggle.
 
 ### 17.21 Homebrew apps store (pkg-zone) — one-tap install of apps, emulators and tools
-pkg-zone.com lists homebrew PKGs (apps, emulators, tools) with versions and authors; XENO STORE adds a **Homebrew** tab (nav: Discover · Browse · Homebrew · Library · Downloads).
+pkg-zone.com lists homebrew PKGs (apps, emulators, tools) with versions and authors; XENO STORE adds a **Homebrew** tab (nav: Discover · Browse · Saves · Downloads · Library · Homebrew).
 - Pipeline `sources/pkgzone.py` (adapter proven by a shipped payload): listing pages `https://pkg-zone.com/?page=N` (stop when a page has no cards, max 40 pages);
   each card is `<article class="pkg …">` with: id after `/details/` (alnum + `_`), title inside `class="title font-bold"`, version inside `class="number …"`,
   author after `text-gray-300">`, "Supports PS5" text flag, cover `https://pkg-zone.com/images/<id>/cover.png`, details `https://pkg-zone.com/details/<id>`,
@@ -913,7 +1006,7 @@ pkg-zone.com lists homebrew PKGs (apps, emulators, tools) with versions and auth
   even before the catalog sync includes it; covers are proxied through `/api/image?url=` (allowlisted host, resized not needed — the PS5 browser handles PNG).
 
 ### 17.22 PS5 Save Data Store (community saves, re-signed on the fly)
-PS5 titles only (PPSA). Two entry points: a **Saves** tab on every PS5 game page ("Saves (n)" next to Download) and **Library → Community Saves** (browse all,
+PS5 titles only (PPSA). Two entry points: a **Saves** tab on every PS5 game page ("Saves (n)" next to Download) and the **Saves** main tab right after Browse (browse all,
 search, "My saves", "Upload my save"). Design: same cards/rails/sheets as the rest of the store; one primary gold action per screen.
 
 **17.22.1 Data model** — `updates/saves.json` (published index; fetched like the catalog, cached 1 h; `settings.saves.indexUrls` may add more feeds):
@@ -1131,21 +1224,27 @@ The app starts the store itself when nothing answers on `127.0.0.1:9095` (connec
 The ELF loader takes raw bytes only, so the app cannot pass `--no-browser`. Instead the store waits up to 2 s after
 binding its port for an `/api/v1` request (the app polls `/system` every 0.5 s while it waits); when one arrives,
 it opens neither the PS5 browser nor its "ready" and pairing notifications: the TV app is the screen, and it shows
-the pairing code itself (Settings → Pair a device). Without the app the start is unchanged (§3.2).
+the pairing code itself (Settings → Pair a device). A store that starts on its own (the ELF loader, Payload Manager)
+opens the TV app itself when it is installed and registered, without those notifications either, and the browser
+only when it cannot (§3.2).
 
 ### 19.4 Restart and updates
 
 - **Settings → Restart download service** and the hand-over after an update both send
   `POST /api/v1/updates {"action":"stop","confirmed":true}`: the store pauses and saves the queue, answers 202,
   drains its job workers (at most 10 s), saves again and exits. It **never relaunches itself** after this stop; the
-  app sees the port close and starts the next copy (§19.2), then waits for a new `instanceId`. Paused downloads
-  stay paused with "Paused for the XENO STORE restart" until resumed.
+  app sees the port close and starts the next copy (§19.2), then waits for a new `instanceId`. The paused jobs are
+  marked `stopPaused`: the new copy queues them again while `downloads.resumeAfterRestart` is on (§7.5), else they
+  stay paused with "Paused for the XENO STORE restart" until resumed. The app's confirmation says so ("…and they then
+  continue on their own (unless Resume after a restart is off in the browser version under Settings → Downloads)").
 - **Store updates:** the app's Settings → Updates checks and installs through `/api/v1/updates` (the same updater as
   the web UI; the saved copy is what the starter prefers).
 - **TV app updates:** `/api/v1/tv-app` reads `updates/tv-app.json` (FORMATS §8), downloads `PPSA99500.ffpkg` from
   the release, checks size, SHA-256 and the UFS2 magic, and renames it over `/data/homebrew/PPSA99500.ffpkg`; the
   new app opens on the next launch. A copy placed by hand is replaced only after confirmation; an unpacked folder or
-  a foreign file at that path is never touched.
+  a foreign file at that path is never touched. The web UI's Settings → Updates → *XENO STORE app* card reads the
+  same feed (`GET /api/app/status`, API.md §8: `latestVersion`, `updateAvailable`) and offers "Update the app", the
+  web install path (except for a folder copy).
 
 ### 19.5 Image layout
 

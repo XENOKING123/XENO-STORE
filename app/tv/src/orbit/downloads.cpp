@@ -4,7 +4,9 @@
 //
 // Views, labels and actions follow the browser storefront (src/Downloads.tsx):
 // Active / Finished / Failed / Cancelled; Pause, Resume, Retry download;
-// Cancel asks whether to keep or delete the partial file.
+// Cancel asks whether to keep or delete the partial file. XENO STORE installs
+// a finished PKG by itself: its row says Installing (nothing to press until it
+// ends), Installed (a badge) or Install failed, under Failed with Retry install.
 
 #include "orbit/screens.hpp"
 #include "orbit/i18n.hpp"
@@ -137,7 +139,14 @@ std::vector<const Job *> DownloadsScreen::visible() const
 std::vector<DownloadsScreen::RowAction> DownloadsScreen::actions_for(const Job &job) const
 {
     if (job.status == "complete")
+    {
+        // The store keeps an installing row in history until the install ends.
+        if (job_install(job) == JobInstall::installing)
+            return {};
+        if (job_install(job) == JobInstall::failed)
+            return {{tr("Retry install"), "install"}, {tr("Remove from history"), "remove"}};
         return {{tr("Remove from history"), "remove"}};
+    }
     if (job.status == "cancelled")
     {
         return {{job.received > 0.0 ? tr("Resume") : tr("Start again"), "resume"},
@@ -184,6 +193,13 @@ void DownloadsScreen::show_job(const std::string &job_id)
 Intent DownloadsScreen::update(const InputFrame &input, float dt, Feedback &feedback, bool focused)
 {
     Intent intent;
+    // Retry install moves its row from Failed to Finished: follow it there.
+    if (!install_job_.empty() && !ctx_.store.action().busy)
+    {
+        if (ctx_.store.action().error.empty())
+            show_job(install_job_);
+        install_job_.clear();
+    }
     // A job created a moment ago appears with the next queue refresh.
     if (!pending_job_.empty())
         show_job(pending_job_);
@@ -320,7 +336,7 @@ Intent DownloadsScreen::update(const InputFrame &input, float dt, Feedback &feed
         {
             const Job &job = *jobs[static_cast<std::size_t>(row_)];
             const std::vector<RowAction> actions = actions_for(job);
-            button_ = std::clamp(button_, 0, static_cast<int>(actions.size()) - 1);
+            button_ = std::clamp(button_, 0, std::max(0, static_cast<int>(actions.size()) - 1));
             if (input.nav == Direction::up)
             {
                 if (row_ == 0)
@@ -358,18 +374,18 @@ Intent DownloadsScreen::update(const InputFrame &input, float dt, Feedback &feed
             }
             if (input.is_pressed(Action::confirm))
             {
-                const RowAction &action = actions[static_cast<std::size_t>(button_)];
-                if (busy)
+                const RowAction *action = actions.empty() ? nullptr : &actions[static_cast<std::size_t>(button_)];
+                if (busy || action == nullptr)
                 {
                     refuse(feedback, input);
                 }
-                else if (std::string_view(action.action) == "archive-password")
+                else if (std::string_view(action->action) == "archive-password")
                 {
                     password_.clear(); password_job_ = job.id; password_open_ = true;
                     password_keyboard_.enter(); password_keyboard_.set_length(0);
                     feedback.play(hui::audio::Cue::modal_open);
                 }
-                else if (std::string_view(action.action) == "dialog")
+                else if (std::string_view(action->action) == "dialog")
                 {
                     dialog_open_ = true;
                     dialog_cancelled_ = job.status == "cancelled";
@@ -383,7 +399,9 @@ Intent DownloadsScreen::update(const InputFrame &input, float dt, Feedback &feed
                 }
                 else
                 {
-                    ctx_.store.job_action(job.id, action.action, false);
+                    ctx_.store.job_action(job.id, action->action, false);
+                    if (std::string_view(action->action) == "install")
+                        install_job_ = job.id;
                     feedback.play(hui::audio::Cue::select);
                 }
             }
@@ -421,7 +439,7 @@ void DownloadsScreen::draw(Frame &frame, bool focused) const
     {
         if (job_view(job) == JobView::active)
             ++active;
-        if (job.status == "error")
+        if (job_view(job) == JobView::failed)
             ++attention;
     }
     const std::string summary =
@@ -521,18 +539,37 @@ void DownloadsScreen::draw(Frame &frame, bool focused) const
         const std::string name = game != nullptr     ? game->title
                                  : job.title.empty() ? job.filename
                                                      : job.title;
-        const char *status = job.status == "complete" ? tr("Complete") : status_label(job.status);
+        const JobInstall install = job_install(job);
+        const char *status = install == JobInstall::installing ? tr("Installing")
+                             : install == JobInstall::failed   ? tr("Install failed")
+                             : job.status == "complete"        ? tr("Complete")
+                                                               : status_label(job.status);
         if (job.delivery == "torbox" && job.status == "queued" && !job.delivery_phase.empty())
             status = tr(job.delivery_phase.c_str());
-        const ui::Color status_ink = job.status == "error"      ? ui::color::bad
-                                     : job.status == "complete" ? ui::color::ok
+        const ui::Color status_ink = job.status == "error" || install == JobInstall::failed ? ui::color::bad
+                                     : install == JobInstall::installing                    ? ui::color::accent
+                                     : job.status == "complete"                             ? ui::color::ok
                                      : job.status == "downloading" || job.status == "verifying" ||
                                                job.status == "extracting"
                                          ? ui::color::accent
                                          : ui::color::text2;
-        const float status_width = type.regular.measure(status, 16.0f);
-        ui::text(list, type.regular, status, right_edge, row.y + kRowPad + 21.0f, 16.0f, status_ink,
-                 ui::Align::right);
+        float status_width = 0.0f;
+        if (install == JobInstall::installed)
+        {
+            // The badge: a check and Installed, on green.
+            const char *label = tr("Installed");
+            status_width = type.semibold.measure(label, 16.0f) + 2.0f * 14.0f + 22.0f;
+            const ui::Rect badge{right_edge - status_width, row.y + kRowPad - 1.0f, status_width, 32.0f};
+            list.rounded_rect(badge, 8.0f, ui::color::ok.with_alpha(0.14f));
+            ui::icon_check(list, badge.x + 22.0f, badge.cy(), 14.0f, ui::color::ok, 2.4f);
+            ui::text(list, type.semibold, label, badge.x + 36.0f, badge.cy() + 5.8f, 16.0f, ui::color::ok);
+        }
+        else
+        {
+            status_width = type.regular.measure(status, 16.0f);
+            ui::text(list, type.regular, status, right_edge, row.y + kRowPad + 21.0f, 16.0f, status_ink,
+                     ui::Align::right);
+        }
         ui::text_fit(list, type.medium, name, tx, row.y + kRowPad + 22.0f, 23.0f,
                      info_width - status_width - 24.0f, ui::color::text);
 
@@ -561,9 +598,10 @@ void DownloadsScreen::draw(Frame &frame, bool focused) const
             total > 0.0 ? static_cast<float>(std::clamp(done / total, 0.0, 1.0)) : 0.0f;
         const ui::Rect bar{tx, row.y + kRowPad + 74.0f, info_width, 6.0f};
         ui::progress_bar(list, bar, progress,
-                         job.status == "error"      ? ui::color::bad
-                         : job.status == "complete" ? ui::color::ok
-                                                    : ui::color::action);
+                         job.status == "error" || install == JobInstall::failed ? ui::color::bad
+                         : install == JobInstall::installing                    ? ui::color::accent
+                         : job.status == "complete"                             ? ui::color::ok
+                                                                                : ui::color::action);
         const std::string left = extracting ? std::string(tr("Extracting")) + " \xC2\xB7 " + i18n::percent(progress * 100.0)
                                  : format_bytes(job.received) + " / " + format_bytes(total) +
                                  " \xC2\xB7 " + i18n::percent(progress * 100.0);
@@ -572,7 +610,9 @@ void DownloadsScreen::draw(Frame &frame, bool focused) const
         std::string right;
         if (!job.error.empty())
         {
-            ui::text_fit(list, type.regular, tr(job.error), right_edge, transfer_y, 16.0f, 620.0f,
+            // A failed install's row already says so: the line gives the store's reason.
+            const std::string error = install == JobInstall::failed ? install_failure(job) : job.error;
+            ui::text_fit(list, type.regular, tr(error), right_edge, transfer_y, 16.0f, 620.0f,
                          ui::color::bad, ui::Align::right);
         }
         else
@@ -691,6 +731,9 @@ std::vector<hui::ui::Hint> DownloadsScreen::hints() const
     if (on_views_)
         return {{hui::ui::Button::dpad, tr("Switch view")},
                 {hui::ui::Button::l1, tr("Tabs"), hui::ui::Button::r1}};
+    const std::vector<const Job *> jobs = visible();
+    if (row_ < static_cast<int>(jobs.size()) && actions_for(*jobs[static_cast<std::size_t>(row_)]).empty())
+        return {{hui::ui::Button::l1, tr("Tabs"), hui::ui::Button::r1}}; // an installing row
     return {{hui::ui::Button::cross, tr("Select")},
             {hui::ui::Button::dpad, tr("Actions")},
             {hui::ui::Button::l1, tr("Tabs"), hui::ui::Button::r1}};

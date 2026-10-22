@@ -48,7 +48,9 @@
     "autoResign": "Automatisch für dein Konto neu signiert und ins Spiel gelegt",
     "worksHere": "Passt zu deinen Spielen",
     "allSaves": "Alle Community-Spielstände",
-    "browse": "Spielstände ansehen"
+    "browse": "Spielstände ansehen",
+    "options": "Optionen des Spielstand-Stores",
+    "optionsDesc": "Backup-Laufwerk, Spitzname, Save-Feeds und Upload-Host"
   },
   "link": {
     "title": "Mit deiner PS5 verbinden",
@@ -66,6 +68,8 @@
     "bad": "Der Code stimmt nicht — prüfe die Benachrichtigung auf deiner PS5",
     "locked": "Zu viele Versuche — warte {n} s",
     "done": "Verbunden! XENO STORE wird geöffnet…",
+    "replaced": "{name} wurde entkoppelt, um Platz zu machen – es war das Gerät, das am längsten nicht benutzt wurde.",
+    "forgotten": "Die PS5 kennt diesen Browser nicht mehr: Er wurde entkoppelt, oder ein anderes Gerät hat seinen Platz eingenommen, als alle Kopplungsplätze belegt waren. Verbinde ihn erneut, um XENO STORE weiter zu nutzen.",
     "note": "Nur verbundene Geräte können deinen Store steuern. Das machst du einmal pro Browser."
   },
   "discover4": {
@@ -88,6 +92,9 @@
     "installing": "Wird installiert…",
     "install": "App installieren",
     "reinstall": "Neu installieren / aktualisieren",
+    "update": "App aktualisieren",
+    "updateAvailable": "Update verfügbar: {v}",
+    "folderCopy": "Als Ordner /data/homebrew/PPSA99500 installiert, den XENO STORE nicht aktualisiert. Entferne diesen Ordner, um die Version hier zu installieren, oder aktualisiere ihn weiter selbst.",
     "cancel": "Abbrechen",
     "cancelled": "Installation abgebrochen",
     "version": "Version {v}",
@@ -103,7 +110,7 @@
     "hintText": "Installiere die App einmal und öffne den Store über seine eigene Kachel – ohne FTP, ohne Browser-Adresse.",
     "notNow": "Nicht jetzt",
     "openOnStart": "XENO STORE beim Start öffnen",
-    "openOnStartHint": "Öffnet den Store bei jedem Start auf dem Fernseher. Schalte es aus, wenn der Store beim Booten automatisch startet.",
+    "openOnStartHint": "Öffnet bei jedem Start des Stores die XENO STORE-App auf dem Fernseher, oder den Browser, wenn die App nicht installiert ist. Schalte es aus, wenn der Store beim Booten automatisch startet.",
     "err": {
       "sha256_mismatch": "Der Download stimmt nicht mit seiner Prüfsumme überein – es wurde nichts installiert. Versuch es erneut.",
       "sha256_unavailable": "Die Version hat noch keine Prüfsumme – versuch es in ein paar Minuten erneut.",
@@ -112,5 +119,27 @@
       "too_large": "Der Download ist größer als erwartet – es wurde nichts installiert.",
       "download_failed": "Der Download ist fehlgeschlagen. Prüfe die Internetverbindung der Konsole und versuch es erneut."
     }
+  },
+  "pairdev": {
+    "title": "Gekoppelte Geräte",
+    "loading": "Gekoppelte Geräte werden geladen…",
+    "loadFailed": "Die gekoppelten Geräte konnten nicht geladen werden.",
+    "none": "Noch kein Handy oder PC gekoppelt.",
+    "unknown": "Unbekanntes Gerät",
+    "ps5Browser": "PS5-Browser",
+    "thisDevice": "Dieses Gerät",
+    "lastSeen": "Zuletzt gesehen: {when}",
+    "notSeen": "Seit dem Update von XENO STORE nicht benutzt",
+    "unpair": "Entkoppeln",
+    "unpairTitle": "{name} entkoppeln?",
+    "unpairText": "{name} braucht dann einen neuen Code von der PS5, um XENO STORE wieder zu steuern.",
+    "unpairSelfText": "Dieser Browser braucht dann einen neuen Code von der PS5, um XENO STORE wieder zu steuern.",
+    "unpaired": "{name} entkoppelt",
+    "unpairOthers": "Alle anderen Geräte entkoppeln",
+    "unpairOthersHint": "Jedes Handy und jeder PC außer diesem muss neu gekoppelt werden",
+    "unpairOthersText": "Alle anderen Handys und PCs brauchen dann einen neuen Code von der PS5, um XENO STORE wieder zu steuern. Die XENO STORE-App und der Browser der Konsole funktionieren weiter.",
+    "unpairOthersGo": "Alle entkoppeln",
+    "unpairedN": "{n, plural, one{# Gerät entkoppelt} other{# Geräte entkoppelt}}",
+    "slots": "Bis zu {max} Handys und PCs bleiben gekoppelt. Wird ein weiteres gekoppelt, ersetzt es das Gerät, das am längsten nicht benutzt wurde."
   }
 }

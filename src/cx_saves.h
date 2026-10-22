@@ -17,8 +17,11 @@ void cx_saves_users_json(jw *w);
 int cx_saves_list_json(uint32_t uid, jw *w, char *err, size_t errcap);
 /* Directory that receives backups: <root>/xeno-store/saves (root = saves.backupRoot or default). */
 void cx_saves_backup_dir(char *out, size_t cap);
-/* Starts a backup job; writes the job id. all=1 starts one job per title and
- * writes "jobs": [ids]. Returns 0 or -1 with code/err. */
+/* Starts a backup job; writes the job id. The job holds the (profile, title)
+ * claim (cx_savemount_claim): busy while another backup, restore, install or
+ * transfer holds it. all=1 starts one job per title and writes "jobs": [ids]
+ * plus "skipped": [{titleId, kind, error, message}] for the titles that did
+ * not start. Returns 0 or -1 with code/err. */
 int cx_saves_backup_start(uint32_t uid, const char *titleId, const char *kind, char *job_id, size_t idcap, char *code, size_t ccap, char *err, size_t errcap);
 int cx_saves_backup_all(uint32_t uid, jw *w, char *err, size_t errcap);
 /* Writes "backups": [...] from every root. */

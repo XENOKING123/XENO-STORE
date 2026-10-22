@@ -2,6 +2,7 @@
   "nav": {
     "discover": "发现",
     "browse": "浏览",
+    "saves": "存档",
     "library": "资料库",
     "downloads": "下载",
     "search": "搜索",
@@ -395,7 +396,7 @@
     "verifyHashes": "验证哈希",
     "verifyHashesHint": "当目录已知时，下载后校验 SHA-256",
     "autoInstall": "自动安装 PKG",
-    "autoInstallHint": "包下载完成后立即安装",
+    "autoInstallHint": "包下载完成后立即安装。这是新下载的默认设置，每个下载都可以单独选择。",
     "shadowScan": "ShadowMount 扫描",
     "shadowScanHint": "镜像下载后让 ShadowMountPlus 重新扫描",
     "keepAwake": "保持主机唤醒",
@@ -578,6 +579,7 @@
     "not_found": "在主机上未找到",
     "forbidden": "主机拒绝了请求",
     "pin_required": "此主机需要先输入 PIN 码才能接受更改",
+    "not_paired": "此浏览器已与 PS5 取消配对。请重新连接以继续使用 XENO STORE。",
     "rate_limited": "主机正在对我们限速——正在用更少的连接重试",
     "transport": "连接中断——正在自动重试",
     "fix": {

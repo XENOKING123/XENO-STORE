@@ -36,7 +36,8 @@
  *
  * Host build: ports come from XENO_PORT_GARLIC / XENO_PORT_LOADER, console
  * paths map below <data>/sim (cx_console_path) and the compiled-in download
- * is off, so tests never touch the real /data or the network.
+ * is off (a test may serve a stand-in for it: XENO_GARLIC_BASE), so tests
+ * never touch the real /data or the network.
  */
 #ifndef XENO_CX_GARLIC_H
 #define XENO_CX_GARLIC_H
@@ -55,6 +56,11 @@ typedef struct cx_job cx_job;
 #define CX_GARLIC_ELF_VERSION "1.7"
 #define CX_GARLIC_ELF_SIZE 1497744
 #define CX_GARLIC_COMPANION_ID "garlic-save-manager"
+
+/* URL the pinned release is downloaded from: CX_GARLIC_ELF_URL; "" on the
+ * host build unless $XENO_GARLIC_BASE serves a stand-in at
+ * <base>/garlic-savemgr.elf (tests). */
+void cx_garlic_pin_url(char *out, size_t cap);
 
 int cx_garlic_port(void);
 

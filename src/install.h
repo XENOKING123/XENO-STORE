@@ -7,6 +7,7 @@
 #define XENO_INSTALL_H
 
 #include <stddef.h>
+#include <stdint.h>
 #include <time.h>
 
 typedef struct install_result {
@@ -23,8 +24,24 @@ typedef struct install_result {
  * content id (may be "" for a fake-signed PS5 pkg), -1 when not a PKG. */
 int install_read_pkg_header(const char *path, char *content_id, size_t cap, char *title_id, size_t tcap);
 void install_start(const char *path, int port, install_result *out);
-/* 1 installed, 0 still pending, -1 failed (sets msg). */
+/* 1 installed, 0 still pending, -1 failed (sets msg). On the console
+ * "installed" means /user/app/<TITLEID> exists: there as soon as an install
+ * starts, and before it for an update or a DLC. Host build: after
+ * XENO_HOST_INSTALL_SECS (3); with XENO_HOST_INSTALL_DIRCHECK=1 also, like the
+ * console, as soon as that folder exists. */
 int install_poll(const char *titleId, const char *contentId, time_t startedAt, char *msg, size_t cap);
+/* What sceAppInstUtilGetInstallStatus says about contentId's install (hints:
+ * the layout is per psdevwiki). *total gets its total size when it reports one.
+ * Host build: XENO_HOST_INSTALL_STATUS none | error | done, else running up to
+ * XENO_HOST_INSTALL_SECS after startedAt (inclusive) and done afterwards. */
+enum {
+  INSTALL_NO_STATUS = -2,   /* the call does not resolve, or no content id */
+  INSTALL_ERROR = -1,       /* an error code */
+  INSTALL_UNKNOWN = 0,      /* no usable answer (yet) */
+  INSTALL_RUNNING = 1,      /* in progress: downloaded size below its total */
+  INSTALL_DONE = 2          /* complete: downloaded size reached a non-zero total, no error */
+};
+int install_progress(const char *contentId, time_t startedAt, int64_t *total);
 void install_release_token(const char *token);
 int install_pkgsrv_lookup(const char *token, char *path, size_t cap);
 /* ShadowMountPlus rescans its scan roots (/data/homebrew among them) on its

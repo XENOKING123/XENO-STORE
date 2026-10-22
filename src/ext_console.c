@@ -518,6 +518,10 @@ static void h_feeds_refresh(api_ctx *c) {
 /* ---- Games-row app (PPSA99500) ------------------------------------------ */
 
 static void h_app_status(api_ctx *c) {
+  /* tv-app.json's release, for "Update available": read on the card's Check for
+   * updates (?check=1), else every 6 h while automatic update checks are on */
+  int force = http_query_int(c->req, "check", 0) == 1;
+  if (force || (settings_updates_auto_check() && !g_cfg.safe_mode)) app_install_check_latest(force);
   jw w;
   api_begin(&w);
   app_install_status_json(&w);

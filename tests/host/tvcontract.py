@@ -476,7 +476,11 @@ SOURCES = Obj({
 # (no url, browserUrl, hashes, password, health or art URLs) may leave the server.
 # --------------------------------------------------------------------------- #
 GAME_LEVEL_KEYS = ("title", "platform", "genre", "tagline", "description", "publisher", "releaseDate",
-                   "addedAt", "newOnOrbitRank", "artworkLayout")
+                   "addedAt", "newOnOrbitRank", "popularRank", "cheats", "screenshotCount", "artworkLayout")
+WIRE_KINDS = ("game", "backport", "update", "dlc")
+KIND_NOTES = {"update": "Update", "dlc": "Add-on content. Needs the base game.",
+              "backport": "Backport for older firmware."}
+MAX_SHOTS = 10   # src/tvapi.h TV_ART_MAX_SHOTS
 
 
 def _catalog_item_post(v, path, err, profile):
@@ -493,12 +497,15 @@ def _catalog_item_post(v, path, err, profile):
     tid, plat = v.get("titleId"), v.get("platform")
     if isinstance(tid, str) and tid and plat in ("ps4", "ps5"):
         _err_if(tid.startswith("CUSA") and plat != "ps4", err, f"{path}: titleId {tid} on a {plat} option")
+    prefix, note = KIND_NOTES.get(v.get("kind")), v.get("notes")
+    if prefix and isinstance(note, str):
+        _err_if(not note.startswith(prefix), err, f"{path}.notes: a {v.get('kind')} option's notes start with {prefix!r}")
 
 
 def _catalog_post(v, path, err, profile):
     if profile == "app":
         return
-    seen_ids, first, closed_games, last_gid = set(), {}, set(), None
+    seen_ids, first, closed_games, last_gid, popular = set(), {}, set(), None, {}
     for i, o in enumerate(v):
         if not isinstance(o, dict):
             continue
@@ -512,6 +519,10 @@ def _catalog_post(v, path, err, profile):
             last_gid = gid
         if gid not in first:
             first[gid] = (i, o)
+            pr = o.get("popularRank")
+            if isinstance(pr, int):
+                _err_if(pr in popular, err, f"{path}[{i}].popularRank: {pr} is also {popular.get(pr)!r}'s")
+                popular.setdefault(pr, gid)
             continue
         j, f0 = first[gid]
         for k in GAME_LEVEL_KEYS:
@@ -532,6 +543,9 @@ CATALOG_ITEM = Obj({
     "releaseDate": F(STR, regex=r"(?:" + RX_DATE + r")?"),
     "addedAt": F(STR, regex=r"(?:" + RX_DATE + r"T00:00:00Z)?"),   # a date-only value parses as 0 (APPO/model.cpp:66-95)
     "newOnOrbitRank": F(INT, req=False, lo=1, hi=100, app=("int", "range")),
+    "popularRank": F(INT, lo=1, hi=MAX_SAFE_INT),      # 1 = the most popular TV game; one per game
+    "cheats": F(INT, req=False, lo=1, hi=MAX_SAFE_INT),
+    "screenshotCount": F(INT, req=False, lo=1, hi=MAX_SHOTS),   # GET /api/v1/art/{id}/shot/{0..n-1}
     "artworkLayout": F(STR),
     "provider": F(STR),
     "sourceId": F(STR, minlen=1),
@@ -542,6 +556,7 @@ CATALOG_ITEM = Obj({
     "region": F(STR),
     "version": F(STR),
     "filename": F(STR, minlen=1),
+    "kind": F(STR, enum=WIRE_KINDS),                   # what the option is, to group a game's options by
     "notes": F(STR),
     "sizeBytes": F(INT, lo=1, hi=MAX_SAFE_INT),        # R1: sizeBytes > 0
     "browserAvailable": F(BOOL),
@@ -926,6 +941,7 @@ TV_APP = Obj({
 
 # GET /api/v1/art/{id}/{kind} 202 — APPO/api.cpp:406-430 (202 = pending, body unread);
 # PORT-SPEC 1.7 replies {"pending":true}. A 200 carries image bytes: see check_art_image().
+# GET /api/v1/art/{id}/shot/{n} (XENO: the n-th screenshot, n < screenshotCount) answers the same way.
 ART_PENDING = Obj({"pending": F(BOOL, enum=(True,))}, src="PORT-SPEC 1.7")
 
 
@@ -941,6 +957,7 @@ ROUTES = {
     "GET /api/v1/catalog/updates": CATALOGUE_STATUS,
     "POST /api/v1/catalog/updates": CATALOGUE_STATUS,
     "GET /api/v1/art/{id}/{kind}": ART_PENDING,
+    "GET /api/v1/art/{id}/shot/{n}": ART_PENDING,
     "GET /api/v1/favorites": FAVORITES,
     "POST /api/v1/favorites": FAVORITES,
     "GET /api/v1/downloads": JOBS,
@@ -969,6 +986,7 @@ SUCCESS_STATUS = {k: 200 for k in ROUTES}
 SUCCESS_STATUS.update({
     "POST /api/v1/catalog/updates": 202,
     "GET /api/v1/art/{id}/{kind}": 202,          # 202 while fetching; 200 carries the bytes
+    "GET /api/v1/art/{id}/shot/{n}": 202,
     "POST /api/v1/downloads": 201,
     "POST /api/v1/library/actions": 202,
     "POST /api/v1/updates": 202,
@@ -986,7 +1004,7 @@ GATES = {
     "GET /api/v1/sources": "S", "POST /api/v1/sources": "SBO",
     "GET /api/v1/catalog": "S",
     "GET /api/v1/catalog/updates": "S", "POST /api/v1/catalog/updates": "SBO",
-    "GET /api/v1/art/{id}/{kind}": "SB",
+    "GET /api/v1/art/{id}/{kind}": "SB", "GET /api/v1/art/{id}/shot/{n}": "SB",
     "GET /api/v1/favorites": "SB", "POST /api/v1/favorites": "SBO",
     "GET /api/v1/downloads": "SB", "POST /api/v1/downloads": "SBO", "POST /api/v1/downloads/{id}/{action}": "SBO",
     "GET /api/v1/storage": "SB", "POST /api/v1/storage/preferred": "SBO",
@@ -1001,6 +1019,7 @@ GATES = {
 }
 ALL_ROUTES = tuple(GATES)
 SAMPLE_PATHS = {k: k.split(" ", 1)[1].replace("{id}/{kind}", "fx-tidewater-ps5/cover")
+                .replace("{id}/shot/{n}", "fx-tidewater-ps5/shot/0")
                 .replace("{id}/{action}", "j_000000/pause") for k in GATES}
 
 _PATTERNS = sorted({k.split(" ", 1)[1] for k in ROUTES} | {"/api/v1/zero/companion"},

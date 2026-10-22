@@ -48,7 +48,9 @@
     "autoResign": "Se vuelve a firmar para tu cuenta y se coloca en el juego automáticamente",
     "worksHere": "Funciona con tus juegos",
     "allSaves": "Todas las partidas de la comunidad",
-    "browse": "Ver partidas"
+    "browse": "Ver partidas",
+    "options": "Opciones de la tienda de partidas",
+    "optionsDesc": "Unidad de copias, apodo, feeds de partidas y host de subida"
   },
   "link": {
     "title": "Vincula tu PS5",
@@ -66,6 +68,8 @@
     "bad": "Ese código no es correcto — revisa la notificación de tu PS5",
     "locked": "Demasiados intentos — espera {n} s",
     "done": "¡Vinculado! Abriendo XENO STORE…",
+    "replaced": "{name} se desvinculó para hacer sitio: era el dispositivo que llevaba más tiempo sin usarse.",
+    "forgotten": "La PS5 ya no reconoce este navegador: se desvinculó, u otro dispositivo ocupó su lugar cuando todas las plazas de vinculación estaban en uso. Vincúlalo de nuevo para seguir usando XENO STORE.",
     "note": "Solo los dispositivos que vincules pueden controlar tu tienda. Se hace una vez por navegador."
   },
   "discover4": {
@@ -88,6 +92,9 @@
     "installing": "Instalando…",
     "install": "Instalar la app",
     "reinstall": "Reinstalar / actualizar",
+    "update": "Actualizar la app",
+    "updateAvailable": "Actualización disponible: {v}",
+    "folderCopy": "Instalada como la carpeta /data/homebrew/PPSA99500, que XENO STORE no actualiza. Elimina esa carpeta para instalar la versión aquí o sigue actualizándola tú.",
     "cancel": "Cancelar",
     "cancelled": "Instalación cancelada",
     "version": "Versión {v}",
@@ -103,7 +110,7 @@
     "hintText": "Instala la app una vez y abre la tienda desde su propio icono, sin FTP ni direcciones en el navegador.",
     "notNow": "Ahora no",
     "openOnStart": "Abrir XENO STORE al iniciarse",
-    "openOnStartHint": "Abre la tienda en la TV cada vez que se inicia. Desactívalo si la tienda se inicia automáticamente al arrancar.",
+    "openOnStartHint": "Abre la app de XENO STORE en la TV cada vez que se inicia la tienda, o el navegador si la app no está instalada. Desactívalo si la tienda se inicia automáticamente al arrancar.",
     "err": {
       "sha256_mismatch": "La descarga no coincide con su suma de verificación; no se instaló nada. Inténtalo de nuevo.",
       "sha256_unavailable": "La versión aún no tiene suma de verificación; inténtalo en unos minutos.",
@@ -112,5 +119,27 @@
       "too_large": "La descarga es más grande de lo esperado; no se instaló nada.",
       "download_failed": "La descarga falló. Comprueba la conexión a internet de la consola e inténtalo de nuevo."
     }
+  },
+  "pairdev": {
+    "title": "Dispositivos vinculados",
+    "loading": "Cargando dispositivos vinculados…",
+    "loadFailed": "No se pudieron cargar los dispositivos vinculados.",
+    "none": "Todavía no hay ningún móvil ni PC vinculado.",
+    "unknown": "Dispositivo desconocido",
+    "ps5Browser": "Navegador de la PS5",
+    "thisDevice": "Este dispositivo",
+    "lastSeen": "Última vez: {when}",
+    "notSeen": "Sin usar desde que se actualizó XENO STORE",
+    "unpair": "Desvincular",
+    "unpairTitle": "¿Desvincular {name}?",
+    "unpairText": "{name} necesitará un código nuevo de la PS5 para volver a controlar XENO STORE.",
+    "unpairSelfText": "Este navegador necesitará un código nuevo de la PS5 para volver a controlar XENO STORE.",
+    "unpaired": "{name} desvinculado",
+    "unpairOthers": "Desvincular todos los demás dispositivos",
+    "unpairOthersHint": "Todos los móviles y PC excepto este tendrán que vincularse de nuevo",
+    "unpairOthersText": "Todos los demás móviles y PC necesitarán un código nuevo de la PS5 para volver a controlar XENO STORE. La app de XENO STORE y el navegador de la consola siguen funcionando.",
+    "unpairOthersGo": "Desvincular todos",
+    "unpairedN": "{n, plural, one{# dispositivo desvinculado} other{# dispositivos desvinculados}}",
+    "slots": "Hasta {max} móviles y PC permanecen vinculados. Si vinculas uno más, sustituye al dispositivo que lleva más tiempo sin usarse."
   }
 }

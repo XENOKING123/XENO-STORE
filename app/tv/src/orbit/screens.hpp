@@ -14,6 +14,7 @@
 #include "gfx/backdrop_spec.hpp"
 #include "gfx/draw_list.hpp"
 #include "orbit/art.hpp"
+#include "orbit/prefs.hpp"
 #include "orbit/store.hpp"
 #include "orbit/ui.hpp"
 #include "ui/components/keyboard.hpp"
@@ -76,16 +77,21 @@ struct Context
     // is not possible.
     std::function<bool(const std::string &game_id)> open_game_browser;
     float clock = 0.0f; // seconds since the app opened
+    // XENO STORE: the app's own settings (Sounds), kept on this console; in
+    // memory only until loaded from a path.
+    Prefs prefs;
 };
 
 // The tabs, in the browser storefront's order; it opens on Discover.
+// XENO STORE: Saves (the Save Data Store) follows Browse.
 namespace tab
 {
 constexpr int discover = 0;
 constexpr int browse = 1;
-constexpr int library = 2;
-constexpr int downloads = 3;
-constexpr int count = 4;
+constexpr int saves = 2;
+constexpr int library = 3;
+constexpr int downloads = 4;
+constexpr int count = 5;
 } // namespace tab
 
 struct Intent
@@ -98,6 +104,7 @@ struct Intent
         show_job,     // id: a job (Downloads)
         show_tab,     // tab: one of tab::
         show_library, // id: a title ID, detail: its Library source key
+        show_saves,   // id: a game (Saves, showing that game's community saves)
         provider_browser, // native verification panel; service opens Vikingfile
         close,        // the game page is done
     } kind = Kind::none;
@@ -178,6 +185,8 @@ void draw_backdrop_art(Context &ctx, hui::gfx::DrawList &list, const Game &game,
 void draw_veils(hui::gfx::DrawList &list, bool discover = false);
 // Refusal at an edge: quiet, and silent on a held direction.
 void refuse(Feedback &feedback, const InputFrame &input);
+// Removes the last UTF-8 character (the on-screen keyboard's Delete).
+void pop_character(std::string &text);
 // The kit theme the on-screen keyboard is drawn in.
 hui::ui::Theme keyboard_theme();
 
@@ -207,18 +216,12 @@ class DiscoverScreen final : public Screen
         bool grid = false;
     };
     void rebuild();
-    void rebuild_grid();
-    int page_count() const;
-    bool on_pager() const;
     const Game *game_at(int row, int column) const;
     float row_top(int row) const;
 
     std::vector<Rail> rails_;
-    std::vector<int> all_games_;
-    int page_ = 0;
-    int page_button_ = 1; // Previous, Next
     std::uint64_t catalog_serial_ = ~0ull;
-    int row_ = 0;              // hero, horizontal rails, All games grid, then page controls
+    int row_ = 0;              // hero, horizontal rails, then the All games grid
     std::vector<int> columns_; // focused column per rail
     std::string featured_;
     std::string previous_featured_;
@@ -417,6 +420,7 @@ class DownloadsScreen final : public Screen
     int row_ = 0;
     int button_ = 0;
     std::string pending_job_; // show_job() before the queue arrived
+    std::string install_job_; // XENO STORE: a Retry install sent, to follow to Finished
     bool dialog_open_ = false;
     bool dialog_cancelled_ = false;
     bool dialog_forget_ = false;
@@ -429,6 +433,118 @@ class DownloadsScreen final : public Screen
     hui::ui::Keyboard password_keyboard_;
     ui::Ease scroll_;
     ui::Ease dialog_in_;
+};
+
+// XENO STORE: Saves, the Save Data Store (the browser version's Community
+// Saves, web/src/js/47-saves.js): the community saves XENO STORE lists from
+// the XenoKing site and the GitHub index, by game, by the games installed,
+// by category or by search; a save's details, and Install for a profile.
+class SavesScreen final : public Screen
+{
+  public:
+    explicit SavesScreen(Context &context);
+    void focus() override;
+    Intent update(const InputFrame &input, float dt, Feedback &feedback, bool focused) override;
+    void draw(Frame &frame, bool focused) const override;
+    std::vector<hui::ui::Hint> hints() const override;
+    bool modal() const override
+    {
+        return keyboard_open_ || picker_.open || !open_.empty();
+    }
+    // One game's saves (a game page's Community saves).
+    void show_game(const std::string &game_id);
+    // Previews and tests.
+    void set_query(const std::string &query);
+    void open_save(const std::string &save_id);
+    bool details_open() const
+    {
+        return !open_.empty();
+    }
+    // The details of this save are open (they show its install themselves).
+    bool showing(const std::string &save_id) const
+    {
+        return !open_.empty() && open_ == save_id;
+    }
+    const std::vector<int> &results() const
+    {
+        return results_;
+    }
+
+  private:
+    enum class Area : std::uint8_t
+    {
+        field,
+        chips, // the game shown, All, For my games, then the categories
+        grid,
+        retry, // Try again, when the saves could not be loaded or the store has none
+    };
+    struct Chip
+    {
+        enum class Kind : std::uint8_t
+        {
+            game,
+            all,
+            mine,
+            category,
+        } kind = Kind::all;
+        SaveCategory category = SaveCategory::other;
+        std::string label;
+        int count = 0;
+    };
+    // The details sheet's buttons, left to right.
+    enum class Control : std::uint8_t
+    {
+        profile,
+        install,
+        cancel,
+        done,
+        back,
+    };
+    void refilter();
+    int current_chip() const;
+    void choose_chip(int chip);
+    bool chip_usable(int chip) const; // it shows saves, or is the filter in use
+    bool can_retry() const;
+    ui::Rect card_rect(int index) const;
+    ui::Rect chip_rect(int chip) const;
+    const Game *game_of(int save) const;
+    bool list_shown() const;
+    void start_search();
+    void open_details(int save);
+    void close_details();
+    std::vector<Control> controls() const;
+    ui::Rect control_rect(int control) const;
+    void draw_card(hui::gfx::DrawList &list, const SaveRow &save, const Game *game,
+                   const ui::Rect &r, float focus) const;
+    void draw_details(Frame &frame, bool focused) const;
+
+    Area area_ = Area::field;
+    int chip_ = 0;
+    int index_ = 0;
+    std::string query_;
+    std::string game_id_; // one game's saves
+    Game game_;           // that game, or a stand-in with its ID
+    bool mine_ = false;
+    int category_ = -1;
+    std::vector<Chip> chips_;
+    std::vector<int> results_; // indices into the listing
+    std::vector<int> games_;   // per listed save: its game in the snapshot, or -1
+    std::uint64_t saves_serial_ = ~0ull;
+    std::uint64_t catalog_serial_ = ~0ull;
+    bool keyboard_open_ = false;
+    hui::ui::Keyboard keyboard_;
+    ui::Ease keyboard_in_;
+    ui::Ease scroll_;
+    ui::Ease field_focus_;
+    float retry_focus_ = 0.0f;
+    std::vector<float> chip_focus_;
+    std::vector<float> card_focus_;
+    // The details sheet.
+    std::string open_; // the save shown
+    Control control_ = Control::install;
+    std::uint32_t user_ = 0; // the profile chosen; 0 lets the store use the signed-in one
+    Picker picker_;
+    ui::Ease sheet_in_;
 };
 
 class GamePage final : public Screen
@@ -453,7 +569,8 @@ class GamePage final : public Screen
   private:
     enum class Sheet : std::uint8_t { none, downloads, source, delivery, storage, about };
     enum class Slot : std::uint8_t { primary, favourite, about, source, delivery, drive,
-                                     choice, again, related, reading, back, close };
+                                     choice, again, related, reading, back, close,
+                                     saves }; // XENO STORE: the game's community saves
     struct Control
     {
         Slot slot;
@@ -520,6 +637,7 @@ class SettingsScreen final : public Screen
         catalogue,
         updates,
         more,
+        about, // XENO STORE: the version, credits, licence and source
         count,
     };
     explicit SettingsScreen(Context &context);
@@ -561,6 +679,7 @@ class SettingsScreen final : public Screen
         archives_toggle,
         download_limit_less,
         download_limit_more,
+        sounds_toggle, // XENO STORE: the app's sounds, kept on this console
     };
     struct Control
     {
@@ -578,6 +697,7 @@ class SettingsScreen final : public Screen
     void build_catalogue(Pane &pane) const;
     void build_updates(Pane &pane) const;
     void build_more(Pane &pane) const;
+    void build_about(Pane &pane) const;
     std::vector<Control> controls(float *height = nullptr) const;
     void activate(const Control &control, Intent &intent, Feedback &feedback);
     void load_draft();
@@ -599,6 +719,7 @@ class SettingsScreen final : public Screen
     std::uint64_t setting_serial_ = 0;
     std::string error_;
     Setting error_setting_ = Setting::none;
+    std::string sounds_error_; // XENO STORE: why the Sounds choice was not saved
     float age_ = 0.0f;
     ui::Ease scroll_;
     std::vector<float> focus_amount_; // parallel to controls(), by position
@@ -629,6 +750,10 @@ class App
     {
         return library_;
     }
+    SavesScreen &saves()
+    {
+        return saves_;
+    }
     int current_tab() const
     {
         return tab_;
@@ -643,6 +768,11 @@ class App
     {
         return toast_;
     }
+    // XENO STORE: the sentence under the toast's line (a save install's outcome).
+    const std::string &toast_detail() const
+    {
+        return toast_detail_;
+    }
     float toast_left() const
     {
         return toast_time_;
@@ -654,6 +784,7 @@ class App
         top,
         content,
     };
+    void update_frame(const InputFrame &input, float dt, Feedback &feedback);
     Screen &screen();
     const Screen &screen() const;
     void draw_top_bar(hui::gfx::DrawList &list) const;
@@ -679,6 +810,7 @@ class App
     Context &ctx_;
     DiscoverScreen discover_;
     BrowseScreen browse_;
+    SavesScreen saves_;
     LibraryScreen library_;
     DownloadsScreen downloads_;
     GamePage game_;
@@ -694,11 +826,30 @@ class App
     int provider_focus_ = 1; // Back first, so returning cannot cancel by accident
     std::string provider_seen_;
     bool update_told_ = false; // the update toast shows once per launch
-    void show_toast(std::string text, float seconds = 2.8f, bool update = false);
+    // The toast's mark: a confirmation, an update notice, a favourite added
+    // or removed, or (XENO STORE) a save install that failed or was cancelled.
+    enum class ToastKind : std::uint8_t
+    {
+        done,
+        update,
+        problem,
+        note,
+        favourite,
+    };
+    // detail: a sentence under the line, wrapped (the toast grows upward).
+    void show_toast(std::string text, float seconds = 2.8f, ToastKind kind = ToastKind::done,
+                    std::string detail = {});
     std::string toast_;
+    std::string toast_detail_;
     float toast_time_ = 0.0f;
     float toast_length_ = 2.8f;
-    bool toast_update_ = false; // an update notice, not a confirmation
+    ToastKind toast_kind_ = ToastKind::done;
+    // XENO STORE: a save install that ends out of sight says how in a toast.
+    void tell_save_install();
+    std::uint64_t save_told_ = 0; // the last install (SaveInstall::run) told
+    std::uint64_t favourite_serial_ = 0;
+    std::size_t favourite_count_ = 0;
+    bool favourite_waiting_ = false; // a favourite request is out; favourite_count_ is from before it
     std::string backdrop_;
     std::string previous_backdrop_;
     std::string settling_; // the art Discover wants, while the focus rests

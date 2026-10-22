@@ -1,6 +1,6 @@
 /* XENO STORE — 45-settings.js: grouped settings. General (+ open on start, accessibility, safe mode, screensaver,
    controller remap, shortcuts), Downloads (+ prefer format, turbo, install sets, rest mode, ZIP extraction, schedule), Debrid (§17.14),
-   Sources, Catalog, Saves (§17.17), Accounts (§17.18), Setup (§17.6), Pair a device (+ mDNS §17.19), Updates (+ the Games-row app),
+   Sources, Catalog, Saves (§17.17), Accounts (§17.18), Setup (§17.6), Pair a device (+ mDNS §17.19, paired devices), Updates (+ the Games-row app),
    Notifications, Diagnostics, About, Uninstall XENO STORE (§17.16). */
 (function () {
   'use strict';
@@ -130,9 +130,11 @@
     list.appendChild(ui.valueRow({ id: 'set-order', icon: 'sort', label: t('settings2.installOrder'), desc: t('settings2.installOrderHint'), value: orderLabel(order), onClick: function (row) {
       ui.menu(row, ORDERS.map(function (o) { return { label: orderLabel(o), checked: order === o, onSelect: function () { sset('downloads.installOrder', o, function () { rerenderGroup('downloads'); }); } }; }), { title: t('settings2.installOrder') });
     } }));
+    list.appendChild(ui.toggleRow({ id: 'set-delpkg', icon: 'trash', label: t('settings2.deletePkg'), desc: t('settings2.deletePkgHint'), value: sget('downloads.deletePkgAfterInstall', false), onChange: function (v) { sset('downloads.deletePkgAfterInstall', v); } }));
     list.appendChild(ui.toggleRow({ id: 'set-shadow', icon: 'zap', label: t('set.shadowScan'), desc: t('set.shadowScanHint'), value: sget('downloads.shadowMountScan', true), onChange: function (v) { sset('downloads.shadowMountScan', v); } }));
     list.appendChild(ui.toggleRow({ id: 'set-awake', icon: 'power', label: t('set.keepAwake'), desc: t('set.keepAwakeHint'), value: sget('downloads.keepAwake', true), onChange: function (v) { sset('downloads.keepAwake', v); } }));
     list.appendChild(ui.toggleRow({ id: 'set-restresume', icon: 'moon', label: t('settings2.restResume'), desc: t('settings2.restResumeHint'), value: sget('downloads.restModeAutoResume', true), onChange: function (v) { sset('downloads.restModeAutoResume', v); } }));
+    list.appendChild(ui.toggleRow({ id: 'set-restartresume', icon: 'retry', label: t('settings2.restartResume'), desc: t('settings2.restartResumeHint'), value: sget('downloads.resumeAfterRestart', true), onChange: function (v) { sset('downloads.resumeAfterRestart', v); } }));
     list.appendChild(ui.toggleRow({ id: 'set-extract', icon: 'box', label: t('settings2.extractZip'), desc: t('settings2.extractZipHint'), value: sget('downloads.extractZip', true), onChange: function (v) { sset('downloads.extractZip', v); } }));
     list.appendChild(ui.toggleRow({ id: 'set-delarchive', icon: 'trash', label: t('settings2.deleteArchive'), desc: t('settings2.deleteArchiveHint'), value: sget('downloads.deleteArchiveAfterExtract', true), onChange: function (v) { sset('downloads.deleteArchiveAfterExtract', v); } }));
     var ss = sget('downloads.scheduleStart', ''), se = sget('downloads.scheduleEnd', '');
@@ -371,7 +373,8 @@
         cb.api.savesBackupAll(fg.id).then(function (res) {
           row.classList.remove('busy');
           var n = res.started || (res.jobs || []).length;
-          ui.toast({ cls: n ? 'gold' : 'good', title: n ? t('lib2.backupAllStarted', { n: n }) : t('lib2.backupAllNone'), action: n ? { label: t('lib2.savesHub'), onClick: function () { XS.router.go('saveshub'); } } : null });
+          if (n || !(res.skipped || []).length) ui.toast({ cls: n ? 'gold' : 'good', title: n ? t('lib2.backupAllStarted', { n: n }) : t('lib2.backupAllNone'), action: n ? { label: t('lib2.savesHub'), onClick: function () { XS.router.go('saveshub'); } } : null });
+          cb.backupSkipped(res);
         }, function (err) { row.classList.remove('busy'); ui.errorToast(err, t('lib2.backUpAll')); });
       });
     }, function (err) { row.classList.remove('busy'); ui.errorToast(err, t('lib2.backUpAll')); });
@@ -513,7 +516,62 @@
     list.appendChild(ui.valueRow({ id: 'pair-local', icon: 'globe', label: t('settings2.localName'), desc: state + (md && md.names && md.names.length ? ' · ' + md.names.join(', ') : ''), valueEl: h('span.mono', { text: localUrl }), hints: 'select', onClick: function () { U.copyText(localUrl).then(function (ok) { ui.toast({ cls: ok ? 'good' : 'bad', title: ok ? t('toast.copied') : t('toast.copyFailed') }); }); } }));
     sec.appendChild(list);
     if (mdOn && !md && Date.now() - mdns.at > 15000) { mdns.at = Date.now(); cb.api.mdns().then(function (r) { mdns.data = r && r.mdns && typeof r.mdns === 'object' ? r.mdns : r; rerenderGroup('pair'); }, function () { /* no mdns endpoint on this build */ }); }
+    /* Paired devices: the phones and PCs linked with the code (the console's own session is never listed) */
+    sec.appendChild(h('h3', { text: t('pairdev.title'), style: { margin: '22px 0 8px', fontSize: '15px' } }));
+    var devBox = h('div');
+    sec.appendChild(devBox);
+    devBox.appendChild(cb.busy(t('pairdev.loading')));
+    api.pairDevices().then(function (r) { paintDevices(devBox, r); }, function (err) { U.clear(devBox); devBox.appendChild(cb.note(t('pairdev.loadFailed') + ' ' + ui.errorText(err), 'warn')); });
   };
+  /* The console names devices in English; its two generic names are translated here. */
+  function deviceName(d) { return !d.name ? t('pairdev.unknown') : d.name === 'PS5 browser' ? t('pairdev.ps5Browser') : d.name; }
+  XS.pairDeviceName = deviceName;   /* also the Link page's (90-boot.js) */
+  function deviceIcon(d) { return /^(iPhone|iPad|Android)/.test(d.name || '') ? 'phone' : d.name === 'PS5 browser' ? 'gamepad' : 'globe'; }
+  function paintDevices(box, r) {
+    U.clear(box);
+    var devs = r.devices || [];
+    var list = h('div.list');
+    if (!devs.length) list.appendChild(h('p.dim', { text: t('pairdev.none') }));
+    devs.forEach(function (d) {
+      var row = h('div.lrow.pd-row', { nav: 'pd-' + d.id, data: { hints: 'select' } });
+      row.appendChild(h('span.ic', { html: U.icon(deviceIcon(d)) }));
+      var main = h('div.main', [h('div.name', [deviceName(d), d.current ? h('span.chip.sm.gold', { text: t('pairdev.thisDevice'), style: { marginInlineStart: '8px' } }) : null])]);
+      main.appendChild(h('div.desc', { text: d.lastSeen ? t('pairdev.lastSeen', { when: cb.fmtAgo(d.lastSeen) }) : t('pairdev.notSeen') }));
+      row.appendChild(main);
+      var un = h('button.btn.sm.ghost', { nav: 'pd-' + d.id + '-unpair', text: t('pairdev.unpair') });
+      un.addEventListener('click', function (e) { e.stopPropagation(); unpairDevice(d); });
+      row.appendChild(un);
+      row.addEventListener('click', function (e) { if (e.target.closest('button')) return; unpairDevice(d); });
+      list.appendChild(row);
+    });
+    if (devs.some(function (d) { return !d.current; })) list.appendChild(ui.valueRow({ id: 'pd-others', icon: 'trash', label: t('pairdev.unpairOthers'), desc: t('pairdev.unpairOthersHint'), noChevron: true, danger: true, onClick: unpairOthers }));
+    box.appendChild(list);
+    box.appendChild(cb.note(t('pairdev.slots', { max: r.max || 16 }), '', 'info'));
+  }
+  function unpairDevice(d) {
+    var name = deviceName(d);
+    ui.confirm(t('pairdev.unpairTitle', { name: name }), d.current ? t('pairdev.unpairSelfText') : t('pairdev.unpairText', { name: name }), t('pairdev.unpair'), true).then(function (ok) {
+      if (!ok) return;
+      api.pairUnpair(d.id).then(function () {
+        ui.toast({ cls: 'good', title: t('pairdev.unpaired', { name: name }) });
+        if (d.current) {   /* this browser has to link again: the Link page says it went (no reload, which would hide it) */
+          S.data.token = ''; U.store.set('token', '');
+          XS.linkGate(t('pairdev.unpaired', { name: name }), 'good').then(function () { rerenderGroup('pair'); });
+          return;
+        }
+        rerenderGroup('pair');
+      }, function (err) { ui.errorToast(err, t('pairdev.unpair')); });
+    });
+  }
+  function unpairOthers() {
+    ui.confirm(t('pairdev.unpairOthers'), t('pairdev.unpairOthersText'), t('pairdev.unpairOthersGo'), true).then(function (ok) {
+      if (!ok) return;
+      api.pairUnpairOthers().then(function (r) {
+        ui.toast({ cls: 'good', title: t('pairdev.unpairedN', { n: r.unpaired || 0 }) });
+        rerenderGroup('pair');
+      }, function (err) { ui.errorToast(err, t('pairdev.unpairOthers')); });
+    });
+  }
   function paintPair(box, url, local) {
     U.clear(box);
     box.appendChild(ui.qr(url));
@@ -563,6 +621,7 @@
     var list = h('div.list');
     list.appendChild(ui.valueRow({ id: 'upd-check', icon: 'refresh', label: t('set.updCheck'), noChevron: true, onClick: function (row) {
       row.classList.add('busy');
+      if (XS.appInstall) XS.appInstall.check().catch(function () { /* the app card keeps what it showed */ });
       api.updateCheck().then(function (r) { row.classList.remove('busy'); S.data.status = S.data.status || {}; S.data.status.update = { available: r.available, latest: r.latest, current: r.current, notes: r.notes || '', url: r.url }; S.emit('status', S.data.status); ui.toast({ cls: r.available ? 'gold' : 'good', title: r.available ? t('toast.updateAvailable', { v: r.latest }) : t('toast.upToDate') }); render(); }, function (err) { row.classList.remove('busy'); ui.errorToast(err, t('set.updCheck')); });
     } }));
     if (up.available) {
@@ -698,7 +757,7 @@
     sec.appendChild(cb.note(t('uninstall.noGhosts'), '', 'shield'));
   };
   function uninstallSheet() {
-    var st = { data: true, homebrew: true, payloadManager: false, keepDownloads: true };
+    var st = { data: true, homebrew: true, keepDownloads: true };
     var handle = ui.sheet({
       title: t('uninstall.title'), sub: t('uninstall.sub'), cls: 'narrow', key: 'uninstall',
       body: function (body) {
@@ -707,27 +766,28 @@
         var list = h('div.list');
         list.appendChild(cb.checkRow({ id: 'un-data', label: t('uninstall.data'), desc: t('uninstall.dataHint'), value: st.data, onChange: function (v) { st.data = v; paintFoot(); } }));
         list.appendChild(cb.checkRow({ id: 'un-homebrew', label: t('uninstall.homebrew'), desc: t('uninstall.homebrewHint'), value: st.homebrew, onChange: function (v) { st.homebrew = v; paintFoot(); } }));
-        list.appendChild(cb.checkRow({ id: 'un-pm', label: t('uninstall.payloadManager'), desc: t('uninstall.payloadManagerHint'), value: st.payloadManager, onChange: function (v) { st.payloadManager = v; paintFoot(); } }));
         list.appendChild(cb.checkRow({ id: 'un-keep', label: t('uninstall.keepDownloads'), desc: t('uninstall.keepDownloadsHint'), value: st.keepDownloads, onChange: function (v) { st.keepDownloads = v; paintFoot(); } }));
         body.appendChild(list);
+        /* Payload Manager downloads its own copy from the XENOKING source; the store never places one */
+        body.appendChild(cb.note(t('uninstall.pmNote'), '', 'info'));
         body.appendChild(h('p.dim.small', { 'data-un-summary': '', text: '' }));
       },
       foot: [h('button.btn.ghost', { nav: 'un-cancel', 'data-autofocus': '', text: t('common.cancel'), on: { click: function () { ui.closeLayer(handle); } } }), h('span.spacer'), h('button.btn.danger', { nav: 'un-go', 'data-go': '', html: U.icon('trash') + '<span>' + U.escapeHtml(t('uninstall.go')) + '</span>', on: { click: go } })]
     });
     function paintFoot() {
-      var any = st.data || st.homebrew || st.payloadManager || !st.keepDownloads;
+      var any = st.data || st.homebrew || !st.keepDownloads;
       var b = handle.foot.querySelector('[data-go]'); if (any) b.removeAttribute('disabled'); else b.setAttribute('disabled', '');
       var sum = handle.body.querySelector('[data-un-summary]');
       if (sum) sum.textContent = !st.keepDownloads ? t('uninstall.summaryDeleteGames') : t('uninstall.summaryKeepGames');
     }
     function go() {
-      var any = st.data || st.homebrew || st.payloadManager || !st.keepDownloads;
+      var any = st.data || st.homebrew || !st.keepDownloads;
       if (!any) return;
       var text = (!st.keepDownloads ? t('uninstall.confirmGames') + ' ' : '') + t('uninstall.confirmText');
       ui.confirm(t('uninstall.confirmTitle'), text, t('uninstall.go'), true).then(function (ok) {
         if (!ok) return;
         var b = handle.foot.querySelector('[data-go]'); b.classList.add('busy');
-        cb.api.uninstall({ data: st.data, homebrew: st.homebrew, payloadManager: st.payloadManager, downloads: !st.keepDownloads }).then(function (r) {
+        cb.api.uninstall({ data: st.data, homebrew: st.homebrew, downloads: !st.keepDownloads }).then(function (r) {
           b.classList.remove('busy');
           ui.closeLayer(handle);
           finalScreen(r);

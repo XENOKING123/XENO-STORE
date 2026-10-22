@@ -403,7 +403,7 @@ int cx_savemount_import_zip(uint32_t uid, const char *titleId, const char *dirNa
 
 /* ---- one operation per save folder -------------------------------------- */
 
-#define SAVE_CLAIMS 16
+#define SAVE_CLAIMS (CXJ_MAX + 16)   /* every save job ("back up all" starts one per title), plus restores and transfers */
 static pthread_mutex_t claim_mu = PTHREAD_MUTEX_INITIALIZER;
 static struct { uint32_t uid; char tid[16]; } claims[SAVE_CLAIMS];
 
@@ -437,7 +437,7 @@ int cx_savemount_import_zip_job(uint32_t uid, const char *titleId, const char *d
   if (!cx_titleid_valid(titleId)) { xstrlcpy(code, "bad_request", ccap); xsnprintf(err, errcap, "invalid title id"); return -1; }
   if (cx_savemount_claim(uid, titleId) != 0) {
     xstrlcpy(code, "busy", ccap);
-    xsnprintf(err, errcap, "another restore, install or transfer of the %s save is still running — wait for it to finish", titleId);
+    xsnprintf(err, errcap, "another backup, restore, install or transfer of the %s save is still running — wait for it to finish", titleId);
     return -1;
   }
   int rc = import_zip_claimed(uid, titleId, dirName, zipPath, backup_first, backup_dir, allow_raw, j, out, code, ccap, err, errcap);

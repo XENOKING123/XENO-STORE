@@ -2,6 +2,7 @@
   "nav": {
     "discover": "Découvrir",
     "browse": "Parcourir",
+    "saves": "Sauvegardes",
     "library": "Bibliothèque",
     "downloads": "Téléchargements",
     "search": "Rechercher",
@@ -395,7 +396,7 @@
     "verifyHashes": "Vérifier les empreintes",
     "verifyHashesHint": "Contrôler le SHA-256 après le téléchargement lorsque le catalogue le connaît",
     "autoInstall": "Installer auto le PKG",
-    "autoInstallHint": "Installer les packages dès leur fin",
+    "autoInstallHint": "Installer les packages dès leur fin. Réglage par défaut des nouveaux téléchargements ; chaque téléchargement peut choisir lui-même.",
     "shadowScan": "Analyse ShadowMount",
     "shadowScanHint": "Demander à ShadowMountPlus de ré-analyser après le téléchargement d'une image",
     "keepAwake": "Garder la console éveillée",
@@ -578,6 +579,7 @@
     "not_found": "Introuvable sur la console",
     "forbidden": "L'hôte a refusé la requête",
     "pin_required": "Cette console a besoin du code PIN avant d'accepter les modifications",
+    "not_paired": "Ce navigateur a été dissocié de la PS5. Associez-le à nouveau pour continuer à utiliser XENO STORE.",
     "rate_limited": "L'hôte limite notre débit — nouvelle tentative avec moins de connexions",
     "transport": "La connexion a été coupée — nouvelle tentative automatique",
     "fix": {

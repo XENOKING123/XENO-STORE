@@ -15,6 +15,8 @@
   };
   function tabOf(j) { for (var k in TABS) if (TABS[k].indexOf(j.state) >= 0) return k; return 'active'; }
   function isScheduled(j) { return j.state === 'queued' && !!j.scheduledFor && !j.startNow; }
+  /* the store's note on a download that was running when it stopped (job.restart), in the UI's language */
+  var RESTART_NOTES = { resumed: 'dl2.restartResumed', held: 'dl2.restartHeld' };
   /* Tab counts: a group counts once, in the tab its status maps to. */
   function counts() {
     var c = { active: 0, queued: 0, finished: 0, failed: 0, cancelled: 0 };
@@ -333,6 +335,7 @@
         if (j.platform && j.platform !== 'HOMEBREW') meta.appendChild(ui.platChip(j.platform, true));
         if (j.verified) meta.appendChild(ui.tick(t('dl.hashVerified')));
         if (j.install && j.install.state === 'installed') meta.appendChild(h('span.chip.sm.good', { text: t('dl.state.installed') }));
+        if (j.install && j.install.pkgDeleted) meta.appendChild(h('span.chip.sm', { text: t('dl2.pkgDeleted') }));
         var tc = turboChip(j); if (tc) meta.appendChild(tc);
         if (ex.state === 'extracted') meta.appendChild(h('span.chip.sm.good', { html: U.icon('box') + '<span>' + U.escapeHtml(t('dl2.extracted', { n: ex.files || 0 })) + '</span>', title: ex.dir || '' }));
         if (ex.archiveDeleted) meta.appendChild(h('span.chip.sm', { text: t('dl2.archiveDeleted') }));
@@ -370,7 +373,7 @@
       if (j.total) stats.appendChild(h('span', { text: U.fmtBytes(j.total) }));
     } else if (j.state === 'paused' || j.state === 'queued' || j.state === 'cancelled') {
       stats.appendChild(h('span', [h('b', { text: U.fmtBytes(j.written) }), j.total ? ' / ' + U.fmtBytes(j.total) : '']));
-      if (j.message) stats.appendChild(h('span', { text: j.message }));
+      if (j.message) stats.appendChild(h('span', { text: RESTART_NOTES[j.restart] ? t(RESTART_NOTES[j.restart]) : j.message }));
       if (j.state === 'queued') stats.appendChild(h('span', { text: t('dl.queuedPos', { n: queuePos(j) }) }));
       if (j.state === 'queued' && j.group) stats.appendChild(h('span', { text: t('dl2.setWaits') }));
     } else if (j.state === 'failed') {
@@ -470,8 +473,9 @@
     if (['paused', 'failed', 'cancelled'].indexOf(st) >= 0 && typeOf(j) === 'download') { can('restart'); can('url'); }
     if (['paused', 'failed', 'cancelled'].indexOf(st) >= 0 && typeOf(j) !== 'download') can('restart');
     if (st === 'queued') { can('top'); can('up'); can('down'); can('bottom'); }
-    if ((st === 'done' || st === 'installed') && j.sha256Expected) can('verify');
-    if (st === 'done' || st === 'installed' || st === 'extracted') can('open');
+    var gone = !!(j.install && j.install.pkgDeleted);   /* the package was removed after it installed */
+    if ((st === 'done' || st === 'installed') && j.sha256Expected && !gone) can('verify');
+    if ((st === 'done' || st === 'installed' || st === 'extracted') && !gone) can('open');
     if (j.gameId && S.game(j.gameId)) items.push({ label: t('lib.openGame'), icon: 'external', onSelect: function () { XS.router.go('game', { id: j.gameId }); } });
     if (j.turbo && j.turbo.tested && j.turbo.tested.length) items.push({ label: t('dl2.turboDetails'), icon: 'zap', onSelect: function () { turboSheet(j); } });
     items.push('sep');

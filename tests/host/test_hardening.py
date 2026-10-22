@@ -5,7 +5,9 @@ test_hardening.py — Phase 3 C hardening and download durability:
   * the DNS-rebind / Origin / Sec-Fetch request gate (a phone on the LAN passes,
     evil.com is refused) and the nosniff / no-referrer headers,
   * device pairing (console code, show cooldown, strike lockout, bearer token,
-    loopback-only /api/session),
+    loopback-only /api/session), the paired devices list (names from the
+    User-Agent, last seen, unpair one / all others, full slots replace the
+    device unused the longest, the console's own session is never listed),
   * the self-healing :9095 listener (forced rebind keeps the server reachable),
   * download durability: the persisted resume cursor never advances past the
     last fsync, even when a flush fails mid-transfer,
@@ -29,6 +31,7 @@ import sys
 import tempfile
 import time
 import unittest
+import urllib.error
 import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -197,6 +200,602 @@ class PairingTests(unittest.TestCase):
             self.assertEqual(st, 200, "a paired token must survive a restart")
         finally:
             srv2.stop()
+
+
+IPHONE_UA = ("Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) "
+             "Version/17.5 Mobile/15E148 Safari/604.1")
+WINDOWS_CHROME_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                     "Chrome/126.0.0.0 Safari/537.36")
+PS5_UA = ("Mozilla/5.0 (PlayStation; PlayStation 5/9.00) AppleWebKit/605.1.15 (KHTML, like Gecko) "
+          "Version/9.00 Safari/605.1.15")
+ANDROID_FIREFOX_UA = "Mozilla/5.0 (Android 14; Mobile; rv:128.0) Gecko/128.0 Firefox/128.0"
+MAC_EDGE_UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) "
+               "Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0")
+
+
+FORGOTTEN = ("The PS5 no longer knows this browser: it was unpaired, or another device took its place when every pairing "
+             "slot was in use. Link it again to keep using XENO STORE.")
+
+
+def bearer(token):
+    return {"Authorization": "Bearer " + token}
+
+
+def lan_api(test, srv, method, path, body=None, token=None, pin=None, ua=None):
+    """The request from this machine's LAN address: the store sees a phone, not the console."""
+    ip = srv.api("GET", "/api/status")[1].get("ip", "127.0.0.1")
+    if not ip or ip.startswith("127."):
+        test.skipTest("no non-loopback IPv4 on this machine")
+    hdrs = {"Content-Type": "application/json"} if body is not None else {}
+    if token:
+        hdrs.update(bearer(token))
+    if pin:
+        hdrs["X-XENO-PIN"] = pin
+    if ua:
+        hdrs["User-Agent"] = ua
+    req = urllib.request.Request(f"http://{ip}:{srv.port}{path}", method=method, headers=hdrs,
+                                 data=json.dumps(body).encode() if body is not None else None)
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return r.status, json.loads(r.read())
+    except urllib.error.HTTPError as e:
+        return e.code, json.loads(e.read())
+    except OSError as e:
+        test.skipTest(f"cannot reach {ip}: {e}")
+
+
+class PairedDevicesTests(unittest.TestCase):
+    """Settings → Pair a device: the paired list (a friendly name from the
+    User-Agent, first and last seen, "this device"), unpair one, unpair all
+    others, full slots replace the device unused the longest, and the
+    console's own session (GET /api/session and /api/v1/session) is never
+    listed or removed; from the console itself (the TV app) only that session
+    counts, and its requests never touch a device. Each test runs its own
+    instance."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp(prefix="xeno-devices.")
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.srv = self.start()
+
+    def start(self, port=None):
+        srv = XenoServer(os.path.join(self.tmp, "data"), port=port).start()
+        self.addCleanup(srv.stop)
+        return srv
+
+    def restart(self):
+        port = self.srv.port
+        self.srv.stop()
+        self.srv = self.start(port)
+
+    def pair(self, ua):
+        code = self.srv.api("GET", "/api/pair")[1]["code"]
+        st, b = self.srv.api("POST", "/api/pair", {"code": code}, headers={"User-Agent": ua})
+        self.assertEqual(st, 200, b)
+        return b["token"]
+
+    def listing(self, token=None):
+        st, b = self.srv.api("GET", "/api/pair/devices", headers=bearer(token) if token else None)
+        self.assertEqual(st, 200, b)
+        return b
+
+    def devices(self, token=None):
+        return self.listing(token)["devices"]
+
+    def linked(self, token):
+        return self.srv.api("GET", "/api/pair", headers=bearer(token))[1]["linked"]
+
+    def session(self):
+        st, b = self.srv.api("GET", "/api/session")
+        self.assertEqual(st, 200, b)
+        return b["token"]
+
+    def test_01_list_names_times_and_this_device(self):
+        local = self.session()
+        before = int(time.time())
+        phone = self.pair(IPHONE_UA)
+        pc = self.pair(WINDOWS_CHROME_UA)
+        desktop = self.pair("XENO-STORE-Desktop/1.3.1")
+        self.pair("Go-http-client/1.1")                     # a Desktop release from before it named itself
+        self.pair(PS5_UA)
+        self.pair(ANDROID_FIREFOX_UA)
+        self.pair(MAC_EDGE_UA)
+        self.pair("curl/8.5.0")                             # nothing recognisable: no name
+        st, _, raw = self.srv.raw("GET", "/api/pair/devices", headers=bearer(phone))
+        self.assertEqual(st, 200, raw)
+        for tok in (local, phone, pc, desktop):
+            self.assertNotIn(tok.encode(), raw, "a token never leaves the console")
+        b = json.loads(raw)
+        self.assertEqual(b["max"], 16)
+        devs = b["devices"]
+        self.assertEqual([d["name"] for d in devs], ["iPhone Safari", "Windows Chrome", "XENO STORE Desktop", "XENO STORE Desktop",
+                                                     "PS5 browser", "Android Firefox", "Mac Edge", ""])
+        self.assertEqual([d["current"] for d in devs], [True] + [False] * 7)
+        self.assertEqual(len({d["id"] for d in devs}), 8)
+        for d in devs:
+            self.assertRegex(d["id"], r"^[0-9a-f]{16}$")
+            self.assertGreaterEqual(d["firstSeen"], before)
+            self.assertGreaterEqual(d["lastSeen"], d["firstSeen"])
+        # the console's own session (the TV app shares it) works and is never listed
+        self.assertEqual(self.srv.api("GET", "/api/v1/session")[1]["token"], local)
+        self.assertTrue(self.linked(local))
+        self.assertEqual(len(self.devices(local)), 8)
+        self.assertFalse(any(d["current"] for d in self.devices(local)))
+        self.assertFalse(any(d["current"] for d in self.devices()))   # the console's browser has no token
+        # a request from the LAN with a token moves its last seen, and only its own;
+        # one from the console itself moves nothing (it is no paired device)
+        time.sleep(1.2)
+        seen = {d["name"]: d["lastSeen"] for d in devs[:3]}
+        self.lan("GET", "/api/status", token=pc)
+        self.srv.api("GET", "/api/status", headers=bearer(phone))
+        now = {d["name"]: d for d in self.devices(local)[:3]}
+        self.assertGreater(now["Windows Chrome"]["lastSeen"], seen["Windows Chrome"])
+        self.assertEqual(now["iPhone Safari"]["lastSeen"], seen["iPhone Safari"])
+        # names and times survive a restart, and so does the console's session
+        self.restart()
+        again = self.devices(pc)
+        self.assertEqual([d["name"] for d in again], [d["name"] for d in devs])
+        self.assertEqual([d["firstSeen"] for d in again], [d["firstSeen"] for d in devs])
+        self.assertEqual([d["current"] for d in again], [False, True] + [False] * 6)
+        self.assertEqual(self.session(), local)
+
+    def test_02_unpair_one_and_all_others(self):
+        local = self.session()
+        phone = self.pair(IPHONE_UA)
+        pc = self.pair(WINDOWS_CHROME_UA)
+        desktop = self.pair("XENO-STORE-Desktop/1.3.1")
+        pc_id = {d["name"]: d["id"] for d in self.devices(phone)}["Windows Chrome"]
+        st, b = self.srv.api("POST", "/api/pair/unpair", {"id": pc_id}, headers=bearer(phone))
+        self.assertEqual(st, 200, b)
+        self.assertEqual([d["name"] for d in b["devices"]], ["iPhone Safari", "XENO STORE Desktop"])
+        self.assertFalse(self.linked(pc), "an unpaired token stops working")
+        self.assertTrue(self.linked(phone))
+        st, b = self.srv.api("POST", "/api/pair/unpair", {"id": pc_id}, headers=bearer(phone))
+        self.assertEqual((st, b["error"]), (404, "not_found"))
+        st, b = self.srv.api("POST", "/api/pair/unpair", {}, headers=bearer(phone))
+        self.assertEqual((st, b["error"]), (400, "bad_request"))
+        # the console's own session has no row, and its id unpairs nothing
+        local_id = hashlib.sha256(local.encode()).hexdigest()[:16]
+        st, b = self.srv.api("POST", "/api/pair/unpair", {"id": local_id}, headers=bearer(phone))
+        self.assertEqual(st, 404, b)
+        self.assertTrue(self.linked(local))
+        # all others: every device but the caller's, never the console's session
+        st, b = self.srv.api("POST", "/api/pair/unpair-others", {}, headers=bearer(desktop))
+        self.assertEqual(st, 200, b)
+        self.assertEqual(b["unpaired"], 1)
+        self.assertEqual([(d["name"], d["current"]) for d in b["devices"]], [("XENO STORE Desktop", True)])
+        self.assertFalse(self.linked(phone))
+        self.assertTrue(self.linked(desktop))
+        self.assertTrue(self.linked(local))
+        # from the console itself (no token): every listed device goes
+        st, b = self.srv.api("POST", "/api/pair/unpair-others", {})
+        self.assertEqual(st, 200, b)
+        self.assertEqual((b["unpaired"], b["devices"]), (1, []))
+        self.assertFalse(self.linked(desktop))
+        self.assertTrue(self.linked(local))
+        self.assertEqual(self.srv.api("GET", "/api/v1/session")[1]["token"], local)
+        st, b = self.srv.api("GET", "/api/v1/system", headers=bearer(local))
+        self.assertIs(b["paired"], True)
+        # what was unpaired stays unpaired after a restart
+        self.restart()
+        self.assertEqual(self.devices(), [])
+        self.assertFalse(self.linked(phone))
+        self.assertEqual(self.session(), local)
+
+    def lan(self, method, path, body=None, token=None, pin=None, ua=None):
+        return lan_api(self, self.srv, method, path, body, token, pin, ua)
+
+    def test_03_unpaired_client_cannot_list_or_unpair(self):
+        lan = self.lan
+        lan("GET", "/api/pair")
+        phone = self.pair(IPHONE_UA)
+        pc = self.pair(WINDOWS_CHROME_UA)
+        pc_id = {d["name"]: d["id"] for d in self.devices(phone)}["Windows Chrome"]
+
+        # /api/pair/* skips the PIN gate, so the routes check the caller themselves
+        self.srv.api("PUT", "/api/settings", {"pairing": {"pin": "2468"}})
+        try:
+            for tok in (None, "0" * 64):
+                for method, path, body in (("GET", "/api/pair/devices", None), ("POST", "/api/pair/unpair", {"id": pc_id}),
+                                           ("POST", "/api/pair/unpair-others", {})):
+                    st, b = lan(method, path, body, tok)
+                    self.assertEqual((st, b.get("error")), (403, "not_paired"), (method, path, tok, b))
+            self.assertTrue(self.linked(pc))
+            self.assertTrue(self.linked(phone))
+            # a paired phone on the LAN may
+            st, b = lan("GET", "/api/pair/devices", token=phone)
+            self.assertEqual(st, 200, b)
+            self.assertEqual([d["current"] for d in b["devices"]], [True, False])
+            st, b = lan("POST", "/api/pair/unpair", {"id": pc_id}, token=phone)
+            self.assertEqual(st, 200, b)
+            self.assertFalse(self.linked(pc))
+        finally:
+            self.srv.api("PUT", "/api/settings", {"pairing": {"pin": ""}}, headers={"X-XENO-PIN": "2468"})
+
+    def test_04_full_slots_replace_the_device_unused_longest(self):
+        local = self.session()
+        code = self.srv.api("GET", "/api/pair")[1]["code"]
+        st, b = self.srv.api("POST", "/api/pair", {"code": code}, headers={"User-Agent": WINDOWS_CHROME_UA})
+        self.assertNotIn("replaced", b, "a free slot replaces nothing")
+        toks = [b["token"]] + [self.pair(WINDOWS_CHROME_UA) for _ in range(15)]
+        time.sleep(1.2)
+        self.lan("GET", "/api/status", token=toks[0])                  # the first one paired is in use
+        code = self.srv.api("GET", "/api/pair")[1]["code"]
+        st, b = self.srv.api("POST", "/api/pair", {"code": code}, headers={"User-Agent": IPHONE_UA})
+        self.assertEqual(st, 200, b)                                     # no "All pairing slots are in use"
+        self.assertEqual(b["replaced"], "Windows Chrome", "the new device is told which one made room")
+        newest = b["token"]
+        # an older store (a downgrade) reads only the first 16 of the "tokens" list and
+        # hands out the first as the console's session: the device left out is the one
+        # unused the longest (toks[2] now), never the newest
+        with open(os.path.join(self.srv.data_dir, "pairing.json")) as f:
+            self.assertEqual(json.load(f)["tokens"], [local, toks[0]] + toks[3:] + [newest])
+        self.assertTrue(self.linked(newest))
+        self.assertFalse(self.linked(toks[1]), "the device unused the longest makes room")
+        self.assertTrue(self.linked(toks[0]), "a device in use stays paired")
+        for t in toks[2:]:
+            self.assertTrue(self.linked(t))
+        self.assertTrue(self.linked(local), "the console's own session never makes room")
+        b = self.listing(newest)
+        self.assertEqual(len(b["devices"]), 16)
+        self.assertEqual(b["devices"][-1]["name"], "iPhone Safari")
+        self.assertTrue(b["devices"][-1]["current"])
+        self.assertIn("replaced", self.srv.log_text())
+
+    def test_07_an_unpaired_token_is_refused_everywhere(self):
+        # unpairing cuts off a device that has the store open: a token the console no
+        # longer knows is refused even where no token is needed, so the web UI goes
+        # back to the Link page instead of carrying on (or asking for the PIN)
+        lan = self.lan
+        phone = self.pair(IPHONE_UA)
+        st, b = lan("PUT", "/api/settings", {"general": {"openOnStart": False}}, token=phone)
+        self.assertEqual(st, 200, b)
+        phone_id = self.devices(phone)[0]["id"]
+        self.assertEqual(self.srv.api("POST", "/api/pair/unpair", {"id": phone_id})[0], 200)
+        st, b = lan("PUT", "/api/settings", {"general": {"openOnStart": True}}, token=phone)
+        self.assertEqual((st, b.get("error")), (403, "not_paired"), b)
+        self.assertIs(self.srv.api("GET", "/api/settings")[1]["settings"]["general"]["openOnStart"], False, "nothing was changed")
+        st, b = lan("GET", "/api/status", token=phone)
+        self.assertEqual((st, b.get("error")), (403, "not_paired"), b)
+        # pairing stays reachable: it says "not linked" and takes a new code over the old token
+        st, b = lan("GET", "/api/pair", token=phone)
+        self.assertEqual((st, b["linked"]), (200, False), b)
+        code = self.srv.api("GET", "/api/pair")[1]["code"]
+        st, b = lan("POST", "/api/pair", {"code": code}, token=phone)
+        self.assertEqual(st, 200, b)
+        again = b["token"]
+        self.assertEqual(lan("GET", "/api/status", token=again)[0], 200)
+        # no token at all is no change: without a PIN anyone on the LAN may
+        st, b = lan("PUT", "/api/settings", {"general": {"openOnStart": True}})
+        self.assertEqual(st, 200, b)
+        # the TV app's dialect keeps its own answer, and the console itself is never cut off
+        st, b = lan("GET", "/api/v1/system", token=phone)
+        self.assertEqual((st, b["paired"]), (200, False), b)
+        self.assertEqual(self.srv.api("GET", "/api/status", headers=bearer(phone))[0], 200)
+        # with a PIN, an unpaired token is told so rather than asked for the PIN
+        self.srv.api("PUT", "/api/settings", {"pairing": {"pin": "2468"}})
+        try:
+            st, b = lan("PUT", "/api/settings", {"general": {"openOnStart": False}}, token=phone)
+            self.assertEqual((st, b.get("error")), (403, "not_paired"), b)
+            st, b = lan("PUT", "/api/settings", {"general": {"openOnStart": False}})
+            self.assertEqual((st, b.get("error")), (401, "pin_required"), b)
+            st, b = lan("PUT", "/api/settings", {"general": {"openOnStart": False}}, token=again)
+            self.assertEqual(st, 200, b)
+        finally:
+            self.srv.api("PUT", "/api/settings", {"pairing": {"pin": ""}}, headers={"X-XENO-PIN": "2468"})
+
+    def write_v1(self, tokens):
+        self.srv.stop()
+        with open(os.path.join(self.srv.data_dir, "pairing.json"), "w") as f:
+            json.dump({"v": 1, "tokens": tokens}, f)
+        self.srv = self.start(self.srv.port)
+
+    def test_05_an_older_pairing_file_is_kept(self):
+        # pairing.json before names and times: tokens[0] is a phone's whenever it
+        # paired before the console asked for its session, so every token is
+        # listed and the console's session starts afresh
+        a, b = "a1" * 32, "b2" * 32
+        self.write_v1([a, b])
+        devs = self.devices()
+        self.assertEqual([(d["name"], d["firstSeen"], d["lastSeen"]) for d in devs], [("", 0, 0), ("", 0, 0)])
+        self.assertEqual([d["id"] for d in devs], [hashlib.sha256(t.encode()).hexdigest()[:16] for t in (a, b)])
+        local = self.session()
+        self.assertNotIn(local, (a, b))
+        self.assertEqual(self.srv.api("GET", "/api/v1/session")[1]["token"], local)
+        # its first request from the LAN names it and starts its times
+        self.lan("GET", "/api/status", token=b, ua=IPHONE_UA)
+        self.assertTrue(self.linked(a))
+        self.assertTrue(self.linked(b))
+        d = self.devices()[1]
+        self.assertEqual(d["name"], "iPhone Safari")
+        self.assertGreater(d["firstSeen"], 0)
+        self.assertGreaterEqual(d["lastSeen"], d["firstSeen"])
+        # tokens[0] can be unpaired like any other device
+        st, r = self.srv.api("POST", "/api/pair/unpair", {"id": devs[0]["id"]})
+        self.assertEqual(st, 200, r)
+        self.assertFalse(self.linked(a))
+        self.assertTrue(self.linked(b))
+        self.assertTrue(self.linked(local))
+        self.restart()
+        self.assertEqual([d["name"] for d in self.devices()], ["iPhone Safari"])
+        self.assertEqual(self.session(), local)
+
+    def test_06_a_phone_first_in_an_older_pairing_file_can_be_unpaired(self):
+        # 1.3.x: the phone paired before anything asked for the console's session,
+        # so its token was tokens[0], and the TV app was later handed that same one
+        phone = self.pair(IPHONE_UA)
+        pc = self.pair(WINDOWS_CHROME_UA)
+        self.write_v1([phone, pc])
+        listed = self.devices(phone)
+        self.assertEqual([d["current"] for d in listed], [True, False])
+        self.assertEqual([d["name"] for d in self.devices()], ["", ""])
+        self.srv.api("GET", "/api/status", headers={**bearer(phone), "User-Agent": "XenoStoreTV"})   # the TV app names nothing
+        self.assertEqual(self.devices()[0]["name"], "")
+        self.lan("GET", "/api/status", token=phone, ua=IPHONE_UA)
+        self.assertEqual(self.devices()[0]["name"], "iPhone Safari")
+        # the console's "Unpair all other devices" reaches it
+        st, b = self.srv.api("POST", "/api/pair/unpair-others", {})
+        self.assertEqual((st, b["unpaired"], b["devices"]), (200, 2, []), b)
+        self.assertFalse(self.linked(phone))
+        self.assertFalse(self.linked(pc))
+        # and the TV app, once told it is no longer paired, gets a session of its own
+        st, b = self.srv.api("GET", "/api/v1/system", headers=bearer(phone))
+        self.assertIs(b["paired"], False)
+        local = self.srv.api("GET", "/api/v1/session")[1]["token"]
+        self.assertNotIn(local, (phone, pc))
+        self.assertTrue(self.linked(local))
+        self.assertEqual(self.devices(), [])
+
+    def test_08_the_tv_app_moves_off_an_older_files_first_token(self):
+        # 1.3.x handed tokens[0] to the TV app, which keeps it across the store's update.
+        # From the console itself a device's token is no session: /api/v1/system says
+        # paired:false, so the app asks /api/v1/session for the console's own, and its
+        # polls neither name that device nor move its last seen
+        tv, pc = "a1" * 32, "b2" * 32
+        self.write_v1([tv, pc])
+        app = {**bearer(tv), "User-Agent": "XenoStoreTV"}
+        st, b = self.srv.api("GET", "/api/v1/system", headers=app)
+        self.assertEqual((st, b["paired"], b["localSessionAvailable"]), (200, False, True), b)
+        self.assertEqual(self.srv.api("GET", "/api/v1/updates", headers=app)[0], 401)
+        self.srv.api("GET", "/api/status", headers=app)
+        local = self.srv.api("GET", "/api/v1/session")[1]["token"]
+        self.assertNotIn(local, (tv, pc))
+        st, b = self.srv.api("GET", "/api/v1/system", headers={**bearer(local), "User-Agent": "XenoStoreTV"})
+        self.assertIs(b["paired"], True)
+        self.assertEqual(self.srv.api("GET", "/api/v1/updates", headers=bearer(local))[0], 200)
+        self.assertEqual([(d["name"], d["firstSeen"], d["lastSeen"]) for d in self.devices(local)], [("", 0, 0), ("", 0, 0)])
+        # a phone that paired before the console asked shares that token: from the LAN
+        # it keeps working (the TV dialect too), and it is named and seen
+        st, b = self.lan("GET", "/api/v1/system", token=tv, ua=IPHONE_UA)
+        self.assertIs(b["paired"], True)
+        self.assertEqual(self.lan("GET", "/api/status", token=tv, ua=IPHONE_UA)[0], 200)
+        d = self.devices()[0]
+        self.assertEqual(d["name"], "iPhone Safari")
+        self.assertGreater(d["lastSeen"], 0)
+        # a token no LAN request has used since the update is the first to make room
+        for _ in range(14):
+            self.pair(WINDOWS_CHROME_UA)
+        code = self.srv.api("GET", "/api/pair")[1]["code"]
+        st, b = self.srv.api("POST", "/api/pair", {"code": code}, headers={"User-Agent": IPHONE_UA})
+        self.assertEqual((st, b.get("replaced")), (200, ""), b)
+        self.assertFalse(self.linked(pc))
+        self.assertTrue(self.linked(tv))
+        self.assertTrue(self.linked(local))
+
+
+PAIRED_DEVICES_SCRIPT = r"""
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.XENO_PLAYWRIGHT);
+const base = process.argv[2];
+const token = process.argv[3];
+const browser = await chromium.launch();
+try {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  // this browser holds the phone's token, as a linked phone would
+  await page.addInitScript((tok) => { localStorage.setItem('xs.wizardDone', 'true'); localStorage.setItem('xs.token', JSON.stringify(tok)); }, token);
+  await page.goto(base + '/');
+  await page.waitForFunction(() => window.XS && XS.router && document.querySelector('#scr-discover'), null, { timeout: 30000 });
+  await page.evaluate(() => XS.router.go('settings'));
+  // the group repaints when settings and status arrive: read it once it lists `n` devices
+  const read = async (n) => (await page.waitForFunction((n) => {
+    const sec = document.querySelector('#scr-settings section.set-group[data-group="pair"]');
+    const rows = sec ? Array.from(sec.querySelectorAll('.pd-row')) : [];
+    if (rows.length !== n) return null;
+    return {
+      rows: rows.map((r) => ({
+        nav: r.getAttribute('data-nav-id'), name: r.querySelector('.name').firstChild.textContent,
+        chip: r.querySelector('.name .chip') ? r.querySelector('.name .chip').innerText : '',
+        desc: r.querySelector('.desc').innerText, unpair: !!r.querySelector('button[data-nav-id$="-unpair"]') })),
+      others: !!sec.querySelector('[data-nav-id="pd-others"]'),
+      text: sec.innerText,
+    };
+  }, n, { timeout: 30000 })).jsonValue();
+  const out = { before: await read(4) };
+  const pc = out.before.rows.find((r) => r.name === 'Windows Chrome');
+  if (!pc) { console.log(JSON.stringify(out)); process.exit(0); }   // the test reports what was listed
+  await page.click(`#scr-settings [data-nav-id="${pc.nav}-unpair"]`);
+  out.dialog = await page.evaluate(() => document.querySelector('.dialog-wrap .dialog').innerText);
+  const answered = page.waitForResponse((r) => new URL(r.url()).pathname === '/api/pair/unpair');
+  await page.click('.dialog-wrap [data-nav-id="dlg-1"]');
+  out.status = (await answered).status();
+  out.after = await read(3);
+  console.log(JSON.stringify(out));
+} finally {
+  await browser.close();
+}
+"""
+
+
+UNPAIRED_WHILE_OPEN_SCRIPT = r"""
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.XENO_PLAYWRIGHT);
+const [lanBase, consoleBase, token] = process.argv.slice(2);
+const browser = await chromium.launch();
+const linkPage = () => {
+  const p = document.querySelectorAll('.link-page');
+  return { pages: p.length, status: p.length ? p[0].querySelector('.link-status').innerText : '', same: window.__same === 1,
+           token: localStorage.getItem('xs.token') };
+};
+try {
+  // a phone on the LAN (not the console itself), linked
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await page.addInitScript((tok) => { if (!localStorage.getItem('xs.token')) { localStorage.setItem('xs.wizardDone', 'true'); localStorage.setItem('xs.token', JSON.stringify(tok)); } }, token);
+  await page.goto(lanBase + '/');
+  await page.waitForFunction(() => window.XS && XS.router && document.querySelector('#scr-discover'), null, { timeout: 30000 });
+  await page.evaluate(() => { window.__same = 1; XS.router.go('settings'); });
+  // 1) it unpairs itself in Settings → Pair a device: the Link page says so (no reload)
+  await page.waitForSelector('#scr-settings .pd-row .chip', { timeout: 30000 });
+  const nav = await page.evaluate(() => document.querySelector('#scr-settings .pd-row .chip').closest('.pd-row').getAttribute('data-nav-id'));
+  await page.click(`#scr-settings [data-nav-id="${nav}-unpair"]`);
+  await page.click('.dialog-wrap [data-nav-id="dlg-1"]');
+  await page.waitForSelector('.link-page', { timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('.link-page .link-status').innerText, null, { timeout: 15000 });
+  const out = { self: await page.evaluate(linkPage) };
+  // linked again with the code the console shows
+  const code = (await (await fetch(consoleBase + '/api/pair')).json()).code;
+  await page.fill('.link-page .link-code', code);
+  await page.waitForFunction(() => !document.querySelector('.link-page'), null, { timeout: 15000 });
+  out.relinked = await page.evaluate(linkPage);
+  // 2) unpaired from elsewhere while it is open: its next calls land on one Link page that says why
+  const r = await fetch(consoleBase + '/api/pair/unpair-others', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+  out.unpairedOthers = (await r.json()).unpaired;
+  await page.evaluate(() => Promise.all([XS.api.status(), XS.api.queue(), XS.api.settings()].map((p) => p.catch(() => null))));
+  await page.waitForFunction(() => { const s = document.querySelector('.link-page .link-status'); return s && s.innerText; }, null, { timeout: 15000 });
+  await page.waitForTimeout(500);
+  out.revoked = await page.evaluate(linkPage);
+  console.log(JSON.stringify(out));
+} finally {
+  await browser.close();
+}
+"""
+
+
+LINK_REPLACES_SCRIPT = r"""
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.XENO_PLAYWRIGHT);
+const [lanBase, consoleBase] = process.argv.slice(2);
+const browser = await chromium.launch();
+try {
+  // a new phone on the LAN links while all 16 slots are taken
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await page.addInitScript(() => { localStorage.setItem('xs.wizardDone', 'true'); });
+  await page.goto(lanBase + '/');
+  await page.waitForSelector('.link-page .link-code', { timeout: 30000 });
+  const code = (await (await fetch(consoleBase + '/api/pair')).json()).code;
+  await page.fill('.link-page .link-code', code);
+  await page.waitForFunction(() => !document.querySelector('.link-page'), null, { timeout: 15000 });
+  await page.waitForSelector('#toasts .toast', { timeout: 15000 });
+  console.log(JSON.stringify({ toasts: await page.evaluate(() => Array.from(document.querySelectorAll('#toasts .toast')).map((t) => t.innerText)) }));
+} finally {
+  await browser.close();
+}
+"""
+
+
+FORGOTTEN_SCRIPT = r"""
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.XENO_PLAYWRIGHT);
+const [lanBase, token] = process.argv.slice(2);
+const browser = await chromium.launch();
+try {
+  // a phone on the LAN opens the store again with the token it was given before
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  await page.addInitScript((tok) => { localStorage.setItem('xs.wizardDone', 'true'); localStorage.setItem('xs.token', JSON.stringify(tok)); }, token);
+  await page.goto(lanBase + '/');
+  await page.waitForSelector('.link-page .link-status', { timeout: 30000 });
+  await page.waitForTimeout(300);
+  console.log(JSON.stringify(await page.evaluate(() => ({ status: document.querySelector('.link-page .link-status').innerText,
+                                                          token: localStorage.getItem('xs.token') }))));
+} finally {
+  await browser.close();
+}
+"""
+
+
+class PairedDevicesUiTests(unittest.TestCase):
+    """Settings → Pair a device in the UI the console serves: every paired
+    device with its name, last seen, "This device" and an Unpair button, the
+    16-slot note, and Unpair removing the device."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pw = harness.playwright_module()
+        if not cls.pw:
+            raise unittest.SkipTest("node with Playwright is not installed")
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp(prefix="xeno-devices-ui.")
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.srv = XenoServer(os.path.join(self.tmp, "data")).start()
+        self.addCleanup(self.srv.stop)
+
+    def pair(self, ua):
+        code = self.srv.api("GET", "/api/pair")[1]["code"]
+        return self.srv.api("POST", "/api/pair", {"code": code}, headers={"User-Agent": ua})[1]["token"]
+
+    def test_list_and_unpair(self):
+        phone = self.pair(IPHONE_UA)
+        pc = self.pair(WINDOWS_CHROME_UA)
+        self.pair(PS5_UA)
+        self.pair("curl/8.5.0")
+        out = harness.run_ui_script(self, self.pw, self.tmp, PAIRED_DEVICES_SCRIPT, self.srv.base, phone)
+        rows = out["before"]["rows"]
+        self.assertEqual([r["name"] for r in rows], ["iPhone Safari", "Windows Chrome", "PS5 browser", "Unknown device"], out)
+        self.assertEqual([r["chip"] for r in rows], ["This device", "", "", ""])
+        for r in rows:
+            self.assertTrue(r["unpair"], r)
+            self.assertTrue(r["desc"].startswith("Last seen "), r)
+        self.assertTrue(out["before"]["others"])
+        self.assertIn("Up to 16 phones and PCs stay paired. Pairing one more replaces the device unused the longest.", out["before"]["text"])
+        self.assertIn("Unpair Windows Chrome?", out["dialog"])
+        self.assertEqual(out["status"], 200)
+        self.assertEqual([r["name"] for r in out["after"]["rows"]], ["iPhone Safari", "PS5 browser", "Unknown device"])
+        self.assertFalse(self.srv.api("GET", "/api/pair", headers=bearer(pc))[1]["linked"])
+        self.assertTrue(self.srv.api("GET", "/api/pair", headers=bearer(phone))[1]["linked"])
+
+    def test_link_page_names_the_device_it_replaced(self):
+        ip = self.srv.api("GET", "/api/status")[1].get("ip", "127.0.0.1")
+        if not ip or ip.startswith("127."):
+            self.skipTest("no non-loopback IPv4 on this machine")
+        self.pair(PS5_UA)                                   # paired first, unused the longest
+        for _ in range(15):
+            self.pair(WINDOWS_CHROME_UA)
+        out = harness.run_ui_script(self, self.pw, self.tmp, LINK_REPLACES_SCRIPT, f"http://{ip}:{self.srv.port}", self.srv.base)
+        self.assertIn("PS5 browser was unpaired to make room — it was the device unused the longest.", out["toasts"], out)
+
+    def test_unpaired_while_open_goes_back_to_the_link_page(self):
+        ip = self.srv.api("GET", "/api/status")[1].get("ip", "127.0.0.1")
+        if not ip or ip.startswith("127."):
+            self.skipTest("no non-loopback IPv4 on this machine")
+        phone = self.pair(IPHONE_UA)
+        out = harness.run_ui_script(self, self.pw, self.tmp, UNPAIRED_WHILE_OPEN_SCRIPT, f"http://{ip}:{self.srv.port}",
+                                    self.srv.base, phone)
+        # its own Unpair: straight to the Link page, which says it was unpaired
+        self.assertEqual(out["self"], {"pages": 1, "status": "iPhone Safari unpaired", "same": True, "token": '""'}, out)
+        self.assertFalse(self.srv.api("GET", "/api/pair", headers=bearer(phone))[1]["linked"])
+        self.assertEqual(out["relinked"]["pages"], 0, out)
+        self.assertTrue(out["relinked"]["same"], out)
+        again = json.loads(out["relinked"]["token"])
+        self.assertNotEqual(again, phone)
+        # unpaired from the console while open: the next calls are refused and one Link page says why
+        self.assertEqual(out["unpairedOthers"], 1, out)
+        self.assertEqual(out["revoked"], {"pages": 1, "same": True, "token": '""', "status": FORGOTTEN}, out)
+
+    def test_a_forgotten_browser_is_told_why_when_it_comes_back(self):
+        # unpaired (or replaced when every slot was taken) while the store was closed on it:
+        # the next load says why it has to link again, not the first-time page as if never linked
+        ip = self.srv.api("GET", "/api/status")[1].get("ip", "127.0.0.1")
+        if not ip or ip.startswith("127."):
+            self.skipTest("no non-loopback IPv4 on this machine")
+        phone = self.pair(IPHONE_UA)
+        st, b = self.srv.api("POST", "/api/pair/unpair-others", {})
+        self.assertEqual((st, b["unpaired"]), (200, 1), b)
+        out = harness.run_ui_script(self, self.pw, self.tmp, FORGOTTEN_SCRIPT, f"http://{ip}:{self.srv.port}", phone)
+        self.assertEqual(out, {"status": FORGOTTEN, "token": '""'})
 
 
 class ListenerTests(unittest.TestCase):
@@ -420,7 +1019,8 @@ class UpdateRestartTests(unittest.TestCase):
             while time.time() < deadline and elf not in got:
                 time.sleep(0.05)
             self.assertIn(elf, got, "the loader must receive exactly the staged ELF")
-            self.assertTrue(os.path.exists(os.path.join(srv.data_dir, "handoff.pending")))
+            with open(os.path.join(srv.data_dir, "handoff.pending")) as f:
+                self.assertEqual(f.read().split()[2], "restart", "the next copy reopens the browser, not the app over it")
             # the port is free again for the new version
             s2 = socket.socket()
             s2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -429,6 +1029,25 @@ class UpdateRestartTests(unittest.TestCase):
         finally:
             srv.stop()
             sink.close()
+
+    def test_restart_from_a_phone_is_no_browser_restart(self):
+        # Restart now from a phone or a PC: nobody is at the console's browser, so the
+        # marker does not say "restart" and the next copy opens the app when it can
+        sink = LoaderSink()
+        self.addCleanup(sink.close)
+        tmp = tempfile.mkdtemp(prefix="xeno-restart-lan.")
+        self.addCleanup(shutil.rmtree, tmp, True)
+        srv = XenoServer(os.path.join(tmp, "data"), env={"XENO_PORT_LOADER": str(sink.port)}).start()
+        self.addCleanup(srv.stop)
+        with open(os.path.join(srv.data_dir, "xeno-store.elf"), "wb") as f:
+            f.write(b"\x7fELF" + bytes(range(256)) * 64)
+        with open(os.path.join(srv.data_dir, "xeno-store.elf.version"), "w") as f:
+            f.write("99.0.0\n")
+        st, b = lan_api(self, srv, "POST", "/api/update/restart", {})
+        self.assertEqual(st, 200, b)
+        srv.proc.wait(timeout=30)
+        with open(os.path.join(srv.data_dir, "handoff.pending")) as f:
+            self.assertEqual(f.read().split()[2], "remote")
 
 
 class LoaderSink:
@@ -468,7 +1087,7 @@ class LoaderSink:
 
 class UpdateHandoffTests(unittest.TestCase):
     """At start, a newer downloaded xeno-store.elf takes over (XENO_HANDOFF=1 on
-    host). handoff.pending ("<time> <version that handed off>") is cleared by a
+    host). handoff.pending ("<time> <version that handed off> start|restart") is cleared by a
     copy once its server is up, so an update that never comes up, or crashes
     right after its start, is set aside as *.failed instead of retried forever."""
 
@@ -538,9 +1157,10 @@ class UpdateHandoffTests(unittest.TestCase):
         self.assertEqual(rc, 0, out)
         self.assertEqual(self.received(), [self.ELF], "the loader must receive exactly the staged ELF")
         with open(self.path("handoff.pending")) as f:
-            ts, frm = f.read().split()
+            ts, frm, why = f.read().split()
         self.assertLess(abs(time.time() - int(ts)), 60)
         self.assertEqual(frm, self.version)
+        self.assertEqual(why, "start", "the next copy may open the app: nobody restarted it from a browser")
         # the handed-off copy must still see the report as fresh
         with open(self.path("crash.txt")) as f:
             self.assertEqual(f.read(), report)
@@ -593,8 +1213,8 @@ class UpdateHandoffTests(unittest.TestCase):
             srv.stop()
         self.assertEqual(len(self.sink.got), 1, "no second hand-off")
         with open(self.path("handoff.pending")) as f:
-            ts, frm = f.read().split()
-        self.write("handoff.pending", "%d %s\n" % (int(ts) - 600, frm))
+            ts, frm, why = f.read().split()
+        self.write("handoff.pending", "%d %s %s\n" % (int(ts) - 600, frm, why))
         srv = XenoServer(self.data, env=self.env).start()
         try:
             self.assert_set_aside()

@@ -17,7 +17,9 @@
  *  - POST /downloads runs the reference's pre-checks, then dl_add() with an
  *    explicit delivery ("direct" or "torbox"), never overwriting a file;
  *  - the job actions translate the app's verbs into dl_action() calls and
- *    answer the full jobs array.
+ *    answer the full jobs array;
+ *  - XENO STORE adds a row's "installState" (a finished PKG's install, as the
+ *    queue reports it) and the "install" action (the app's Retry install).
  * Nothing here touches a drive on a polled path: drives come from the
  * tv-storage snapshot, pending bytes from the queue, TorBox from memory.
  *
@@ -90,6 +92,9 @@
 #define S_ARCHIVE_GONE "The archive is no longer on the drive. Remove this download and download it again."
 #define S_LIMIT "Choose a whole number from 1 to 4."
 #define S_INSTALL_FAILED "Install failed: "
+#define S_INSTALL_PKG_ONLY "Only a finished PKG download can be installed."
+#define S_INSTALL_BUSY "This download is already installing."
+#define S_INSTALL_GONE "The PKG file is no longer on the drive. Remove this download and download it again."
 #define S_DOWNLOAD_FAILED "Download failed."
 #define S_BROWSER                                                                                  \
   "Vikingfile asks for a human check, so XENO STORE cannot fetch it by itself. Download it with " \
@@ -153,6 +158,16 @@ static int extract_failed(const dl_brief *b) { return b->state == DL_DONE && str
 static int install_failed(const dl_brief *b) { return strcmp(b->installState, "failed") == 0; }
 /* "complete" in the app's eyes (map-downloads §3.3): the download is finished. */
 static int tv_complete(const dl_brief *b) { return (st_complete(b->state) && !extract_failed(b)) || b->state == DL_INSTALLING; }
+/* XENO STORE: where a complete row's install stands, as the queue reports it
+ * (dl_job.install.state): idle, pending (an install set waits for its other
+ * files), installing, installed or failed. Any other row is idle. */
+static const char *install_state(const dl_brief *b) {
+  static const char *const STATES[] = { "pending", "installing", "installed", "failed" };
+  if (!tv_complete(b)) return "idle";
+  for (size_t i = 0; i < XS_ARRAY_LEN(STATES); i++)
+    if (strcmp(b->installState, STATES[i]) == 0) return STATES[i];
+  return "idle";
+}
 /* TorBox fetches this job: chosen for it, resolved by it, or (web UI "auto")
  * resolving its link through it right now. */
 static int is_torbox(const dl_brief *b) {
@@ -353,6 +368,7 @@ static void job_json(jw *w, const dl_brief *b, const tvcat_rel *cat) {
   kv_text(w, "path", path);
   jw_kv_str(w, "status", status);
   kv_text(w, "error", err);
+  jw_kv_str(w, "installState", install_state(b));
   jw_kv_str(w, "verification", b->verified ? "sha256" : "size");
   jw_kv_str(w, "delivery", is_torbox(b) ? "torbox" : "direct");
   jw_kv_str(w, "deliveryPhase", phase);
@@ -767,6 +783,26 @@ static int act_remove(const dl_brief *b, act_result *res) {
   return run_xeno(b, "remove", BODY_KEEP_FILES, S_REMOVE, res);
 }
 
+/* XENO STORE: Retry install. A finished PKG installs again (the queue's own
+ * "install" action), from the file it saved. */
+static int act_install(const dl_brief *b, act_result *res) {
+  if (b->state == DL_INSTALLING && !install_failed(b)) REFUSE(409, S_INSTALL_BUSY);
+  int pkg = util_strieq(b->format, "pkg") || util_strieq(b->format, "fpkg");
+  if (!pkg || !tv_complete(b) || b->state == DL_EXTRACTED) REFUSE(409, S_INSTALL_PKG_ONLY);
+  if (!tvdl_root_present(b->root)) REFUSE(409, S_RECONNECT_DRIVE);
+  if (!b->path[0] || !util_file_exists(b->path)) REFUSE(409, S_INSTALL_GONE);
+  /* the worker of the last install has not let go of the job yet */
+  if (b->running) REFUSE(409, S_INSTALL_BUSY);
+#ifdef XENO_HOST
+  /* XENO_HOST_TV_INSTALL_HOLD_MS: the request waits that long here, so a test
+   * can start the same install elsewhere first (two presses at once). */
+  const char *hold = getenv("XENO_HOST_TV_INSTALL_HOLD_MS");
+  if (hold && *hold) util_sleep_ms(atoi(hold));
+#endif
+  /* past the checks, only an install started meanwhile makes the queue refuse */
+  return run_xeno(b, "install", BODY_EMPTY, S_INSTALL_BUSY, res);
+}
+
 /* Ported from Orbit Store backend/queue.c job_password_locked (GPL-3.0-or-later):
  * the state rule first, then the password rules. */
 static int act_password(const api_ctx *c, const dl_brief *b, act_result *res) {
@@ -804,6 +840,7 @@ void tvdl_h_action(api_ctx *c) {
   else if (strcmp(action, "forget") == 0) rc = act_delete(b, 1, &res);
   else if (strcmp(action, "remove") == 0) rc = act_remove(b, &res);
   else if (strcmp(action, "archive-password") == 0) rc = act_password(c, b, &res);
+  else if (strcmp(action, "install") == 0) rc = act_install(b, &res);
   else if (strcmp(action, "refresh-link") == 0) { res.status = 409; res.sentence = S_NO_LINK; rc = -1; }
   else { res.status = 404; res.sentence = S_UNKNOWN_ACTION; rc = -1; }
   if (rc == 0) LOGI("tvapi downloads: %s %s", action, id);

@@ -14,7 +14,8 @@ Same command line and environment as the real preview (PORT-SPEC 2.9):
 
 Per scenario it talks to the backend over HTTP the way the app does (system,
 session, sources, catalogue, downloads, storage, library, updates; the art of
-the Discover hero and first rail), runs the starter for real against
+the Discover hero and first rail; the Save Data Store's list, profiles and
+the scenario's save install, followed to its end), runs the starter for real against
 XENO_LOADER_PORT (cold start, crash fallback, restart through POST
 /api/v1/updates stop), prints TVMARK lines where the real scenarios do
 (library: remove-drive, connection-lost: stop-backend) and waits for the
@@ -34,12 +35,21 @@ import os
 import socket
 import sys
 import time
+import urllib.parse
 
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TABLE = os.environ.get("XENO_STUB_TABLE") or os.path.join(HERE, "scenarios.json")
 START_UP = ("offline", "no-loader", "cold-start", "crash-fallback")
+# The Save Data Store scenarios that install a save, as the real ones do (the
+# saves of tools/tv/world.py): (save id, profile index, cancel once bytes arrive).
+SAVE_INSTALLS = {"saves-install": ("xk-ember-forge", 1, False), "saves-progress": ("xk-starfall-season", 0, True),
+                 "saves-closed": ("xk-ember-forge", 0, False),
+                 "saves-running": ("xk-orchard-bloom", 0, False), "saves-garlic": ("xk-ember-forge", 0, False)}
+# The installs that end with the details closed: the app's toast names the save.
+SAVE_TOASTS = ("saves-closed",)
+SAVES = ("saves", "game-saves", "saves-long", "saves-building") + tuple(SAVE_INSTALLS)
 
 
 class Refused(Exception):
@@ -97,7 +107,8 @@ class Stub:
                       "catalogueCount": 0, "toasts": [], "settingError": "", "libraryActionError": "",
                       "favouriteError": "", "browserError": "", "stateHealthy": True, "paired": False, "version": "",
                       "instanceId": "", "setupNeeded": False, "starting": "idle", "startDetail": "",
-                      "restart": "idle", "restartDetail": "", "jobs": {}, "libraryGames": 0, "storageJob": "",
+                      "restart": "idle", "restartDetail": "", "jobs": {}, "saves": "idle", "savesCount": 0,
+                      "savesBuilding": False, "savesError": "", "saveInstall": "", "libraryGames": 0, "storageJob": "",
                       "captures": [], "marks": [], "timeouts": [], "errorsSeen": [], "startingSeen": [],
                       "restartSeen": [], "opened": [], "starterLog": []}
         self.t0 = time.time()
@@ -156,6 +167,51 @@ class Stub:
             if path == "/api/v1/library" and st == 200:
                 self.state["libraryGames"] = len((jbody(b) or {}).get("games", []))
         return True
+
+    def saves(self, settle=True, timeout=60.0):
+        """GET /api/saves/store as the Saves tab asks it: again every 4 s while the
+        store builds its index (the first answer can take it 15 s)."""
+        deadline = time.time() + timeout
+        while True:
+            st, b = http(self.port, "GET", "/api/saves/store", token=self.token, timeout=30.0)
+            v = jbody(b) or {}
+            if st != 200:
+                load = "unsupported" if st == 404 else "failed"
+                self.state.update(saves=load, savesError=v.get("message") or f"HTTP {st}")
+                self.state["errorsSeen"].append({"from": "saves", "error": self.state["savesError"]})
+                return v
+            self.state.update(saves="ready", savesCount=len(v.get("saves") or []),
+                              savesBuilding=bool(v.get("building")), savesError="")
+            if not settle or not v.get("building") or time.time() > deadline:
+                return v
+            time.sleep(4.0)
+
+    def install_save(self, save, profile, cancel):
+        """POST /api/saves/store/{id}/install for a profile, then the job every second."""
+        st, b = http(self.port, "GET", "/api/saves/users", token=self.token)
+        users = (jbody(b) or {}).get("users") or []
+        uid = users[profile]["id"] if 0 <= profile < len(users) else 0
+        st, b = http(self.port, "POST", f"/api/saves/store/{urllib.parse.quote(save, safe='')}/install",
+                     {"user": uid, "backupFirst": True, "wait": False}, token=self.token, timeout=30.0)
+        job = (jbody(b) or {}).get("job") or {}
+        if st != 200 or not job.get("id"):
+            self.state["saveInstall"] = "refused"
+            self.state["errorsSeen"].append({"from": "saveInstall", "error": (jbody(b) or {}).get("message", f"HTTP {st}")})
+            return
+        deadline = time.time() + 60
+        while job.get("state") not in ("done", "failed", "cancelled") and time.time() < deadline:
+            if cancel and job.get("state") == "running" and job.get("done", 0) > 0:
+                http(self.port, "POST", f"/api/saves/jobs/{job['id']}/cancel", {}, token=self.token)
+                cancel = False
+            time.sleep(1.0)
+            st, b = http(self.port, "GET", f"/api/saves/jobs/{job['id']}", token=self.token)
+            job = (jbody(b) or {}).get("job") or job
+        state, code = job.get("state", ""), job.get("errorCode", "")
+        if state not in ("done", "failed", "cancelled"):
+            self.state["timeouts"].append("save install")
+        if state == "failed" and job.get("error"):
+            self.state["errorsSeen"].append({"from": "saveInstall", "error": job["error"]})
+        self.state["saveInstall"] = state if state in ("done", "cancelled") or not code else f"{state}:{code}"
 
     def wait_ready(self, timeout=30.0):
         deadline = time.time() + timeout
@@ -334,6 +390,29 @@ class Stub:
             self.poll()
         elif n == "discover":
             self.discover_art()
+        elif n == "favourite":
+            # Favourite on a game's page, twice: each change shows its toast.
+            game = next((o.get("gameId") for o in self.catalog if o.get("gameId")), "")
+            for _ in range(2):
+                st, b = self.get("/api/v1/favorites")
+                saved = game in (jbody(b) or [])
+                st, b = http(self.port, "POST", "/api/v1/favorites", {"gameId": game, "favorite": not saved},
+                             token=self.token)
+                if not self.error_of("/api/v1/favorites", st, b):
+                    self.state["toasts"].append("Removed from favourites" if saved else "Added to favourites")
+        elif n == "saves-building":
+            if not self.saves(settle=False).get("building"):
+                self.state["timeouts"].append("saves-building")
+            self.capture(caps.pop(0))
+            self.saves()
+        elif n in SAVES:
+            listing = self.saves()
+            if n in SAVE_INSTALLS:
+                self.install_save(*SAVE_INSTALLS[n])
+            if n in SAVE_TOASTS:
+                save = SAVE_INSTALLS[n][0]
+                name = next((r.get("name", "") for r in listing.get("saves") or [] if r.get("id") == save), save)
+                self.state["toasts"].append(f"{name} | {self.state['saveInstall']}")
         elif n == "library":
             self.capture(caps.pop(0))
             self.mark("remove-drive")
@@ -388,7 +467,7 @@ def list_scenarios(table):
         return 2
     drop = {x for x in os.environ.get("XENO_STUB_LIST_DROP", "").split(",") if x}
     rename = os.environ.get("XENO_STUB_LIST_RENAME", "")
-    own = START_UP + ("setup", "restart", "connection-lost", "state-unhealthy")
+    own = START_UP + ("setup", "restart", "connection-lost", "state-unhealthy") + SAVES
     for name, sc in table["scenarios"].items():
         if name in drop:
             continue

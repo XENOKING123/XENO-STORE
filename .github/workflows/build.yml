@@ -477,7 +477,8 @@ jobs:
           chmod 755 "$m/XENO-STORE-Desktop"; cp ../LICENSE "$m/LICENSE.txt"
           (cd "$m" && zip -q -9 "$OLDPWD/../dist/desktop/XENO-STORE-Desktop-Mac.zip" ./*)
           l="$(mktemp -d)"; gob linux amd64 "$l/XENO-STORE-Desktop"; cp ../LICENSE "$l/LICENSE.txt"
-          tar -C "$l" -czf ../dist/desktop/XENO-STORE-Desktop-Linux.tar.gz .
+          # The two files only: a './' entry would give the folder it is unpacked in mktemp's 0700.
+          tar -C "$l" -czf ../dist/desktop/XENO-STORE-Desktop-Linux.tar.gz XENO-STORE-Desktop LICENSE.txt
           ls -la ../dist/desktop
       - name: Upload desktop builds
         uses: actions/upload-artifact@v4
@@ -575,7 +576,7 @@ jobs:
             printf '## Install\n\n'
             printf '**First time**\n\n'
             printf '1. Send **xeno-store.elf** to your ELF loader / Payload Manager (port 9021). The store opens on the TV.\n'
-            printf '2. In the store, open **Settings → Updates → Install the XENO STORE app**. It puts the XENO STORE app in your Games row by itself.\n'
+            printf '2. In the store, open **Settings → Updates → XENO STORE app** and press **Install the app** (**Reinstall / update** when an older app is there). It puts the XENO STORE app in your Games row by itself.\n'
             printf '   (Or copy **PPSA99500.ffpkg** to `/data/homebrew/` yourself.) The app needs kstuff + ShadowMountPlus.\n\n'
             printf '**After that**\n\n'
             printf -- '- Open XENO STORE from its tile under **Games**. It is the native TV app (controller, GPU-drawn, gold theme): when the store is not running yet, the app sends the copy it carries (or the newer one an update saved) to the ELF loader on port 9021 and opens once the store answers. No browser opens over it.\n'
@@ -606,6 +607,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # A rerun of an older main run must not replace assets whose hashes main's
+          # updates/*.json already pin: the commit-back below could not follow it.
+          git fetch -q origin main
+          if [ -n "$(git rev-list HEAD..origin/main -- updates/payloads.json updates/tv-app.json)" ]; then
+            echo "::error::main already pins newer hashes in updates/ than $GITHUB_SHA; not re-publishing $TAG from an older commit (run the workflow on main's head instead)"
+            exit 1
+          fi
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release edit "$TAG" --title "XENO STORE $VERSION" --notes-file /tmp/release-notes.md
             # A rerun on the same tag drops files this build no longer ships.
@@ -613,7 +621,7 @@ jobs:
               if [ ! -e "release/$old" ]; then gh release delete-asset "$TAG" "$old" --yes; fi
             done
           else
-            gh release create "$TAG" --title "XENO STORE $VERSION" --notes-file /tmp/release-notes.md
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "XENO STORE $VERSION" --notes-file /tmp/release-notes.md
           fi
           gh release upload "$TAG" release/* --clobber
           echo "Uploaded $(find release -type f | wc -l) assets to $TAG"
@@ -684,6 +692,7 @@ jobs:
           for attempt in 1 2 3; do
             if git pull --rebase origin main && git push origin HEAD:main; then exit 0; fi
             echo "push attempt $attempt failed — retrying"
+            git rebase --abort 2>/dev/null || true
             sleep 5
           done
           echo "::error::could not push payloads.json"

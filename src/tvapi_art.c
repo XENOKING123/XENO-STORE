@@ -1,7 +1,8 @@
 /*
- * tvapi_art.c — GET /api/v1/art/{gameId}/{cover|hero}: game artwork for the
- * native TV app, fetched off the HTTP workers and kept in a bounded memory
- * cache (PORT-SPEC 1.7, R8, R9; map-catalog-art §8).
+ * tvapi_art.c — GET /api/v1/art/{gameId}/{cover|hero} and
+ * /api/v1/art/{gameId}/shot/{n}: game artwork and screenshots for the native
+ * TV app, fetched off the HTTP workers and kept in a bounded memory cache
+ * (PORT-SPEC 1.7, R8, R9; map-catalog-art §8).
  *
  * Copyright (C) 2026 XENO STORE contributors
  * SPDX-License-Identifier: GPL-3.0-or-later
@@ -15,7 +16,8 @@
  *
  *  - The art index maps every catalogue game id (R9: any catalogue game, not
  *    only the TV-visible ones) to at most two cover and two hero candidate
- *    URLs that already passed the URL policy. A worker rebuilds it whenever
+ *    URLs and its screenshot URLs (TV_ART_MAX_SHOTS, one candidate each)
+ *    that already passed the URL policy. A worker rebuilds it whenever
  *    the catalogue changes; the request path reads only the index and the
  *    cache under art_mu (a leaf lock), never catalog_mu, the network or a
  *    drive, so the first answer is immediate.
@@ -23,7 +25,10 @@
  *    worker takes the newest queued key, fetches its candidates in order,
  *    probes each body without decoding it and keeps the first one the app
  *    can draw. Later requests answer 200 with a copy of the bytes, 502 for
- *    120 s after a failed fetch, and 404 when no candidate is usable.
+ *    120 s after a failed fetch, and 404 when no candidate is usable. Each
+ *    key is fetched and cached on its own: a screenshot with the same URL as
+ *    the game's hero (many games list their hero first among them) costs a
+ *    second fetch and a second copy.
  *
  * Ported from Orbit Store backend/art.c (GPL-3.0-or-later): the 202-then-200
  * protocol, the two workers, the 256-entry cache with least-recently-used
@@ -32,7 +37,7 @@
  * window, the identifier check and the three reply sentences. Our changes:
  * the web UI's candidate rule (_artOk), a 24 MiB budget, a newest-first
  * queue, header probes with the pixel caps and the JPEG frame check, the
- * per-URL refusal memory and the art index.
+ * per-URL-and-kind refusal memory and the art index.
  */
 #include "tvapi.h"
 
@@ -65,10 +70,12 @@
 #define ART_MAX_SIDE 8192               /* the app refuses larger sides */
 #define ART_COVER_PIXELS 1048576LL      /* PNG/JPEG: stb decodes the full picture first */
 #define ART_HERO_PIXELS 3686400LL       /* 2560 x 1440 */
+#define ART_SHOT_PIXELS ART_HERO_PIXELS /* a screenshot: the hero cap, any shape */
 #define ART_COVER_WIDTH 512             /* image.api.playstation.com w= */
 #define ART_HERO_WIDTH 1920
+#define ART_SHOT_WIDTH 1920
 #define ART_ID_MAX 95                   /* route captures hold at most 95 bytes */
-#define ART_KEY 104                     /* "<id>#cover" */
+#define ART_KEY 104                     /* "<id>#cover", "<id>#shot9" */
 #define ART_URL_MAX 2048
 #define ART_REFUSED_SLOTS 8192          /* open addressing, at most half used */
 /* Never "image/" + "*": content-negotiating CDNs answer that with AVIF. */
@@ -80,6 +87,7 @@
 #define ART_MSG_BUSY "Artwork is busy. Try again shortly."
 
 enum { ART_EMPTY = 0, ART_PENDING, ART_READY, ART_FAILED, ART_NONE };
+enum { KIND_COVER = 0, KIND_HERO, KIND_SHOT };   /* what a picture is for: its caps and its width */
 enum { FETCH_OK = 0, FETCH_REFUSED, FETCH_FAILED };
 enum { PROBE_MORE = 0, PROBE_OK, PROBE_BAD };
 
@@ -102,6 +110,8 @@ typedef struct art_game {
   uint64_t hash;
   uint32_t id;           /* offsets into pool; 0 = none */
   uint32_t url[4];       /* cover candidates [0..1], hero candidates [2..3] */
+  uint32_t shot0;        /* its screenshots: shots[shot0 .. shot0 + nshots) */
+  uint8_t nshots;
 } art_game;
 
 typedef struct art_idx {
@@ -113,8 +123,11 @@ typedef struct art_idx {
   uint32_t nslots;
   char *pool;
   size_t plen, pcap;
+  uint32_t *shots;       /* screenshot URLs as pool offsets */
+  uint32_t nshots, shcap;
   int oom;
   int covers, heroes;    /* games with a cover / hero candidate */
+  int shot_games;        /* games with a usable screenshot */
 } art_idx;
 
 static pthread_mutex_t art_mu = PTHREAD_MUTEX_INITIALIZER;   /* leaf lock: guards A */
@@ -132,7 +145,7 @@ static struct {
   int nqueue;
   size_t bytes;          /* held by READY entries */
   int nready;
-  uint64_t refused[ART_REFUSED_SLOTS];   /* URL hashes refused for their format */
+  uint64_t refused[ART_REFUSED_SLOTS];   /* refusal_key()s of the URLs refused for a kind */
   int nrefused;
   int refused_full_logged;
   unsigned long fetched, refusals, failures, evictions, busy;
@@ -251,7 +264,7 @@ static int sharp_art(char *url, size_t cap, int width) {
  * (image.api.playstation.com sized for the kind). With final = 1 it checks
  * where the redirects ended instead: no extension rule, no rewrite.
  * Returns 1 when usable. */
-static int art_url_ok(const char *url, int hero, int final, char *out, size_t cap) {
+static int art_url_ok(const char *url, int kind, int final, char *out, size_t cap) {
   if (!url || !*url || strlen(url) >= ART_URL_MAX) return 0;
   for (const unsigned char *p = (const unsigned char *)url; *p; p++)
     if (*p <= 0x20 || *p == 0x7F) return 0;   /* never a raw space or CR/LF into a request line */
@@ -265,9 +278,15 @@ static int art_url_ok(const char *url, int hero, int final, char *out, size_t ca
   if (q) *q = 0;
   if (util_iends_with(path, ".avif") || util_iends_with(path, ".gif")) return 0;   /* the app has no decoder */
   if (xstrlcpy(out, url, cap) >= cap) return 0;
-  if (strcmp(u.host, "image.api.playstation.com") == 0 && sharp_art(out, cap, hero ? ART_HERO_WIDTH : ART_COVER_WIDTH) != 0)
-    return 0;
+  int width = kind == KIND_COVER ? ART_COVER_WIDTH : kind == KIND_HERO ? ART_HERO_WIDTH : ART_SHOT_WIDTH;
+  if (strcmp(u.host, "image.api.playstation.com") == 0 && sharp_art(out, cap, width) != 0) return 0;
   return 1;
+}
+
+/* tvapi.h: /catalog counts a game's screenshots by this, the index keeps the same ones. */
+int tvart_shot_usable(const char *url) {
+  char out[ART_URL_MAX];
+  return art_url_ok(url, KIND_SHOT, 0, out, sizeof out);
 }
 
 /* ---- the probe: format and size from the first bytes, without decoding ----------
@@ -279,7 +298,11 @@ typedef struct art_probe {
   int64_t w, h;
 } art_probe;
 
-static int probe_dims(art_probe *pr, int64_t w, int64_t h, int hero, int capped, char *why, size_t cap) {
+static const char *kind_name(int kind) { return kind == KIND_COVER ? "cover" : kind == KIND_HERO ? "hero" : "screenshot"; }
+
+/* The sides the app can draw for this kind: PNG and JPEG (capped) within the
+ * kind's pixel cap, and a hero wide enough for a background. */
+static int probe_dims(art_probe *pr, int64_t w, int64_t h, int kind, int capped, char *why, size_t cap) {
   pr->w = w;
   pr->h = h;
   if (w <= 0 || h <= 0) { xsnprintf(why, cap, "%s with no size", pr->mime); return PROBE_BAD; }
@@ -287,51 +310,51 @@ static int probe_dims(art_probe *pr, int64_t w, int64_t h, int hero, int capped,
     xsnprintf(why, cap, "%s %lldx%lld: a side is over %d px", pr->mime, (long long)w, (long long)h, ART_MAX_SIDE);
     return PROBE_BAD;
   }
-  int64_t limit = hero ? ART_HERO_PIXELS : ART_COVER_PIXELS;
+  int64_t limit = kind == KIND_COVER ? ART_COVER_PIXELS : kind == KIND_HERO ? ART_HERO_PIXELS : ART_SHOT_PIXELS;
   if (capped && w * h > limit) {
     xsnprintf(why, cap, "%s %lldx%lld is over the %lld-pixel %s cap", pr->mime, (long long)w, (long long)h, (long long)limit,
-              hero ? "hero" : "cover");
+              kind_name(kind));
     return PROBE_BAD;
   }
-  if (hero && w * 10 < h * 14) {
+  if (kind == KIND_HERO && w * 10 < h * 14) {
     xsnprintf(why, cap, "hero %lldx%lld is not wide (needs width >= 1.4 x height)", (long long)w, (long long)h);
     return PROBE_BAD;
   }
   return PROBE_OK;
 }
 
-static int probe_webp(const unsigned char *d, size_t n, int hero, art_probe *pr, char *why, size_t cap) {
+static int probe_webp(const unsigned char *d, size_t n, int kind, art_probe *pr, char *why, size_t cap) {
   if (n < 16) return PROBE_MORE;
   if (memcmp(d + 12, "VP8 ", 4) == 0) {   /* lossy: key frame start code, 14-bit sides */
     if (n < 30) return PROBE_MORE;
     if (d[23] != 0x9D || d[24] != 0x01 || d[25] != 0x2A) { xsnprintf(why, cap, "WebP VP8 without a key frame"); return PROBE_BAD; }
-    return probe_dims(pr, le16(d + 26) & 0x3FFF, le16(d + 28) & 0x3FFF, hero, 0, why, cap);
+    return probe_dims(pr, le16(d + 26) & 0x3FFF, le16(d + 28) & 0x3FFF, kind, 0, why, cap);
   }
   if (memcmp(d + 12, "VP8L", 4) == 0) {   /* lossless: signature 0x2f, then 14-bit width-1 and height-1 */
     if (n < 25) return PROBE_MORE;
     if (d[20] != 0x2F) { xsnprintf(why, cap, "WebP VP8L without its signature"); return PROBE_BAD; }
     uint32_t bits = le32(d + 21);
-    return probe_dims(pr, (int64_t)(bits & 0x3FFF) + 1, (int64_t)((bits >> 14) & 0x3FFF) + 1, hero, 0, why, cap);
+    return probe_dims(pr, (int64_t)(bits & 0x3FFF) + 1, (int64_t)((bits >> 14) & 0x3FFF) + 1, kind, 0, why, cap);
   }
   if (memcmp(d + 12, "VP8X", 4) == 0) {   /* extended: flags, 24-bit canvas width-1 and height-1 */
     if (n < 30) return PROBE_MORE;
     if (d[20] & 0x02) { xsnprintf(why, cap, "animated WebP"); return PROBE_BAD; }
-    return probe_dims(pr, (int64_t)le24(d + 24) + 1, (int64_t)le24(d + 27) + 1, hero, 0, why, cap);
+    return probe_dims(pr, (int64_t)le24(d + 24) + 1, (int64_t)le24(d + 27) + 1, kind, 0, why, cap);
   }
   xsnprintf(why, cap, "WebP with an unknown first chunk");
   return PROBE_BAD;
 }
 
-static int probe_png(const unsigned char *d, size_t n, int hero, art_probe *pr, char *why, size_t cap) {
+static int probe_png(const unsigned char *d, size_t n, int kind, art_probe *pr, char *why, size_t cap) {
   if (n < 24) return PROBE_MORE;
   if (memcmp(d + 12, "IHDR", 4) != 0) { xsnprintf(why, cap, "PNG without IHDR"); return PROBE_BAD; }
-  return probe_dims(pr, be32(d + 16), be32(d + 20), hero, 1, why, cap);
+  return probe_dims(pr, be32(d + 16), be32(d + 20), kind, 1, why, cap);
 }
 
 /* Walks the markers up to the frame header. stb decodes only SOF0/SOF1/SOF2
  * (baseline, extended and progressive Huffman) with 8-bit samples; the app
  * cannot draw CMYK/YCCK (4 components), 12-bit, arithmetic or lossless. */
-static int probe_jpeg(const unsigned char *d, size_t n, int hero, art_probe *pr, char *why, size_t cap) {
+static int probe_jpeg(const unsigned char *d, size_t n, int kind, art_probe *pr, char *why, size_t cap) {
   size_t p = 2;
   for (;;) {
     if (p >= n) return PROBE_MORE;
@@ -351,27 +374,27 @@ static int probe_jpeg(const unsigned char *d, size_t n, int hero, art_probe *pr,
       if (m > 0xC2) { xsnprintf(why, cap, "JPEG coding SOF%u (arithmetic, lossless or hierarchical)", m - 0xC0); return PROBE_BAD; }
       if (precision != 8) { xsnprintf(why, cap, "%u-bit JPEG", precision); return PROBE_BAD; }
       if (comps != 1 && comps != 3) { xsnprintf(why, cap, "JPEG with %u components (CMYK or YCCK)", comps); return PROBE_BAD; }
-      return probe_dims(pr, w, h, hero, 1, why, cap);
+      return probe_dims(pr, w, h, kind, 1, why, cap);
     }
     p += len;
   }
 }
 
 /* PROBE_OK with pr filled, PROBE_BAD with why, or PROBE_MORE (needs more bytes). */
-static int art_probe_bytes(const unsigned char *d, size_t n, int hero, art_probe *pr, char *why, size_t cap) {
+static int art_probe_bytes(const unsigned char *d, size_t n, int kind, art_probe *pr, char *why, size_t cap) {
   memset(pr, 0, sizeof *pr);
   if (n < 12) return PROBE_MORE;
   if (memcmp(d, "RIFF", 4) == 0 && memcmp(d + 8, "WEBP", 4) == 0) {
     pr->mime = "image/webp";
-    return probe_webp(d, n, hero, pr, why, cap);
+    return probe_webp(d, n, kind, pr, why, cap);
   }
   if (memcmp(d, "\x89PNG\r\n\x1a\n", 8) == 0) {
     pr->mime = "image/png";
-    return probe_png(d, n, hero, pr, why, cap);
+    return probe_png(d, n, kind, pr, why, cap);
   }
   if (d[0] == 0xFF && d[1] == 0xD8 && d[2] == 0xFF) {
     pr->mime = "image/jpeg";
-    return probe_jpeg(d, n, hero, pr, why, cap);
+    return probe_jpeg(d, n, kind, pr, why, cap);
   }
   xsnprintf(why, cap, "not a WebP, PNG or JPEG image");
   return PROBE_BAD;
@@ -414,7 +437,7 @@ typedef struct art_buf {
 } art_buf;
 
 typedef struct art_hop {
-  int hero, refused;
+  int kind, refused;
 } art_hop;
 
 /* xhttp_req.redirect_ok: a hop outside the policy is refused before the
@@ -422,12 +445,12 @@ typedef struct art_hop {
 static int art_hop_ok(const char *next, void *user) {
   art_hop *h = user;
   char tmp[ART_URL_MAX];
-  if (art_url_ok(next, h->hero, 1, tmp, sizeof tmp)) return 1;
+  if (art_url_ok(next, h->kind, 1, tmp, sizeof tmp)) return 1;
   h->refused = 1;
   return 0;
 }
 
-static int art_fetch(const char *url, int hero, art_buf *out, char *why, size_t cap) {
+static int art_fetch(const char *url, int kind, art_buf *out, char *why, size_t cap) {
   memset(out, 0, sizeof *out);
   why[0] = 0;
   xhttp_req r;
@@ -438,7 +461,7 @@ static int art_fetch(const char *url, int hero, art_buf *out, char *why, size_t 
   r.extra_headers = ART_ACCEPT;
   r.connect_timeout_ms = r.recv_timeout_ms = ART_TIMEOUT_MS;
   r.follow_redirects = ART_REDIRECTS;
-  art_hop hop = {hero, 0};
+  art_hop hop = {kind, 0};
   r.redirect_ok = art_hop_ok;
   r.redirect_user = &hop;
   r.cancel_flag = &g_cfg.stop_requested;
@@ -456,7 +479,7 @@ static int art_fetch(const char *url, int hero, art_buf *out, char *why, size_t 
   unsigned char *buf = NULL;
   size_t len = 0, bcap;
   char final_url[ART_URL_MAX];
-  if (!art_url_ok(resp.location, hero, 1, final_url, sizeof final_url)) {
+  if (!art_url_ok(resp.location, kind, 1, final_url, sizeof final_url)) {
     xsnprintf(why, cap, "redirected outside the art URL policy");
     rc = FETCH_REFUSED;
     goto out;
@@ -486,7 +509,7 @@ static int art_fetch(const char *url, int hero, art_buf *out, char *why, size_t 
     len += (size_t)got;
     if (len > ART_MAX_BYTES) { xsnprintf(why, cap, "over the 12 MiB limit"); rc = FETCH_REFUSED; goto out; }
     if (probe == PROBE_MORE) {
-      probe = art_probe_bytes(buf, len, hero, &out->pr, why, cap);
+      probe = art_probe_bytes(buf, len, kind, &out->pr, why, cap);
       if (probe == PROBE_BAD) { rc = FETCH_REFUSED; goto out; }
     }
     if (util_now_ms() > deadline) { xsnprintf(why, cap, "took longer than %d s", ART_TOTAL_MS / 1000); goto out; }
@@ -554,13 +577,29 @@ static uint32_t pool_add(art_idx *x, const char *s) {
   return off;
 }
 
+/* Appends one screenshot URL (a pool offset). 0, or -1 when out of memory. */
+static int shot_push(art_idx *x, uint32_t off) {
+  if (x->nshots == x->shcap) {
+    uint32_t nc = x->shcap ? x->shcap * 2 : 1024;
+    uint32_t *ns = realloc(x->shots, (size_t)nc * sizeof *ns);
+    if (!ns) { x->oom = 1; return -1; }
+    x->shots = ns;
+    x->shcap = nc;
+  }
+  x->shots[x->nshots++] = off;
+  return 0;
+}
+
 /* The candidates of one game (map-catalog-art §8.2):
  *  cover: the primary cover is bad when it is missing, an archive.org
  *         services/img collection thumbnail or used by another game too (the
  *         web UI's _artOk rule); then [coverFallback, cover unless shared],
  *         else [cover, coverFallback];
  *  hero:  [hero unless it equals cover, heroFallback unless it equals
- *         coverFallback]; the probe then requires a wide picture.
+ *         coverFallback]; the probe then requires a wide picture;
+ *  shot n: the n-th screenshot within the URL policy (TV_ART_MAX_SHOTS in
+ *         tvapi.h) alone: n means the same here as in /catalog's
+ *         screenshotCount, which counts the same ones (tvart_shot_usable).
  * A game without any usable candidate is left out (404 at once). */
 static void index_game(art_build *b, jv g) {
   art_idx *x = b->x;
@@ -576,17 +615,29 @@ static void index_game(art_build *b, jv g) {
   char url[ART_URL_MAX];
   int any = 0;
   for (int k = 0; k < 4; k++) {
-    if (!*cand[k] || !art_url_ok(cand[k], k >= 2, 0, url, sizeof url)) continue;
+    if (!*cand[k] || !art_url_ok(cand[k], k >= 2 ? KIND_HERO : KIND_COVER, 0, url, sizeof url)) continue;
     if ((k & 1) && ag.url[k - 1] && strcmp(x->pool + ag.url[k - 1], url) == 0) continue;   /* same URL twice */
     if (!(ag.url[k] = pool_add(x, url))) return;
     any = 1;
   }
-  if (!any) return;
+  ag.shot0 = x->nshots;
+  jv list = jv_get(g, "screenshots");
+  if (jv_type(list) == JV_ARR) {   /* JV_FOREACH would walk an object's members too */
+    JV_FOREACH(s, list) {
+      if (ag.nshots >= TV_ART_MAX_SHOTS) break;
+      if (jv_type(s) != JV_STR || !art_url_ok(jv_str(s, ""), KIND_SHOT, 0, url, sizeof url)) continue;
+      uint32_t off = pool_add(x, url);
+      if (!off || shot_push(x, off) != 0) return;
+      ag.nshots++;
+    }
+  }
+  if (!any && !ag.nshots) return;
   if (!(ag.id = pool_add(x, id))) return;
   ag.hash = fnv1a(id);
   x->games[x->ngames++] = ag;
   if (ag.url[0] || ag.url[1]) x->covers++;
   if (ag.url[2] || ag.url[3]) x->heroes++;
+  if (ag.nshots) x->shot_games++;
 }
 
 /* catalog_visit_root callback: holds catalog_mu, so it calls no catalog_* or
@@ -620,6 +671,7 @@ static void index_free(art_idx *x) {
   free(x->games);
   free(x->slots);
   free(x->pool);
+  free(x->shots);
   free(x);
 }
 
@@ -644,6 +696,10 @@ static int index_finish(art_idx *x) {
   }
   char *pfit = realloc(x->pool, x->plen);
   if (pfit) x->pool = pfit;
+  if (x->nshots && x->nshots < x->shcap) {
+    uint32_t *sfit = realloc(x->shots, x->nshots * sizeof *x->shots);
+    if (sfit) x->shots = sfit;
+  }
   return 0;
 }
 
@@ -656,6 +712,35 @@ static const art_game *index_find(const art_idx *x, const char *id) {
     const art_game *g = &x->games[v - 1];
     if (g->hash == h && strcmp(x->pool + g->id, id) == 0) return g;
   }
+}
+
+/* The candidate URLs of one picture of g (NULL: none), as pool offsets in
+ * the order they are tried; 0 = no candidate. */
+static void game_cands(const art_idx *x, const art_game *g, int kind, int shot, uint32_t c[2]) {
+  c[0] = c[1] = 0;
+  if (!g) return;
+  if (kind == KIND_SHOT) {
+    if (shot >= 0 && shot < g->nshots) c[0] = x->shots[g->shot0 + (uint32_t)shot];
+    return;
+  }
+  c[0] = g->url[kind == KIND_HERO ? 2 : 0];
+  c[1] = g->url[kind == KIND_HERO ? 3 : 1];
+}
+
+/* A cache key ("<id>#cover", "<id>#hero", "<id>#shot<n>") split into the
+ * game id (ART_KEY bytes) and the kind; *shot = n for a screenshot. */
+static int key_split(const char *key, char *id, int *shot) {
+  xstrlcpy(id, key, ART_KEY);
+  *shot = 0;
+  char *hash = strrchr(id, '#');   /* never part of a game id (art_id_ok) */
+  if (!hash) return KIND_COVER;
+  *hash = 0;
+  if (strcmp(hash + 1, "hero") == 0) return KIND_HERO;
+  if (strncmp(hash + 1, "shot", 4) == 0) {
+    *shot = atoi(hash + 5);
+    return KIND_SHOT;
+  }
+  return KIND_COVER;
 }
 
 /* ---- cache (everything below *_locked runs under art_mu) --------------------------
@@ -753,6 +838,15 @@ static int queue_room_locked(int64_t now, art_notes *nt) {
   return 0;
 }
 
+/* The refusal memory's key: a URL with the kind it was refused for. The kinds
+ * have their own caps and shape rule (a 1920x1080 PNG is too big for a cover
+ * and a square picture is no hero, yet both make a fine screenshot), so a
+ * refusal holds for that kind only. */
+static uint64_t refusal_key(const char *url, int kind) {
+  uint64_t h = (fnv1a(url) ^ (uint64_t)(kind + 1)) * 1099511628211ULL;
+  return h ? h : 1;   /* 0 marks an empty refusal slot */
+}
+
 static int refused_has_locked(uint64_t h) {
   for (uint32_t s = (uint32_t)h & (ART_REFUSED_SLOTS - 1);; s = (s + 1) & (ART_REFUSED_SLOTS - 1)) {
     if (!A.refused[s]) return 0;
@@ -836,9 +930,10 @@ static void index_refresh(void) {
   pthread_cond_broadcast(&art_cv);
   pthread_mutex_unlock(&art_mu);
   index_free(old);
-  LOGI("tvart: art index for catalogue revision %lld: %u games with art (%d covers, %d heroes), %zu KiB, %lld ms%s",
-       (long long)x->revision, x->ngames, x->covers, x->heroes, (x->plen + x->ngames * sizeof(art_game) + x->nslots * 4u) >> 10,
-       (long long)(util_now_ms() - t0), old ? "; cache cleared" : "");
+  LOGI("tvart: art index for catalogue revision %lld: %u games with art (%d covers, %d heroes), %d with screenshots, %zu KiB, %lld ms%s",
+       (long long)x->revision, x->ngames, x->covers, x->heroes, x->shot_games,
+       (x->plen + x->ngames * sizeof(art_game) + x->nslots * 4u + x->nshots * 4u) >> 10, (long long)(util_now_ms() - t0),
+       old ? "; cache cleared" : "");
 }
 
 /* ---- workers ----------------------------------------------------------------------- */
@@ -846,7 +941,7 @@ static void index_refresh(void) {
 typedef struct art_job {
   int slot;
   unsigned gen;
-  int hero;
+  int kind;
   char key[ART_KEY];
   int n;
   char url[2][ART_URL_MAX];
@@ -871,16 +966,15 @@ static int job_take_locked(art_job *j, int64_t now) {
   j->gen = A.gen;
   xstrlcpy(j->key, e->key, sizeof j->key);
   char id[ART_KEY];
-  xstrlcpy(id, e->key, sizeof id);
-  char *hash = strrchr(id, '#');
-  if (hash) *hash = 0;
-  j->hero = hash && strcmp(hash + 1, "hero") == 0;
-  const art_game *g = index_find(A.idx, id);
-  for (int k = 0; g && k < 2; k++) {
-    uint32_t off = g->url[(j->hero ? 2 : 0) + k];
+  int shot;
+  j->kind = key_split(e->key, id, &shot);
+  uint32_t cand[2];
+  game_cands(A.idx, index_find(A.idx, id), j->kind, shot, cand);
+  for (int k = 0; k < 2; k++) {
+    uint32_t off = cand[k];
     if (!off) continue;
     const char *u = A.idx->pool + off;
-    if (refused_has_locked(fnv1a(u))) continue;
+    if (refused_has_locked(refusal_key(u, j->kind))) continue;
     xstrlcpy(j->url[j->n++], u, ART_URL_MAX);
   }
   if (j->n) return 1;
@@ -896,14 +990,14 @@ static void job_run(const art_job *j, art_result *r) {
   for (int i = 0; i < j->n; i++) {
     char why[200];
     xthread_note("tv-art: %s", j->key);
-    int rc = art_fetch(j->url[i], j->hero, &r->img, why, sizeof why);
+    int rc = art_fetch(j->url[i], j->kind, &r->img, why, sizeof why);
     if (rc == FETCH_OK) {
       r->state = ART_READY;
       r->from = i;
       return;
     }
     if (rc == FETCH_REFUSED) {
-      r->refused[r->nrefused++] = fnv1a(j->url[i]);
+      r->refused[r->nrefused++] = refusal_key(j->url[i], j->kind);
       LOGI("tvart: refused for %s: %s: %s", j->key, why, j->url[i]);
     } else {
       failed = 1;
@@ -1027,7 +1121,7 @@ void tvart_start(void) {
   if (n == 0) LOGE("tvart: no art worker could start; /api/v1/art answers 503");
 }
 
-/* ---- GET /api/v1/art/{gameId}/{cover|hero} -------------------------------------------
+/* ---- GET /api/v1/art/{gameId}/{cover|hero} and /art/{gameId}/shot/{n} -------------------
  * 404 unknown id, kind, game, no candidate or NONE; 200 bytes; 202 pending
  * or queued now; 502 within 120 s of a failure; 503 when the queue is full
  * (or no worker runs). The gate already answered 503 while stopping and 401
@@ -1040,15 +1134,15 @@ typedef struct art_answer {
   char mime[12];
 } art_answer;
 
-static void art_lookup_locked(const char *id, int hero, const char *key, uint64_t kh, int64_t now, art_answer *an,
-                              art_notes *nt) {
+static void art_lookup_locked(const char *id, int kind, int shot, const char *key, uint64_t kh, int64_t now,
+                              art_answer *an, art_notes *nt) {
   if (!A.started) { an->status = 503; return; }
   if (A.idx) {   /* until the first index exists every key is queued and resolved by the worker */
-    const art_game *g = index_find(A.idx, id);
-    int k0 = hero ? 2 : 0;
-    if (!g || (!g->url[k0] && !g->url[k0 + 1])) { an->status = 404; return; }
-    int open0 = g->url[k0] && !refused_has_locked(fnv1a(A.idx->pool + g->url[k0]));
-    int open1 = g->url[k0 + 1] && !refused_has_locked(fnv1a(A.idx->pool + g->url[k0 + 1]));
+    uint32_t c[2];
+    game_cands(A.idx, index_find(A.idx, id), kind, shot, c);
+    if (!c[0] && !c[1]) { an->status = 404; return; }
+    int open0 = c[0] && !refused_has_locked(refusal_key(A.idx->pool + c[0], kind));
+    int open1 = c[1] && !refused_has_locked(refusal_key(A.idx->pool + c[1], kind));
     if (!open0 && !open1) { an->status = 404; return; }   /* every candidate refused for this catalogue */
   }
   art_entry *e = entry_find_locked(key, kh);
@@ -1095,25 +1189,17 @@ static void art_lookup_locked(const char *id, int hero, const char *key, uint64_
   an->status = 202;
 }
 
-void tvart_h_art(api_ctx *c) {
-  if (c->nparams < 2) {
-    tv_error(c, 404, ART_MSG_UNKNOWN);
-    return;
-  }
-  const char *id = c->params[0], *kind = c->params[1];
-  int hero = strcmp(kind, "hero") == 0;
-  if (!art_id_ok(id) || (!hero && strcmp(kind, "cover") != 0)) {
-    tv_error(c, 404, ART_MSG_UNKNOWN);
-    return;
-  }
+/* Answers one picture of a checked game id (both routes). */
+static void art_reply(api_ctx *c, const char *id, int kind, int shot) {
   char key[ART_KEY];
-  xsnprintf(key, sizeof key, "%s#%s", id, hero ? "hero" : "cover");
+  if (kind == KIND_SHOT) xsnprintf(key, sizeof key, "%s#shot%d", id, shot);
+  else xsnprintf(key, sizeof key, "%s#%s", id, kind == KIND_HERO ? "hero" : "cover");
   art_answer an;
   memset(&an, 0, sizeof an);
   art_notes nt;
   nt.n = nt.more = 0;
   pthread_mutex_lock(&art_mu);
-  art_lookup_locked(id, hero, key, fnv1a(key), util_now_ms(), &an, &nt);
+  art_lookup_locked(id, kind, shot, key, fnv1a(key), util_now_ms(), &an, &nt);
   pthread_mutex_unlock(&art_mu);
   notes_flush(&nt);
   switch (an.status) {
@@ -1132,6 +1218,37 @@ void tvart_h_art(api_ctx *c) {
   case 502: tv_error(c, 502, ART_MSG_FAILED); return;
   default: tv_error(c, 503, ART_MSG_BUSY); return;
   }
+}
+
+void tvart_h_art(api_ctx *c) {
+  if (c->nparams < 2) {
+    tv_error(c, 404, ART_MSG_UNKNOWN);
+    return;
+  }
+  const char *id = c->params[0], *kind = c->params[1];
+  int hero = strcmp(kind, "hero") == 0;
+  if (!art_id_ok(id) || (!hero && strcmp(kind, "cover") != 0)) {
+    tv_error(c, 404, ART_MSG_UNKNOWN);
+    return;
+  }
+  art_reply(c, id, hero ? KIND_HERO : KIND_COVER, 0);
+}
+
+_Static_assert(TV_ART_MAX_SHOTS <= 10, "shot/{n} takes one digit");
+
+/* The n-th screenshot (0-based) of those /catalog counts in screenshotCount:
+ * n is one digit below TV_ART_MAX_SHOTS ("01", "+1" or " 1" are unknown). */
+void tvart_h_shot(api_ctx *c) {
+  if (c->nparams < 2) {
+    tv_error(c, 404, ART_MSG_UNKNOWN);
+    return;
+  }
+  const char *id = c->params[0], *n = c->params[1];
+  if (!art_id_ok(id) || n[0] < '0' || n[0] > '9' || n[1] || n[0] - '0' >= TV_ART_MAX_SHOTS) {
+    tv_error(c, 404, ART_MSG_UNKNOWN);
+    return;
+  }
+  art_reply(c, id, KIND_SHOT, n[0] - '0');
 }
 
 /* GET /api/diagnostics "tvapi" extras: the art cache at a glance (read under

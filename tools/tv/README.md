@@ -10,7 +10,7 @@ This folder holds the tools for the TV app in `app/tv/`:
 | File | Owner and purpose |
 |---|---|
 | `preview_live.py` | The live preview harness. It renders every screen of the TV app against the real host backend and checks each run. Details below. |
-| `world.py` | The harness's temporary test world: catalogue, feeds, settings, Library files, the backend, the loaders and the recording proxy. |
+| `world.py` | The harness's temporary test world: catalogue, feeds, settings, Library files, the Save Data Store's community saves, the backend, the loaders and the recording proxy. |
 | `fake_loader.py` | A stand-in for the PS5 ELF loader, so start-up and restart run for real on a PC. |
 | `art_server.py` | Serves the generated covers and heroes, plus the images the backend must refuse. |
 | `contact_sheet.py` | Writes the review page `index.html` for a run, or for any folder of PNGs. |
@@ -42,7 +42,7 @@ The exit status is 0 when every check passed, 1 when a check failed, and 2 when 
 | Option | Meaning |
 |---|---|
 | `--out DIR` | The output folder (default `build/tv-preview`). The harness clears its own entries there first: `<lang>/`, `logs/`, `thumbs/`, `report.json` and `index.html`. |
-| `--langs en\|all\|de,fr` | `all` adds the locale sweep: scenarios.json `"sweep"` (`discover`, `game`, `downloads`, `library-details`, `settings-*`) in every `app/tv/i18n/*.json` locale except English, written to `<out>/<lang>/`. Review these pictures for text overflow. |
+| `--langs en\|all\|de,fr` | `all` adds the locale sweep: scenarios.json `"sweep"` (`discover`, `game`, `downloads`, `library-details`, `settings-*`, `saves`) in every `app/tv/i18n/*.json` locale except English, written to `<out>/<lang>/`. Review these pictures for text overflow. |
 | `--scenarios a,b*` | Run only these scenarios (comma list, `*` allowed), in their groups. |
 | `--groups g,h` | Run only these groups. |
 | `--compare DIR` | Compares each picture with the same file in a previous `--out`, as the mean absolute luma difference (0-255). Pictures over `--compare-threshold` (default 6) are listed in `report.json` `compare.flagged`. `--compare-fail` makes a flagged picture fail the run. |
@@ -63,12 +63,14 @@ For every language and every group of `scenarios.json`:
    - `settings.json`, with sources acknowledged or not depending on the group;
    - the Library files of `tvworld.LIBRARY_FILES` on roots `R1` and `R2`: `PPSA01234.exfat`, `CUSA00001.pkg`, a catalogue-named `.pkg`, a `.xpart`, `PPSA99500.ffpkg`, and `<data>/user/app/PPSA05555`;
    - the TV app image and install record of the group's `tvApp` state;
-   - the starter's copies: the bundled ELF (the host binary) with its version file, and for `crash-fallback` a saved ELF that exits at once with version 9.9.9.
+   - the starter's copies: the bundled ELF (the host binary) with its version file, and for `crash-fallback` a saved ELF that exits at once with version 9.9.9;
+   - the Save Data Store of the group's `saves` mode (below): the GitHub saves index and the published `saves-backend.json` on the feed server under `/w/<world>/`, the XenoKing site's stand-in (`tests/host/supabase_mock.py`), and in `sim/` the two profiles, the installed games with their versions and a profile's save to back up.
 2. **Servers** shared by the whole run:
    - `tests/host/range_server.py` for the release files. `slow/` keeps jobs downloading, `f404/` fails them, and `r429/` makes them retry.
    - `art_server.py` for the art.
-   - A feed server with the store update feed (the next version, a copy of the host binary), the TV app feed, `catalog/revision.json` (answered after 2 s so a refresh shows as busy) and a GitHub API stand-in.
-3. **Backend**: `build/host/xeno-store --port B --data D --root R1 --root R2 --no-browser`. Its environment holds `XENO_HOST_ART_FIXTURE`, `XENO_HOST_RESOLVE_HOST`, `XENO_TVAPI_UPDATES=1`, `XENO_APP_BASE`, `XENO_GITHUB_API_BASE`, and `XENO_PORT_LOADER`, which points at a record-only sentinel loader.
+   - A feed server with the store update feed (the next version, a copy of the host binary), the TV app feed, `catalog/revision.json` (answered after 2 s so a refresh shows as busy), a GitHub API stand-in, and each world's saves files under `/w/<world>/`.
+3. **Backend**: `build/host/xeno-store --port B --data D --root R1 --root R2 --no-browser`. Its environment holds `XENO_HOST_ART_FIXTURE`, `XENO_HOST_RESOLVE_HOST`, `XENO_TVAPI_UPDATES=1`, `XENO_APP_BASE`, `XENO_GITHUB_API_BASE`, `XENO_SAVES_INDEX_BASE` (the world's saves index, so saves never reach the network), and `XENO_PORT_LOADER`, which points at a record-only sentinel loader.
+   - The `community` and `garlic` saves worlds add `XENO_HOST_RUNNING_TITLE=PPSA90004` (Glass Orchard is running). `garlic` also sets `XENO_SIM_NATIVE=0`, and points `XENO_PORT_GARLIC` and `XENO_PORT_LOADER` at a closed port, so an install needs Garlic Save Manager and cannot start it.
    - For the start-up groups the backend stays down. `fake_loader.py` listens instead, and starts the backend when the app sends it the bytes.
 4. **Proxy**: the app is given a recording proxy rather than the backend port. The proxy listens only while the backend listens, so a stopped backend shows up as a refused connection, as on the console. It logs every request's method, path, status and error body to `logs/<lang>/<group>/requests.jsonl`.
 5. **Seeder** (in `preview_live.py`): drives `/api/v1` as the app does. It uses one request per connection, a Bearer token from `GET /api/v1/session`, and JSON bodies. The group's `seed` steps are:
@@ -97,7 +99,10 @@ When the preview answers `--list` (one JSON line per scenario: name, fixture, li
 | `crash-fallback` | as cold-start, plus a saved copy that exits at once | `crash-fallback` (2 sends: `copy=saved`, then `copy=bundled`) |
 | `setup` | sources not acknowledged | `setup` |
 | `downloads` | the six seeded rows | `downloads`, `downloads-finished`, `downloads-dialog`, `delete-cancelled`, `downloads-actions`, `queued`, `download`, `game`, `game-viking`, `game-ps4`, `game-library` |
-| `store` | one finished download | `discover` (with the art check), `browse*`, `library-details`, `library-storage`, `settings`, `settings-*`, `library` (`remove-drive` mark) |
+| `store` | one finished download | `discover` (with the art check), `discover-jump`, `favourite` (a toast with "Added to favourites"), `browse*`, `library-details`, `library-storage`, `settings`, `settings-*`, `library` (`remove-drive` mark) |
+| `saves` | saves `community` | `saves` (list, For my games, search, details), `game-saves` (a game page's Community saves), `saves-install` (the second profile, to the end), `saves-progress` (a slow download, then Cancel), `saves-long` (a site save with a long name and long notes), `saves-closed` (Install, then the details closed: the card's progress and the toast at the end), `saves-running` (title_running) |
+| `saves-garlic` | saves `garlic` | `saves-garlic` (garlic_unavailable) |
+| `saves-building` | saves `building` | `saves-building` (the store builds its index, then has no saves) |
 | `library-copy` | default | `library-copy` (the app starts and follows the copy) |
 | `tv-app-orbit`, `tv-app-manual` | TV app image installed by the app, or by hand | `settings-tv-app` (pictures `*.orbit.png`, `*.manual.png`) |
 | `restart` | fake loader, one throttled download | `restart` (1 send, drain, no relaunch by the store) |
@@ -121,14 +126,15 @@ Order matters inside a group: `downloads-actions` deletes the cancelled job, and
 | `seed` | a list of seed steps |
 | `releaseRoutes` | `{releaseId: range_server route}` |
 | `loaderDelay` | seconds before the fake loader runs a copy (default 1) |
+| `saves` | the Save Data Store (`world.SAVES_MODES`): `none` (an empty index, no site), `community` (seven saves: four in the GitHub index, three on the XenoKing site; two profiles; Ember Hollow, Glass Orchard, Starfall Rally and Echo Valley installed, Glass Orchard running; the host's native save engine), `garlic` (as community, with no native engine, Garlic or loader), `building` (an empty site that answers after 18 s, so the store's first list says it is building) |
 
 ### The six checks
 
 The run fails on any of these, and every failure is listed in `report.json` and on the contact sheet.
 
 1. **Captures.** Every expected capture exists, and the PNG is not uniform: its luma standard deviation is above 4, and more than 1% of its pixels differ from the most common value by more than 2.
-2. **State.** Each scenario's `TVSTATE` has empty `linkError`, `libraryError` and `downloadsError`, unless the scenario expects one (`offline`, `no-loader`, `connection-lost`). No toast, `*Error` field or `errorsSeen` entry contains "unreadable". Every mark the scenario lists was reached.
-3. **Backend.** The proxy saw no 5xx on `/api/v1/*`. There are two exceptions: an art 502, and in `restart` a 503 whose body says the store "is stopping". There are no requests to `/zero/companion`. Repeated identical failures are counted once, with "(N times)".
+2. **State.** Each scenario's `TVSTATE` has empty `linkError`, `libraryError`, `downloadsError` and `savesError`, unless the scenario expects one (`offline`, `no-loader`, `connection-lost`). No toast, `*Error` field or `errorsSeen` entry contains "unreadable". Every mark the scenario lists was reached. Where the scenario expects them, `savesCount` (the saves the app listed) and `saveInstall` (how its install ended: `done`, `cancelled` or `failed:<errorCode>`) match, and a toast contains `toastHas`.
+3. **Backend.** The proxy saw no 5xx on `/api/v1/*` or `/api/saves/*`. There are two exceptions: an art 502, and in `restart` a 503 whose body says the store "is stopping". There are no requests to `/zero/companion`. Repeated identical failures are counted once, with "(N times)".
 4. **Loader.**
    - The fake loader received exactly the expected sends: 1 for `cold-start`, 2 for `crash-fallback` and 1 for `restart`.
    - For `crash-fallback`, `copy=saved` then `copy=bundled` appear, in that order, in the app's starter log (TVSTATE `starterLog` or the preview's stderr).
@@ -196,6 +202,6 @@ python3 -I tools/tv/contact_sheet.py app/tv/build/preview/pictures --dest build/
 ## Adding a scenario
 
 1. Add the scenario to `app/tv/host/preview_main.cpp` with `live_ok` set. Pictures are `capture` steps, and changes to the world are `mark(...)` steps.
-2. Add it to `scenarios.json`: its captures, any `expect` (`linkError`, `marks`, `loaderSends`, `starterOrder`, `allow503`, `drain`, `art`) and `maxSeconds`, and put it in a group whose world fits. A new world needs a group of its own.
+2. Add it to `scenarios.json`: its captures, any `expect` (`linkError`, `savesError`, `marks`, `loaderSends`, `starterOrder`, `allow503`, `drain`, `art`, `savesCount`, `saveInstall`, `toastHas`) and `maxSeconds`, and put it in a group whose world fits. A new world needs a group of its own.
 3. A new mark also needs a case in `World.on_mark` and an entry in `world.MARKS`.
 4. Run `python3 -I tools/tv/preview_live.py --scenarios <name>`. `report.json` `scenarioList.drift` shows any name that differs from the binary.

@@ -28,6 +28,8 @@ did. self.fail[...] makes one kind of call fail: "list", "insert", "upload",
 "sign", "garlic" (HTTP status + JSON), "garlic200" (HTTP 200 with a JSON
 error, as an edge function that catches its own error does), "garlic_url"
 (JSON {"url": …} pointing elsewhere) and "list_redirect" (a 302 elsewhere).
+self.list_delay (seconds, default 0) holds every table GET that long before it
+answers: a slow site, for the store's "building" listing.
 The apikey and Authorization: Bearer headers must carry the anon key on
 every call except a signed GET.
 
@@ -45,6 +47,7 @@ import http.server
 import json
 import re
 import threading
+import time
 import urllib.parse
 import uuid
 
@@ -76,6 +79,7 @@ class SupabaseMock:
         self.tokens = {}             # token -> path
         self.log = []
         self.fail = {}
+        self.list_delay = 0.0
         self.lock = threading.Lock()
         mock = self
 
@@ -223,6 +227,8 @@ class SupabaseMock:
         if rel != TABLE:
             return self._json(404, {"code": "PGRST205", "details": None, "hint": None, "message": "Could not find the table 'public.%s' in the schema cache" % rel})
         if method == "GET":
+            if self.list_delay > 0:
+                time.sleep(self.list_delay)
             if "list_redirect" in self.fail:
                 return 302, "text/plain", b"", {"Location": self.fail["list_redirect"]}
             f = self._failure("list")

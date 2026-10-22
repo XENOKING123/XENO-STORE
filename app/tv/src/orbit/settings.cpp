@@ -34,9 +34,23 @@ constexpr float kViewBottom = 990.0f; // and stops above the hints
 constexpr float kCardRadius = 14.0f;
 constexpr int kSectionCount = static_cast<int>(SettingsScreen::Section::count);
 constexpr const char *kSections[] = {/* i18n */ "Download sources", /* i18n */ "Storage", /* i18n */ "Pair a device",
-                                     /* i18n */ "Game catalogue",   /* i18n */ "Updates", /* i18n */ "More settings"};
+                                     /* i18n */ "Game catalogue",   /* i18n */ "Updates", /* i18n */ "More settings",
+                                     /* i18n */ "About"};
 constexpr const char *kSavedElf = "/data/xeno-store/xeno-store.elf";
+// XENO STORE: where each release's TV app source archive is (About).
+constexpr const char *kReleasesPage = "github.com/XENOKING123/XENO-STORE/releases";
 constexpr int kMaxDownloads = 4; // XENO STORE runs 1 to 4 downloads at once
+// XENO STORE: About's third-party components, from app/tv/NOTICE (short list).
+// Names, versions and licence identifiers: not translated.
+constexpr const char *kComponents[] = {
+    "Orbit Store 1.2.0 / 1.3.5, saawant12 \xC2\xB7 GPL-3.0-or-later",
+    "ps5-homebrew-ui, BlackBearReloaded \xC2\xB7 GPL-3.0-or-later",
+    "SharpProspero, SvenGDK \xC2\xB7 GPL-3.0",
+    "ps5-opengl SDK 1.0.0 (Mesa 26.2.0) \xC2\xB7 GPL-3.0-or-later",
+    "PS5 payload SDK v0.42 \xC2\xB7 GPL-3.0-or-later",
+    "LLVM libc++, libc++abi, libunwind, compiler-rt \xC2\xB7 Apache-2.0 WITH LLVM-exception",
+    "libwebp 1.4.0 \xC2\xB7 BSD-3-Clause;  stb \xC2\xB7 MIT OR Unlicense;  Inter 4.1 \xC2\xB7 OFL-1.1",
+};
 constexpr const char *kNotice =
     /* i18n */ "XENO STORE does not host game files. The catalog links to public archives and "
     "community pages; it is your responsibility to only download what you are allowed to. Hosts "
@@ -240,6 +254,7 @@ void SettingsScreen::open(Section section, bool content)
     confirm_replace_ = false;
     error_.clear();
     error_setting_ = Setting::none;
+    sounds_error_.clear();
     age_ = 0.0f;
     scroll_.snap(0.0f);
     load_draft();
@@ -309,6 +324,9 @@ void SettingsScreen::build(Pane &pane) const
     case Section::updates:
         build_updates(pane);
         break;
+    case Section::about:
+        build_about(pane);
+        break;
     default:
         build_more(pane);
         break;
@@ -329,7 +347,7 @@ void SettingsScreen::build_sources(Pane &pane) const
 
     // .source-card: a check and the source's name.
     float cx = pane.x;
-    const float cy = pane.y;
+    float cy = pane.y;
     bool browser_only_source = false;
     for (int i = 0; i < static_cast<int>(state.sources.options.size()); ++i)
     {
@@ -337,6 +355,8 @@ void SettingsScreen::build_sources(Pane &pane) const
         const bool on = contains(draft_, option.id);
         browser_only_source = browser_only_source || option.id == "vikingfile";
         const float w = type.medium.measure(option.label, 21.0f) + 104.0f;
+        // A source that would cross the pane's edge starts the next row.
+        if (cx > pane.x && cx + w > pane.x + pane.width) { cx = pane.x; cy += 74.0f; ++pane.row; }
         const ui::Rect r{cx, cy, w, 60.0f};
         if (pane.list != nullptr)
         {
@@ -847,8 +867,9 @@ void SettingsScreen::build_updates(Pane &pane) const
                                    "payload manager instead.",
                                    {{"next", next}, {"running", running_service}})
                               : std::string(tr("Active downloads pause. This app stops XENO STORE and "
-                                               "starts it again, then you can resume your downloads "
-                                               "from Downloads.")));
+                                               "starts it again, and they then continue on their own "
+                                               "(unless Resume after a restart is off in the browser "
+                                               "version under Settings \xE2\x86\x92 Downloads).")));
             pane.buttons(
                 {{Kind::restart_confirm, tr("Restart now"), ui::ButtonKind::primary, !disabled},
                  {Kind::restart_cancel, tr("Not now")}});
@@ -896,10 +917,50 @@ void SettingsScreen::build_more(Pane &pane) const
         pane.buttons({{Kind::open_browser, tr("Open browser version"), ui::ButtonKind::primary}});
     pane.gap(12.0f);
     pane.rule();
+    // XENO STORE: the app's own sounds, kept on this console.
+    pane.heading(tr("Sounds"));
+    pane.body(ctx_.prefs.sounds()
+                  ? tr("The app plays a sound as you move and select.")
+                  : tr("The app is silent. Games and the console keep their own sounds."));
+    pane.buttons({{Kind::sounds_toggle,
+                   ctx_.prefs.sounds() ? tr("Turn sounds off") : tr("Turn sounds on")}});
+    if (!sounds_error_.empty())
+        pane.body(std::string(tr("Changed until the app closes. The choice could not be saved on "
+                                 "this console.")) +
+                      " (" + sounds_error_ + ")",
+                  19.0f, ui::color::bad);
+    pane.gap(12.0f);
+    pane.rule();
     const std::string running = app_release_version(ctx_.app_version);
     pane.version_row(tr("TV app"), running.empty() ? tr("Unknown") : running);
     pane.version_row(tr("Download service"),
                      state.system.version.empty() ? tr("Unknown") : state.system.version);
+}
+
+// ---- About (XENO STORE): the version, credits, licence and source ----
+
+void SettingsScreen::build_about(Pane &pane) const
+{
+    const Snapshot &state = ctx_.store.state();
+    const std::string running = app_release_version(ctx_.app_version);
+    pane.heading(tr("About"));
+    // XENO STORE's is the running store's version; Updates installs the TV app
+    // apart, and its source archive follows its own release.
+    pane.version_row(tr("XENO STORE version"),
+                     state.system.version.empty() ? tr("Unknown") : state.system.version);
+    pane.version_row(tr("TV app version"), running.empty() ? tr("Unknown") : running);
+    pane.gap(8.0f);
+    pane.body(tr("This TV app is based on the TV app of {orbit} and on {kit} by BlackBearReloaded.",
+                 {{"orbit", "Orbit Store"}, {"kit", "ps5-homebrew-ui"}}));
+    pane.body(tr("XENO STORE is free software under the GNU General Public License, version 3 or "
+                 "later. It comes with no warranty."));
+    pane.body(tr("Get the TV app\xE2\x80\x99s complete source from {url}: {file}.",
+                 {{"url", kReleasesPage}, {"file", tv_source_archive(running)}}));
+    pane.rule();
+    pane.subheading(tr("Third-party components"));
+    for (const char *component : kComponents)
+        pane.fine(component);
+    pane.fine(tr("The source\xE2\x80\x99s app/tv/NOTICE lists each one\xE2\x80\x99s licence and where its text is."));
 }
 
 // ---- input ----
@@ -921,6 +982,12 @@ void SettingsScreen::activate(const Control &control, Intent &intent, Feedback &
     case Kind::archives_toggle:
         error_.clear();
         ctx_.store.set_delete_archives(!state.system.delete_archives);
+        break;
+    case Kind::sounds_toggle:
+        // A failed save keeps the choice until the app closes, and says so.
+        sounds_error_ = ctx_.prefs.set_sounds(!ctx_.prefs.sounds());
+        if (!sounds_error_.empty())
+            std::fprintf(stderr, "[XENO-TV] sounds setting not saved: %s\n", sounds_error_.c_str());
         break;
     case Kind::source:
     {
@@ -1109,6 +1176,7 @@ Intent SettingsScreen::update(const InputFrame &input, float dt, Feedback &feedb
                     confirm_replace_ = false;
                     error_.clear();
                     error_setting_ = Setting::none;
+                    sounds_error_.clear();
                     load_draft();
                     if (section_ == Section::pairing)
                         ctx_.store.refresh_session();
@@ -1307,6 +1375,8 @@ std::vector<hui::ui::Hint> SettingsScreen::hints() const
 {
     if (in_content_)
         return {{hui::ui::Button::cross, tr("Select")}, {hui::ui::Button::circle, tr("Back")}};
+    if (controls().empty()) // About: nothing to select
+        return {{hui::ui::Button::dpad, tr("Sections")}, {hui::ui::Button::circle, tr("Close")}};
     return {{hui::ui::Button::dpad, tr("Sections")},
             {hui::ui::Button::cross, tr("Select")},
             {hui::ui::Button::circle, tr("Close")}};
