@@ -15188,6 +15188,48 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1501750/47dd2aec80b4b992192863ffd12ec1b79cfc32c6/ss_47dd2aec80b4b992192863ffd12ec1b79cfc32c6.1920x1080.jpg?t=1786951564"
    ]
   },
+  "lornsword winter chronicle": {
+   "about": "Lornsword Winter Chronicle is a story-driven action strategy game. Be the general on the battlefield: take direct action to command your soldiers and set up your economy.Tactics through Action\n\nControl your hero directly: Fight, lead, explore, capture, summon...\nExecute your tactics in a heartbeat.\nStrategy through planning\n\nSet up your army over time: Manage gold, food, battle fronts, unit types, building upgrades...",
+   "ageRating": null,
+   "appId": 960900,
+   "developer": "Tower Five",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T00:43:23Z",
+   "genres": [
+    "Action",
+    "Strategy",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "Lornsword Winter Chronicle",
+   "publisher": "Tower Five",
+   "releaseDate": "2019-10-23",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960900/ss_b3ff517025b54beee6f5197fc9d6fd511c6c9fcf.1920x1080.jpg?t=1698244535",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960900/ss_16d421fe45bd43849adb447ed6ec9f26f16ad4ee.1920x1080.jpg?t=1698244535",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960900/ss_b6960c5289e90d28fd79f05aef6e87403dc5f912.1920x1080.jpg?t=1698244535",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960900/ss_c8721aac3175cf8b272b7c844ff6d9992f1460ea.1920x1080.jpg?t=1698244535",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960900/ss_ec373f41ca23e1f1f0872b65bead7538549067fa.1920x1080.jpg?t=1698244535",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960900/ss_b163e6b618fc05375264baa3b7b1b6461c6520a5.1920x1080.jpg?t=1698244535",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960900/ss_506de055f6e26e7f35dfa0a7b06960be00c70130.1920x1080.jpg?t=1698244535",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960900/ss_1c807f7fb97a8abfd2159f8e99cddebe8d215dfa.1920x1080.jpg?t=1698244535"
+   ]
+  },
   "love is all around": {
    "about": "\"Love Is All Around\" is a simulating love story real-life full-motion interactive video . You will not only meet but also fall in love with six beauties with completely different personalities and styles, eventually embark on an immersive and sweet journey one after another.\nUnder their charisma, how would you deal with the six beauties while you are busy at paying off debts? Would you ignore your feelings and focus on making money? Or would you choose love over money?",
    "ageRating": null,
@@ -15451,6 +15493,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1941540/ss_ecfbf9a220417bb61285a981a8a6630d98d56d27.1920x1080.jpg?t=1788898865"
    ]
   },
+  "malicious fallen": {
+   "fetchedAt": "2026-10-23T00:43:25Z",
+   "miss": true
+  },
   "mandragora whispers of the witch tree": {
    "about": "Journey into a decaying world full of monsters and secrets in Mandragora: Whispers of the Witch Tree, an epic dark fantasy action RPG.\n\n \n\nCreate your Inquisitor from one of six unique Classes, and wield blades and magic against nightmarish creatures. Craft hundreds of weapons and items and learn powerful Talents to define your combat style. Explore a vast, interconnected world and unearth its mysteries in a journey that will push your skills to their limits.",
    "ageRating": null,
@@ -15495,6 +15541,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1721060/279b3aa3f1e1dbca5fdacf65c459d0bee94553a6/ss_279b3aa3f1e1dbca5fdacf65c459d0bee94553a6.1920x1080.jpg?t=1786452629",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1721060/6d5677b2c3f7f8775c799490633b437c1ae107b4/ss_6d5677b2c3f7f8775c799490633b437c1ae107b4.1920x1080.jpg?t=1786452629"
    ]
+  },
+  "marble duel": {
+   "fetchedAt": "2026-10-23T00:43:28Z",
+   "miss": true
   },
   "martha is dead": {
    "about": "Martha Is Dead is a dark first-person psychological thriller, set in 1944 Italy, that blurs the lines between reality, superstition and the tragedy of war.\n\nAs conflict intensifies between German and Allied forces, the desecrated body of a woman is found drowned… Martha! \n\nMartha is dead, and her twin sister Giulia, the young daughter of a German soldier, must alone deal with the acute trauma of loss and the fallout from her murder.",
@@ -15592,6 +15642,10 @@
   },
   "marvels avengers definitive edition": {
    "fetchedAt": "2026-10-22T11:52:30Z",
+   "miss": true
+  },
+  "marvels guardians of the galaxy the telltale series": {
+   "fetchedAt": "2026-10-23T00:43:30Z",
    "miss": true
   },
   "marvels midnight suns": {
@@ -16477,6 +16531,57 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740660/ss_cb4492922065b9e3882ef72a97d71fb7cd687d2f.1920x1080.jpg?t=1746026219"
    ]
   },
+  "mobile suit gundam extreme vs maxiboost on": {
+   "fetchedAt": "2026-10-23T00:43:33Z",
+   "miss": true
+  },
+  "monopoly madness": {
+   "about": "Rediscover the property trading game you love in a way you’ve never seen before. Mr. MONOPOLY is looking for a temporary stand-in while he takes a vacation! Get ready to engage in a real-time competitive race to see who has what it takes to take Mr. Monopoly's place.\n\nIn this race for fame and fortune, the rules have changed slightly:\n\n• No more board! Roam the streets of Monopoly City to collect money, water, and electricity.\n\n• 20 NEW playable characters inspired by classic MONOPOLY tokens.",
+   "ageRating": null,
+   "appId": 2383760,
+   "developer": "Engine Software, Ubisoft",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op"
+   ],
+   "fetchedAt": "2026-10-23T00:43:38Z",
+   "genres": [
+    "Action",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Dutch",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Latin America",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Monopoly Madness",
+   "publisher": "Ubisoft",
+   "releaseDate": "2023-06-22",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2383760/ss_c7654775e21b4efb4f58c6bb78e59628e5280c8a.1920x1080.jpg?t=1782394477",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2383760/ss_8a43073dd52ce97ed4bbd857bb14c732faa38130.1920x1080.jpg?t=1782394477",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2383760/ss_cf1ddbd2cb4997135ffb58ccd58f9a6e4146d1a8.1920x1080.jpg?t=1782394477",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2383760/ss_11a04944a3e3e6a822578c5eab6967fd03d51bdc.1920x1080.jpg?t=1782394477",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2383760/ss_0ad1eb97bdf741ed72f0081a238be2aa563ed4f0.1920x1080.jpg?t=1782394477",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2383760/ss_38ffd8f765cd67d03684507df24ec9a14d50916f.1920x1080.jpg?t=1782394477",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2383760/ss_76c5b8893886879842aa0484f74921aff9ba29bb.1920x1080.jpg?t=1782394477",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2383760/ss_ec33eff78b40363994237434de026d003eb219ab.1920x1080.jpg?t=1782394477"
+   ]
+  },
   "monster boy and the cursed kingdom": {
    "about": "A legendary series returns with a grand new adventure!\nEnjoy a colorful action-adventure game made alongside Ryuichi Nishizawa, creator of the original Wonder Boy in Monster World series.\nMonster Boy and the Cursed Kingdom borrows the best from the classic series to deliver a fresh, modern adventure with fun gameplay, memorable music and gorgeous hand drawn animations.\n\nCan Jin save Monster World Kingdom?",
    "ageRating": null,
@@ -16998,8 +17103,16 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1755030/ss_da78a0e76ffd11ab7e729feb75b73453d0577bc9.1920x1080.jpg?t=1703184140"
    ]
   },
+  "moto racer 4": {
+   "fetchedAt": "2026-10-23T00:43:40Z",
+   "miss": true
+  },
   "motogp 21": {
    "fetchedAt": "2026-10-16T04:32:28Z",
+   "miss": true
+  },
+  "motogp 22": {
+   "fetchedAt": "2026-10-23T00:43:43Z",
    "miss": true
   },
   "motogp 25": {
@@ -17104,6 +17217,52 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/996770/ss_a11e5312bf750176f72219bbf39ca17b791ab452.1920x1080.jpg?t=1781014487"
    ]
   },
+  "mudrunner": {
+   "about": "MudRunner is the ultimate off-road experience, putting the players in the driver seat and daring them to take charge of incredible all-terrain vehicles, venturing across extreme Siberian landscapes with only a map and compass as guides!\n\nDrive 19 powerful all-terrain vehicles, each with its own characteristics and attachable equipment. Complete your objectives and deliveries by enduring perilous conditions across wild, untamed landscapes in extreme conditions with dynamic day-night cycles.",
+   "ageRating": null,
+   "appId": 675010,
+   "developer": "Saber Interactive",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Cross-platform multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T00:43:48Z",
+   "genres": [
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "MudRunner",
+   "publisher": "Focus Entertainment",
+   "releaseDate": "2017-10-30",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/675010/ss_95b0985dd1aaa652c69fb0f2ae046177838c319a.1920x1080.jpg?t=1784714181",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/675010/ss_cdb67d33a04c4987f67e9c0d6991f7aee0225a88.1920x1080.jpg?t=1784714181",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/675010/ss_15b9797151b58d28c0d4e4251c164ee74b80d350.1920x1080.jpg?t=1784714181",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/675010/ss_b6de7ed6b8a7628985bd98a58ab1a6b4b50ccd4a.1920x1080.jpg?t=1784714181",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/675010/ss_24846b82bb21886dec0970e818a8155ddccd59e5.1920x1080.jpg?t=1784714181",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/675010/ss_06a211b2c74b30ff539339e9a87f69f2272c5dbb.1920x1080.jpg?t=1784714181",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/675010/ss_b7287b6ea0214ccd6ba4d99609d9285f44c0bbb7.1920x1080.jpg?t=1784714181",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/675010/ss_91e2f33ec02c937652e917c37fbc84619ba816ef.1920x1080.jpg?t=1784714181"
+   ]
+  },
+  "mutant football league dynasty edition": {
+   "fetchedAt": "2026-10-23T00:43:50Z",
+   "miss": true
+  },
   "my first gran turismo": {
    "fetchedAt": "2026-10-14T17:23:47Z",
    "miss": true
@@ -17111,6 +17270,49 @@
   "my friend pedro blood bullets bananas": {
    "fetchedAt": "2026-10-21T07:40:53Z",
    "miss": true
+  },
+  "my little riding champion": {
+   "about": "Your horse. Your passion.\n\nGet ready to fulfil your dreams at a gallop. The village's riding club needs you to win the next major competitions. Choose your favourite horse, train it and win medals for your club!\n\nCreate a bond by going out riding in the countryside and taking care of it. Together you will set out on a large number of missions and earn new outfits and equipment for both of you.",
+   "ageRating": null,
+   "appId": 789900,
+   "developer": "Caipirinha Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T00:43:55Z",
+   "genres": [
+    "Adventure",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Polish",
+    "Russian",
+    "Traditional Chinese",
+    "Simplified Chinese",
+    "Japanese",
+    "Korean"
+   ],
+   "metacritic": null,
+   "name": "My Little Riding Champion",
+   "publisher": "Toplitz Productions",
+   "releaseDate": "2018-11-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/789900/ss_1e003b67d53f1d52f1fd1532297d887789a9dbd0.1920x1080.jpg?t=1601463817",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/789900/ss_deb35af9ef387dbb2160951f524c337924e163ad.1920x1080.jpg?t=1601463817",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/789900/ss_c80d38762bfc1c7bcf019b8d98d51ece653b33dd.1920x1080.jpg?t=1601463817",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/789900/ss_fe4ad9783ab2a254e8339939074fb41d98fd711d.1920x1080.jpg?t=1601463817",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/789900/ss_8078b671d123dbb2a02b55e52d633cd7b660a20c.1920x1080.jpg?t=1601463817",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/789900/ss_5c3c967dbf470b9a6770bd20b4048e1bf4bb6d49.1920x1080.jpg?t=1601463817",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/789900/ss_644058ff467285de3cf6a71a96d65636dca8ad46.1920x1080.jpg?t=1601463817",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/789900/ss_a927bd63b12f90859a81afb0a5e04bbdcdb0a0e9.1920x1080.jpg?t=1601463817"
+   ]
   },
   "naiad": {
    "about": "Flow with Naiad across a mysterious river and interact with its fauna and flora to discover little secrets. Enjoy a wholesome experience with an original visual style.\n\nLearn to swim like a duck, dive like a fish, dash like a frog and meet other adorable friends like butterflies, rabbits, turtles, snakes, and crocodiles. Help them find their way and avoid obstacles.",
@@ -17245,6 +17447,18 @@
    "fetchedAt": "2026-10-21T23:21:42Z",
    "miss": true
   },
+  "nba 2k20": {
+   "fetchedAt": "2026-10-23T00:43:58Z",
+   "miss": true
+  },
+  "nba 2k21": {
+   "fetchedAt": "2026-10-23T00:44:00Z",
+   "miss": true
+  },
+  "nba 2k22": {
+   "fetchedAt": "2026-10-23T00:44:03Z",
+   "miss": true
+  },
   "nba 2k26": {
    "about": "Bragging rights are on the line in MyCAREER*, MyTEAM, MyNBA, The W, and Play Now. Showcase your bag of moves with hyper realism, Powered by ProPLAY™, and challenge your friends, or rivals, in NBA 2K26’s competitive modes—and leave no doubt that you wear the crown.\n\nPOWERED BY ProPLAY™\n\nDominate every possession with immersive technology that directly translates NBA footage into realistic gameplay.",
    "ageRating": null,
@@ -17361,6 +17575,45 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1222370/ss_04071565110761dadfbe12021a30b86b00c93f60.1920x1080.jpg?t=1727865639",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1222370/ss_05076daf928bfd454218dfafd5894bea59ca11c0.1920x1080.jpg?t=1727865639",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1222370/ss_5ebc43267613dadfef62ee83c269fa28d1a4bc7f.1920x1080.jpg?t=1727865639"
+   ]
+  },
+  "necromunda underhive wars": {
+   "about": "Deep below the nightmarish, polluted hive cities of Necromunda, in the twisted, vertiginous, dark tunnels of the Underhive, rival gangs fight to the bitter end for personal power, wealth, survival and the honour of their Houses. Only the strongest survive.\n\nLead, customize, and grow your gangs of Escher, Goliath, and Orlock. Specialize each member and send them to battle in hazardous dystopian environments.",
+   "ageRating": null,
+   "appId": 566440,
+   "developer": "Rogue Factor",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T00:44:08Z",
+   "genres": [
+    "Action",
+    "Strategy"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Polish",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "Necromunda: Underhive Wars",
+   "publisher": "Focus Entertainment",
+   "releaseDate": "2020-09-07",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/566440/ss_6e3de7f4c630539d781528ec517c1bd6e85cfc9a.1920x1080.jpg?t=1695820234",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/566440/ss_cd7da226829493b3616e81cbf88649d3e69f76d1.1920x1080.jpg?t=1695820234",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/566440/ss_3b729e8db9f4eaf35a636575db1f5fa0f8258fd9.1920x1080.jpg?t=1695820234",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/566440/ss_28c41d9694e644e9bbd1ab776663b50b3e4bea65.1920x1080.jpg?t=1695820234",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/566440/ss_1d6bc137187d9126ccd7878ef61c68c6222113ba.1920x1080.jpg?t=1695820234",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/566440/ss_6819866e5978f908da9955c5a11c923f828ff8e6.1920x1080.jpg?t=1695820234"
    ]
   },
   "need for speed payback": {
@@ -17500,6 +17753,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2420660/ss_52acca00d787f0f0c3a830904024e48f0a1e0e17.1920x1080.jpg?t=1771587898",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2420660/ss_2c112088eb5d3ed2e1376fe34a22afa96110daa6.1920x1080.jpg?t=1771587898",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2420660/ss_bfe21ed7ce40011fa0a83e3d112ef3b95abd4e99.1920x1080.jpg?t=1771587898"
+   ]
+  },
+  "new gundam breaker": {
+   "about": "Collect Gunpla parts with friends, and make the ultimate Gundam!\n\r\nDefeat your enemies with your Gunpla model, collect their parts, and use them to make and battle with your own custom Gundam in this all-new Gunpla action game!\n\r\n\n\r\nAll’s fair in love and Gunpla parts in New Gundam Breaker?!\n\r\nPower is everything at this school, and the evil Laplace Nest team rules from on high.",
+   "ageRating": null,
+   "appId": 738530,
+   "developer": "CRAFTS & MEISTER Co., Ltd.",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T00:44:13Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "New Gundam Breaker",
+   "publisher": "BANDAI NAMCO Entertainment",
+   "releaseDate": "2018-09-24",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738530/ss_85a8cb3884f7d6334baf88c1f796bb1e8d964241.1920x1080.jpg?t=1691057875",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738530/ss_b523233bdf27a77c1f4fb6ab0c0c09c5d3d4e706.1920x1080.jpg?t=1691057875",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738530/ss_aeb3555eb1a647f9e8a71ef8b98bc931ceeeb9a3.1920x1080.jpg?t=1691057875",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738530/ss_52460c301e7eb3364b1b2aaf2f1540dad0c90bbe.1920x1080.jpg?t=1691057875",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738530/ss_3706a98aa1ebcd7fdf474e43a15c93ebf8652ba0.1920x1080.jpg?t=1691057875",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738530/ss_be15602e7b3f02a7549a047002218867b3a19a34.1920x1080.jpg?t=1691057875"
    ]
   },
   "new tales from the borderlands": {
@@ -17684,6 +17975,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2017080/ss_b39c5b83b11efd796e37c35d6cb215bf23c0e537.1920x1080.jpg?t=1746026398",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2017080/ss_71b20bbc6718063215c1489f77190a1e979a77cb.1920x1080.jpg?t=1746026398",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2017080/ss_bb671a205dfc9856669e00d9cc38c8b31a57c4d4.1920x1080.jpg?t=1746026398"
+   ]
+  },
+  "nickelodeon kart racers 2 grand prix": {
+   "about": "Nickelodeon Kart Racers is back and we’re kicking it into overdrive! In Nickelodeon Kart Racers 2: Grand Prix, you can select from 30 playable racers and 70 team members to assemble your ultimate pit crew. Choose your favorites from Nickelodeon’s hall of fame, including JoJo Siwa, SpongeBob SquarePants, the Teenage Mutant Ninja Turtles, the babies from Rugrats, the cool kids from Hey Arnold!, Ren and Stimpy, Lincoln Loud and his sisters, and more!\n\r\n\n\r\nMore Characters + More Karts + More Tracks…",
+   "ageRating": null,
+   "appId": 1383960,
+   "developer": "Bamtang Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T00:44:18Z",
+   "genres": [
+    "Action",
+    "Racing",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Dutch"
+   ],
+   "metacritic": null,
+   "name": "Nickelodeon Kart Racers 2: Grand Prix",
+   "publisher": "GameMill Entertainment",
+   "releaseDate": "2020-12-01",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1383960/ss_db7f5c98d025a71e139a1a153fddea8e9cfcf3c4.1920x1080.jpg?t=1746026506",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1383960/ss_e5fea206ad0def0aa5e0c151272e8084d2ea2881.1920x1080.jpg?t=1746026506",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1383960/ss_cacbf5ec471d0cbbf2a29b54dbeb18a27904f79e.1920x1080.jpg?t=1746026506",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1383960/ss_acdc45f827713adf9460dae841b2055b1737ca08.1920x1080.jpg?t=1746026506",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1383960/ss_897964cecbb681e76e93ee0fee8010844b5fc66f.1920x1080.jpg?t=1746026506",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1383960/ss_a39799e47757d523c66ba48f9a88ea8cc7cc2032.1920x1080.jpg?t=1746026506",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1383960/ss_46b2c97db8509d9fdea289ab6066ccb836a14ea2.1920x1080.jpg?t=1746026506",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1383960/ss_2071d68be0ff793de91ab61cc6675fc626a3f90b.1920x1080.jpg?t=1746026506"
    ]
   },
   "nickelodeon kart racers 3 slime speedway": {
@@ -18060,6 +18391,47 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1432050/ss_c39e5b6b67c2e83b029bca6fef8ec201be52fcb8.1920x1080.jpg?t=1771966069"
    ]
   },
+  "nova 111": {
+   "about": "Navigate mind-warping puzzles and engage in strategic battles with bizarre creatures in a twisted environment where the turn-based world and the real-time world collide. As you progress through the universe, you'll need to protect yourself by collecting new abilities and upgrade modules for your ship, but remember, your greatest weapon is SCIENCE itself! \n\nFeatures\n\nInnovative Gameplay - Innovative mix of turn-based and real-time gameplay\n\nStrategic Combat - Fight smart.",
+   "ageRating": null,
+   "appId": 325370,
+   "developer": "Funktronic Labs",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T00:44:23Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Strategy",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Portuguese - Brazil"
+   ],
+   "metacritic": 68,
+   "name": "Nova-111",
+   "publisher": "Funktronic Labs",
+   "releaseDate": "2015-08-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/325370/ss_e3e8df0dbb0a7312ddb102492cb3dd9d9a8e41e0.1920x1080.jpg?t=1657649473",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/325370/ss_0b73685a9995bf634be502054853bf218180783c.1920x1080.jpg?t=1657649473",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/325370/ss_042b7bf1f9808cd2a4a1ba3fec56175053b557c5.1920x1080.jpg?t=1657649473",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/325370/ss_610ea84ffde5a7a9a76f69d05121aae30304a9d5.1920x1080.jpg?t=1657649473",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/325370/ss_8a54ff6d870a9b24b10dd9a152185ca90cee6382.1920x1080.jpg?t=1657649473",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/325370/ss_12f7a53d0c8efc618e19d6fcc204dac0d09b213d.1920x1080.jpg?t=1657649473",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/325370/ss_77263d192923145565c0a4314c37a116d3c2e745.1920x1080.jpg?t=1657649473",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/325370/ss_7d600bd79199b06f98b479781303982c1a809c60.1920x1080.jpg?t=1657649473"
+   ]
+  },
   "oddworld soulstorm": {
    "about": "As 300 freshly liberated slaves celebrate their escape from the industrial megacomplex of RuptureFarms, a new menace rises. They will soon discover that, although their physical bonds were broken, they are far from free. \n\nJoin the revolution as you guide their savior, Abe, on an almost impossible journey to uncover the truth behind the generations of disinformation and misleading news that have brainwashed his people.",
    "ageRating": null,
@@ -18319,6 +18691,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/814000/ss_7dce153c2727574ae6868d3104dd78152d201e6d.1920x1080.jpg?t=1703657096",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/814000/ss_8aa310768b655b8940de1901ff631a3f3e5881f4.1920x1080.jpg?t=1703657096",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/814000/ss_805b61f668d001acb1be3c58a17a2ea390068d59.1920x1080.jpg?t=1703657096"
+   ]
+  },
+  "one piece pirate warriors 3": {
+   "about": "ADVENTURES OF LUFFY AND HIS STRAW HAT CREW ARE COMING TO PC!\n\nEnjoy the original story of ONE PIECE from Fuschia village, where everything has started, to the kingdom of Dressrosa, a mysterious island dominated by the evil Donquixote.Doflamingo.\n\nWill your resolution be strong enough to defeat the most dangerous pirates, including Doflamingo and many more?\nGather every member of the Straw Hat Crew, like in the original story, sail to the most emblematic places and enter the most epic battles:…",
+   "ageRating": null,
+   "appId": 331600,
+   "developer": "KOEI TECMO GAMES CO., LTD.",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T00:44:28Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "One Piece Pirate Warriors 3",
+   "publisher": "BANDAI NAMCO Entertainment",
+   "releaseDate": "2015-08-27",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331600/ss_0c22f54b96b73c393203bff949d882bc9e6c092d.1920x1080.jpg?t=1701307253",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331600/ss_6aa24b103bb033a798fd2c71347a9d7efac1e4f1.1920x1080.jpg?t=1701307253",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331600/ss_62d0604f3cb9aebfa9ffb58adb36b7a5e30b32a5.1920x1080.jpg?t=1701307253",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331600/ss_14aae73ce07e312b1c9d1ff181fd3e0e197710a4.1920x1080.jpg?t=1701307253",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331600/ss_9c895186b1df52812630c51927f1af3f042ac568.1920x1080.jpg?t=1701307253",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331600/ss_733e057cfba1424ab2cab4a65b18f1b48a9c77d0.1920x1080.jpg?t=1701307253",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331600/ss_c2f40ae899cbb328702903d5eb28dcc6135538ea.1920x1080.jpg?t=1701307253",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331600/ss_69cccbeeeb756041bf0cc905f3809b521c5bcebb.1920x1080.jpg?t=1701307253"
    ]
   },
   "onimusha way of the sword": {
@@ -19011,6 +19421,14 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2161700/ss_e5f9b3aedadef82286c34d9d419b7cd45e034f87.1920x1080.jpg?t=1764776430"
    ]
   },
+  "persona 5 dancing in starlight": {
+   "fetchedAt": "2026-10-23T00:44:35Z",
+   "miss": true
+  },
+  "pga tour 2k21": {
+   "fetchedAt": "2026-10-23T00:44:30Z",
+   "miss": true
+  },
   "pga tour 2k25": {
    "about": "Step onto golf’s biggest stages and prove you can rise among the greats. Compete in the ultimate test: The PGA Championship, The U.S. Open, and The Open Championship make their PGA TOUR 2K debut.\n\n \n\n Rise through the ranks in an expanded MyCAREER, where every round builds your legacy. Create your path to greatness with new MyPLAYER customization, upgraded Skill Trees, and advanced Course Designer tools. Then take your shot against the best in ranked, casual, and cross-platform multiplayer.",
    "ageRating": null,
@@ -19055,6 +19473,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2385530/ss_d5e1fac157f9ec1da217e5a7e881ecdffca8cbee.1920x1080.jpg?t=1790783811"
    ]
   },
+  "phantom breaker battle grounds overdrive": {
+   "fetchedAt": "2026-10-23T00:44:33Z",
+   "miss": true
+  },
   "phantom breaker battle grounds ultimate": {
    "about": "Follow four cuties who pack a punch—Mikoto, Waka, Itsuki, and Yuzuha—as they hack and slash their way across parallel worlds to rescue Nagi, who has been spirited away by the villainous Phantom.\n\nBattling through 8 action-packed stages, they take down the legions of Phantom’s minions standing in their way. The game features diverse combat mechanics reminiscent of a fighting game, with strategic action and intense encounters.",
    "ageRating": null,
@@ -19097,6 +19519,53 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2067350/ss_95314f2760f930533801093985dade64b04b51b8.1920x1080.jpg?t=1784659798",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2067350/ss_25621e0c02666269fb92b8ecf654f0d20b33825d.1920x1080.jpg?t=1784659798"
    ]
+  },
+  "phoenix point behemoth edition": {
+   "fetchedAt": "2026-10-23T00:44:38Z",
+   "miss": true
+  },
+  "pillars of eternity 2 deadfire": {
+   "fetchedAt": "2026-10-23T00:44:40Z",
+   "miss": true
+  },
+  "pinball arcade": {
+   "about": "Pinball Arcade by FarSight Studios features exact recreations of the all-time greatest pinball tables from Stern Pinball® and Gottlieb® together in one game.\n \nEvery flipper, bumper, sound effect, and display pixel has been painstakingly emulated in astonishing detail.",
+   "ageRating": null,
+   "appId": 238260,
+   "developer": "FarSight Studios",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T00:44:45Z",
+   "genres": [
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain"
+   ],
+   "metacritic": null,
+   "name": "Pinball Arcade",
+   "publisher": "FarSight Studios",
+   "releaseDate": "2013-11-04",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238260/ss_5eecbdfb8a454b3e239487b83fefe88abd882694.1920x1080.jpg?t=1572624312",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238260/ss_dece6a7548a5f58021601942768224dfc91bc067.1920x1080.jpg?t=1572624312",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238260/ss_bf4b9e2412ce9c298a1d4ea190acac7c2a033e80.1920x1080.jpg?t=1572624312",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238260/ss_cbdf9d8955a167f89beac2a0194f6f7881fb59e6.1920x1080.jpg?t=1572624312",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238260/ss_2e52c720d6940f3daf72ee9201093e4175fa9964.1920x1080.jpg?t=1572624312",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238260/ss_a5f2215a774c5bba0db566319b3c806f91d0d494.1920x1080.jpg?t=1572624312",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238260/ss_52823c2a48bfeacfb2afa545d5c13c3259ef1173.1920x1080.jpg?t=1572624312"
+   ]
+  },
+  "pirate flight": {
+   "fetchedAt": "2026-10-23T00:44:48Z",
+   "miss": true
   },
   "plague tale innocence": {
    "about": "Follow the grim tale of young Amicia and her little brother Hugo, in a heartrending journey through the darkest hours of history. Hunted by Inquisition soldiers and surrounded by unstoppable swarms of rats, Amicia and Hugo will come to know and trust each other. As they struggle to survive against overwhelming odds, they will fight to find purpose in this brutal, unforgiving world.\n\n1348. The plague ravages the Kingdom of France.",
@@ -19189,6 +19658,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1182900/ss_029c5cfa427cf6d5f0d9f96ae7ea0f3e69f2e88d.1920x1080.jpg?t=1784712272",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1182900/ss_7a82b164803c773f1b38038d04b7a1d9b9a0ed7a.1920x1080.jpg?t=1784712272"
    ]
+  },
+  "planescape torment and icewind dale enhanced editions": {
+   "fetchedAt": "2026-10-23T00:44:50Z",
+   "miss": true
   },
   "plucky squire": {
    "about": "The Plucky Squire follows the magical adventures of Jot and his friends - storybook characters who discover a three-dimensional world outside the pages of their book.\n\nWhen the malevolent Humgrump realizes he's the villain of the book - destined to lose his battle against the forces of good for all eternity - he kicks the heroic Jot out of its pages and changes the story forever.",
@@ -19295,6 +19768,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1817490/f863071d35418687686ed75f834db3ec676914b0/ss_f863071d35418687686ed75f834db3ec676914b0.1920x1080.jpg?t=1789515302",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1817490/21781d8aa68a27b0a26222e0dda788be918ab4b4/ss_21781d8aa68a27b0a26222e0dda788be918ab4b4.1920x1080.jpg?t=1789515302"
    ]
+  },
+  "portal knights legendary edition": {
+   "fetchedAt": "2026-10-23T00:44:53Z",
+   "miss": true
   },
   "post trauma": {
    "about": "Post Trauma is a Puzzle Horror Game and Red Soul Games is a small studio made up of fans of old school survival horror. We have taken a lot of inspiration from several genre-defining classics and we hope it shows!\n\nPuzzle oriented: Designed for players looking for a challenge. Escape room style puzzles that require you to study your surroundings carefully. A pen and paper is recommended.\n\nRetro Vibes: Play a modern survival horror through a retro-focused lens. Fixed Cameras.",
@@ -19592,6 +20069,122 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2751000/ss_c134fcbaf1b6f49a27b3e571b58ba1826fa57f37.1920x1080.jpg?t=1777993930"
    ]
   },
+  "project cars": {
+   "fetchedAt": "2026-10-23T00:44:55Z",
+   "miss": true
+  },
+  "punch line": {
+   "about": "Be a friendly ghost - Haunt a house full of girls while you solve puzzles, play tricks and cause trouble!\n\n Level-up your powers! – Learn to master your poltergeist abilities from moving objects to full-body possession!\n\n Be a trickster – Play elaborate pranks on your housemates but don't get too excited if you see their panties!\n\n Beware your weakness – See too many panties and humanity will be destroyed!\n\n Put on your detective hat – Perform investigations reclaim your body with the help of a…",
+   "ageRating": 17,
+   "appId": 766680,
+   "developer": "MAGES. Inc.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T00:45:00Z",
+   "genres": [
+    "Adventure",
+    "RPG"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Punch Line",
+   "publisher": "PQube",
+   "releaseDate": "2019-05-23",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/766680/ss_0d04975002af82da57f67f824c0d4194d6a1120f.1920x1080.jpg?t=1792062507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/766680/ss_85e5cf03ce37833249f78c1946885f649848e8f6.1920x1080.jpg?t=1792062507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/766680/ss_b58f71c13f706ed917a623922f5ab6eb43379cf1.1920x1080.jpg?t=1792062507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/766680/ss_19ba0ad7da1d0081b53c221dfaf4754c1e4707ba.1920x1080.jpg?t=1792062507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/766680/ss_a0f78acfa69c28c7013cdf96e25ef6a1ebb3d9ad.1920x1080.jpg?t=1792062507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/766680/ss_79fa88e9283b77a600c656cacaafd1f8353a5c40.1920x1080.jpg?t=1792062507"
+   ]
+  },
+  "pure farming 2018": {
+   "about": "FARMING GOES GLOBAL!\n\nUse the latest technology and state-of-the-art licensed machines to manage all aspects of modern farming. Travel between Europe, Asia, and both Americas to plant region-specific crops such as hemp, coffee beans, and olives. Farm your way thanks to three unique game modes tailored to both simulation veterans and newcomers to farming games.",
+   "ageRating": null,
+   "appId": 534370,
+   "developer": "Ice Flames",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T00:45:05Z",
+   "genres": [
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Czech",
+    "Polish",
+    "Russian",
+    "Hungarian"
+   ],
+   "metacritic": 69,
+   "name": "Pure Farming 2018",
+   "publisher": "Techland Publishing",
+   "releaseDate": "2018-03-13",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/534370/ss_860d058c0b09c07bcea4d202152265b5c886bf51.1920x1080.jpg?t=1639505951",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/534370/ss_424e5c614056441c6458d1c3d3b01356ac9853a8.1920x1080.jpg?t=1639505951",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/534370/ss_380f492dd0789d8d1a8778e50ce1af41e2b7b605.1920x1080.jpg?t=1639505951",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/534370/ss_dbc1c39a7f098451a79c30e2a7710a04b04ae6cc.1920x1080.jpg?t=1639505951",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/534370/ss_f616efe3cf79a8bb5bdd6362b7b14a7dc5e1f2cf.1920x1080.jpg?t=1639505951",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/534370/ss_cfd8513df9a15674e3d7b0662df1b4024695fd5b.1920x1080.jpg?t=1639505951",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/534370/ss_9a5cefa717a5571d3fe4a9928e2c034e14ea2b8c.1920x1080.jpg?t=1639505951",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/534370/ss_4d4f935868f5a835d1fe631950c80525c9b1f3ca.1920x1080.jpg?t=1639505951"
+   ]
+  },
+  "puyo puyo tetris 2": {
+   "about": "Two Legends Reunite for the Ultimate Puzzle Match\n\nJapan’s beloved puzzle game series Puyo Puyo and the world-renowned Tetris® game franchise have teamed up again to deliver even more Puyo-popping and Tetrimino-clearing fun!\n\n Competitive and Co-op Play Engage in up to 4 player online and local play, including competitive Puzzle Leagues and the new online co-op Boss Raid mode.",
+   "ageRating": null,
+   "appId": 1259790,
+   "developer": "SEGA",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T00:45:10Z",
+   "genres": [
+    "Action",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Puyo Puyo™ Tetris® 2",
+   "publisher": "SEGA",
+   "releaseDate": "2021-03-23",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1259790/ss_fbdcbad179eddd5b83d1b4fd5b46d5ab243f441b.1920x1080.jpg?t=1763679729",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1259790/ss_0b013ab56a0b37740d91467819337b2852577955.1920x1080.jpg?t=1763679729",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1259790/ss_d845eba2e517321d7a8b7db3922e942f8e8f397c.1920x1080.jpg?t=1763679729",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1259790/ss_74e29277a0477c13fe33d95df950de63e6fc26e6.1920x1080.jpg?t=1763679729",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1259790/ss_f126eaa38bc3e8e53d3bfcd62e29917f2b8f12a2.1920x1080.jpg?t=1763679729",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1259790/ss_e6e706fc9918352b60927a15f280fde23154272a.1920x1080.jpg?t=1763679729",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1259790/ss_bd12035b0a67d4277f412d649c3ceee5fa9e9857.1920x1080.jpg?t=1763679729",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1259790/ss_deb4b465acb4896fbc5b1c088297b6e0942c84ce.1920x1080.jpg?t=1763679729"
+   ]
+  },
   "puzzle bobble 3d vacation odyssey": {
    "fetchedAt": "2026-10-20T17:05:28Z",
    "miss": true
@@ -19677,6 +20270,56 @@
   "r type final 3 evolved": {
    "fetchedAt": "2026-10-18T04:32:51Z",
    "miss": true
+  },
+  "r4 ridge racer type 4 5 05cusa33746": {
+   "fetchedAt": "2026-10-23T00:45:13Z",
+   "miss": true
+  },
+  "rad rodgers radical edition": {
+   "about": "The Story\n\nRad is a rambunctious but spirited young boy who maybe plays too many video games. After dozing off at the tail end of a long night of gaming, Rad awakens to find his dusty old console has turned itself back on. Suddenly a vortex emerges and he's sucked into his TV, where he finds himself the star in his very own video game adventure.\n\nDusty is Rad's good-hearted but foul-mouthed, now-sentient game console.",
+   "ageRating": null,
+   "appId": 805660,
+   "developer": "Slipgate Ironworks™",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T00:45:18Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Simplified Chinese",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Russian"
+   ],
+   "metacritic": 73,
+   "name": "Rad Rodgers - Radical Edition",
+   "publisher": "THQ Nordic Mobile, 3D Realms",
+   "releaseDate": "2018-02-21",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/805660/ss_d565a644012bbf152a943f0cd05456ba45ab8396.1920x1080.jpg?t=1791462465",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/805660/ss_c2e4388d66567c671de6a069a91007b644e4d243.1920x1080.jpg?t=1791462465",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/805660/ss_4f4d7b6a1f628f929b38e532304deb683b114f8a.1920x1080.jpg?t=1791462465",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/805660/ss_dd19c3745b00ceedde75474e59b8cee7ede8360b.1920x1080.jpg?t=1791462465",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/805660/ss_f2fed9c7af8b79b9ac876161e127af41c2b7ac58.1920x1080.jpg?t=1791462465",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/805660/ss_0d8f2d25bf40d49d82f554bf0a6c668fb3be9d84.1920x1080.jpg?t=1791462465",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/805660/ss_0a55b4a091d9a067364d0428a250a9f53c0cba97.1920x1080.jpg?t=1791462465",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/805660/ss_2801ef5987bf9080fc52a4e9244f3d4d9de9af40.1920x1080.jpg?t=1791462465"
+   ]
   },
   "raiden iii x mikado maniax": {
    "about": "Soar sky-high in Raiden III x MIKADO MANIAX, an electrifying entry in the classic arcade shoot-‘em-up series! Customize your music, wallpapers, game mode, and more before launching into high-octane aerial action!\n\nStrap in and take off as Raiden III x MIKADO MANIAX soars onto the scene! This enhanced version of Raiden III brings the action to PC, complete with a fresh, high-resolution coat of paint.",
@@ -28441,6 +29084,6 @@
    ]
   }
  },
- "updatedAt": "2026-10-22T21:40:16Z",
+ "updatedAt": "2026-10-23T00:45:18Z",
  "version": 1
 }
