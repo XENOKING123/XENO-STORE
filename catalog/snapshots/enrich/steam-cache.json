@@ -20572,6 +20572,62 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1144200/ss_4b928ab5fa37af0ef9d0cf0727e76d1a2cd5d6c1.1920x1080.jpg?t=1790846188"
    ]
   },
+  "readyset heroes": {
+   "fetchedAt": "2026-10-23T07:32:51Z",
+   "miss": true
+  },
+  "real farm": {
+   "about": "Pull on your boots, fire up your tractor, and start your ‘Real Farm’. Go from farmhand to agricultural A-list in career mode, or cultivate the role of an established farmer in free mode. With two maps, you get to explore the American -and West European country side. Acquire land, manage staff, crops and animals, and drive powerful farm vehicles while you grow your reputation as you go.",
+   "ageRating": null,
+   "appId": 1321220,
+   "developer": "SOEDESCO",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:32:56Z",
+   "genres": [
+    "Adventure",
+    "Simulation",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "Italian",
+    "Spanish - Spain",
+    "French",
+    "German",
+    "Arabic",
+    "Czech",
+    "Danish",
+    "Dutch",
+    "Finnish",
+    "Hungarian",
+    "Japanese",
+    "Korean",
+    "Norwegian",
+    "Polish",
+    "Portuguese - Brazil",
+    "Romanian",
+    "Russian",
+    "Simplified Chinese",
+    "Swedish"
+   ],
+   "metacritic": null,
+   "name": "Real Farm – Gold Edition",
+   "publisher": "SOEDESCO",
+   "releaseDate": "2021-06-24",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1321220/ss_30b402b7bad238e3f70aebe4efcc313fb3604ad9.1920x1080.jpg?t=1751544247",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1321220/ss_9f5f34a7bb3e9438ab5526cb9f34ad1fc287ddda.1920x1080.jpg?t=1751544247",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1321220/ss_cd0df5822f7426bd7330a78768dbfe5426f9f55a.1920x1080.jpg?t=1751544247",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1321220/ss_e0312b87593ea8e435c9cc1b97f3652c1b814f3e.1920x1080.jpg?t=1751544247",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1321220/ss_6bae2e2427ea22a506cd76db97cd9fda2947dba8.1920x1080.jpg?t=1751544247",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1321220/ss_53b6c598c3d95eda4577966491dd53f23f0c03e1.1920x1080.jpg?t=1751544247",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1321220/ss_b663e643e9cd38506e97343c23e335abad7d42b2.1920x1080.jpg?t=1751544247",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1321220/ss_7147d8ba8f1c5dff588e3f8a490c3bfa47882410.1920x1080.jpg?t=1751544247"
+   ]
+  },
   "reanimal": {
    "about": "WHAT IS REANIMAL?\n\nThe original creators of Little Nightmares™ & Little Nightmares™ II have returned to take you on a more terrifying journey than ever before. In this co-op horror adventure game, you play as a brother & sister who go through hell to rescue their missing friends. Exploring by boat and on land, you must use your wits to survive, work together to escape the hellish island, and the dark secret that haunts you.",
    "ageRating": 18,
@@ -20791,6 +20847,53 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1282100/ss_62a6676be62fbb7f793d3975594b1e13316cc716.1920x1080.jpg?t=1764659459",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1282100/ss_bf0af9ee034cb0fb09275fe8e803b1f8ebe46aa0.1920x1080.jpg?t=1764659459",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1282100/ss_45e18d5f4d59910eb58b314787691c117ddc5969.1920x1080.jpg?t=1764659459"
+   ]
+  },
+  "remothered tormented fathers": {
+   "about": "Remothered: Tormented Fathers is the pure and realistic survival horror videogame. \n\nPsychology plays a huge role within the game: heroes and enemies are atypical and the line between good and evil is blurred. The plot is rich of unpredictable twists, but it is touching at the same time. The development of the game is similar to that of a film narration, where the player perfectly identifies himself with the character.",
+   "ageRating": null,
+   "appId": 633360,
+   "developer": "Stormind Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:33:01Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Italian",
+    "French",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Turkish",
+    "Russian",
+    "German",
+    "Simplified Chinese",
+    "Japanese",
+    "Polish",
+    "Hungarian",
+    "Traditional Chinese",
+    "Arabic",
+    "Korean"
+   ],
+   "metacritic": 77,
+   "name": "Remothered: Tormented Fathers",
+   "publisher": "Stormind Games",
+   "releaseDate": "2018-01-30",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/633360/ss_faf4106a0d8a19f2f94f7e985c3a7c8f64639dd2.1920x1080.jpg?t=1778183363",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/633360/ss_726b20a2edd3949ca28d8193b84be0e4ee1c0c4f.1920x1080.jpg?t=1778183363",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/633360/ss_3c5ace4ac7d27723e90db3775c235e9eab449165.1920x1080.jpg?t=1778183363",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/633360/ss_e84df34e07d4454125e28fe1e4731aa2240de339.1920x1080.jpg?t=1778183363",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/633360/ss_641c9ba11cf11704224b49aaed216c2f2976f1a4.1920x1080.jpg?t=1778183363",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/633360/ss_561ea210ab1842809dc1421d1c708dc1eca64693.1920x1080.jpg?t=1778183363",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/633360/ss_fbc6157bf11a2f1e447ce8512ad3218137377b3f.1920x1080.jpg?t=1778183363",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/633360/ss_58da6a4beb575050f91a0763bbd36366d9f5db98.1920x1080.jpg?t=1778183363"
    ]
   },
   "resident evil 2": {
@@ -21108,6 +21211,51 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1196590/ss_d296efbc9a5d87bf20b2ea19134f35ba203ae813.1920x1080.jpg?t=1776927117",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1196590/ss_d6c5bfb48d7fda343ed583750372b0d3e513ae17.1920x1080.jpg?t=1776927117",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1196590/ss_b790b617004b92423a855d5526a1eb29e05b6c78.1920x1080.jpg?t=1776927117"
+   ]
+  },
+  "return of the obra dinn": {
+   "about": "LOST AT SEA, 1803\nthe good ship\n\"OBRA DINN\"\n----------------\nBuilt 1796, London ~ 800 tons, 18ft draught\nCaptain R. WITTEREL ~ Crew 51 men\nLast voyage to Orient ~ Cape rendezvous unmet\n----------------\nContact East India Cy. London Office\nfor enquiries or testimonyAn Insurance Adventure with Minimal Color\n\nIn 1802, the merchant ship Obra Dinn set out from London for the Orient with over 200 tons of trade goods.",
+   "ageRating": null,
+   "appId": 653530,
+   "developer": "Lucas Pope",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:33:06Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Korean",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Arabic",
+    "Ukrainian"
+   ],
+   "metacritic": 89,
+   "name": "Return of the Obra Dinn",
+   "publisher": "3909",
+   "releaseDate": "2018-10-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/653530/ss_7dd3476ace2170e134141e487f9491d4c9d094f3.1920x1080.jpg?t=1686697594",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/653530/ss_380dc35237fde7d3863a44270abafc37924d1db4.1920x1080.jpg?t=1686697594",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/653530/ss_69b3c98eda3c3476a4dee6a1a220169ac70dcb6d.1920x1080.jpg?t=1686697594",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/653530/ss_4f555f01fa82723c28fcce8f0909570caaee8e8f.1920x1080.jpg?t=1686697594",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/653530/ss_7a8824f581b399abc52f598966b339fada982349.1920x1080.jpg?t=1686697594",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/653530/ss_f3e24e7a7f86ad925076f63b4e6cd86258f63d2c.1920x1080.jpg?t=1686697594",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/653530/ss_63206a87c60ff7b4a5e22d98f10b426a6789981d.1920x1080.jpg?t=1686697594",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/653530/ss_a9b3e454ca8d710838c9fe44b13eae7ace557bf4.1920x1080.jpg?t=1686697594"
    ]
   },
   "returnal": {
@@ -21656,6 +21804,14 @@
   },
   "robocop rogue city unfinished business": {
    "fetchedAt": "2026-10-14T05:06:53Z",
+   "miss": true
+  },
+  "rock band 4": {
+   "fetchedAt": "2026-10-23T07:33:08Z",
+   "miss": true
+  },
+  "rocksmith 2014": {
+   "fetchedAt": "2026-10-23T07:33:11Z",
    "miss": true
   },
   "rollercoaster tycoon adventures deluxe": {
@@ -22258,6 +22414,48 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1196090/ss_ea6e35a3e3a8c42523fbcf8db12b6cecc029f016.1920x1080.jpg?t=1681942670"
    ]
   },
+  "scholars mate": {
+   "about": "Scholar's Mate is an immersive first-person horror Escape Room experience that puts you in the shoes of Judith, a young woman who wakes up in the gloomy facilities of a psychiatric hospital.\n\n \n\nYou must escape from this macabre place by solving mysteries while avoiding capture by Eddie, your sinister hunter.\n\nChallenging puzzles.\n\nA first person horror escape room.\n\nExplore and solve the hidden secrets of the hospital to escape.\n\nRelentless pursuit by Eddie.",
+   "ageRating": null,
+   "appId": 2095510,
+   "developer": "JanduSoft",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:33:23Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Spanish - Spain",
+    "French",
+    "German",
+    "Portuguese - Portugal",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Latin America",
+    "Catalan",
+    "Turkish",
+    "Ukrainian"
+   ],
+   "metacritic": null,
+   "name": "Scholar's Mate",
+   "publisher": "JanduSoft",
+   "releaseDate": "2024-05-30",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2095510/ss_62792954409ba5018f175536b3db796866d5f91c.1920x1080.jpg?t=1761754319",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2095510/ss_c9ac4a09230cb947cf634c46f77e6e7ad97348d6.1920x1080.jpg?t=1761754319",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2095510/ss_fe55974df59dec7faa6475a760cfc6feecead2aa.1920x1080.jpg?t=1761754319",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2095510/ss_dd254feb592f41650c782f3b5178abb2cae40af0.1920x1080.jpg?t=1761754319",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2095510/ss_7b5689a97bed337af66cd663b6c30bfd167a74c6.1920x1080.jpg?t=1761754319",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2095510/ss_e8e0abf04dbbafd663bc56556fff6b6e0fc0fd43.1920x1080.jpg?t=1761754319",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2095510/ss_645cc355435fe7f4eed905e03dfbfa4c9e44db16.1920x1080.jpg?t=1761754319",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2095510/ss_ae3b0d30fbf00482af737182984a71f4c1e2e221.1920x1080.jpg?t=1761754319"
+   ]
+  },
   "scorn": {
    "about": "Scorn is an atmospheric first-person horror adventure game set in a nightmarish universe of odd forms and somber tapestry.\n\nIt is designed around the idea of \"being thrown into the world\". Isolated and lost inside this dream-like world, you will explore different interconnected regions in a non-linear fashion. The unsettling environment is a character itself.\n\nEvery location contains its own theme (story), puzzles and characters that are integral in creating a cohesive world.",
    "ageRating": null,
@@ -22663,6 +22861,10 @@
    "fetchedAt": "2026-10-21T23:21:44Z",
    "miss": true
   },
+  "shenmue 2": {
+   "fetchedAt": "2026-10-23T07:33:26Z",
+   "miss": true
+  },
   "shin megami tensei v vengeance": {
    "about": "The Shin Megami Tensei V: Vengeance Digital Deluxe Edition includes:\n\n• Shin Megami Tensei V: Vengeance Base Game \n\n• Mitama Dance of Wealth - Increases the drop rate of items that can be sold for Macca.\n\n• Mitama Dance of EXP - Increases drop rate of items that give the protagonist EXP and ally demons EXP.\n\n• Mitama Dance of Miracles - Increases drop rate of items that give Glory points needed to learn new bonus effects.",
    "ageRating": 17,
@@ -22976,6 +23178,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1636440/2cc8a7a9459fb8a8fe3dc62c6bec3b7471f7abdc/ss_2cc8a7a9459fb8a8fe3dc62c6bec3b7471f7abdc.1920x1080.jpg?t=1790222467"
    ]
   },
+  "skull islan rise of kong colossal edition": {
+   "fetchedAt": "2026-10-23T07:33:28Z",
+   "miss": true
+  },
   "skull island rise of kong": {
    "about": "Embark on a 3rd person action-adventure quest to avenge the death of your parents at the hands of the ultimate alpha predator: Gaw. Conquer waves of primal beasts and defeat the minions of your arch-nemesis on your way to becoming the rightful King of Skull Island.",
    "ageRating": null,
@@ -23012,6 +23218,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2097890/ss_e0f25032ee8aa506683004b4333270dcf5136d8f.1920x1080.jpg?t=1746026639",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2097890/ss_b0c9b3ecd36c900ad04b85648c2ff573a4857bf8.1920x1080.jpg?t=1746026639"
    ]
+  },
+  "skulls of the shogun bone a fide edition": {
+   "fetchedAt": "2026-10-23T07:33:31Z",
+   "miss": true
   },
   "skyrim": {
    "fetchedAt": "2026-10-17T07:00:52Z",
@@ -23143,6 +23353,45 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/768200/ss_1631e81472ca4a096db003bebe8554386ea89f62.1920x1080.jpg?t=1787165670",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/768200/ss_18683091788481e439072bc1aed0259a72b933eb.1920x1080.jpg?t=1787165670",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/768200/ss_6ac12b8930b52455bfa895510b829ad14af64273.1920x1080.jpg?t=1787165670"
+   ]
+  },
+  "smoots summer games": {
+   "about": "Get the Gold Medal!\n\nGet ready for Summer Games!!\n\n- Play athletics events from your sofa. Prepare yourself for the next season. \n\n- Smoot Summer Games is a sports arcade game for 1-4 players where you can play 18 athletics events.\n\n- Play with your favorite Smoot character in practice, Special Challenge and Championship game modes. \n\n- Smoots Summer Games is the perfect game to play with your friends and family.",
+   "ageRating": null,
+   "appId": 1601220,
+   "developer": "Kaneda Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer"
+   ],
+   "fetchedAt": "2026-10-23T07:33:36Z",
+   "genres": [
+    "Racing",
+    "Sports",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Portugal"
+   ],
+   "metacritic": null,
+   "name": "Smoots Summer Games",
+   "publisher": "JanduSoft",
+   "releaseDate": "2021-07-22",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1601220/ss_9f5d5e982a9761a55b3c4146b93b605704fb671c.1920x1080.jpg?t=1756365293",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1601220/ss_c32e562833611656d7030daf1ecd2c296e75a3ac.1920x1080.jpg?t=1756365293",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1601220/ss_3baf09042e83128202ed86777b54fa5fb1782ac1.1920x1080.jpg?t=1756365293",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1601220/ss_e95c18e8c8d1fa0eff4b3194f0881ff9073da857.1920x1080.jpg?t=1756365293",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1601220/ss_91c274b22c8658b697b3e35285e1bd25b482744f.1920x1080.jpg?t=1756365293",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1601220/ss_c950cb4842148bf8a66511255d7c055117565514.1920x1080.jpg?t=1756365293",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1601220/ss_618d2ad9f6c96d5f3c433eda00b2c37381b0e77f.1920x1080.jpg?t=1756365293",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1601220/ss_efb4ccf18c45c87e67e5b47fbe158096b921efdb.1920x1080.jpg?t=1756365293"
    ]
   },
   "sniper elite 3": {
@@ -23326,6 +23575,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1338770/ss_331bb5c4939b408d53423497cc8f74eb09d9523a.1920x1080.jpg?t=1747413239"
    ]
   },
+  "snk collection": {
+   "fetchedAt": "2026-10-23T07:33:13Z",
+   "miss": true
+  },
   "snowrunner": {
    "about": "SnowRunner puts you in the driver’s seat of powerful vehicles as you conquer extreme open environments with the most advanced terrain simulation ever, by the makers of multi-million seller MudRunner.\n\nOvercome mud, torrential waters, snow, and frozen lakes powered by Saber Interactive’s best-in-class terrain physics engine. Traverse wild environments inspired by North American and Eurasian wilderness that accurately react to your trucks’ weight, speed and momentum.",
    "ageRating": null,
@@ -23370,6 +23623,53 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1465360/ss_7d4c05e9201a8e891428b735d557b19c74f62219.1920x1080.jpg?t=1791469409",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1465360/ss_ae2416a02c4581fd9f3a6d00ea419d7cf599fecd.1920x1080.jpg?t=1791469409",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1465360/ss_8b7d5be8de0e50fd27317c4faf5dbb16faf61a40.1920x1080.jpg?t=1791469409"
+   ]
+  },
+  "somerville": {
+   "about": "In the wake of catastrophe you must find the means to make your family whole again. Somerville is a Sci-Fi adventure grounded in the intimate repercussions of large scale conflict.\nFAMILY \n\nYou embark on a journey to find the whereabouts of your family in the wake of an alien invasion.\n\nTHE INVASION \n\nLive through the personal struggles of a young family separated in the final moments of a global conflict against a hostile alien civilisation.",
+   "ageRating": null,
+   "appId": 1671410,
+   "developer": "Jumpship",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:33:41Z",
+   "genres": [
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Arabic",
+    "Czech",
+    "Danish",
+    "Dutch",
+    "Finnish",
+    "Hungarian",
+    "Norwegian",
+    "Russian",
+    "Swedish"
+   ],
+   "metacritic": null,
+   "name": "Somerville",
+   "publisher": "Jumpship",
+   "releaseDate": "2022-11-14",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1671410/ss_0ba90f93378b7e07587b3dec2b101f1595e3ac8a.1920x1080.jpg?t=1696415061",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1671410/ss_bfa6b1d1d6d5eb0ee10af3add23d6ad8f306b6ea.1920x1080.jpg?t=1696415061",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1671410/ss_982d8401f36076a8133278b81bf064a1e5984398.1920x1080.jpg?t=1696415061",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1671410/ss_3f8b99a90ec3ec87019b784feb0b7e952ecbc31b.1920x1080.jpg?t=1696415061",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1671410/ss_5cfb73ab27ed47b4060e3d30f1293cef5874530f.1920x1080.jpg?t=1696415061"
    ]
   },
   "sonic frontiers": {
@@ -23720,6 +24020,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1602080/ss_e5991d52f2f42be4a7613eca7734ad673d23eca9.1920x1080.jpg?t=1746539339"
    ]
   },
+  "sound shapes": {
+   "fetchedAt": "2026-10-23T07:33:44Z",
+   "miss": true
+  },
   "south of midnight": {
    "about": "UNRAVEL THE PAST\n\nFrom the creators of Contrast and We Happy Few, South of Midnight is a spellbinding third person action-adventure game set in the American Deep South. \n\nAs Hazel, you will explore the mythos and encounter creatures of Southern folklore in a macabre and fantastical world. When disaster strikes her hometown, Hazel is called to become a Weaver: a magical mender of broken bonds and spirits.",
    "ageRating": null,
@@ -23850,6 +24154,51 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2878220/e2d4be6c3d104cecf3354ad25d28d81e2d85c714/ss_e2d4be6c3d104cecf3354ad25d28d81e2d85c714.1920x1080.jpg?t=1789024005",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2878220/14ea56ec83eb85a74debbe6f90ab734afb8aebe9/ss_14ea56ec83eb85a74debbe6f90ab734afb8aebe9.1920x1080.jpg?t=1789024005",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2878220/6a21a082e25fa19fa6bd9e99c74ba4bc2a49c115/ss_6a21a082e25fa19fa6bd9e99c74ba4bc2a49c115.1920x1080.jpg?t=1789024005"
+   ]
+  },
+  "space crew": {
+   "fetchedAt": "2026-10-23T07:33:46Z",
+   "miss": true
+  },
+  "spike volleyball": {
+   "about": "50 national teams, men's and women's, go head to head in a realistic indoor volleyball simulation. Speed, reflexes, teamwork: all the elements needed for success are there for a spectacular sports experience. \n\r\nManage your own team and take it to the highest level.",
+   "ageRating": null,
+   "appId": 738550,
+   "developer": "Black Sheep Studio",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:33:51Z",
+   "genres": [
+    "Sports"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Korean",
+    "Japanese",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "Spike Volleyball",
+   "publisher": "Nacon",
+   "releaseDate": "2019-02-05",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738550/ss_e966e3e19aac67a8c2b619287d0291faeb765fa8.1920x1080.jpg?t=1725291174",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738550/ss_eb0e7cd73aea7b0ace8b8a29386f44356cf8d051.1920x1080.jpg?t=1725291174",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738550/ss_af3c8eaa2e15860d59977a9e929b4b7c543f223f.1920x1080.jpg?t=1725291174",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738550/ss_6ecc745675f27c3bfa6c0efbc481c24b81aaa798.1920x1080.jpg?t=1725291174",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738550/ss_6d65962bdd634b059c0ba1d31da411d2e5e075c4.1920x1080.jpg?t=1725291174"
    ]
   },
   "spirit of the north": {
@@ -24070,6 +24419,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2067050/ss_3f36000a3b890973c438c0b6cf1fff8995565572.1920x1080.jpg?t=1788534440"
    ]
   },
+  "stalker clear sky": {
+   "fetchedAt": "2026-10-23T07:33:53Z",
+   "miss": true
+  },
   "star ocean the divine force": {
    "about": "[Fly Around Areas Freely]\nIn STAR OCEAN THE DIVINE FORCE, characters can freely move in 360° degrees and roam the skies.\n\n[Move and explore freely in three dimensions: everything you see can be explored!]\nYou can move in three dimensions whilst flying around the largest environment ever. \nWhether you’re flying around and exploring rockfaces and roofs of buildings in the city, or leaping off cliffs to seamlessly enter battles, you’ll have more freedom in terms of both adventuring and battling.",
    "ageRating": null,
@@ -24144,6 +24497,47 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2238900/ss_20e278ea551ec9b9e2ebe354f9c999e421c3c49a.1920x1080.jpg?t=1782353780"
    ]
   },
+  "star wars battlefront": {
+   "about": "The Star Wars™ Battlefront™ Ultimate Edition has everything fans need to live out their Star Wars™ battle fantasies. In addition to the Star Wars Battlefront Deluxe Edition, Rebels and Imperials alike will be able to expand their galaxy with the Star Wars Battlefront Season Pass, which includes 4 expansion packs filled with new content and an exclusive Shoot First emote.Features\n\nImmersive and Photorealistic Interactive Entertainment\nVisit classic planets from the original Star Wars trilogy,…",
+   "ageRating": null,
+   "appId": 1237980,
+   "developer": "DICE",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:33:18Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Strategy"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Arabic",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Spanish - Latin America",
+    "Traditional Chinese",
+    "Spanish - Spain"
+   ],
+   "metacritic": 76,
+   "name": "STAR WARS™ Battlefront",
+   "publisher": "Electronic Arts",
+   "releaseDate": "2020-06-11",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237980/ss_52041f6a2fec4e6275b2bd2ce176e8a33974ed73.1920x1080.jpg?t=1777393769",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237980/ss_cbc09fc5075c34eeb5b1bb95823b4d811ed767bd.1920x1080.jpg?t=1777393769",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237980/ss_bdceba941839b54f97cc7c2aaef66302d9c005d7.1920x1080.jpg?t=1777393769",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237980/ss_cad65e8b278ff0e548c960d655c8cf746bc11239.1920x1080.jpg?t=1777393769",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237980/ss_321d400b28fe19b64563ff819eefe80e3c9691ec.1920x1080.jpg?t=1777393769"
+   ]
+  },
   "star wars dark forces remaster": {
    "about": "Star Wars™: Dark Forces Remaster has been brought to life by the team at Nightdive Studios, fully remastered through its proprietary KEX engine, allowing the game to run on modern gaming devices at up to 4K resolution at 120FPS. New and returning players will enjoy Star Wars: Dark Forces Remaster’s upgraded gameplay, high-resolution textures, enhanced lighting and rendering, and support for gamepads.",
    "ageRating": null,
@@ -24174,6 +24568,38 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2292260/ss_6bdb05dd7844e759838e33dfff4475791279035e.1920x1080.jpg?t=1774275644",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2292260/ss_99be511cfd376ba2e3e393de4058f32abcc0434f.1920x1080.jpg?t=1774275644",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2292260/ss_d6018efc72b98f4bf595d6551e1b958a51d079ab.1920x1080.jpg?t=1774275644"
+   ]
+  },
+  "star wars episode i racer": {
+   "about": "Two Engines. One Champion. No Limits. \n\r\n\n\r\nClimb on, strap in, and experience the pure adrenaline-pumping excitement of the Podracing sequence from Star Wars: Episode I The Phantom Menace.\n\r\n\n\r\nTake the controls as Anakin Skywalker, or any one of over 21 Podracers, and feel the full-force blast of two massive jet engines at simulated speeds of up to 600 mph. Rein in a turbine-driven chariot through 8 spectacular worlds.",
+   "ageRating": null,
+   "appId": 808910,
+   "developer": "LucasArts",
+   "features": [
+    "Single-player",
+    "Online multiplayer"
+   ],
+   "fetchedAt": "2026-10-23T07:33:59Z",
+   "genres": [
+    "Action",
+    "Racing"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "STAR WARS™ Episode I Racer",
+   "publisher": "Lucasfilm, Disney",
+   "releaseDate": "2018-11-16",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/808910/ss_57de81a28454e1835b62637c3d9f153fbf50737d.1920x1080.jpg?t=1741811672",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/808910/ss_bce2a1f65e35b10e2c02e587476b1ead40abc5c2.1920x1080.jpg?t=1741811672",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/808910/ss_4a3aef638f441b33b8fb8ff1352c16a2ff1c77b4.1920x1080.jpg?t=1741811672",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/808910/ss_55d7af66140a69d1038603a1e0d062f0a05ac3b2.1920x1080.jpg?t=1741811672",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/808910/ss_46f120d580720060860aa90c984a102523ba2f1d.1920x1080.jpg?t=1741811672",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/808910/ss_61fa918a14dcc10b12cdbd146ef36f19ecd7d2e7.1920x1080.jpg?t=1741811672",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/808910/ss_289b531d47705978712bc420a4b7d37125c138b4.1920x1080.jpg?t=1741811672",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/808910/ss_a2c6d472e2d49a2371def2bc94dbd2a4b76c3ef7.1920x1080.jpg?t=1741811672"
    ]
   },
   "star wars galactic racer": {
@@ -24268,6 +24694,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1172380/ss_8363c00f973874cc19a886e0370c6858a32e3793.1920x1080.jpg?t=1788256986",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1172380/ss_dc2d50077b559b54f58b6dff572a4cf9479c54db.1920x1080.jpg?t=1788256986",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1172380/ss_fcdc1d9848bbc604fb38e1b740eee00e90b0a366.1920x1080.jpg?t=1788256986"
+   ]
+  },
+  "star wars jedi knight 2 jedi outcast": {
+   "fetchedAt": "2026-10-23T07:34:01Z",
+   "miss": true
+  },
+  "star wars jedi knight jedi academy": {
+   "about": "Forge your weapon and follow the path of the Jedi\nJedi Knight: Jedi Academy is the latest installment of the highly acclaimed Jedi Knight series. Take on the role of a new student eager to learn the ways of the Force from Jedi Master Luke Skywalker. Interact with famous Star Wars characters in many classic Star Wars locations as you face the ultimate choice: fight for good and freedom on the light side or follow the path of power and evil to the dark side.",
+   "ageRating": null,
+   "appId": 6020,
+   "developer": "Raven Software",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:34:06Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain"
+   ],
+   "metacritic": 81,
+   "name": "STAR WARS™ Jedi Knight - Jedi Academy™",
+   "publisher": "LucasArts, Lucasfilm",
+   "releaseDate": "2009-09-16",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/6020/ss_b025e54e7be0c0374a70cc7cda53d94e3eaf245c.1920x1080.jpg?t=1741814908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/6020/ss_a760fa150ea3be09f438923933f85d63ccc9f943.1920x1080.jpg?t=1741814908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/6020/ss_c8dbb6346a948e122ac7de4b87a7299108974a00.1920x1080.jpg?t=1741814908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/6020/ss_722244b07245f5b64b097114c88eb9113aae1914.1920x1080.jpg?t=1741814908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/6020/ss_625ee87bb3234529357814446f67eafcc2819f6d.1920x1080.jpg?t=1741814908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/6020/ss_feb2570dddea903108312a7be9121360ae8ce38c.1920x1080.jpg?t=1741814908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/6020/ss_03e4bbe89a52098a916b59232e3572c3159c17cb.1920x1080.jpg?t=1741814908",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/6020/ss_6b6b4bef912f65f2ac0d3b92416f59554c049770.1920x1080.jpg?t=1741814908"
    ]
   },
   "star wars jedi survivor": {
@@ -24665,6 +25131,48 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1332010/ss_95ead64e0d31147f47f27ce828e8d5f52939dcf6.1920x1080.jpg?t=1785424330"
    ]
   },
+  "street fighter 30th anniversary collection": {
+   "about": "Celebrate Street Fighter’s historic legacy with the Street Fighter 30th Anniversary Collection. In this massive collection of 12 Street Fighter titles, perfect arcade balance makes it to consoles and PC for the first time ever. Four groundbreaking titles let you hop online and relive the arcade experience through the online Arcade Mode or play with friends - SFII Hyper Fighting, Super SFII Turbo, SF Alpha 3 and SFIII: Third Strike!\n\r\n\n\r\nThe celebration continues in the Museum, where fans and…",
+   "ageRating": null,
+   "appId": 586200,
+   "developer": "Digital Eclipse",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:34:11Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Portuguese - Brazil",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Street Fighter 30th Anniversary Collection",
+   "publisher": "Capcom U.S.A, Inc.",
+   "releaseDate": "2018-05-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586200/ss_5bc5867b0315072ec03ee98a22b8f6c61cbcce70.1920x1080.jpg?t=1779341474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586200/ss_59e2a0a9b795daa662ff0aeeb3b241648120116c.1920x1080.jpg?t=1779341474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586200/ss_4c7a03727337b0dc39f13d823fe135c7db3b2b43.1920x1080.jpg?t=1779341474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586200/ss_23514c0ab2b463aac9c2e0e74b95275c73ccc206.1920x1080.jpg?t=1779341474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586200/ss_6b666b8110403797f2afb75efe1ad08be2df3188.1920x1080.jpg?t=1779341474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586200/ss_9f62b5f1573d20f0eb4703c2bf9a56b95a9faa8e.1920x1080.jpg?t=1779341474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586200/ss_ed6635cf1013e67318eabf3cf1d09e831b4ba8ef.1920x1080.jpg?t=1779341474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586200/ss_b74d837f769e221b40fe4f41dae921be1b63052e.1920x1080.jpg?t=1779341474"
+   ]
+  },
   "street fighter 6": {
    "about": "Here comes Capcom’s newest challenger! Street Fighter™ 6 launches worldwide on June 2nd, 2023 and represents the next evolution of the series. \n\nPowered by Capcom’s proprietary RE ENGINE, the Street Fighter 6 experience spans across three distinct game modes featuring World Tour, Fighting Ground and Battle Hub.",
    "ageRating": null,
@@ -24749,6 +25257,38 @@
    "fetchedAt": "2026-10-21T18:42:01Z",
    "miss": true
   },
+  "sturmfront the mutant war ubel edition": {
+   "about": "SturmFront – The Mutant War: Übel Edition is a remake of Andrade Games’ debut game that aims to enhance every feature imaginable: Doubled content, enhanced gameplay, more graphics and more blood!\n\nThis is the ultimate version of SturmFront and a love letter to the arcade genre!\n\nIt is the year 1984 and it is the end of the world as we know it. A great plague, wrought by human hands, devoured all known life and puked forth a new and foreign kind of creature: the mutants.",
+   "ageRating": null,
+   "appId": 501530,
+   "developer": "Andrade Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:34:16Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "SturmFront - The Mutant War: Übel Edition",
+   "publisher": "Andrade Games",
+   "releaseDate": "2017-08-11",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/501530/ss_4d7021f83ba220136cc182f82398be62af00149d.1920x1080.jpg?t=1588238212",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/501530/ss_195af6952ac05252ab176583369a3ce6247f3496.1920x1080.jpg?t=1588238212",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/501530/ss_09004d2e7e5218dc2dc9dab4dbd2ae6e434c6bd7.1920x1080.jpg?t=1588238212",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/501530/ss_af03f97c583ad526741369c6d519c29402fc0da2.1920x1080.jpg?t=1588238212",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/501530/ss_5579a78bee9283cfa3c85854e62bfc29b4387a70.1920x1080.jpg?t=1588238212",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/501530/ss_c66ec98409fe8d8fc7b1bf28de55205dca9cc8a9.1920x1080.jpg?t=1588238212",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/501530/ss_d64ca1845b15d6635f6d2fdae8d29637ada8da53.1920x1080.jpg?t=1588238212",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/501530/ss_97adf2d7b130db00c413e8a916101b868bf84d5a.1920x1080.jpg?t=1588238212"
+   ]
+  },
   "styx blades of greed": {
    "about": "You play as Styx, a cunning goblin with a caustic sense of humor who has mastered the art of stealth. Your goal is to get your hands on Quartz, the most precious – and dangerous – resource in a world on the brink of war between elves, humans and orcs.\nStyx: Blades of Greed refines the proven formula of the first two games by making freedom and creativity central to the experience. Explore vast vertical environments and master new tools and powers.",
    "ageRating": 17,
@@ -24786,6 +25326,58 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3290690/ss_6c16015c621d70e39091ba3af62e4bdffe522532.1920x1080.jpg?t=1782382020",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3290690/ss_54011d695a81a99ffe91820c5d24cdd49c2118e2.1920x1080.jpg?t=1782382020",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3290690/3ea6a483a8fca3e4af0e2d3681a9ce4b9617259a/ss_3ea6a483a8fca3e4af0e2d3681a9ce4b9617259a.1920x1080.jpg?t=1782382020"
+   ]
+  },
+  "subnautica": {
+   "about": "Subnautica is an underwater adventure game set on an alien ocean planet. A massive, open world full of wonder and peril awaits you!Dive Into a Vast Underwater World\n\nYou have crash-landed on an alien ocean world, and the only way to go is down. Subnautica's oceans range from sun drenched shallow coral reefs to treacherous deep-sea trenches, lava fields, and bio-luminescent underwater rivers. Manage your oxygen supply as you explore kelp forests, plateaus, reefs, and winding cave systems.",
+   "ageRating": null,
+   "appId": 264710,
+   "developer": "Unknown Worlds Entertainment",
+   "features": [
+    "Single-player",
+    "Controller support",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-23T07:34:21Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Polish",
+    "Russian",
+    "Simplified Chinese",
+    "Turkish",
+    "Finnish",
+    "Italian",
+    "Czech",
+    "Hungarian",
+    "Spanish - Spain",
+    "Danish",
+    "Japanese",
+    "Korean",
+    "Portuguese - Brazil",
+    "Bulgarian",
+    "Ukrainian",
+    "Dutch",
+    "Swedish"
+   ],
+   "metacritic": 87,
+   "name": "Subnautica",
+   "publisher": "Unknown Worlds Entertainment",
+   "releaseDate": "2018-01-23",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/264710/ss_e182b6b20bb797500f9f63c561586d920d44e37c.1920x1080.jpg?t=1777456112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/264710/ss_970a13f246e33e0df26d93baf9f8e975732adb4b.1920x1080.jpg?t=1777456112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/264710/ss_5f2f2ea498cdc632cbffd6cf37c1a09670eb3272.1920x1080.jpg?t=1777456112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/264710/ss_cebc378d2f7bc78978c21db4e3c5e12ccd067349.1920x1080.jpg?t=1777456112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/264710/ss_0ace7f8b4350b8fbdd16345a76bc30545256e918.1920x1080.jpg?t=1777456112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/264710/ss_f0eeabe108c2bc2b3e370b9828fb280035b50db2.1920x1080.jpg?t=1777456112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/264710/ss_b28404f3d108cc15aebbb2c3d7cb17e587225662.1920x1080.jpg?t=1777456112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/264710/ss_623579a6693f6fc48033e619cacc4306f10eef15.1920x1080.jpg?t=1777456112"
    ]
   },
   "subnautica below zero": {
@@ -24929,6 +25521,86 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1913740/ss_fc9fadd92dcde332cb0097914c8b1cb7ab8734d0.1920x1080.jpg?t=1748337512"
    ]
   },
+  "super crazy rhythm castle": {
+   "about": "It’s Super Crazy Rhythm Castle, the chaotic rhythm adventure! A puzzling co-op mashup unlike anything you've ever heard – work together to think outside the box while keeping your combo. Solo, or with a band of up to three friends … \n… Can you conquer the castle?\n\nAn unforgettable journey with a light heart and a tapping foot. You’ll become one with the music and the madness. Unlikely heroes, approach Rhythm Castle!",
+   "ageRating": null,
+   "appId": 1812560,
+   "developer": "Second Impact Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:34:26Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Korean",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Japanese",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Spanish - Latin America",
+    "Italian"
+   ],
+   "metacritic": null,
+   "name": "SUPER CRAZY RHYTHM CASTLE",
+   "publisher": "KONAMI",
+   "releaseDate": "2023-11-13",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1812560/ss_e5c21b985baf155a30709c70ffadcbd3a6ba4857.1920x1080.jpg?t=1769071965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1812560/ss_a11d5a5d999c00da222f8cdba6a4bc4fe3e669eb.1920x1080.jpg?t=1769071965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1812560/ss_2d09e9f5f9a1be0e07c2c73b17aa56bd52fb706a.1920x1080.jpg?t=1769071965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1812560/ss_e080c1a2f12ec4a96393865356548c58ea365e37.1920x1080.jpg?t=1769071965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1812560/ss_24238635e83e6a3d0fce50987748aa321fe167d9.1920x1080.jpg?t=1769071965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1812560/ss_ba32ffd15d3f5b5a19fa872b13e3cb97c5780b84.1920x1080.jpg?t=1769071965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1812560/ss_9754a7bcffe05639fdbc0434998421ea457291d5.1920x1080.jpg?t=1769071965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1812560/ss_f95811519c17810dcce46f2a8e1bcef4eb48805c.1920x1080.jpg?t=1769071965"
+   ]
+  },
+  "super meat boy": {
+   "about": "Super Meat Boy is a tough as nails platformer where you play as an animated cube of meat who's trying to save his girlfriend (who happens to be made of bandages) from an evil fetus in a jar wearing a tux.\n \nOur meaty hero will leap from walls, over seas of buzz saws, through crumbling caves and pools of old needles. Sacrificing his own well being to save his damsel in distress.",
+   "ageRating": null,
+   "appId": 40800,
+   "developer": "Team Meat",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:34:31Z",
+   "genres": [
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Russian"
+   ],
+   "metacritic": 87,
+   "name": "Super Meat Boy",
+   "publisher": "",
+   "releaseDate": "2010-11-30",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/40800/ss_2482dad154fa38c32195a5301891ec7d9cefa7da.1920x1080.jpg?t=1700669950",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/40800/ss_652092068cc0d5e75fe3f199ad1bbc395806c1f2.1920x1080.jpg?t=1700669950",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/40800/ss_71f114e451550394500613d8ec8082ae3eac44e5.1920x1080.jpg?t=1700669950",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/40800/ss_d158c2843c714bf2294376e03d9c4d6c7cd96397.1920x1080.jpg?t=1700669950",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/40800/ss_8579adfaa58c863497e71df1b36331d37e51aeab.1920x1080.jpg?t=1700669950",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/40800/ss_84f8832c8cfb5d93dba79c099b0067e22447cbab.1920x1080.jpg?t=1700669950",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/40800/ss_1d69a008fd9716dd2c35f8c1b5ccd467cd1a2ad3.1920x1080.jpg?t=1700669950",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/40800/ss_caa6db7059ac1e918ea38d643ef752e2dccef970.1920x1080.jpg?t=1700669950"
+   ]
+  },
   "super meat boy 3d": {
    "about": "Super Meat Boy 3D is a tough as nails platformer where you play as an animated cube of meat who's trying to save his girlfriend (who happens to be made of bandages) from an evil fetus in a jar wearing a tux – IN 3D!\n\nOur meaty hero will leap from walls, over seas of buzz saws, through crumbling caves and pools of old trash sacrificing his own well-being to save his damsel in distress – IN 3D!",
    "ageRating": null,
@@ -24976,6 +25648,45 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3288210/642e90291698c85a287b944e41703a22013703dd/ss_642e90291698c85a287b944e41703a22013703dd.1920x1080.jpg?t=1791896041",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3288210/f33fd0eff644aabc233b5b57cbd1ca58cf462e4c/ss_f33fd0eff644aabc233b5b57cbd1ca58cf462e4c.1920x1080.jpg?t=1791896041",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3288210/762e6d310474854951baadd3f20c557dd326a9ff/ss_762e6d310474854951baadd3f20c557dd326a9ff.1920x1080.jpg?t=1791896041"
+   ]
+  },
+  "super monkey ball banana blitz hd": {
+   "about": "Hold onto your bananas, because Super Monkey Ball: Banana Blitz HD is rolling your way! \n\n Head back into the fantastical world of Super Monkey Ball and blast through 100 twisting and turning levels. Play as one of your favorite monkeys and take back your bananas from the space alien pirate king, Captain Crabuchin. For the first time ever, play as Sonic the Hedgehog and dash through the levels, and unlock a selection of costumes for every monkey in the base game.",
+   "ageRating": null,
+   "appId": 1061730,
+   "developer": "SEGA",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:34:36Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Super Monkey Ball: Banana Blitz HD",
+   "publisher": "SEGA",
+   "releaseDate": "2019-12-10",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1061730/ss_0a74db0dc7853b7198afbade95e43192337fe4eb.1920x1080.jpg?t=1718358459",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1061730/ss_48f36d4189c1109034acd21c0d1c43afce8171cd.1920x1080.jpg?t=1718358459",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1061730/ss_db4bf6abdfd134b89cb8eaa8ea58d7ae5b547c53.1920x1080.jpg?t=1718358459",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1061730/ss_bf239f6c3915c837ebce9b0d07bfd5bc1ca085f2.1920x1080.jpg?t=1718358459",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1061730/ss_373141e0f5ed38b5ab5686a9e5006bcc78eedb30.1920x1080.jpg?t=1718358459",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1061730/ss_a0b99486ed5b1dd5c09757f783800953e7b05d37.1920x1080.jpg?t=1718358459",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1061730/ss_6791794da07ba587c0adb15c9aeee85680de1ac6.1920x1080.jpg?t=1718358459"
    ]
   },
   "super robot wars y": {
@@ -25870,6 +26581,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1496590/ss_f529b0b9e3baf40a2aa7281c3ac3ddf7270600d1.1920x1080.jpg?t=1772227146"
    ]
   },
+  "tearaway unfolded": {
+   "fetchedAt": "2026-10-23T07:34:43Z",
+   "miss": true
+  },
   "teardown": {
    "about": "Plan and execute the perfect heist in a fully destructible world. In Teardown, anything can be broken, moved, or turned into a shortcut. Take your time and use creative problem-solving, brute force, and everything around you to create an efficient path through the level.\n\nRun, jump, drive, slingshot. Do whatever you need to collect targets, avoid robots, or steal whatever your clients ask for, alone or together with friends in multiplayer. And whatever you do… don’t get caught.",
    "ageRating": null,
@@ -26038,6 +26753,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1659600/ss_68254e7b762c0e80bcf85bdbe528a2145e55ab65.1920x1080.jpg?t=1756915028",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1659600/ss_4e3229de56c22becaa2bc57977e3b85d5aa915ee.1920x1080.jpg?t=1756915028"
    ]
+  },
+  "tekken 3": {
+   "fetchedAt": "2026-10-23T07:34:46Z",
+   "miss": true
   },
   "tekken 8": {
    "about": "TEKKEN 8 is the latest addition to the TEKKEN series, which celebrated its 30th anniversary in 2025, and has now sold over 59 million units worldwide.\n\nThe game features a rich roster of over 32 characters with meticulously detailed high-resolution models that push modern hardware to its limits. Experience exciting battles with new battle features like Heat, or get yourself out of tough situations with powerful ultimate moves known as Rage Arts.",
@@ -27444,6 +28163,53 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/768180/ss_11e75253066705cd5cb650bc203fc5c387b4cda5.1920x1080.jpg?t=1761212208",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/768180/ss_9312a85f0572525cb677b4b5c2250bee97d4c0ec.1920x1080.jpg?t=1761212208",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/768180/ss_6cbc2f18436718c55c1a4cf720c27bfc3d2c2bb6.1920x1080.jpg?t=1761212208"
+   ]
+  },
+  "tt isle of man ride on the edge 2": {
+   "about": "Without a shadow of a doubt it is one of the most dangerous motorbike races in the world. In TT Isle of Man – Ride On the Edge 2, you prove your worth in different championships before setting out to conquer the Snaefell Mountain Course, a 60 km-long track with both winding and straight sections that will push your riding skills to the limit. TT 2 features 17 additional tracks, 18 different motorbikes including classic models, and the official riders.",
+   "ageRating": null,
+   "appId": 1082180,
+   "developer": "KT Racing",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T07:34:41Z",
+   "genres": [
+    "Action",
+    "RPG",
+    "Racing",
+    "Sports",
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Korean",
+    "Japanese",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "TT Isle of Man: Ride on the Edge 2",
+   "publisher": "Nacon",
+   "releaseDate": "2020-03-19",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1082180/ss_b46a400c07400ed8e8647f08a096d42da07a090e.1920x1080.jpg?t=1725352899",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1082180/ss_072a31e89af3c54e381e4b301458f270122c86ef.1920x1080.jpg?t=1725352899",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1082180/ss_ea71a5fe47f1394135712218412ca66c412c46cb.1920x1080.jpg?t=1725352899",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1082180/ss_3821dc5c1c9a918383c2361fd97c50b0581b488c.1920x1080.jpg?t=1725352899",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1082180/ss_672684d92c5bf3cd611d64b9c1467cbb46dbe8c1.1920x1080.jpg?t=1725352899",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1082180/ss_7b7eb9b56157d2fb292b509d63d5c8b9a45446b2.1920x1080.jpg?t=1725352899",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1082180/ss_d9665450257e6e16bef4fa26264312e25f37f461.1920x1080.jpg?t=1725352899",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1082180/ss_5847fc0587f7c00b439dbb4c4fe74c0b32c126fd.1920x1080.jpg?t=1725352899"
    ]
   },
   "turok 2 seeds of evil": {
@@ -29084,6 +29850,6 @@
    ]
   }
  },
- "updatedAt": "2026-10-23T00:45:18Z",
+ "updatedAt": "2026-10-23T07:34:48Z",
  "version": 1
 }
