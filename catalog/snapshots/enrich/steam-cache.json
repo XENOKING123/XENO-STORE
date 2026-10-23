@@ -2352,6 +2352,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1695830/ss_33e5b4e46427d895b5fc5cad5ff149d5d0159466.1920x1080.jpg?t=1654887460"
    ]
   },
+  "bards tale 4 directors cut": {
+   "fetchedAt": "2026-10-23T13:28:23Z",
+   "miss": true
+  },
   "bassmaster fishing 2022": {
    "fetchedAt": "2026-10-21T23:22:12Z",
    "miss": true
@@ -5541,6 +5545,96 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1281590/ss_040ec91d46863fb975154e57773a80669d7c1e93.1920x1080.jpg?t=1728912876"
    ]
   },
+  "dark pictures anthology little hope": {
+   "about": "Experience the upgraded version of Little Hope, available now. \nNew to this upgrade: difficulty settings & QTE warnings, improved UI & interactions, updated bearing’s art & event triggers, increased walk speeds and wider accessibility options including subtitle sizing.\n\n*Free upgrade for owners of Little Hope on PC.\n\nThe Dark Pictures Anthology is a series of intense, standalone, branching cinematic horror games featuring single and multiplayer modes.",
+   "ageRating": 17,
+   "appId": 1194630,
+   "developer": "Supermassive Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:28:28Z",
+   "genres": [
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Arabic",
+    "Japanese",
+    "Korean",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Latin America",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "The Dark Pictures Anthology: Little Hope",
+   "publisher": "BANDAI NAMCO Entertainment Europe",
+   "releaseDate": "2020-10-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1194630/ss_580e1caf12ff6fc9dd0ebcc7a67b113d0a9d0b57.1920x1080.jpg?t=1731918218",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1194630/ss_54189a6f51e17cc83d8f631d6ef5dd7adf0e0725.1920x1080.jpg?t=1731918218",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1194630/ss_c0863c524933b50766285e15e644f4a54e843d8f.1920x1080.jpg?t=1731918218",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1194630/ss_f057f49b300f2423fdbf6ba3d42778bea29d6997.1920x1080.jpg?t=1731918218",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1194630/ss_34a7e87cd03a4283353eafa1f34206bff92ed135.1920x1080.jpg?t=1731918218",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1194630/ss_ef384b5da8b9df01df3e1c02d9775444c16c80f0.1920x1080.jpg?t=1731918218",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1194630/ss_6b97f7774c1253fd9a082c8910dbaf38c528f9bf.1920x1080.jpg?t=1731918218",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1194630/ss_264b7492cb064cc71b065ed4f2809dff89890075.1920x1080.jpg?t=1731918218"
+   ]
+  },
+  "dark pictures anthology man of medan": {
+   "about": "Experience the upgraded version of Man of Medan, available now.\nNew to this upgrade: difficulty settings & QTE warnings, improved UI & interactions, updated bearing’s art & event triggers, increased walk speeds and wider accessibility options including subtitle sizing. \nDiscover an extended playable chapter “Flooded”, introducing new deaths in this climatic ending to the game!\n\n*Free upgrade for owners of Man of Medan on PC.",
+   "ageRating": 17,
+   "appId": 939850,
+   "developer": "Supermassive Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:28:33Z",
+   "genres": [
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Arabic",
+    "Japanese",
+    "Korean",
+    "Portuguese - Brazil",
+    "Traditional Chinese",
+    "Spanish - Latin America",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": 75,
+   "name": "The Dark Pictures Anthology: Man of Medan",
+   "publisher": "BANDAI NAMCO Entertainment Europe",
+   "releaseDate": "2019-08-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/939850/ss_1af0e37de162c10f6c17160801f5941f08cfcc37.1920x1080.jpg?t=1728913265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/939850/ss_47b3cc64b4b2637f6c988eeb64ed2e5efc80ea9b.1920x1080.jpg?t=1728913265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/939850/ss_a839dd472bba49ff3f1f38699a35b7e9455e9ecb.1920x1080.jpg?t=1728913265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/939850/ss_d4c61629dd5f19edef4a3a17c370fdcbc9d70e7c.1920x1080.jpg?t=1728913265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/939850/ss_bfd7de1d7ea5676b743e1b4c09a318cdb6936d51.1920x1080.jpg?t=1728913265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/939850/ss_5f175b9d054f45a0209b2c5030c0057ee12939f0.1920x1080.jpg?t=1728913265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/939850/ss_55b2b81fbe7a228e1aee6daf50ad6f2e97e740f8.1920x1080.jpg?t=1728913265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/939850/ss_08b1c72e5951fcdde9b688147553048aff2c0c09.1920x1080.jpg?t=1728913265"
+   ]
+  },
   "dark pictures anthology the devil in me": {
    "about": "A series of stand-alone branching cinematic horror games from the studio behind Until Dawn. Easy to pick-up and play in short sessions, alone or with friends. The Devil in Me is the fourth game in the series and the Season One finale. \n \nA group of documentary film makers receive a mysterious call inviting them to a modern-day replica of serial killer H.H. Holmes’ ‘Murder Castle’.",
    "ageRating": 18,
@@ -7501,6 +7595,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1579100/ss_ad39e0ec1a9a9f2875614b8833ec053151a0b8e2.1920x1080.jpg?t=1727138847",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1579100/ss_80d3a19dedc7c9ad9892eb3267681441ab831451.1920x1080.jpg?t=1727138847",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1579100/ss_0492dc8a6319c02d1f15b299edfc0402623fd61d.1920x1080.jpg?t=1727138847"
+   ]
+  },
+  "dungeon of naheulbeuk the amulet of chaos": {
+   "about": "Are you ready to dive into a tactical RPG chock-full of charm, humor and crazy characters?! \n\nThey are clumsy, inexperienced and feisty but...they’ll have to endure each other’s company to get the dungeon’s treasure. \n\nHowever, a feeling of déjà-vu quickly arises... \n\nGuide this team of unlikely heroes in an adventure full of humor and chaos! \n\nThe Naheulbeuk universe is an original creation by French author John Lang.",
+   "ageRating": null,
+   "appId": 970830,
+   "developer": "Artefacts Studio",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:28:38Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Strategy",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Simplified Chinese",
+    "Spanish - Spain",
+    "Russian"
+   ],
+   "metacritic": 72,
+   "name": "The Dungeon Of Naheulbeuk: The Amulet Of Chaos",
+   "publisher": "Dear Villagers, E-Home Entertainment",
+   "releaseDate": "2020-09-17",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/970830/ss_6fe6530b84ab52cf9ebdb94732fd8dc008ae28d7.1920x1080.jpg?t=1721835298",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/970830/ss_4a6869418a1da1b5c222be368e837db6aad6f86a.1920x1080.jpg?t=1721835298",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/970830/ss_b56de87aaf981006a52750fbfb854b129c29d287.1920x1080.jpg?t=1721835298",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/970830/ss_9ef7c08d881ae0549148d10e7e6c6b1d221a9129.1920x1080.jpg?t=1721835298",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/970830/ss_247c12a5938d15c7c90ffac222a963ad4f045fc9.1920x1080.jpg?t=1721835298",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/970830/ss_73ff218cb0c78c25d5e20d369413561ef2bdc893.1920x1080.jpg?t=1721835298"
    ]
   },
   "dusk diver 2": {
@@ -11817,6 +11949,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2561580/ss_a6b53ec7766957393c5bd80e29eb0f846d6335ee.1920x1080.jpg?t=1750952943"
    ]
   },
+  "horror sense daruma san ga koronda": {
+   "fetchedAt": "2026-10-23T13:28:06Z",
+   "miss": true
+  },
   "horror tales the wine": {
    "about": "Mediterranean Horror: Explore the forsaken capital of an awe-inspiring archipelago. Do not let yourself be fooled by the gentle sea breeze, the Mediterranean vistas or the comforting summer sun. Since the Devil's Fevers pandemic ravaged the city, it was abandoned, and now only horrific nightmares await there. \n\nSurvive your Nemesis: Someone is relentlessly hunting you. Suffer and agonize while you try to run away from the encounters with this strange stalker obsessed with you.",
    "ageRating": null,
@@ -12200,6 +12336,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/751060/ss_2910b767f1f1dfe4931b92e47a8c9852d12f9777.1920x1080.jpg?t=1695198805",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/751060/ss_62e09c62a1757c9b56bb5aa843a66e705769bfb2.1920x1080.jpg?t=1695198805"
    ]
+  },
+  "idolm ster stella stage": {
+   "fetchedAt": "2026-10-23T13:28:41Z",
+   "miss": true
   },
   "ikai": {
    "about": "Ikai is a first-person psychological horror game drawing inspiration from Japanese folklore. Live the horror by the hand of its defining yokais and submerge into the superstitions of the past driven by a unique story and exploration.\n\nIkai embodies the spirit of the classical psychological horror genre with a defenseless main character incapable of attacking the evil creatures.",
@@ -13632,6 +13772,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2769080/ss_fe19635f02b46df1120c0e55c2e7847020f18b4b.1920x1080.jpg?t=1760966155"
    ]
   },
+  "kowloons gate vr suzaku": {
+   "fetchedAt": "2026-10-23T13:27:53Z",
+   "miss": true
+  },
   "la mulana": {
    "about": "LA-MULANA is an “Archaeological Ruin Exploration Action Game,” bringing the classic appeal of adventure with the punishing difficulty of retro-inspired gaming. Search inside ancient ruins, seeking out the “Secret Treasure of Life” – which sleeps in the sprawling ruins of “LA-MULANA” and is said to be the beginning of all civilization. Unfortunately, priceless artifacts very rarely give themselves up easily.",
    "ageRating": null,
@@ -13810,6 +13954,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1359920/ss_0f2547f2e3ebc66232230c8116d773712d4e1280.1920x1080.jpg?t=1787733190",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1359920/ss_bbdb2e59886e0367649a2b051c12766cf5a6fa22.1920x1080.jpg?t=1787733190"
    ]
+  },
+  "last guardian": {
+   "fetchedAt": "2026-10-23T13:27:48Z",
+   "miss": true
   },
   "last of us part i": {
    "about": "Experience the emotional storytelling and unforgettable characters in The Last of Us™, winner of over 200 Game of the Year awards.\n\nIn a ravaged civilization, where infected and hardened survivors run rampant, Joel, a weary protagonist, is hired to smuggle 14-year-old Ellie out of a military quarantine zone. However, what starts as a small job soon transforms into a brutal cross-country journey.",
@@ -14038,6 +14186,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2521380/ss_c173764c2ca0c20534386244717d1a896fab9cdd.1920x1080.jpg?t=1769814502",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2521380/ss_599225e5822da0fe08daad1b95582808417603f7.1920x1080.jpg?t=1769814502"
    ]
+  },
+  "legend of heroes trails through daybreak 2": {
+   "fetchedAt": "2026-10-23T13:28:48Z",
+   "miss": true
   },
   "lego batman 3 beyond gotham": {
    "about": "The best-selling LEGO Batman videogame franchise returns in an out-of-this-world, action-packed adventure! In LEGO Batman™ 3: Beyond Gotham, the Caped Crusader joins forces with the super heroes of the DC Comics universe and blasts off to outer space to stop the evil Brainiac from destroying Earth. Using the power of the Lantern Rings, Brainiac shrinks worlds to add to his twisted collection of miniature cities from across the universe.",
@@ -14453,6 +14605,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405310/ss_05cd9ddb2c40475c65ace0b484d230d62d51c0f2.1920x1080.jpg?t=1780599434",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405310/ss_e8e25986fcf81ce6b7b79837d3381e97fcf55970.1920x1080.jpg?t=1780599434",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405310/ss_6a619b78524dbf5939b1c576a4ca3d1a0ba3cd59.1920x1080.jpg?t=1780599434"
+   ]
+  },
+  "lego movie videogame": {
+   "about": "Join Emmet and an unlikely group of resistance fighters in their heroic quest to thwart Lord Business’ evil plans—a mission that Emmet is hopelessly and hilariously unprepared for.  It’s a wild ride with a surprising mix of over 90 playable characters including Batman, Superman, Wonder Woman, the Green Ninja, Gandalf, Shakespeare, Cleopatra and more.",
+   "ageRating": null,
+   "appId": 267530,
+   "developer": "TT Fusion, Traveller's Tales",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:28:46Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "Spanish - Spain",
+    "Danish",
+    "Dutch",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "German"
+   ],
+   "metacritic": null,
+   "name": "The LEGO® Movie - Videogame",
+   "publisher": "Warner Bros. Interactive Entertainment",
+   "releaseDate": "2014-02-07",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/267530/ss_a8db01f73a8d908c483d046cc30df6d8b99f1836.1920x1080.jpg?t=1780600195",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/267530/ss_e578f88ec3786135c087d874ec46dc0df4a267b5.1920x1080.jpg?t=1780600195",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/267530/ss_2aa151fcb5aeae73700e0932e25b1e95e3d2aebf.1920x1080.jpg?t=1780600195",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/267530/ss_f3d77ab0ec97c3099aa8cb4ade7dce5484abab40.1920x1080.jpg?t=1780600195",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/267530/ss_5d221f6285bdb75f7900512dd4ade1ca37980c72.1920x1080.jpg?t=1780600195"
    ]
   },
   "lego party": {
@@ -16363,6 +16555,49 @@
   "metro redux": {
    "fetchedAt": "2026-10-21T00:41:26Z",
    "miss": true
+  },
+  "metronomicon slay the dance floor": {
+   "about": "Packing in a fully-fledged story mode with a colorful cast of musically-empowered heroes and villains, The Metronomicon sees you take control of a party of eight new masters of the “rhythmic combat arts” to wage musical warfare against a multitude of dance-mongering fiends. Control up to four concurrent heroes as they cast powerful spells, buff their teammates, and beat down their enemies with a variety of magical loot and groovin’ dance moves.",
+   "ageRating": null,
+   "appId": 416790,
+   "developer": "Puuba",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:28:53Z",
+   "genres": [
+    "Action",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Russian",
+    "Japanese"
+   ],
+   "metacritic": 79,
+   "name": "The Metronomicon: Slay The Dance Floor",
+   "publisher": "Akupara Games",
+   "releaseDate": "2016-09-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/416790/ss_37dd7e374f8f35cfc6da74188a824b3a56a31bd0.1920x1080.jpg?t=1791223598",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/416790/ss_9c803506a794b38731a0fd5174e2e7360a69a5f6.1920x1080.jpg?t=1791223598",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/416790/ss_5ee83590dc51d930321874b31dd35b3d3a044763.1920x1080.jpg?t=1791223598",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/416790/ss_56729ce9f794c5651d95b94efc3bd9397c97232e.1920x1080.jpg?t=1791223598",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/416790/ss_a574525dc3cd50e6df8767d32e62a91d5f05da75.1920x1080.jpg?t=1791223598",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/416790/ss_6ed37c3d562d801e1f2b91b4e275ef4d48b7be39.1920x1080.jpg?t=1791223598",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/416790/ss_5614c103fa074a9a1f453d2ee9204baba6e09816.1920x1080.jpg?t=1791223598",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/416790/ss_066e09a86e80dac1e687c986b9567b724f83c8d5.1920x1080.jpg?t=1791223598"
+   ]
   },
   "miasma chronicles": {
    "about": "In the not-too-distant future. America has been torn apart by a savage force known only as the ‘Miasma’.\n\nMeet Elvis, a young man brought to the mining town of Sedentary as a baby. Left by his mother in the care of a robotic older ‘brother’ and given a mysterious glove with which he can control the Miasma.\n\nJoin the brothers on a quest across a post-apocalyptic wasteland to find the answers they crave. Answers which may change the course of human history forever.",
@@ -18432,6 +18667,45 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/325370/ss_7d600bd79199b06f98b479781303982c1a809c60.1920x1080.jpg?t=1657649473"
    ]
   },
+  "occupation": {
+   "about": "Your role is to uncover evidence as a journalist by sneaking through restricted areas and questioning people on their actions through a series of one-on-one interviews. All this takes place in a detailed, systems-driven world where people will react to your actions and where time is your biggest enemy.\n\nAt White Paper Games, we focus on world’s that feel lived in through non-linear spaces and objectives that can be solved with multiple approaches.",
+   "ageRating": 13,
+   "appId": 765880,
+   "developer": "White Paper Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:28:58Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Korean",
+    "Polish",
+    "Russian"
+   ],
+   "metacritic": 68,
+   "name": "The Occupation",
+   "publisher": "Balor Games",
+   "releaseDate": "2019-03-05",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/765880/ss_233a1e4aa792883e4e6ff0cb364e147af33a6320.1920x1080.jpg?t=1786607394",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/765880/ss_c98b5b294765eb1d348167c17fae86d7cc0f3849.1920x1080.jpg?t=1786607394",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/765880/ss_8779e882e953bc920ce2999fdd1c8b71deb8faab.1920x1080.jpg?t=1786607394",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/765880/ss_4d8188f2bda1a287d9b5a8c220e7ef39e5caffdc.1920x1080.jpg?t=1786607394",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/765880/ss_faa44075884c121c2393070dcc7856058893a2f1.1920x1080.jpg?t=1786607394",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/765880/ss_07c7bdfa1e4634101109dfcca8b391c2e0020159.1920x1080.jpg?t=1786607394",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/765880/ss_75a8abc9fb861bb413bdbbd4f6ec67de15457509.1920x1080.jpg?t=1786607394",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/765880/ss_5f310fbbd2bbb786d4c7821b48153bc48519511c.1920x1080.jpg?t=1786607394"
+   ]
+  },
   "oddworld soulstorm": {
    "about": "As 300 freshly liberated slaves celebrate their escape from the industrial megacomplex of RuptureFarms, a new menace rises. They will soon discover that, although their physical bonds were broken, they are far from free. \n\nJoin the revolution as you guide their savior, Abe, on an almost impossible journey to uncover the truth behind the generations of disinformation and misleading news that have brainwashed his people.",
    "ageRating": null,
@@ -18775,6 +19049,37 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2638890/884ef55e720a36debf01d36f742a6db07e12320f/ss_884ef55e720a36debf01d36f742a6db07e12320f.1920x1080.jpg?t=1790383151",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2638890/ca28a3116080d0d6ab309545d08171d1b4cc7dc5/ss_ca28a3116080d0d6ab309545d08171d1b4cc7dc5.1920x1080.jpg?t=1790383151",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2638890/38db13c961be5bb407a0c42387e7c111886ced5f/ss_38db13c961be5bb407a0c42387e7c111886ced5f.1920x1080.jpg?t=1790383151"
+   ]
+  },
+  "orc slayer": {
+   "about": "The world has been overrun by Orcs, the few humans who survived the great Orc uprising have fled their homes. Towns and castles have been left abandoned, the world is at the mercy of the ferocious invading armies. Stubborn and determined you refused to run or die, hiding in the thick forest near your home plotting your revenge has led to the creation of a weapon to rival any sword, counter any magic and pierce damn near anything with lethal force.",
+   "ageRating": null,
+   "appId": 374990,
+   "developer": "Cooply Solutions",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:28:03Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Orc Slayer",
+   "publisher": "Cooply Solutions",
+   "releaseDate": "2015-11-05",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/374990/ss_96fba6e686579bf15dc5abda8f62b66281401fad.1920x1080.jpg?t=1458675040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/374990/ss_d70af2614626c0c228e4e90b23fdc4a61df46d7c.1920x1080.jpg?t=1458675040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/374990/ss_99f2bc278c22345955e9b4f3ef050a329de3b983.1920x1080.jpg?t=1458675040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/374990/ss_96ac20941c5bfd0c8422a56243ba54f93a10dcc4.1920x1080.jpg?t=1458675040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/374990/ss_452fa77da13a0ced264578cdc0bac22773d8fde5.1920x1080.jpg?t=1458675040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/374990/ss_537d673df8a890b28e47361c4ab044ed5f91c1ed.1920x1080.jpg?t=1458675040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/374990/ss_7d39847dd93ee6a62f08c94ac72b310a57b3a941.1920x1080.jpg?t=1458675040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/374990/ss_41673eb8ee2818e66c657a50bf18985a021426cb.1920x1080.jpg?t=1458675040"
    ]
   },
   "order 1886": {
@@ -19423,6 +19728,10 @@
   },
   "persona 5 dancing in starlight": {
    "fetchedAt": "2026-10-23T00:44:35Z",
+   "miss": true
+  },
+  "personality and psychology premium": {
+   "fetchedAt": "2026-10-23T13:28:08Z",
    "miss": true
   },
   "pga tour 2k21": {
@@ -22195,6 +22504,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2094550/ss_66a1719dca9818bb3051e1922aa70f6a25af997c.1920x1080.jpg?t=1707744718"
    ]
   },
+  "saint seiya soldiers soul": {
+   "fetchedAt": "2026-10-23T13:27:51Z",
+   "miss": true
+  },
   "saints row": {
    "about": "As the future Boss, with Neenah, Kevin, and Eli by your side, you’ll form The Saints – and take on Los Panteros, The Idols, and Marshall as you build your empire across the streets of Santo Ileso and battle for control of the city. Ultimately Saints Row is the story of a start-up company, it’s just that the business The Saints are in happens to be crime.",
    "ageRating": 17,
@@ -23625,6 +23938,45 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1465360/ss_8b7d5be8de0e50fd27317c4faf5dbb16faf61a40.1920x1080.jpg?t=1791469409"
    ]
   },
+  "sojourn": {
+   "about": "A tale of light, darkness, and the nature of reality\n\nTraverse a thought-provoking puzzle game and its immersive colour-drenched world of light and shadow.\n\nIn The Sojourn you arrive in a mysterious land, where lights guide you forward. It’s not long until the world reveals itself to be full of challenges.",
+   "ageRating": null,
+   "appId": 794960,
+   "developer": "Shifting Tides",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:29:03Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": 78,
+   "name": "The Sojourn",
+   "publisher": "Iceberg Interactive",
+   "releaseDate": "2020-09-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/794960/ss_29c335e98d949d24af3bd7c0fe56b5122ae9669a.1920x1080.jpg?t=1772459560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/794960/ss_a714f4cb7e8ee547db5e5ad2ac89bb83cae0eaa6.1920x1080.jpg?t=1772459560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/794960/ss_257b3dba405c12be5fdae89425041b9a112606b3.1920x1080.jpg?t=1772459560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/794960/ss_efba56fd68eeb2315cad9b0991e367e1a49ea8c2.1920x1080.jpg?t=1772459560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/794960/ss_8e974fa8c9c4e6536180d628d6d5dc0dfff7fdd8.1920x1080.jpg?t=1772459560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/794960/ss_de84f3b8536155a1e3d0a1a726b1b02c5d472ecc.1920x1080.jpg?t=1772459560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/794960/ss_839b2544fd3314437a2056066b3eabebc56209be.1920x1080.jpg?t=1772459560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/794960/ss_2ff90309fffeb8260c94a908bafa6b8be8ac4a5b.1920x1080.jpg?t=1772459560"
+   ]
+  },
   "somerville": {
    "about": "In the wake of catastrophe you must find the means to make your family whole again. Somerville is a Sci-Fi adventure grounded in the intimate repercussions of large scale conflict.\nFAMILY \n\nYou embark on a journey to find the whereabouts of your family in the wake of an alien invasion.\n\nTHE INVASION \n\nLive through the personal struggles of a young family separated in the final moments of a global conflict against a hostile alien civilisation.",
    "ageRating": null,
@@ -23851,6 +24203,50 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2486820/b65b0ccb468851692c21e5811446bebbcc267721/ss_b65b0ccb468851692c21e5811446bebbcc267721.1920x1080.jpg?t=1791936165",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2486820/10bd6db8995132d5316b5e14f379a2fc4fe6aca9/ss_10bd6db8995132d5316b5e14f379a2fc4fe6aca9.1920x1080.jpg?t=1791936165",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2486820/8ba342c61837566af2d6fbbc28602b2a6c350f1e/ss_8ba342c61837566af2d6fbbc28602b2a6c350f1e.1920x1080.jpg?t=1791936165"
+   ]
+  },
+  "sonic superstars": {
+   "about": "Adventure through the mystical Northstar Islands in this all-new take on classic 2D Sonic high-speed action platforming. Play as Sonic, Tails, Knuckles, and Amy and harness all-new Emerald powers to move and attack in dynamic new ways. Navigate gorgeous, never-before-seen environments solo or with up to 3 other players and stop Dr.",
+   "ageRating": null,
+   "appId": 2022670,
+   "developer": "SEGA",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Cross-platform multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:27:58Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Thai",
+    "Traditional Chinese",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "SONIC SUPERSTARS",
+   "publisher": "SEGA",
+   "releaseDate": "2023-10-16",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2022670/ss_4e6e80e861ac1bae894b82dcb849a0a18628e284.1920x1080.jpg?t=1783397336",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2022670/ss_2b0d44a8694bc6d92559a0b49f89beb2a901420b.1920x1080.jpg?t=1783397336",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2022670/ss_55087a2c140ccadb0e38e7c2a91aeb73fa66c226.1920x1080.jpg?t=1783397336",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2022670/ss_51bee5d4b456e686c9f6e7063eae26dd4b0287dc.1920x1080.jpg?t=1783397336",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2022670/ss_2684fbea6f81bec2f81d2ce54b24a960408729cd.1920x1080.jpg?t=1783397336"
    ]
   },
   "sonic x shadow generations": {
@@ -26809,6 +27205,88 @@
    "fetchedAt": "2026-10-19T23:42:35Z",
    "miss": true
   },
+  "tennis world tour": {
+   "about": "THE BIGGEST STARS IN TENNIS\n• Play as one of the 30 best tennis players in the world: Roger Federer, Angelique Kerber, Stan Wawrinka and many of the sport's legends.\n\nPERFECTLY REPRODUCED MOVEMENT\n• Realistic animations, carefully reproduced in the game using motion capture technology, help you learn all of the shots used in modern tennis: the slice, lob, top spin, etc.\n\nEVERY PLAYING SURFACE\n• 18 types of courts: hard, clay, grass, carpet and even hardwood.",
+   "ageRating": null,
+   "appId": 692030,
+   "developer": "Breakpoint",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:28:13Z",
+   "genres": [
+    "Sports"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "Tennis World Tour",
+   "publisher": "Nacon",
+   "releaseDate": "2018-06-12",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/692030/ss_dafffff7586ca689a04922a78d17015961a06a35.1920x1080.jpg?t=1725352509",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/692030/ss_b83409983cdbbdabfc1f79223300ce37a94a1de7.1920x1080.jpg?t=1725352509",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/692030/ss_8a8f28947efed789458a26151882a61ec8fae322.1920x1080.jpg?t=1725352509",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/692030/ss_3bfd0b5b481ca636809c26f52a719864ce626f74.1920x1080.jpg?t=1725352509",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/692030/ss_6cdbf44ec8e58d5a85e5b838e9676af80d9a1ef2.1920x1080.jpg?t=1725352509"
+   ]
+  },
+  "tennis world tour 2": {
+   "about": "Play as the world's top players or create your own player to try and dominate the world rankings. Faster paced, with more animations and more realism: experience the true sensations of tennis, in singles or doubles games, and challenge your friends locally or online.THE REAL LIFE OF A TENNIS PRO\n\nYour player, your decisions. In Career mode, you manage your season, your staff, your equipment and your sponsors.",
+   "ageRating": null,
+   "appId": 1223910,
+   "developer": "Big Ant Studios",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:28:18Z",
+   "genres": [
+    "Sports",
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Tennis World Tour 2",
+   "publisher": "Nacon",
+   "releaseDate": "2020-09-24",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1223910/ss_10195bd3bc5acb0ab458af82dbedd1a1f86e86a4.1920x1080.jpg?t=1725352603",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1223910/ss_451c2a71b7d9eaacf053a96e6c78be8c32c3f57f.1920x1080.jpg?t=1725352603",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1223910/ss_22bcc63140626ed7203b07e1dd4e1627f973a977.1920x1080.jpg?t=1725352603",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1223910/ss_edf23363fc0ad06357c5c540a7f0af3ff853a21d.1920x1080.jpg?t=1725352603"
+   ]
+  },
   "terminator 2d no fate": {
    "about": "Experience the events of ‘Terminator 2: Judgment Day’ brought to life through glorious pixel artwork and action-packed arcade gameplay! Play as Sarah Connor and the T-800 through a variety of thrilling missions as they take on the T-1000 and try to put a stop to Skynet’s plans before the human race is annihilated. Lead the Resistance as John Connor in the future, fighting on the front lines as mankind’s only hope in the War Against the Machines.",
    "ageRating": 17,
@@ -26939,9 +27417,54 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3180240/ss_0e609a6eff72417e1d47d6eab8fcea2367963acf.1920x1080.jpg?t=1773073787"
    ]
   },
+  "thats you": {
+   "fetchedAt": "2026-10-23T13:28:21Z",
+   "miss": true
+  },
+  "theatrhythm final bar line premium": {
+   "fetchedAt": "2026-10-23T13:29:11Z",
+   "miss": true
+  },
   "thief": {
    "fetchedAt": "2026-10-18T04:34:01Z",
    "miss": true
+  },
+  "thimbleweed park": {
+   "about": "Welcome to Thimbleweed Park. Population: 80 nutcases. \n\nA haunted hotel, an abandoned circus, a burnt-out pillow factory, a dead body pixelating under the bridge, toilets that run on vacuum tubes... you’ve never visited a place like this before. \n\nFive people with nothing in common have been drawn to this rundown, forgotten town. They don’t know it yet, but they are all deeply connected. And they’re being watched.",
+   "ageRating": null,
+   "appId": 569860,
+   "developer": "Terrible Toybox",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:29:16Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Russian"
+   ],
+   "metacritic": 84,
+   "name": "Thimbleweed Park™",
+   "publisher": "Terrible Toybox",
+   "releaseDate": "2017-03-30",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/569860/ss_16835791fa0280b2fc46f77e0744e910a24b34f1.1920x1080.jpg?t=1667234024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/569860/ss_704c62153ab86d4739dcc46319c1c0b26c3b6d5e.1920x1080.jpg?t=1667234024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/569860/ss_ab53c306bd00ec3fa69dea2cf90e9ea7644e2558.1920x1080.jpg?t=1667234024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/569860/ss_d83f6aa4c36d9ea859a52d2ed9412f2c6384a74c.1920x1080.jpg?t=1667234024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/569860/ss_758d194b730513ac00717fd3e0de8db4832366e4.1920x1080.jpg?t=1667234024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/569860/ss_04dbea4ee8f591ccf7ba1186b586aafe03449e31.1920x1080.jpg?t=1667234024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/569860/ss_8f5f8f98bc46f095cad7ae44c3ec97410006545e.1920x1080.jpg?t=1667234024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/569860/ss_b29698f8dc25d293c319510c8eb728c95a30e9d4.1920x1080.jpg?t=1667234024"
+   ]
   },
   "thing remastered": {
    "about": "No One Survives Alone.\n\nThe 2002 third-person survival horror shooter that serves as a sequel to the genre-defining 1982 film is back, remastered by Nightdive Studios to bring this innovative blend of fast paced squad action meets survival horror to the modern era. Including Antialiasing, Per Pixel Lighting, 4K Resolution and up to 144 FPS.\n\nWhere the movie ended, the true terror begins.\n\nYou are Cpt J.F. Blake, leader of a U.S.",
@@ -26976,6 +27499,51 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2958970/ss_f0e09e66cac6be17be947c6d7fdb329ee4aeb918.1920x1080.jpg?t=1773067625",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2958970/ss_f4e08180be2985478cd9cf6da8ffe080b11c791a.1920x1080.jpg?t=1773067625",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2958970/ss_f8511aab2e0bfe6eec7db765c9949fe8b154177f.1920x1080.jpg?t=1773067625"
+   ]
+  },
+  "those who remain": {
+   "about": "Those Who Remain places you in an up-close, psychological horror story set in the sleepy town of Dormont - a town in a spiralling split from the fabric of reality, warped by darkness and the deeds of the Citizens who reside.\n\n Confront the uncomfortable horrors reflected by the darkness and survive the night of Dormont as Edward is confronted with a test of his sanity, morality and the shadows of evil that lurks below.",
+   "ageRating": 17,
+   "appId": 715380,
+   "developer": "Camel 101",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:29:21Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Portuguese - Portugal",
+    "Russian",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Hungarian",
+    "Croatian"
+   ],
+   "metacritic": 48,
+   "name": "Those Who Remain",
+   "publisher": "Wired Productions, WhisperGames",
+   "releaseDate": "2020-05-28",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/715380/ss_c0d0678393bc469a25a01715dd29392baf065376.1920x1080.jpg?t=1792687110",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/715380/ss_a5091878fa50175f02eaf4d4c2953675c2e50041.1920x1080.jpg?t=1792687110",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/715380/ss_f43811d5454da7d676261359769643ff5408c70d.1920x1080.jpg?t=1792687110",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/715380/ss_6b2f212acc0750b952061c79ebbaac1501a2e67c.1920x1080.jpg?t=1792687110",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/715380/ss_5e0c6e931d3cf159b27eba11b6f4758b9493f472.1920x1080.jpg?t=1792687110",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/715380/ss_920ed97b8726a47548bc01a19082143873439775.1920x1080.jpg?t=1792687110",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/715380/ss_8ca9c84859ea1e7116a86d2d0d63b038ccec8006.1920x1080.jpg?t=1792687110",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/715380/ss_d6888fc4270ad858ccb899b0adeb6cfeee980ee1.1920x1080.jpg?t=1792687110"
    ]
   },
   "thymesia": {
@@ -27145,6 +27713,41 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237970/ss_f4a8464ce43962b76fa6f2156b341eee28ad6494.1920x1080.jpg?t=1779987598",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237970/ss_9e89b335e17df4e5049ffd30a558ddf50a8e36af.1920x1080.jpg?t=1779987598",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1237970/ss_18550193debe4e3461e9f5daac9eb4e399dcebab.1920x1080.jpg?t=1779987598"
+   ]
+  },
+  "to the top": {
+   "about": "VR Platforming Game, that gives you the freedom to move across the environment with superhuman abilities. Conquer over 35 levels with new obstacles and challenges. Compete for the fastest times or explore the environment. Experience the freedom of movement.\n\nStory\nIn the future, cities are not protected by superheroes, instead superheroes are built. Super Bots are human piloted robots engineered with super powers to protect and serve the people.",
+   "ageRating": null,
+   "appId": 509250,
+   "developer": "Electric Hat Games LLC.",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-23T13:29:26Z",
+   "genres": [
+    "Action",
+    "Racing",
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "TO THE TOP",
+   "publisher": "Electric Hat Games LLC.",
+   "releaseDate": "2017-05-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/509250/ss_452052cbd4042e8aad755a61840f1c346392fa41.1920x1080.jpg?t=1569022917",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/509250/ss_d567b626e2c0cca7d6871d38509cd04e3f0cd12b.1920x1080.jpg?t=1569022917",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/509250/ss_d49624da9305a4d345d2ffbc65dd132f3e345786.1920x1080.jpg?t=1569022917",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/509250/ss_caaf8657c0f6c3021f44ba0a7169e832df114489.1920x1080.jpg?t=1569022917",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/509250/ss_6216c50a29d01abce9f803b72170c7a7cf5ab8b2.1920x1080.jpg?t=1569022917",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/509250/ss_29b12a640c6876a2b0c2051081ca3e82b4b94b94.1920x1080.jpg?t=1569022917",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/509250/ss_fbff01f1132cd8cea6939b512690a8e8bc15f305.1920x1080.jpg?t=1569022917",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/509250/ss_d9fb1cb4e81b3fe5f1be4894d36542f4ff33821d.1920x1080.jpg?t=1569022917"
    ]
   },
   "tokyo xtreme racer": {
@@ -27678,6 +28281,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/953580/ss_b36daa44988bda65057bc88d595a138bbb7bcd6a.1920x1080.jpg?t=1764347195"
    ]
   },
+  "trackmania turbo": {
+   "about": "Test your skills in outlandish tracks and challenge your friends at home (offline splitscreen) or online.\n\n4 ENVIRONMENTS = 4 GAMEPLAYS\n- Rollercoaster Lagoon: Defy gravity in a tropical paradise, racing on magnetic tracks.\n- International Stadium: Use your driving skills to master the tracks of this worldwide competition. \n- Canyon Grand Drift: Drift your way through narrow tracks in this red canyon landscape.",
+   "ageRating": null,
+   "appId": 375900,
+   "developer": "Nadeo",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "VR",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:29:31Z",
+   "genres": [
+    "Racing"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "Trackmania® Turbo",
+   "publisher": "Ubisoft",
+   "releaseDate": "2016-03-24",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/375900/ss_eaa0c73c179354c1b8c3704db4ba68273ad6ca76.1920x1080.jpg?t=1680016593",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/375900/ss_432d95b0d5490e1edc3c2c17c4e21f7d69be88b1.1920x1080.jpg?t=1680016593",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/375900/ss_f0adb8e5a976262dad67214be7d71c06aedb7378.1920x1080.jpg?t=1680016593",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/375900/ss_92c2d8d39c6aad92cf37f91232b316fa79f5717b.1920x1080.jpg?t=1680016593",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/375900/ss_7377f2dbcb4748fc0e5a25108c9d0e868ced6b05.1920x1080.jpg?t=1680016593",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/375900/ss_1775e3a4ed9e123d5d2fd9a25352223bc8e967b4.1920x1080.jpg?t=1680016593",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/375900/ss_7fb3b4033a1905874e51c228427b60ee0c19fdae.1920x1080.jpg?t=1680016593",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/375900/ss_dbdc2560caa20729f47233ef647fd33e47545cec.1920x1080.jpg?t=1680016593"
+   ]
+  },
   "trails in the sky 1st chapter": {
    "about": "Flip through the pages of the iconic Trails series to where it all began with Trails in the Sky 1st Chapter!\n\nThis stunning, award-nominated remake reimagines the beloved classic with new breathtaking visuals, refined gameplay, and the first unforgettable adventure across Liberl Kingdom.\n\nJoin Estelle Bright and her adoptive brother, Joshua, as they embark on their journey as junior bracers, determined to climb the ranks of their renowned peacekeeping guild.",
    "ageRating": null,
@@ -27752,6 +28398,88 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_3599ebccafb53952681e37a76e1820f420ee8e82.1920x1080.jpg?t=1764602266",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_64a53eb6312a03c81eb6c3a3d9360d12055e2ee2.1920x1080.jpg?t=1764602266"
    ]
+  },
+  "trainervr": {
+   "about": "TrainerVR is a unique physics-based VR train construction game.\n\r\nIn TrainerVR you can create from simple tracks to an elaborate rail network, just like the wooden piece game, but to the infinity and beyond, and drive the trains inside your creations!\n\r\n\n\r\nHave you ever feel the despair of running out of tracks just when the fun was sparkling?\n\r\nHave you ever dreamed about a huge train network connecting towns, going up and down, intersecting and looping?\n\r\nIf you liked building with your own…",
+   "ageRating": null,
+   "appId": 763790,
+   "developer": "Sumalab",
+   "features": [
+    "Single-player",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-23T13:29:36Z",
+   "genres": [
+    "Simulation",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "TrainerVR",
+   "publisher": "Sumalab",
+   "releaseDate": "2017-12-27",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/763790/ss_c4ea2fc72c3cda4d6afd40ad61ebacfd056a2956.1920x1080.jpg?t=1605252560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/763790/ss_48d107b285730c38990f24b365df8f2162bfab94.1920x1080.jpg?t=1605252560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/763790/ss_cf838a11ef06d4a3f4ef108514df84098b9e4d74.1920x1080.jpg?t=1605252560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/763790/ss_f314ac251a8f76396994f589f9209adc35eab3da.1920x1080.jpg?t=1605252560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/763790/ss_6e37061b9fd78e7878ea922b290e8cf0b2530bcd.1920x1080.jpg?t=1605252560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/763790/ss_35df2e266673dc029a5361460ccec1b1ac946bdb.1920x1080.jpg?t=1605252560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/763790/ss_acac1140c4301ea329d8ea0371fe41f1e27a4fe5.1920x1080.jpg?t=1605252560",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/763790/ss_3e60014c49f6c63fe3a0c9991f3d3a870e4ce6d2.1920x1080.jpg?t=1605252560"
+   ]
+  },
+  "transference": {
+   "about": "Available in VR and Non-VR. \n\r\n\n\r\nImagine an escape room set in a deranged mind. Experience a first-person exploration game in a chilling new dimension. Shift between three perspectives of a family in this troubled scientist's experiment, and attempt to unravel the mystery hiding in this mind-bending psychological thriller.",
+   "ageRating": null,
+   "appId": 647570,
+   "developer": "Ubisoft",
+   "features": [
+    "Single-player",
+    "VR",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-23T13:29:41Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Dutch",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Transference™",
+   "publisher": "Ubisoft",
+   "releaseDate": "2018-09-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/647570/ss_a2922510da35b9859b592008583b83c52ac77de6.1920x1080.jpg?t=1680016684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/647570/ss_4ebded8a800de91dd4a9da5ce5aa02e832831691.1920x1080.jpg?t=1680016684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/647570/ss_5ea1fb8d8b62f4cc9ee832a1194fe577eebad83f.1920x1080.jpg?t=1680016684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/647570/ss_bb0bf5bc1a039b88d20c23aa0d3de446097b8965.1920x1080.jpg?t=1680016684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/647570/ss_d30264a70ffe05e65d132d4119a10c200752fbb8.1920x1080.jpg?t=1680016684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/647570/ss_e159c76bbf778dccc8a1d9c7ebfed9d269fc5643.1920x1080.jpg?t=1680016684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/647570/ss_cccdf4e24389fd9b479d60648926d8f16c90d0b8.1920x1080.jpg?t=1680016684",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/647570/ss_ced00d8de827be9df20f7ac38fff7b14c2bf28a5.1920x1080.jpg?t=1680016684"
+   ]
+  },
+  "transformers battlegrounds": {
+   "fetchedAt": "2026-10-23T13:29:43Z",
+   "miss": true
   },
   "transformers devastation": {
    "fetchedAt": "2026-10-21T13:52:10Z",
@@ -27854,6 +28582,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2324210/ss_515b3b17e4628ba2e833e17245c937ebe96b30e9.1920x1080.jpg?t=1728635642",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2324210/ss_0a98b3e68b6fdce176aafcc04f2dbb1ab02bdf95.1920x1080.jpg?t=1728635642"
    ]
+  },
+  "transpose": {
+   "fetchedAt": "2026-10-23T13:29:46Z",
+   "miss": true
   },
   "travis strikes again no more heroes": {
    "about": "Travis is living the trailerpark dream in the rural South when Badman comes knocking to avenge his daughter, Bad Girl. It looks like Game Over for Travis when both of them are sucked into the legendary Death Drive Mk II games console. This time, the games are taking the fight to you! The characters of the Death Drive Mk II's diverse game library aren't going to go down without a fight!",
@@ -29238,6 +29970,44 @@
    "fetchedAt": "2026-10-16T04:32:48Z",
    "miss": true
   },
+  "wizards": {
+   "about": "Use motion controllers to destroy your enemies by weaving magic into lightning, fireballs, and other elemental spells. Chain combos and use different tactics against the hostile creatures. Make the game as challenging or as casual as you like with Fate Cards, and become the hero you’ve always wanted to be with powerful spells at your fingertips!\n\nAction-adventure VR spellcaster set in a rich fantasy world\n\nCampaign featuring time travel, heroic battles, and dragons\n\nIntuitive system of casting…",
+   "ageRating": null,
+   "appId": 586950,
+   "developer": "Carbon Studio",
+   "features": [
+    "Single-player",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-23T13:29:08Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "German",
+    "Simplified Chinese",
+    "French",
+    "Spanish - Spain",
+    "Japanese",
+    "Russian"
+   ],
+   "metacritic": 80,
+   "name": "The Wizards - Enhanced Edition",
+   "publisher": "Carbon Studio",
+   "releaseDate": "2018-03-08",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586950/ss_35c2e89722a46c4ace3fb6a19a1ae2be81833974.1920x1080.jpg?t=1727958710",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586950/ss_27af889be2b688752acfd9fe1949309007b7e268.1920x1080.jpg?t=1727958710",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586950/ss_cf50f4ef72b68d1dda1e688eca80a73172ee06a5.1920x1080.jpg?t=1727958710",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586950/ss_ef61f145d945d5513d71bd8bfc6e9d7cfe927366.1920x1080.jpg?t=1727958710",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586950/ss_6165fb0236ecbf575d0383facd55075cc96e308c.1920x1080.jpg?t=1727958710",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586950/ss_fc5c602bf0e1fefbec435f6ba639cdfda2b42e39.1920x1080.jpg?t=1727958710",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586950/ss_4097d0d72c63990c379eb52f1ebc0a1631e2f41e.1920x1080.jpg?t=1727958710",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/586950/ss_a92e42274508fde9d2c235b6e4947ccd90440b85.1920x1080.jpg?t=1727958710"
+   ]
+  },
   "wo long fallen dynasty": {
    "about": "From the depths of darkness, a dragon soars. \n\nA new dark fantasy Three Kingdoms action RPG from Team NINJA, the developers of Nioh.\n\n184 AD, Later Han Dynasty China. The land is overcome by chaos and destruction. The imperial dynasty that prospered for many years is now about to collapse. \n\nWo Long: Fallen Dynasty is a dramatic, action-packed story of a nameless militia soldier fighting for survival in a dark fantasy version of the Later Han Dynasty where demons plague the Three Kingdoms.",
    "ageRating": 17,
@@ -29850,6 +30620,6 @@
    ]
   }
  },
- "updatedAt": "2026-10-23T07:34:48Z",
+ "updatedAt": "2026-10-23T13:29:46Z",
  "version": 1
 }
