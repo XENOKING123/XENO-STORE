@@ -25631,6 +25631,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1183850/ss_fbbe543a06d4ae15944692c38a8fdb5fe353f8f8.1920x1080.jpg?t=1727798894"
    ]
   },
+  "poppy playtime chapter 1": {
+   "fetchedAt": "2026-10-25T19:06:25Z",
+   "miss": true
+  },
   "poppy playtime chapter 2": {
    "about": "Disclaimer: Purchase of this content includes only the second chapter. You must first download the Base Game (free) to play this DLC. \n\nThree times the size of Chapter 1, you must descend deeper into the toy factory. Mind-boggling puzzles and horrific toys await. Grapple and swing your way to safety. Try to escape- and don't let Mommy find you. \n\nThe Train Station\n\nExplore one of Playtime Co.'s most popular locations, the Game Station! This Train Station is more than just a pitstop...",
    "ageRating": null,
@@ -25963,8 +25967,16 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2751000/ss_c134fcbaf1b6f49a27b3e571b58ba1826fa57f37.1920x1080.jpg?t=1777993930"
    ]
   },
+  "princess crown": {
+   "fetchedAt": "2026-10-25T19:06:27Z",
+   "miss": true
+  },
   "pro evolution soccer 2015 pes 2015": {
    "fetchedAt": "2026-10-24T11:00:46Z",
+   "miss": true
+  },
+  "pro evolution soccer 2016 pes 2016": {
+   "fetchedAt": "2026-10-25T19:06:30Z",
    "miss": true
   },
   "pro evolution soccer 2019 pes 2019": {
@@ -26214,6 +26226,44 @@
    "fetchedAt": "2026-10-23T00:45:13Z",
    "miss": true
   },
+  "rack n ruin": {
+   "about": "Rack N Ruin is a fusion of a top-down action adventure game and a classic arcade shooter. Take control of Rack, a maniacal demon wizard with a gleeful appetite for destruction, and embark on a grand adventure across a world filled with magic and wonder. Then transform the once enchanting world into a hellish nightmare. As the world falls deeper into darkness, Rack's power will grow, and the champions of good will rise to face him.",
+   "ageRating": null,
+   "appId": 378080,
+   "developer": "LifeSpark Entertainment",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:06:37Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain"
+   ],
+   "metacritic": null,
+   "name": "Rack N Ruin",
+   "publisher": "LifeSpark Entertainment",
+   "releaseDate": "2015-09-01",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378080/ss_8558d6a8b0a451ca562f72a85d1343ad227fe628.1920x1080.jpg?t=1447377024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378080/ss_5ea084b454ef5bac4d17300c0199d337a19ffeec.1920x1080.jpg?t=1447377024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378080/ss_bc0ea281ac846fe330e848d490bb677b40d7748b.1920x1080.jpg?t=1447377024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378080/ss_6d2b1bfad5473b683db4725852532466279f652b.1920x1080.jpg?t=1447377024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378080/ss_cf3ed9233df83ff3cb803dbdef1e71b6d2e0fca1.1920x1080.jpg?t=1447377024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378080/ss_1ef045a7dcad36688bbe2ede82258a2c36c3c843.1920x1080.jpg?t=1447377024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378080/ss_98960fca42d5deeff3844389d72bd32bf41d8b95.1920x1080.jpg?t=1447377024",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378080/ss_89f00692b9f57aa11cadb0fc327f8ba60f4282a4.1920x1080.jpg?t=1447377024"
+   ]
+  },
   "rad": {
    "about": "RAD is a 3D action rogue-like set in a post-post-apocalyptic world, where humanity has faced armageddon not once, but twice.\n\nPlaying as a teenage protagonist, you must venture into the Fallow — an ever-changing, radioactive wasteland filled with unknown and unspeakable creatures.\n\nBut humanity’s future comes at great personal cost, as the deeper you journey into unknown lands, the more you will expose yourself to gnarly toxins which will wreak havoc on your fragile human form.",
    "ageRating": null,
@@ -26367,6 +26417,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2002850/ss_5f5422c00e2e21bbee0ff9fe30f2b395fa588129.1920x1080.jpg?t=1747633091",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2002850/ss_a24bc721b91148a94f4c828297ddb6eac2a8e272.1920x1080.jpg?t=1747633091"
    ]
+  },
+  "rainbow moon": {
+   "fetchedAt": "2026-10-25T19:06:40Z",
+   "miss": true
   },
   "ratchet and clank rift apart": {
    "about": "The intergalactic adventurers are back with a bang in Ratchet & Clank: Rift Apart! \n\nGo dimension-hopping with Ratchet and Clank as they venture onto a PC near you for the very first time. Help them take on an evil emperor from another reality as you jump between action-packed worlds and beyond.",
@@ -26962,6 +27016,10 @@
    "fetchedAt": "2026-10-16T04:33:50Z",
    "miss": true
   },
+  "resident evil 3 nemesis": {
+   "fetchedAt": "2026-10-25T19:06:42Z",
+   "miss": true
+  },
   "resident evil 3 remake": {
    "fetchedAt": "2026-10-16T04:33:53Z",
    "miss": true
@@ -27234,6 +27292,54 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1196590/ss_b790b617004b92423a855d5526a1eb29e05b6c78.1920x1080.jpg?t=1776927117"
    ]
   },
+  "resonance a plague tale legacy": {
+   "about": "Set 15 years before A Plague Tale: Requiem, play as Sophia, a fierce young plunderer, on the run but determined to uncover the secrets of her past. Dive into an original story blending combat, myth and fate with a brand new take in the universe of A Plague Tale. \n\nSophia’s journey leads to the Minotaur' Island, where she faces deadly trials, navigates treacherous trails, solves puzzles, all while fighting and staying one step ahead of the army chasing her.",
+   "ageRating": null,
+   "appId": 2713000,
+   "developer": "Asobo Studio",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:06:47Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Arabic",
+    "Czech",
+    "Korean",
+    "Polish",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Latin America",
+    "Traditional Chinese",
+    "Ukrainian",
+    "Portuguese - Brazil",
+    "Japanese",
+    "Turkish"
+   ],
+   "metacritic": 84,
+   "name": "Resonance: A Plague Tale Legacy",
+   "publisher": "Focus Entertainment",
+   "releaseDate": "2026-08-27",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2713000/eb5c2bfe44017bede10d1e649966804922e518c3/ss_eb5c2bfe44017bede10d1e649966804922e518c3.1920x1080.jpg?t=1790254824",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2713000/c64b2faba011b9d82b65bcf8794c046244c3f174/ss_c64b2faba011b9d82b65bcf8794c046244c3f174.1920x1080.jpg?t=1790254824",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2713000/8a6c212059ef9362a864e84d9b647cbbfedeb4b2/ss_8a6c212059ef9362a864e84d9b647cbbfedeb4b2.1920x1080.jpg?t=1790254824",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2713000/fd9dde076e8cae84052ac9b682888c370fca7ed4/ss_fd9dde076e8cae84052ac9b682888c370fca7ed4.1920x1080.jpg?t=1790254824",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2713000/9ff81a313610c1e31177a94a7c2ff3f8ec17e2ab/ss_9ff81a313610c1e31177a94a7c2ff3f8ec17e2ab.1920x1080.jpg?t=1790254824",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2713000/1218579fae82e00d1c459c3ea880d89854494e31/ss_1218579fae82e00d1c459c3ea880d89854494e31.1920x1080.jpg?t=1790254824",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2713000/55987015a15b4af4c98548ffea60f97624c5ebfd/ss_55987015a15b4af4c98548ffea60f97624c5ebfd.1920x1080.jpg?t=1790254824",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2713000/822d39e2d2c1a4920a336de73201bb453ef076c0/ss_822d39e2d2c1a4920a336de73201bb453ef076c0.1920x1080.jpg?t=1790254824"
+   ]
+  },
   "return of the obra dinn": {
    "about": "LOST AT SEA, 1803\nthe good ship\n\"OBRA DINN\"\n----------------\nBuilt 1796, London ~ 800 tons, 18ft draught\nCaptain R. WITTEREL ~ Crew 51 men\nLast voyage to Orient ~ Cape rendezvous unmet\n----------------\nContact East India Cy. London Office\nfor enquiries or testimonyAn Insurance Adventure with Minimal Color\n\nIn 1802, the merchant ship Obra Dinn set out from London for the Orient with over 200 tons of trade goods.",
    "ageRating": null,
@@ -27372,6 +27478,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2787320/ss_37ef0b760ba2c8fb81fb652586fbbc65b6dba266.1920x1080.jpg?t=1766069600",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2787320/ss_905f728c07cbb40b4f98fdc22f00009f9287e722.1920x1080.jpg?t=1766069600",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2787320/ss_803873ba11e69d716b7cb2b47d3dff1b213af1c1.1920x1080.jpg?t=1766069600"
+   ]
+  },
+  "reverie knights tactics": {
+   "about": "Reverie Knights Tactics is a turn-based tactical RPG with strategic battles in isometric grids where every decision you make can alter the story and the way you configure the characters.\n\nLead your party of heroes, each one with distinct, special abilities and skills, allowing you to use multiple battle strategies to defeat your enemies.",
+   "ageRating": null,
+   "appId": 1399690,
+   "developer": "40 Giants Entertainment",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:06:52Z",
+   "genres": [
+    "Adventure",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "German",
+    "Japanese",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "Reverie Knights Tactics",
+   "publisher": "Fulqrum Publishing ",
+   "releaseDate": "2022-01-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1399690/ss_b543f60bdf69d441dcd5ad57993d2525bebf5edf.1920x1080.jpg?t=1789563630",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1399690/ss_a619160fbe1fc8b82cce7578901ac03b93d40fa7.1920x1080.jpg?t=1789563630",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1399690/ss_7ac475fb3c1a3b4cc849d42a98ed7d1b5561aca6.1920x1080.jpg?t=1789563630",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1399690/ss_7ac09ed178d8dd2c155011abe81678bf9bff2931.1920x1080.jpg?t=1789563630",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1399690/ss_14101afcdd34da88ede9b6723e15a369175096f0.1920x1080.jpg?t=1789563630",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1399690/ss_cbfce8d6f33baacd54f70b98eca50f9a18528da4.1920x1080.jpg?t=1789563630",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1399690/ss_1a34b43e4c35e05a3de4ddd6a957ca679085b8cf.1920x1080.jpg?t=1789563630",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1399690/ss_166e444e9dd25e42e4e91c03e499a952f5506fb2.1920x1080.jpg?t=1789563630"
    ]
   },
   "reynatis": {
@@ -27816,6 +27960,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1419040/ss_62c6acd05a36dbc7ad01961a5847d15296a6b288.1920x1080.jpg?t=1759929584"
    ]
   },
+  "road to exotics": {
+   "fetchedAt": "2026-10-25T19:06:32Z",
+   "miss": true
+  },
   "roadcraft": {
    "about": "As the leader of a company specialized in restoring sites devastated by natural disasters, use your construction machinery to restart the local industry. Clear debris and faulty equipment, rebuild roads and bridges damaged by weather, and much more! \n\nYou run a disaster recovery company, specialized in restoring sites devastated by natural disasters.",
    "ageRating": null,
@@ -27925,6 +28073,46 @@
   },
   "rollercoaster tycoon adventures deluxe": {
    "fetchedAt": "2026-10-19T04:42:20Z",
+   "miss": true
+  },
+  "rollers of the realm": {
+   "about": "Rollers of the Realm combines the frantic physics of classic arcade pinball with the character-driven adventure of fantasy role-playing games. Bounce, spin, and battle through scenes of an epic storyline with a band of medieval misfits tasked with reclaiming the world from dark and ancient magic. Winner of a \"Best in Play\" Award at GDC Play 2014, IndieCade finalist in 2013.Key Features\n\nA new spin on pinball: includes physics-based puzzles and combat with unique nudge and flipper mechanics.",
+   "ageRating": null,
+   "appId": 262470,
+   "developer": "Phantom Compass",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:06:57Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain"
+   ],
+   "metacritic": 68,
+   "name": "Rollers of the Realm",
+   "publisher": "Phantom Compass",
+   "releaseDate": "2014-11-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/262470/ss_46d40e6207ce0d58508f06474732be6bffc790c9.1920x1080.jpg?t=1785332702",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/262470/ss_c5509b3212f758498170949bc1ead58a6c304b62.1920x1080.jpg?t=1785332702",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/262470/ss_fe2baeca09823bda9ee8cc52811f6d7075dd3da5.1920x1080.jpg?t=1785332702",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/262470/ss_964a7479ef5d1564b4c5c86574263c9222d710ef.1920x1080.jpg?t=1785332702",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/262470/ss_1212f2d9ae5748b5fd05bcfe82edbcca4b547222.1920x1080.jpg?t=1785332702"
+   ]
+  },
+  "rolling bob": {
+   "fetchedAt": "2026-10-25T19:07:00Z",
    "miss": true
   },
   "romancing saga 2 revenge of the seven": {
@@ -28837,6 +29025,40 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1086620/ss_7961fb5397e8bcf99f611309077840da446ab0eb.1920x1080.jpg?t=1738248761"
    ]
   },
+  "senko no ronde 2": {
+   "about": "Originally released in Japanese arcades in 2005, the Senko no Ronde series provides an unique mix of both the shooting and fighting genres, mixing them into a one-on-one action game where two Rounder (mecha) pilots face off against one another in a veritable ballet of bullets and battling. Featuring an involved storyline, multiple characters and rounders, with local battles, online matching and more!",
+   "ageRating": null,
+   "appId": 574160,
+   "developer": "G.rev Ltd.",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:07:10Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Senko no Ronde 2",
+   "publisher": "KOMODO, KADOKAWA CORPORATION",
+   "releaseDate": "2017-09-06",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/574160/ss_9a4b8f09e3212ebebd28f939da96e03da8fb44f2.1920x1080.jpg?t=1696960837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/574160/ss_0af61d885247adac1b9744318f73619959ed5d3d.1920x1080.jpg?t=1696960837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/574160/ss_802b8d51fe8a6e5ce25d9045313f1cbea5f7b39a.1920x1080.jpg?t=1696960837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/574160/ss_5b3570c203502553df6027cff920b9879a981cd3.1920x1080.jpg?t=1696960837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/574160/ss_bb71e3b6a13877b8a7a497b464ddf2ca8ae3c2e2.1920x1080.jpg?t=1696960837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/574160/ss_a8bb8e429bde821c063ad6426e9b6650b74b9902.1920x1080.jpg?t=1696960837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/574160/ss_0a5f158ddf317815df7bc7741fd84bc2e6c4f76d.1920x1080.jpg?t=1696960837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/574160/ss_9f505a7d40d24379bcc2094f9ca845ccf8adf822.1920x1080.jpg?t=1696960837"
+   ]
+  },
   "senran kagura burst re newal": {
    "about": "Every ninja, from the mythical tricksters of old to the covert operatives of the modern day, began as a student. Today, those students train at secret schools throughout Japan, from converted old castles to normal-looking high schools. Join the finest among equals at Hanzo National Academy, or the tough-as-nails survivors of Hebijo Clandestine Girls’ Academy, as they risk their young lives (and their nicest outfits!) for honor, family, and friends.",
    "ageRating": 17,
@@ -29134,6 +29356,53 @@
    "fetchedAt": "2026-10-23T07:33:26Z",
    "miss": true
   },
+  "sherlock holmes the devils daughter": {
+   "about": "Sherlock Holmes: The Devil’s Daughter is a fantastic adventure with unique gameplay that blends investigation, action and exploration for an extraordinary experience that will test the limits of your nerves and intelligence.\n\nTrack down evil in the darkest corners of London and the human soul while playing as the great detective, as you untangle a web of intrigue leading to the final stunning revelation.",
+   "ageRating": null,
+   "appId": 350640,
+   "developer": "Frogwares",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:07:15Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Russian",
+    "Turkish",
+    "Ukrainian",
+    "Polish",
+    "Portuguese - Brazil",
+    "Czech",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Japanese",
+    "Korean",
+    "Arabic"
+   ],
+   "metacritic": 65,
+   "name": "Sherlock Holmes: The Devil's Daughter",
+   "publisher": "Frogwares",
+   "releaseDate": "2016-06-10",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/350640/ss_078a91c02c254235cbb91eaf18cd874e94856a55.1920x1080.jpg?t=1758522993",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/350640/ss_6e9c0e0a1d44a8b5c6f89cf48ab2945d35a15736.1920x1080.jpg?t=1758522993",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/350640/ss_4b982a75ba7f447989491c18c3234f88d664cc73.1920x1080.jpg?t=1758522993",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/350640/ss_ec40d690b5fa3c046227e4b6641b40343692bd97.1920x1080.jpg?t=1758522993",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/350640/ss_de3eccd167776134c2fb8f24be6659426853517f.1920x1080.jpg?t=1758522993",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/350640/ss_59bb802bd1a13fd913ed4b8a541fe565471326da.1920x1080.jpg?t=1758522993",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/350640/ss_a0f4c8669dea92e660de4bbae827a60c31df0ac5.1920x1080.jpg?t=1758522993",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/350640/ss_529fd1e73e26028e2ee47d7f7a7d9176766fe14f.1920x1080.jpg?t=1758522993"
+   ]
+  },
   "shin megami tensei v vengeance": {
    "about": "The Shin Megami Tensei V: Vengeance Digital Deluxe Edition includes:\n\n• Shin Megami Tensei V: Vengeance Base Game \n\n• Mitama Dance of Wealth - Increases the drop rate of items that can be sold for Macca.\n\n• Mitama Dance of EXP - Increases drop rate of items that give the protagonist EXP and ally demons EXP.\n\n• Mitama Dance of Miracles - Increases drop rate of items that give Glory points needed to learn new bonus effects.",
    "ageRating": 17,
@@ -29309,6 +29578,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2138710/ss_8bdc441c064f7ac1f75a33bb9f50e38110f38d28.1920x1080.jpg?t=1782742326",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2138710/ss_e13cb718cba01b51788627b43226fedd52caa217.1920x1080.jpg?t=1782742326"
    ]
+  },
+  "silence": {
+   "fetchedAt": "2026-10-25T19:07:17Z",
+   "miss": true
   },
   "silent hill 2": {
    "about": "Having received a letter from his deceased wife,\n\nJames heads to where they shared so many memories,\n\nin the hope of seeing her one more time: Silent Hill.\n\nThere, by the lake, he finds a woman eerily similar to her...\n\n\"My name… is Maria,\" the woman smiles. Her face, her voice... She's just like her.\n\nExperience a master-class in psychological horror―lauded as the best in the series―on the latest hardware with chilling visuals and visceral sounds.",
@@ -29942,6 +30215,47 @@
    "fetchedAt": "2026-10-23T07:33:13Z",
    "miss": true
   },
+  "snow moto racing freedom": {
+   "about": "Snow Moto Racing Freedom let's you take your rightful place on a high-speed snowmobile on snocross tracks or through vast beautiful winter landscapes. Experience the thrill of racing so close to your opponents that you can feel the spray of their snow and hear the roar of their engines. Carve your own chosen path through exotic sceneries while stringing together extreme stunts high up in the air to gain that extra speed boost to fly past your opponents.",
+   "ageRating": null,
+   "appId": 587400,
+   "developer": "Zordix AB",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:07:22Z",
+   "genres": [
+    "Action",
+    "Racing",
+    "Sports",
+    "Simulation",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Russian"
+   ],
+   "metacritic": 50,
+   "name": "Snow Moto Racing Freedom",
+   "publisher": "Zordix AB",
+   "releaseDate": "2017-04-11",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/587400/ss_109a813ad46ca59c11f03d0ace6bdea59dad050e.1920x1080.jpg?t=1594805091",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/587400/ss_0cee15360503d6b7c4bc9c657a19ec38147db374.1920x1080.jpg?t=1594805091",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/587400/ss_63db799cfd25767a674053509bb6ad99d87e6cb3.1920x1080.jpg?t=1594805091",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/587400/ss_f673af03ebec7db57f035c5b51a4d7e0c61e5675.1920x1080.jpg?t=1594805091",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/587400/ss_ea0bc9c334b37e1dccb1f640658cd4e49a6fc17a.1920x1080.jpg?t=1594805091",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/587400/ss_6e85d136b58b59a6363a87f4c742c191cdc34025.1920x1080.jpg?t=1594805091"
+   ]
+  },
   "snowrunner": {
    "about": "SnowRunner puts you in the driver’s seat of powerful vehicles as you conquer extreme open environments with the most advanced terrain simulation ever, by the makers of multi-million seller MudRunner.\n\nOvercome mud, torrential waters, snow, and frozen lakes powered by Saber Interactive’s best-in-class terrain physics engine. Traverse wild environments inspired by North American and Eurasian wilderness that accurately react to your trucks’ weight, speed and momentum.",
    "ageRating": null,
@@ -30026,6 +30340,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/794960/ss_839b2544fd3314437a2056066b3eabebc56209be.1920x1080.jpg?t=1772459560",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/794960/ss_2ff90309fffeb8260c94a908bafa6b8be8ac4a5b.1920x1080.jpg?t=1772459560"
    ]
+  },
+  "sokorobot": {
+   "fetchedAt": "2026-10-25T19:07:25Z",
+   "miss": true
   },
   "somerville": {
    "about": "In the wake of catastrophe you must find the means to make your family whole again. Somerville is a Sci-Fi adventure grounded in the intimate repercussions of large scale conflict.\nFAMILY \n\nYou embark on a journey to find the whereabouts of your family in the wake of an alien invasion.\n\nTHE INVASION \n\nLive through the personal struggles of a young family separated in the final moments of a global conflict against a hostile alien civilisation.",
@@ -30298,6 +30616,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2022670/ss_51bee5d4b456e686c9f6e7063eae26dd4b0287dc.1920x1080.jpg?t=1783397336",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2022670/ss_2684fbea6f81bec2f81d2ce54b24a960408729cd.1920x1080.jpg?t=1783397336"
    ]
+  },
+  "sonic unleashed recompiled unofficial port": {
+   "fetchedAt": "2026-10-25T19:07:27Z",
+   "miss": true
   },
   "sonic x shadow generations": {
    "about": "Shadow the Hedgehog is back with Classic and Modern Sonic in SONIC X SHADOW GENERATIONS, an all-new collection featuring two unique experiences!\n\nPlay as Shadow in a brand-new story campaign featuring never-before-seen abilities that prove why he’s known as the Ultimate Life Form! Speed through iconic stages from Shadow’s history, discover hidden secrets in an expansive hub world, and unlock new powers to take on Black Doom and save the world.",
@@ -30606,6 +30928,10 @@
    "fetchedAt": "2026-10-23T07:33:46Z",
    "miss": true
   },
+  "space junkies": {
+   "fetchedAt": "2026-10-25T19:07:30Z",
+   "miss": true
+  },
   "spike volleyball": {
    "about": "50 national teams, men's and women's, go head to head in a realistic indoor volleyball simulation. Speed, reflexes, teamwork: all the elements needed for success are there for a spectacular sports experience. \n\r\nManage your own team and take it to the highest level.",
    "ageRating": null,
@@ -30784,6 +31110,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2479650/be3681eb90947b112d123357bdf6ff1825500a33/ss_be3681eb90947b112d123357bdf6ff1825500a33.1920x1080.jpg?t=1770127075",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2479650/35809a5b94efc1b68de492e0af9766aaa19ecab1/ss_35809a5b94efc1b68de492e0af9766aaa19ecab1.1920x1080.jpg?t=1770127075"
    ]
+  },
+  "sports bar vr hangout 2 0": {
+   "fetchedAt": "2026-10-25T19:07:32Z",
+   "miss": true
   },
   "spy anya operation memories": {
    "about": "Based on the popular anime & manga series! Anya Forger has received a new assignment from school: create a photo diary of memories.\n\nOn weekdays, head to class in the morning, then enjoy family time in the evening.\n\nOn weekends, visit all sorts of exciting places, like the beach or art museums, in search of subjects worthy of photographing!\n\nWhat kind of photo diary will you help Anya create?\n\n• Take pictures when Anya finds something interesting!\n• There are many peculiar things that can catch…",
@@ -31306,6 +31636,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2842040/ss_12847d4e2a4ea2bcaec01e440e500809f566486c.1920x1080.jpg?t=1773407100"
    ]
   },
+  "star wars racer revenge": {
+   "fetchedAt": "2026-10-25T19:07:35Z",
+   "miss": true
+  },
   "starfield": {
    "about": "Starfield is the first new universe in over 25 years from Bethesda Game Studios, the award-winning creators of The Elder Scrolls V: Skyrim and Fallout 4. In this next generation role-playing game set amongst the stars, create any character you want and explore with unparalleled freedom as you embark on an epic journey to answer humanity’s greatest mystery.\n\nIn the year 2330, humanity has ventured beyond our solar system, settling new planets, and living as a spacefaring people.",
    "ageRating": 17,
@@ -31390,6 +31724,37 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1283400/ss_33b0b20cceecf79b9e07e4211a927296300a2421.1920x1080.jpg?t=1778174679",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1283400/ss_a8a3af0f00361394f93a6c124773e2a31f50e57d.1920x1080.jpg?t=1778174679",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1283400/ss_352c53ec516eeb8588d7b5149a115fc67fcc042a.1920x1080.jpg?t=1778174679"
+   ]
+  },
+  "steins gate elite": {
+   "about": "STEINS;GATE ELITE follows a rag-tag band of tech-savvy young students who discover the means of changing the past via e-mail using a modified microwave. Their experiments in pushing the boundaries of time begin to spiral out of control as they become entangled in a conspiracy surrounding SERN, the organization behind the Large Hadron Collider, and John Titor, who claims to be from a dystopian future.",
+   "ageRating": null,
+   "appId": 819030,
+   "developer": "MAGES. Inc.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:07:40Z",
+   "genres": [
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "Japanese",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "STEINS;GATE ELITE",
+   "publisher": "Spike Chunsoft Co., Ltd.",
+   "releaseDate": "2019-02-19",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/819030/ss_731163f666dfaeb15d6ec8bd0cda2bc494978ea6.1920x1080.jpg?t=1715703414",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/819030/ss_0f55bb25d332dd5a2ba0ce9a602d0ac6d8bf95be.1920x1080.jpg?t=1715703414",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/819030/ss_56947eb1c82eb01fb6cc2b5f5c5a9df6b6dc77d3.1920x1080.jpg?t=1715703414",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/819030/ss_4c1f99792b7e3d0a2c050ad38e894638d3a06fd0.1920x1080.jpg?t=1715703414",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/819030/ss_b12ef2b8e9e8251a8e38478042fe5f229102fac0.1920x1080.jpg?t=1715703414"
    ]
   },
   "stellar blade": {
@@ -31565,6 +31930,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/978780/ss_6da1ac83e1300d1db3d1af5ccc35adff1ab0a0dc.1920x1080.jpg?t=1743091853",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/978780/ss_15bbcf54691663ea119dfb8c132fd0a446487fe1.1920x1080.jpg?t=1743091853",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/978780/ss_b58a203dab001fd9774e537d1d7b116fff5ae034.1920x1080.jpg?t=1743091853"
+   ]
+  },
+  "story of seasons pioneers of olive town": {
+   "about": "Build Your Farm From the Ground Up!\n\nWelcome to Olive Town, a peaceful community established by your trailblazing grandfather and his friends. Now that you've taken over his farm, it's your job to carry on his legacy.\n\nPlant crops, raise animals, build relationships, and get to know the residents of your new home in this brand-new entry in the STORY OF SEASONS series!\n\nCultivate Your Farm, Cultivate Your Town\nTame the wilderness and build your farm from the ground up!",
+   "ageRating": null,
+   "appId": 1392960,
+   "developer": "Marvelous Inc.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:07:45Z",
+   "genres": [
+    "RPG",
+    "Simulation",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": 76,
+   "name": "STORY OF SEASONS: Pioneers of Olive Town",
+   "publisher": "XSEED Games, Marvelous USA, Inc.",
+   "releaseDate": "2021-09-15",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1392960/ss_2f4235399f9b09f648e5cb4e617c12c0a445a550.1920x1080.jpg?t=1743092367",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1392960/ss_444b300288436ec1276c0afebbe3ba0166edc52d.1920x1080.jpg?t=1743092367",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1392960/ss_ee1ccb62083c6b90f115640e450f5d46a32c86d7.1920x1080.jpg?t=1743092367",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1392960/ss_7bbbfdac759ab21c20dbbff4f46e84d396e06664.1920x1080.jpg?t=1743092367",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1392960/ss_85f92a0ba308253a767b9f24744cc5969e270816.1920x1080.jpg?t=1743092367",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1392960/ss_0118d0ecbd8aa7d3c31eb18067d6af46e429b8f4.1920x1080.jpg?t=1743092367",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1392960/ss_fbcbaaf87cce9490a525eef27bd7be8a81163024.1920x1080.jpg?t=1743092367",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1392960/ss_efd758b3a731a7c15d1a9bc960babc6b3b30c2cb.1920x1080.jpg?t=1743092367"
    ]
   },
   "stranded sails explorers of the cursed islands": {
@@ -32258,6 +32663,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1812560/ss_f95811519c17810dcce46f2a8e1bcef4eb48805c.1920x1080.jpg?t=1769071965"
    ]
   },
+  "super hyperactive ninja": {
+   "about": "Get ready to tune up your coffee-ninja skills, you will need them in this hardcore platformer! \n\nSuper Hyperactive Ninja is a fast-paced hyper-caffeinated action-platformer in 2D, designed with those who want a real tough challenge and speedrunners in mind.\n\nThe evil Shogun has stolen all the coffee from the secret ninja village of Kohinomura, recover it before you fall asleep!",
+   "ageRating": null,
+   "appId": 743330,
+   "developer": "Grimorio of Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:07:50Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Spanish - Spain",
+    "French",
+    "Italian",
+    "German",
+    "Portuguese - Portugal",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Super Hyperactive Ninja",
+   "publisher": "JanduSoft",
+   "releaseDate": "2018-05-22",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/743330/ss_f08871ff3d76b8c22213afa2d3e2f789015fa3d9.1920x1080.jpg?t=1618481130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/743330/ss_2f56bee0abffdf9a09c1d4fe2229446b38ba3b01.1920x1080.jpg?t=1618481130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/743330/ss_44c7c90b146132a2f1ebc23040a23dba9403f0ad.1920x1080.jpg?t=1618481130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/743330/ss_4b5358b3f0c78b1cc62d6b1b5999bbb1e64f0e7a.1920x1080.jpg?t=1618481130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/743330/ss_8ac517dd499ab45324f5acfe6ed451dd5c5cf6f0.1920x1080.jpg?t=1618481130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/743330/ss_16554acb64c17d8722627514afd370f2bdde8d5e.1920x1080.jpg?t=1618481130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/743330/ss_7a8ebd3234af94ae16ddcda7873f37d3c51ef610.1920x1080.jpg?t=1618481130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/743330/ss_f74b4dc7cf793a4ad1a0452ddb455575a392659c.1920x1080.jpg?t=1618481130"
+   ]
+  },
   "super meat boy": {
    "about": "Super Meat Boy is a tough as nails platformer where you play as an animated cube of meat who's trying to save his girlfriend (who happens to be made of bandages) from an evil fetus in a jar wearing a tux.\n \nOur meaty hero will leap from walls, over seas of buzz saws, through crumbling caves and pools of old needles. Sacrificing his own well being to save his damsel in distress.",
    "ageRating": null,
@@ -32497,6 +32942,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1554640/ss_cc7f44c1de196783b30d2ed7a074baf3763a46c5.1920x1080.jpg?t=1748485281"
    ]
   },
+  "super time force ultra": {
+   "about": "Super Time Force Ultra is an action-packed platformer with a time-travelling twist! You’re in control of time itself, bending and stretching it to your advantage on the battlefield. Rewind time and choose when to jump back into the action, teaming-up with your past selves in a unique single-player co-op experience! Take control of up to 19 unique characters, and battle across 6 different time periods, from the long-ago past to the far-away future.",
+   "ageRating": null,
+   "appId": 250700,
+   "developer": "Capybara Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:07:55Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Polish",
+    "Russian",
+    "Japanese"
+   ],
+   "metacritic": 80,
+   "name": "Super Time Force Ultra",
+   "publisher": "Capybara Games",
+   "releaseDate": "2014-08-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250700/ss_27a8e2e8e1d3058896b20527190343658c0f1f1d.1920x1080.jpg?t=1746133326",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250700/ss_6f14d3d3de1e3d7ff3a22219f1e71d3264947b1c.1920x1080.jpg?t=1746133326",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250700/ss_41f2307d33a1fb1d6c0121f9348e4fd84ab405fe.1920x1080.jpg?t=1746133326",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250700/ss_10926003af7c7bb4a3eccaa6f941be4d7856bc0b.1920x1080.jpg?t=1746133326",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250700/ss_cc7934f558d9b7217aab015341ec706bf1e08158.1920x1080.jpg?t=1746133326",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250700/ss_5d27c39deebd4ecf7475c904dc20371a7d1140f6.1920x1080.jpg?t=1746133326",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250700/ss_9b1cdbb7f360769b03385368afd7c844a6f38d20.1920x1080.jpg?t=1746133326",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250700/ss_ca8374f36c4876640833f2774eb644e27e462f62.1920x1080.jpg?t=1746133326"
+   ]
+  },
   "super woden gp": {
    "about": "Will you be able to reach the top of the motorsport world?\n\r\nYour story at Super Woden GP will start from the lowest in terms of resources and budget. With this, you must get a cheap vehicle and sign up for some races to start being someone and acquire better vehicles and advance to the top of the motor world.\n\r\n\n\r\nChampionships, Rallys, weekend events, arcade mode, endurance races ...",
    "ageRating": null,
@@ -32548,6 +33033,52 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1534180/ss_c69069702120ed7b0e2c70747f5ded204bc8d031.1920x1080.jpg?t=1714673019",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1534180/ss_1d3141d61ff26a1c053137b517671fb54dcc5bab.1920x1080.jpg?t=1714673019",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1534180/ss_0ad9ce2aac7e191d63d4fcdf353b0c63fd9e1cc6.1920x1080.jpg?t=1714673019"
+   ]
+  },
+  "superhot": {
+   "about": "Blurring the lines between cautious strategy and unbridled mayhem, SUPERHOT is the smash-hit FPS in which time moves only when you move.\n\nNo regenerating health bars. No conveniently placed ammo drops. It's you, alone, outnumbered and outgunned. Snatch weapons from fallen enemies to shoot, slice and dodge through a truly cinematic hurricane of slow-motion bullets\n\nDo you crave meaning? Acceptance? Decrypt a deep and multi-layered narrative. Find the answers you seek. Mind is software.",
+   "ageRating": null,
+   "appId": 322500,
+   "developer": "SUPERHOT Team",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:07:05Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Czech",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Japanese",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Hungarian",
+    "Korean",
+    "Slovak"
+   ],
+   "metacritic": 82,
+   "name": "SUPERHOT",
+   "publisher": "SUPERHOT Team",
+   "releaseDate": "2016-02-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/322500/ss_ae4a994de7b15e3cec3e56ae714cf7a44c7188cf.1920x1080.jpg?t=1726509130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/322500/ss_1e3ef7d9d9654c6189e6680502a0ce3068d1aef7.1920x1080.jpg?t=1726509130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/322500/ss_fbd718c60719f045e4e4ee1d23d159ecabb3a171.1920x1080.jpg?t=1726509130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/322500/ss_7d2f3db42595a665912155fa44a9b65f807fd483.1920x1080.jpg?t=1726509130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/322500/ss_82e641a68d684effec7b1c9ad5d17a70f9cb82ea.1920x1080.jpg?t=1726509130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/322500/ss_98b769b11caf672fda92891b325c9a3525bff2d7.1920x1080.jpg?t=1726509130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/322500/ss_f027e1abfd94f4f84f9a0c7520a8238a5533b59b.1920x1080.jpg?t=1726509130",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/322500/ss_298fcbe1a5464113bfcd77c521b5318a76a31b40.1920x1080.jpg?t=1726509130"
    ]
   },
   "superliminal": {
@@ -32678,6 +33209,55 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/644830/ss_7b450859cd2c0cad04f5b7d5c1a6820c61302f31.1920x1080.jpg?t=1727794351",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/644830/ss_017c106ce86bb9aa6a7e7a1021323e0b2e31d557.1920x1080.jpg?t=1727794351"
    ]
+  },
+  "surgeon simulator experience reality": {
+   "about": "Surgeon Simulator is bringing the ER to VR! The most critically acclaimed and infamous surgery simulation game as you have never seen it before! Built for Vive and featuring all of the surgeries and twisted humour of the original favourite plus a few new surprises…\n\r\n\n\r\nSurgeon Simulator: Experience Reality transports you into some of the most unlikely and possibly unsanitary surgeries possible.",
+   "ageRating": null,
+   "appId": 518920,
+   "developer": "Bossa Studios",
+   "features": [
+    "Single-player",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-25T19:08:00Z",
+   "genres": [
+    "Action",
+    "Simulation",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Danish",
+    "Dutch",
+    "Finnish",
+    "Norwegian",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Swedish"
+   ],
+   "metacritic": null,
+   "name": "Surgeon Simulator: Experience Reality",
+   "publisher": "Bossa Studios, Infogrames",
+   "releaseDate": "2016-12-05",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/518920/ss_16565aad2345b4909f9c610255c865d27739feae.1920x1080.jpg?t=1726238943",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/518920/ss_397440c6c328b623511ae12fb990fd941a9a6f62.1920x1080.jpg?t=1726238943",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/518920/ss_55be6efac1670bf2b31737d43f3ac21525de81ad.1920x1080.jpg?t=1726238943",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/518920/ss_50cded69e8107bed7185dfc4ea7891bce701217f.1920x1080.jpg?t=1726238943",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/518920/ss_b95cc592ca089da3daf2e5d7dda406bc722aab1f.1920x1080.jpg?t=1726238943",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/518920/ss_cc146b8348ba01df5ee1ac2eb5b9d540989eb96d.1920x1080.jpg?t=1726238943",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/518920/ss_ee966fc9f3f72b33d3a9f6e0258858cb59719928.1920x1080.jpg?t=1726238943",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/518920/ss_53582528fb50f4cdd6652c2078f558b8aa04bf33.1920x1080.jpg?t=1726238943"
+   ]
+  },
+  "sword and fairy 6": {
+   "fetchedAt": "2026-10-25T19:08:02Z",
+   "miss": true
   },
   "sword art online fractured daydream": {
    "about": "Galaxia, a new system allowing players to relive the past, has been added to ALfheim Online; however, Galaxia spins out of control causing players from all over time and space to be displaced! To set the timeline back on track, Kirito must work with fallen friends... and foes.\n\nA total of 21 characters from the SAO series, each with their own unique role, will join him in a battle beyond memory.",
@@ -33016,6 +33596,47 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/482400/ss_11e02c61a9029c5a51a65d6667a5e4124b903b30.1920x1080.jpg?t=1769786947"
    ]
   },
+  "tacoma": {
+   "about": "The Venturis Corporation wants their AI back. That’s where you come in.\n\nTacoma is a narrative adventure set aboard a high-tech space station in the year 2088. As you go about your mission, you’ll explore every detail of how the station’s crew lived and worked, finding the clues that add up to a gripping story of trust, fear, and resolve in the face of disaster.",
+   "ageRating": null,
+   "appId": 343860,
+   "developer": "Fullbright",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:08:12Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Portuguese - Brazil",
+    "Russian",
+    "Italian",
+    "Simplified Chinese"
+   ],
+   "metacritic": 76,
+   "name": "Tacoma",
+   "publisher": "Fullbright, Serenity Forge",
+   "releaseDate": "2017-08-01",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/343860/ss_5f28c18796e68f306ae0bc290c1498bef8f7ee9b.1920x1080.jpg?t=1760995934",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/343860/ss_52effc12c87c4f68b5999a7b6b15b89a0d0d612a.1920x1080.jpg?t=1760995934",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/343860/ss_8d3590e95c165a427545c8276acb1a9c093f5abf.1920x1080.jpg?t=1760995934",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/343860/ss_875fba27c6b9462ea0693177c5a52e37e349b1ca.1920x1080.jpg?t=1760995934",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/343860/ss_48d5bf311815ee566574da23698bf82cc0d5e635.1920x1080.jpg?t=1760995934",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/343860/ss_2a332fb6b145e53c42da612d66a1ae97c0988401.1920x1080.jpg?t=1760995934",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/343860/ss_51cdb08bb3bd551df9d9c2ed559d37a72fa2fde3.1920x1080.jpg?t=1760995934",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/343860/ss_ad957ae1770e9969da3067f092d74ff1a2c6d23e.1920x1080.jpg?t=1760995934"
+   ]
+  },
   "tactics ogre reborn": {
    "about": "Tactics Ogre, crown jewel of the tactical role-playing genre, is reborn!\n\nBased on the 2010 release, the game features improved graphics and sound, as well as updated game design, bringing to life a new Tactics Ogre that remains true to its roots. Tactics Ogre veterans will experience a game that surpasses their fondest memories, while players new to Tactics Ogre will discover a game unlike any they've ever played.",
    "ageRating": 13,
@@ -33307,6 +33928,52 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/835960/ss_9822028978b61e262399e0b4456730e3a11e5bee.1920x1080.jpg?t=1791588605",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/835960/ss_db9d34a0e8b846278a209922d1bcdddd25fcba44.1920x1080.jpg?t=1791588605",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/835960/ss_e718fed841769837ac9c43dfadd440f9ee238544.1920x1080.jpg?t=1791588605"
+   ]
+  },
+  "tandem a tale of shadows": {
+   "about": "Tandem : A Tale of Shadows redefines the puzzle platformer genre with a unique top down and side-scroller gameplay and exceptional aesthetics. Help Emma and the teddy bear Fenton solve the mystery of the disappearance of the famous magician Thomas Kane.\n\nAward-winning Tandem: A Tale of Shadows features five beautiful Victorian-inspired worlds inspired by Tim Burton, Jules Vernes, Conan Doyle.",
+   "ageRating": null,
+   "appId": 1436920,
+   "developer": "Monochrome Paris",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:08:17Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Portuguese - Portugal",
+    "Czech",
+    "Turkish"
+   ],
+   "metacritic": 73,
+   "name": "Tandem: A Tale of Shadows",
+   "publisher": "Hatinh Interactive",
+   "releaseDate": "2021-10-20",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1436920/ss_9306d2472ed65d14c8647f484a54b185327e4c87.1920x1080.jpg?t=1715806965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1436920/ss_454b4361f7662b953c6c328415186eacea1e23f2.1920x1080.jpg?t=1715806965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1436920/ss_10a2d36c7829571c2ff607b5741549438f3a70ce.1920x1080.jpg?t=1715806965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1436920/ss_2f0b6df8c30c6fefbeeb1ac3a2937cbdf0eea982.1920x1080.jpg?t=1715806965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1436920/ss_7f65b4b581e3eb1b552e2324daa23b12501133f3.1920x1080.jpg?t=1715806965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1436920/ss_03401ce95f76f39a6d5a6b4d00b1d95de625192b.1920x1080.jpg?t=1715806965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1436920/ss_da576e336b738249696cf11711b8ef5f152c0d94.1920x1080.jpg?t=1715806965",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1436920/ss_18c3fea7a5bb3066b4289da34b3332478074ef98.1920x1080.jpg?t=1715806965"
    ]
   },
   "tape unveil the memories": {
@@ -33659,6 +34326,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1778820/ss_b0b4c57e786656b4232b9ec51f3e04f73e88d843.1920x1080.jpg?t=1787180720",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1778820/ss_853e5ffd8d75e9b5aa171e0b332d026866e1b5af.1920x1080.jpg?t=1787180720"
    ]
+  },
+  "tekken dark resurrection": {
+   "fetchedAt": "2026-10-25T19:08:20Z",
+   "miss": true
   },
   "tekken7": {
    "fetchedAt": "2026-10-19T23:42:35Z",
@@ -35467,6 +36138,40 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/690640/ss_42c0ad1a34c392ba77bf66c2e259c8b26d835f27.1920x1080.jpg?t=1789546865",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/690640/ss_fb8edbfb0fd1d97f6ae4aa09c4c81fc6a3a6b307.1920x1080.jpg?t=1789546865",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/690640/ss_225c3502ca7ae2c147ddd25e96225a3f3216dd9e.1920x1080.jpg?t=1789546865"
+   ]
+  },
+  "tron run r": {
+   "about": "Return to the world of TRON with TRON RUN/r, a new lightning fast, action-adventure racing game with a twist! Blaze through dynamic circuits, facing-off against virulent adversaries while taking on all challengers. \n\r\n\n\r\nPack your loadouts with dozens of combinations of cycles, suits and powerups.",
+   "ageRating": null,
+   "appId": 392000,
+   "developer": "Sanzaru Games Inc.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T19:08:07Z",
+   "genres": [
+    "Action",
+    "Racing"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil"
+   ],
+   "metacritic": null,
+   "name": "TRON RUN/r",
+   "publisher": "Disney",
+   "releaseDate": "2016-02-16",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/392000/ss_1d467a56c1d9bbb90145a47401a16a8301e41d76.1920x1080.jpg?t=1741820808",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/392000/ss_27413ff7faeaee99eec693d62d908d78b6e4c023.1920x1080.jpg?t=1741820808",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/392000/ss_94e68aba396b96aa4dbe7cecbdb7562b90e106d0.1920x1080.jpg?t=1741820808",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/392000/ss_a012447941f4d32169dc54011a6afdae4ed0fe6c.1920x1080.jpg?t=1741820808",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/392000/ss_2e4896b9c3e72d7d559b5a3a83e92afc500e2ec6.1920x1080.jpg?t=1741820808"
    ]
   },
   "trover saves the universe": {
@@ -38273,6 +38978,6 @@
    ]
   }
  },
- "updatedAt": "2026-10-25T16:19:09Z",
+ "updatedAt": "2026-10-25T19:08:22Z",
  "version": 1
 }
