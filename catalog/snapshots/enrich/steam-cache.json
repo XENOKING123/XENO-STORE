@@ -3488,6 +3488,10 @@
    "fetchedAt": "2026-10-24T22:34:14Z",
    "miss": true
   },
+  "beach buggy racing": {
+   "fetchedAt": "2026-10-25T04:41:36Z",
+   "miss": true
+  },
   "bearer and the last flame": {
    "about": "In the far reaches of the extinct land of men, darkness has ravaged every sign of life. The lost souls of bloodthirsty warriors seek rest in the underworld, where the demons of the abyss, the darkest creatures, and soulless sorcerers dwell. Darkness hangs over the whole land and there is hardly a glimpse of light. There is no solace for life. But in the high mountains of Selender, a halo of hope has arisen. \n\nA living soul has received his commission.",
    "ageRating": null,
@@ -3565,6 +3569,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2001760/9759eb253a5c18a6e9840d89e7127f610627c684/ss_9759eb253a5c18a6e9840d89e7127f610627c684.1920x1080.jpg?t=1788151394",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2001760/8c99c5092bae7a08967faff2f77ca9a3e41f72a3/ss_8c99c5092bae7a08967faff2f77ca9a3e41f72a3.1920x1080.jpg?t=1788151394",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2001760/9165d04eccf6fb47c9b71f7a80ed685726502b6f/ss_9165d04eccf6fb47c9b71f7a80ed685726502b6f.1920x1080.jpg?t=1788151394"
+   ]
+  },
+  "beat cop": {
+   "about": "New York, more like a beast than a city. Explore it’s darkest corners and uncover its secrets as Jack Kelly, a former detective who has been framed for a murder. Degraded and forgotten by old pals, it’s your last chance to find the truth behind this whole terrible mess. The thing is, your new boss treats you like shit, your wife is a money sucking spawn from hell and the local mafia wants your head on a plate.",
+   "ageRating": null,
+   "appId": 461950,
+   "developer": "Pixel Crow",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-25T04:41:41Z",
+   "genres": [
+    "Adventure",
+    "Simulation",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Polish",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Russian",
+    "French",
+    "Japanese",
+    "Simplified Chinese",
+    "Italian",
+    "Turkish",
+    "Korean"
+   ],
+   "metacritic": 71,
+   "name": "Beat Cop",
+   "publisher": "11 bit studios",
+   "releaseDate": "2017-03-30",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/461950/ss_bec5fae481648b3b1604d6fd23581e8c1f03cfc8.1920x1080.jpg?t=1701878616",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/461950/ss_332a5b58d443c94ce8715dea8609ac9ed8ab2eb9.1920x1080.jpg?t=1701878616",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/461950/ss_eb4075e26d442e0b91ad314980f528ba85b86105.1920x1080.jpg?t=1701878616",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/461950/ss_abe70ce7d26dc9993b3ec2783dfc751524797375.1920x1080.jpg?t=1701878616",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/461950/ss_881a1d9a841910a7be4a0c738a0695b500801a5f.1920x1080.jpg?t=1701878616",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/461950/ss_c0857a491fc75b0f6be96898ec73fe95e3a66ae6.1920x1080.jpg?t=1701878616",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/461950/ss_723747b95e778651483c74670c9612745e4b5f8a.1920x1080.jpg?t=1701878616",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/461950/ss_d1ccfe023c5b6eabd71571b889ef81c6b50ef82c.1920x1080.jpg?t=1701878616"
    ]
   },
   "bendy and the dark revival": {
@@ -3783,6 +3830,40 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2384730/ss_3793023b3e7f6b8ab6eeb47c51bbcf26df676c82.1920x1080.jpg?t=1792140600",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2384730/6ff6ad3f916fc143a4b4e1d71ffc85d3bb444be8/ss_6ff6ad3f916fc143a4b4e1d71ffc85d3bb444be8.1920x1080.jpg?t=1792140600",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2384730/ss_d67121e0ec044d7a86d6cc293f4dcf22adbcb209.1920x1080.jpg?t=1792140600"
+   ]
+  },
+  "biolab wars": {
+   "about": "An alien lab experimenting on Earth? It's time to call the mercenary team on duty to sweep the invaders by firing, beating and bombing.\nInspired by the 8-bit games and by the movies from the 80's, your goal is to blow things up, defeat aliens and fight bizarre bosses in this platformer 2D with classic mechanics.",
+   "ageRating": null,
+   "appId": 1117880,
+   "developer": "2ndBoss",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:41:46Z",
+   "genres": [
+    "Action",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "Spanish - Spain",
+    "Portuguese - Brazil"
+   ],
+   "metacritic": null,
+   "name": "Biolab Wars",
+   "publisher": "2ndBoss",
+   "releaseDate": "2019-08-23",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1117880/ss_8dd03be3ff5932d19e85033e8d30a4f6e3975371.1920x1080.jpg?t=1681992212",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1117880/ss_7817f513d0b04e13ba8e1188c7275aae4985393f.1920x1080.jpg?t=1681992212",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1117880/ss_a21c2a203e30479f9ef70a761abd4096512ecbc5.1920x1080.jpg?t=1681992212",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1117880/ss_beb80cb8688c496dcc256e198f4ea1b46f27728f.1920x1080.jpg?t=1681992212",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1117880/ss_a042531edf2a7361e9329d248f74bd09f2e59ab2.1920x1080.jpg?t=1681992212",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1117880/ss_05f51bb0c5b61a2e7a8f17bbb33230425a0c904c.1920x1080.jpg?t=1681992212",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1117880/ss_5b816e81d43910e1a4d7583cc0c8cd83f10e6238.1920x1080.jpg?t=1681992212"
    ]
   },
   "biomutant": {
@@ -4645,6 +4726,51 @@
    "fetchedAt": "2026-10-22T17:14:26Z",
    "miss": true
   },
+  "braid": {
+   "about": "Control the flow of time to solve subtle platform puzzles in this update of the indie classic \"Braid,\" featuring refreshed artwork and seriously in-depth creator commentary. Travel from a city house through a series of interconnected worlds where time behaves strangely, searching for an elusive Princess. Along the way you'll explore memories and regrets that still haunt you.",
+   "ageRating": null,
+   "appId": 499180,
+   "developer": "Thekla, Inc.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:41:51Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Spanish - Latin America",
+    "Traditional Chinese",
+    "Turkish",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "Braid, Anniversary Edition",
+   "publisher": "Thekla, Inc.",
+   "releaseDate": "2024-05-14",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499180/ss_320fc2bf5c2b9b42c73a10451c4a710cb08a3d96.1920x1080.jpg?t=1730925816",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499180/ss_59e3348fa79118f5e2f37db0c0e7695e82393771.1920x1080.jpg?t=1730925816",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499180/ss_654230af657b4300ed692da96b2782665d9b3b48.1920x1080.jpg?t=1730925816",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499180/ss_14971642f27908991469cb28dbec355fa0823c84.1920x1080.jpg?t=1730925816",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499180/ss_d03aea70b6ff74909161aa7410c96546135c5a14.1920x1080.jpg?t=1730925816",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499180/ss_59ed5ec0e0923491188be0b276687d805125ca1b.1920x1080.jpg?t=1730925816",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499180/ss_59c99e3e1bef1d2e0b227aaf9d691dfd5ba84b2f.1920x1080.jpg?t=1730925816",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499180/ss_a6bc4827d35b0a3c0ac369b1e54755d7e0036f2e.1920x1080.jpg?t=1730925816"
+   ]
+  },
   "bramble the mountain king": {
    "about": "Bramble The Mountain King takes you on a gripping and unsettling journey through stunning environments. Take on the role of Olle, a young boy setting off to rescue his sister, kidnapped by a dreaded troll.\n\nNot everything in Bramble is exactly how it seems - in this strange land with creatures big and small, you must be careful when to approach and when to hide. Many hungry and spiteful beasts lurk in these forests and caves. Watch your step....",
    "ageRating": null,
@@ -5003,6 +5129,44 @@
   "butcher": {
    "fetchedAt": "2026-10-24T22:34:16Z",
    "miss": true
+  },
+  "cabernet": {
+   "about": "Cabernet is a 2D narrative RPG set in a 19th century Eastern European inspired world, with a modern twist. Guide Liza, a young vampire struggling with her morality and the supernatural world she has been pulled into. Will you retain your humanity or descend further into the horror you have become? Prepare to explore a hidden world of political intrigue, class conflict, and decadent corruption. \n\nUse the moonlit sky to plan your next feast and explore.",
+   "ageRating": null,
+   "appId": 2401410,
+   "developer": "Party for Introverts",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:42:07Z",
+   "genres": [
+    "Adventure",
+    "RPG",
+    "Simulation",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Japanese"
+   ],
+   "metacritic": 88,
+   "name": "Cabernet",
+   "publisher": "Akupara Games",
+   "releaseDate": "2025-02-20",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2401410/ss_5e6f55fa54cfa60406a2462d572f8e50522f63fa.1920x1080.jpg?t=1791217820",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2401410/ss_2a04db2cabc38185aacc4bc7061fe655cbdec246.1920x1080.jpg?t=1791217820",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2401410/ss_4550dbef02d0ae8261394a961e03b353e5d9917d.1920x1080.jpg?t=1791217820",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2401410/ss_8bee5a60de7d0917f0b604a83b93ad01caa255b8.1920x1080.jpg?t=1791217820",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2401410/ss_17612e37e000214f60315262df743331fd4ef1cb.1920x1080.jpg?t=1791217820",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2401410/ss_cdb6abdd778bf70fa2266570bcc0a6f5859ef71a.1920x1080.jpg?t=1791217820",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2401410/ss_126d919452e73909c2447fa29baf6c4638d3bf81.1920x1080.jpg?t=1791217820",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2401410/ss_e461c8c50dc11bddad92c28fc9c3ba17aa983b6b.1920x1080.jpg?t=1791217820"
+   ]
   },
   "caligula effect 2": {
    "about": "●STORY\n\nRedo - a world without regrets.\nRegret - a mysterious virtuadoll.\nThose who hear her songs find themselves transported into another world.\nThe world of Redo is a virtual world built from the regrets of many people.\n\"If only I'd done things differently...\"\nThis is a world where everyone's secret desire to redo their lives can come true.\nA place where they can become the person they would have been had they chosen differently...",
@@ -5535,6 +5699,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1544020/ss_3a3bde04768bed352f677f5733d693c7e46900fe.1920x1080.jpg?t=1760331403"
    ]
   },
+  "capcom belt action collection": {
+   "fetchedAt": "2026-10-25T04:41:54Z",
+   "miss": true
+  },
   "captain tsubasa rise of new champions": {
    "about": "Captain Tsubasa: Rise of New Champions is an arcade football game bringing a refreshing look to the football genre with the exhilarating action and over the top shots.⚽ BUILD YOUR DREAM ELEVEN\n\nCreate your own characters with new skills and abilities, and build your dream team to play offline and online!⚽ 4 PLAYER VERSUS\n\nDecide who's the football legend amongst your friends with offline versus up to 4 players!⚽ ONLINE\n\nCompete across several online modes to claim trophies and rewards.⚽ 2 STORY…",
    "ageRating": null,
@@ -5629,9 +5797,100 @@
    "fetchedAt": "2026-10-18T11:04:31Z",
    "miss": true
   },
+  "celebrities hacked": {
+   "fetchedAt": "2026-10-25T04:42:09Z",
+   "miss": true
+  },
+  "chernobylite": {
+   "about": "Chernobylite is a Science Fiction Survival Horror RPG from developers The Farm 51. Set in the hyper-realistic, 3D scanned wasteland of Chernobyl’s exclusion zone, you’ll take on the role of Igor, a physicist and ex-employee of the Chernobyl Power Plant, returning to Pripyat to investigate the mysterious disappearance of his fiancée, 30 years prior.",
+   "ageRating": 17,
+   "appId": 1016800,
+   "developer": "The Farm 51",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:42:14Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Simulation",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Russian",
+    "French",
+    "German",
+    "Polish",
+    "Spanish - Spain",
+    "Italian",
+    "Simplified Chinese",
+    "Japanese",
+    "Portuguese - Brazil",
+    "Hungarian",
+    "Ukrainian",
+    "Czech",
+    "Turkish"
+   ],
+   "metacritic": 75,
+   "name": "Chernobylite Complete Edition",
+   "publisher": "The Farm 51",
+   "releaseDate": "2021-07-28",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1016800/ss_85f3a7a65bb5968281de763f5c763112709bae41.1920x1080.jpg?t=1741257112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1016800/ss_ecd582120d35c0baceb6a4e4e66710785eea1377.1920x1080.jpg?t=1741257112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1016800/ss_2b827893b101c7d434177b463c364a955933330f.1920x1080.jpg?t=1741257112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1016800/ss_4ac61df3f65418ba29f12d693a5e00cc5327134e.1920x1080.jpg?t=1741257112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1016800/ss_daffdd44ac34dc8c0effa17f82f7806cd5ece5eb.1920x1080.jpg?t=1741257112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1016800/ss_5ce28dae4e05afb82b2b4eb0b899abf8f3c5464d.1920x1080.jpg?t=1741257112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1016800/ss_19b7cf613c1d9585057936acf51add6aeb0bc8eb.1920x1080.jpg?t=1741257112",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1016800/ss_5ba9caaf55ea86961d64437d50c1f084168cdd03.1920x1080.jpg?t=1741257112"
+   ]
+  },
   "chicken police": {
    "fetchedAt": "2026-10-22T17:14:28Z",
    "miss": true
+  },
+  "child of light": {
+   "about": "Aurora, a young girl from 1895 Austria, awakens on the lost fairytale continent of Lemuria. To return home she must fight against the dark creatures of the Queen of the Night, who have stolen the sun, the moon and the stars. At stake is not only Lemuria, but Aurora’s true destiny.Key Features\n\nAn Adventure Waits!\nCreated by a talented team at Ubisoft Montreal using the UbiArt Framework, Child of Light is an RPG inspired by fairy tales complemented with a story carefully crafted in verse and…",
+   "ageRating": null,
+   "appId": 256290,
+   "developer": "Ubisoft Montréal",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:42:19Z",
+   "genres": [
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Portuguese - Brazil",
+    "Russian"
+   ],
+   "metacritic": 77,
+   "name": "Child of Light",
+   "publisher": "Ubisoft",
+   "releaseDate": "2014-04-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256290/ss_c8b078e853b8535c51512694ba2b82ead4f02d8a.1920x1080.jpg?t=1777993974",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256290/ss_6de7a1ca8ec7a59fa68065d418f247675de3e1a5.1920x1080.jpg?t=1777993974",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256290/ss_aa99e09c5d3d5936b820555448bbf123479104df.1920x1080.jpg?t=1777993974",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256290/ss_224e8004b6e8f9de0b3d524e9d465e998c46fd99.1920x1080.jpg?t=1777993974",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256290/ss_d6c2e812f72dd9eae818a97eb0700428a3b11d46.1920x1080.jpg?t=1777993974",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256290/ss_38a89565412b4a729fc92d8417b25cdd1e841d61.1920x1080.jpg?t=1777993974",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256290/ss_edb83545058283ab79755fe6de98ea0b7686ad99.1920x1080.jpg?t=1777993974"
+   ]
   },
   "chimparty": {
    "fetchedAt": "2026-10-22T17:14:31Z",
@@ -5689,6 +5948,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1766740/ss_e308b23495e34a3603ca85628ccd1cdd765a1e6e.1920x1080.jpg?t=1776483802"
    ]
   },
+  "chroma squad": {
+   "about": "Chroma Squad is a tactical RPG about five stunt actors who decide to quit their jobs and start their own Power Rangers-inspired TV show! Cast actors, purchase equipment and upgrades for your studio, craft weapons and giant Mechas out of cardboard and duct tape.",
+   "ageRating": null,
+   "appId": 251130,
+   "developer": "Behold Studios",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:42:24Z",
+   "genres": [
+    "RPG",
+    "Strategy",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Portuguese - Brazil",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Japanese"
+   ],
+   "metacritic": 75,
+   "name": "Chroma Squad",
+   "publisher": "Akupara Games",
+   "releaseDate": "2015-04-30",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251130/ss_7b1d1407dcee63a99c94fc8c16eed430c1f8fd9a.1920x1080.jpg?t=1783615507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251130/ss_09eab70a1e76e341876d880ae85fa22bd5cf1ee9.1920x1080.jpg?t=1783615507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251130/ss_ff8dca16450c2c9a998612031b12c46cb90423a4.1920x1080.jpg?t=1783615507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251130/ss_9cdbbeb7fcc45bedfe1418a7bf04dca03bb7fd72.1920x1080.jpg?t=1783615507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251130/ss_37b273218c62491f3ac5352d1bbf009b6e0ffb6f.1920x1080.jpg?t=1783615507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251130/ss_fbfe9066178eedc6645c3d4d29889f5d90f9e48a.1920x1080.jpg?t=1783615507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251130/ss_edeb0a31956b27b91098ceb35a4052cbd686da82.1920x1080.jpg?t=1783615507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251130/ss_230cc7f789645e3f63516a712decaf8c111c3bd0.1920x1080.jpg?t=1783615507"
+   ]
+  },
   "chronos before the ashes": {
    "about": "Chronos: Before the Ashes is an atmospheric RPG that chronicles a hero’s lifelong quest to save their homeland from a great evil. Grow wiser, stronger and more powerful as you explore the depths of the mysterious labyrinth. But beware, the labyrinth takes a heavy toll – each time your hero dies, they lose a year of their life!\n\nAdventure RPG - Refreshing combination of Adventure Game elements and RPG mechanics.",
    "ageRating": null,
@@ -5728,6 +6025,40 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/967390/ss_c9919b4cabf196dd31e1376e36217ce138e49b78.1920x1080.jpg?t=1696428864",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/967390/ss_91dc82721367251e9820b80094974340ff86c194.1920x1080.jpg?t=1696428864",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/967390/ss_7ece46368ea340fdd6208adcbea7043c50d579d5.1920x1080.jpg?t=1696428864"
+   ]
+  },
+  "cladun returns this is sengoku": {
+   "about": "Set in Japan’s Sengoku Era, you wake up in the mysterious land of Arcanus Cella where the souls of the dead gather as they await reincarnation. However, some souls have unfinished business that needs to be settled before they can reincarnate. As the player, you will assist these souls by traveling to real-world locations in feudal Japan and fighting your way through dangerous dungeons filled with monsters and traps.",
+   "ageRating": null,
+   "appId": 506260,
+   "developer": "Nippon Ichi Software, Inc.",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:42:29Z",
+   "genres": [
+    "Action",
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Cladun Returns: This Is Sengoku!",
+   "publisher": "NIS America, Inc.",
+   "releaseDate": "2017-06-06",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/506260/ss_3de0fadc9a46376f4caec19622564baf44dfc4b6.1920x1080.jpg?t=1732583553",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/506260/ss_f28a10286133be22184cbe50816a25f3189ff92d.1920x1080.jpg?t=1732583553",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/506260/ss_822833380c438398d54c6e508a416580419b556e.1920x1080.jpg?t=1732583553",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/506260/ss_80a4dc13807c4b0781c6265e6a6814e248035ee3.1920x1080.jpg?t=1732583553",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/506260/ss_6455e8e9fc2aeb5ca96d6b44182d297911fa6fef.1920x1080.jpg?t=1732583553",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/506260/ss_4a7cd33685dc533601a1a696e8f27e186fbf55a5.1920x1080.jpg?t=1732583553",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/506260/ss_8495be863d3b8fac3e04574b4ee34a7c9337a3de.1920x1080.jpg?t=1732583553"
    ]
   },
   "clair obscur expedition 33": {
@@ -5914,6 +6245,54 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1687990/ss_cfc4f86796b502054965cd06cafd7c813d25af1a.1920x1080.jpg?t=1728324729"
    ]
   },
+  "cocoon": {
+   "about": "From Jeppe Carlsen, the lead gameplay designer of LIMBO and INSIDE — COCOON takes you on an adventure across worlds within worlds. Master world-leaping mechanics to unravel a cosmic mystery.\n\nWorlds within Worlds\nCOCOON is a unique take on the puzzle adventure genre, where each world exists within an orb that you can carry on your back. Wrap your head around the core mechanic of leaping between worlds—and combine, manipulate, and rearrange them to solve intricate puzzles.",
+   "ageRating": null,
+   "appId": 1497440,
+   "developer": "Geometric Interactive",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:41:59Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Portuguese - Portugal",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Latin America",
+    "Traditional Chinese",
+    "Korean",
+    "Turkish",
+    "Polish",
+    "Dutch",
+    "Danish"
+   ],
+   "metacritic": 88,
+   "name": "COCOON",
+   "publisher": "Annapurna Interactive",
+   "releaseDate": "2023-09-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1497440/ss_e1760582c4ed7da2bc737b878126864f83308ca0.1920x1080.jpg?t=1763721043",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1497440/ss_33edba0e9cbf89a896e9ec2e9b2731303c4ea83a.1920x1080.jpg?t=1763721043",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1497440/ss_33294bb3b7addea79361629d24023223dab0aa4c.1920x1080.jpg?t=1763721043",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1497440/ss_515d6e054265fde30ca72373ffaefd50e9276fc2.1920x1080.jpg?t=1763721043",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1497440/ss_c86c35b3d748565240b4d02879a18dd3ba0c18fd.1920x1080.jpg?t=1763721043",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1497440/ss_df2535ce031cdbeb300f2e2ad0b97d8bcbb6b5b4.1920x1080.jpg?t=1763721043",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1497440/ss_544ae824c4386fa271d36771426ff111e36186c2.1920x1080.jpg?t=1763721043",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1497440/ss_8470201b352f6158a6f15ff0c24d184d13b38afa.1920x1080.jpg?t=1763721043"
+   ]
+  },
   "code violet": {
    "fetchedAt": "2026-10-15T09:14:10Z",
    "miss": true
@@ -5965,6 +6344,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1479730/99c8a3251798b4c2e5249b8ae37c66f96ceb0bd5/ss_99c8a3251798b4c2e5249b8ae37c66f96ceb0bd5.1920x1080.jpg?t=1778060427",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1479730/6a27eda79e3b7375c23167b8117968e4c1ea904b/ss_6a27eda79e3b7375c23167b8117968e4c1ea904b.1920x1080.jpg?t=1778060427"
    ]
+  },
+  "conscript": {
+   "fetchedAt": "2026-10-25T04:42:01Z",
+   "miss": true
   },
   "construction simulator": {
    "about": "----------------------------------------------------------\n\nConstruction Simulator has returned – larger and more impressive than ever! Fulfil your ambition to become a successful construction entrepreneur by establishing your business from scratch, assisted by your mentor Hape. Tackle intriguing projects of different sizes and requirements that help you increase your income, so that you're able to add even more powerful machinery to your vehicle fleet.",
@@ -6018,6 +6401,41 @@
   "constructor": {
    "fetchedAt": "2026-10-24T04:37:56Z",
    "miss": true
+  },
+  "contra anniversary collection": {
+   "about": "The Contra Anniversary Collection brings this classic Run and Gun franchise back to modern platforms and a new generation of players. \n\r\n\n\r\nGrab power ups and blast your way through waves of menacing enemies and bosses that will put your reaction skills to the test. Also included is a digital Bonus Book with tons of concept documents and sketches, the official chronology of the franchise, an exclusive interview with the veteran producer of the series, and more!",
+   "ageRating": null,
+   "appId": 1018020,
+   "developer": "KONAMI",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:42:34Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Contra Anniversary Collection",
+   "publisher": "KONAMI",
+   "releaseDate": "2019-06-11",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1018020/ss_380dd50a9f9fc8ea0edfff1352b51e639b84db39.1920x1080.jpg?t=1747196462",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1018020/ss_f3bc922c142068093c91978b2b5b5c4133c2e2fa.1920x1080.jpg?t=1747196462",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1018020/ss_f289bd4571e865cd3985d8ebea0b015b4ca76064.1920x1080.jpg?t=1747196462",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1018020/ss_10d5138035761c6126218f0d41244d5581109c1c.1920x1080.jpg?t=1747196462",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1018020/ss_16fb050d7df771f5cad8289f0ce47e1ea2fba68c.1920x1080.jpg?t=1747196462",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1018020/ss_545385576d7c0222f7abf5324cc2331962857f3c.1920x1080.jpg?t=1747196462",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1018020/ss_cabc1abe36d9978bb1d76bd01790ed92ec45743c.1920x1080.jpg?t=1747196462",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1018020/ss_4ee7d6caca973cd34d146542eed92bd4f7d36e8c.1920x1080.jpg?t=1747196462"
+   ]
   },
   "contra operation galuga": {
    "about": "A new entry in the legendary Contra series is here! Contra: Operation Galuga is a thorough reimagining of the classic run-'n'-gun action game from the '80s, featuring modern graphics and sound, new stages, new enemies and bosses, new play mechanics, an updated weapons system, and explosive co-op combat for up to two players in Story Mode or four players in Arcade Mode!\n\r\n\n\r\nWhen the Red Falcon terrorist group takes over the Galuga Islands off the coast of New Zealand, elite Contra commandos…",
@@ -6222,6 +6640,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1378990/ss_d50f2aa68b00871ebd916f5ab4a4c47bad6d67c9.1920x1080.jpg?t=1755191015",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1378990/ss_d115bbf4da2f0a16cb824f4f044a92fe84fbdee7.1920x1080.jpg?t=1755191015"
    ]
+  },
+  "crazy chicken shooter bundle": {
+   "fetchedAt": "2026-10-25T04:42:36Z",
+   "miss": true
   },
   "creature in the well": {
    "about": "Creature in the Well is a top-down, pinball-inspired, hack-and-slash dungeon crawler. As the last remaining BOT-C unit, venture deep into a desert mountain to restore power to an ancient facility, haunted by a desperate Creature. Uncover and upgrade powerful gear in order to free the city of Mirage from a deadly sandstorm.\n\nPinball with swords: Charge up energy orbs, then bounce and ricochet them to reactivate dormant machinery and stop the sandstorm.",
@@ -6574,6 +6996,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1313140/ss_468acea830d216876979ff7cf0443a0a226e79da.1920x1080.jpg?t=1786554901"
    ]
   },
+  "curved space": {
+   "about": "Curved Space is an intense arcade-style twin-stick shooter that takes the classic formula and plunges it into the weirdest reaches of space. Battle cosmic space-invading spiders across curved landscapes where bullets hug the terrain while the horizon drops sharply out of sight.\n\nInspired by arcade classics, players will have to hunt for weapon power-ups and upgrades while dodging enemy fire, blasting interdimensional bugs, and wrangling some enormous boss monsters.",
+   "ageRating": null,
+   "appId": 1320230,
+   "developer": "Only By Midnight Ltd.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:42:41Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Latin America",
+    "Traditional Chinese",
+    "Japanese",
+    "Korean"
+   ],
+   "metacritic": null,
+   "name": "Curved Space",
+   "publisher": "Maximum Games",
+   "releaseDate": "2021-06-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1320230/ss_d313058de5b0b3ec14b87b9f554dc986404d0e9b.1920x1080.jpg?t=1636412486",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1320230/ss_ffb9b9c8ebb228039bf707d52d3cd58b5569c2aa.1920x1080.jpg?t=1636412486",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1320230/ss_d8488f2bf43639af6a3af7613d5ce237cd402eba.1920x1080.jpg?t=1636412486",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1320230/ss_81251db7a8be2e544132dfc3b16210a29bd1a14c.1920x1080.jpg?t=1636412486",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1320230/ss_8c0ee96979b632ab58c021e57ac778bd20da2647.1920x1080.jpg?t=1636412486",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1320230/ss_39206cdb9a3a34ac729ea043891b04210e74e890.1920x1080.jpg?t=1636412486",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1320230/ss_4601b429304fbbe1a9a2bc3d1dd48b49c2df171b.1920x1080.jpg?t=1636412486",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1320230/ss_166afde54ef1eb10f55d4f226f1521edadd1c59f.1920x1080.jpg?t=1636412486"
+   ]
+  },
   "cusa 00062": {
    "fetchedAt": "2026-10-24T22:33:29Z",
    "miss": true
@@ -6791,6 +7256,82 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1839940/ss_f21d60fc6739d9b8c7c9d2fd463c7699cbd6c881.1920x1080.jpg?t=1790865915",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1839940/ss_6acafd0c62998a0705ab2e2177b305e67ae814b4.1920x1080.jpg?t=1790865915"
    ]
+  },
+  "danger zone 2": {
+   "about": "Danger Zone 2 takes the crash testing action out of the Test Area and onto real public roads.\nA high speed driving game featuring speed, traffic and crashes, Danger Zone 2 lets players\nloose onto the Freeways of the USA, the Motorways of the UK and the Autovias of Spain.\n\nUsing advanced real world physics and the power of Unreal Engine, Danger Zone 2 lets\nplayers ‘crash for cash’ and compete against each other to cause the most chaos on the\nroad.",
+   "ageRating": null,
+   "appId": 513690,
+   "developer": "Three Fields Entertainment",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:42:46Z",
+   "genres": [
+    "Racing",
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Danger Zone 2",
+   "publisher": "Three Fields Entertainment",
+   "releaseDate": "2018-07-12",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/513690/ss_95a25f0346971bf9e77d0edc2e02345ece08e4ae.1920x1080.jpg?t=1765213271",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/513690/ss_13a10b9d235ba34850f687d28b6bea33bf8c26aa.1920x1080.jpg?t=1765213271",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/513690/ss_50c0de4ddb06c644dc0cf123376b9e510981b32d.1920x1080.jpg?t=1765213271",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/513690/ss_ab15adbbe9199e99c45dc514c120043754eaa1dd.1920x1080.jpg?t=1765213271",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/513690/ss_a78ded2b4acc5736e62acd201faca81bf1b649fd.1920x1080.jpg?t=1765213271"
+   ]
+  },
+  "dangerous driving": {
+   "fetchedAt": "2026-10-25T04:42:49Z",
+   "miss": true
+  },
+  "dangerous golf": {
+   "about": "Mixing arcade style high score gameplay with humorous irreverence, Dangerous Golf isn't about Par or Birdie. The aim of the game is to cause maximum damage over 100 holes and four unusual locations.\n\nSmash up the toilets, make a big mess in the Kitchen, destroy priceless antiques in the Palace. This is golf played indoors where the more expensive the object the higher its game value. Humorous destruction and over the top trickshots are the way to score big.",
+   "ageRating": null,
+   "appId": 405500,
+   "developer": "Three Fields Entertainment",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:42:54Z",
+   "genres": [
+    "Action",
+    "Sports",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain"
+   ],
+   "metacritic": 54,
+   "name": "Dangerous Golf",
+   "publisher": "Three Fields Entertainment ",
+   "releaseDate": "2016-06-02",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405500/ss_39b020bf7899b10638fff54c190c478bedc753f9.1920x1080.jpg?t=1626416166",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405500/ss_0b3d3774069e2caf8cc8ad3f2507ef99ac3eb236.1920x1080.jpg?t=1626416166",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405500/ss_3b8743722f845bf5841cb102f7389ca1d8289755.1920x1080.jpg?t=1626416166",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405500/ss_c25e86c154f2c50bed07cbff3a39b980e7ab2ee2.1920x1080.jpg?t=1626416166",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405500/ss_32dc5b2e990f949cca26525cf76d35544d79caaf.1920x1080.jpg?t=1626416166",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405500/ss_1847546ce1153e5be6db2508cce6b61e367e5493.1920x1080.jpg?t=1626416166",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405500/ss_70f400204d6f7dc863cd197984c2988926ad274c.1920x1080.jpg?t=1626416166",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405500/ss_aab9e4e9414f3b56abe67eac7ea925cd91004117.1920x1080.jpg?t=1626416166"
+   ]
+  },
+  "dark cloud": {
+   "fetchedAt": "2026-10-25T04:42:56Z",
+   "miss": true
   },
   "dark pictures anthology house of ashes": {
    "about": "The Dark Pictures Anthology is a series of standalone, cinematic branching horror games where the decisions you make in the game determine the story and the outcome you receive.\n \nHouse of Ashes is the third game in the series.\n\nIn House of Ashes, at the close of the Iraq War, Special Forces hunting for weapons of mass destruction unearth something far deadlier – a buried Sumerian temple containing a nest of unearthly creatures.",
@@ -7019,6 +7560,53 @@
   "dark souls iii the fire fades edition": {
    "fetchedAt": "2026-10-17T06:59:47Z",
    "miss": true
+  },
+  "darkest dungeon 2": {
+   "about": "Darkest Dungeon II is a roguelike road trip of the damned. Form a party, equip your stagecoach, and set off across the decaying landscape on a last gasp quest to avert the apocalypse. The greatest dangers you face, however, may come from within...\n\n \n\nNew Game Mode - Kingdoms - Now Playable!",
+   "ageRating": null,
+   "appId": 1940340,
+   "developer": "Red Hook Studios",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:43:01Z",
+   "genres": [
+    "RPG",
+    "Strategy",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Czech",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Spanish - Latin America",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Ukrainian",
+    "Spanish - Spain",
+    "Traditional Chinese"
+   ],
+   "metacritic": 81,
+   "name": "Darkest Dungeon® II",
+   "publisher": "Red Hook Studios",
+   "releaseDate": "2023-05-08",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1940340/ss_bc4c7aec5704ed4108a181ec9a790c3fea4a9f12.1920x1080.jpg?t=1759351183",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1940340/ss_254e72f3356e62496b02c1faf7852bb5053e0338.1920x1080.jpg?t=1759351183",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1940340/ss_19b4a3415f5c4167121cb2acd12b7d6d90555e2c.1920x1080.jpg?t=1759351183",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1940340/ss_9fab75b3c27e5dfc4b55a105b457623d0a76f924.1920x1080.jpg?t=1759351183",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1940340/ss_7c63e2d7ec491bf2b4a94209742a75b869b47814.1920x1080.jpg?t=1759351183",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1940340/ss_e25bc022fa98e7b235eb7146a3e54507893f3ab0.1920x1080.jpg?t=1759351183",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1940340/ss_e1e58fd089d3223d6af5e2285ec957ce4fa47601.1920x1080.jpg?t=1759351183",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1940340/ss_d9ace881030b51b9f405198111df391f4573d092.1920x1080.jpg?t=1759351183"
+   ]
   },
   "darknet": {
    "about": "Darknet is a strategy/puzzle game in which you play as an elite hacker in the Net. Plug into cyberspace, using viruses, worms, and exploits to steal the data before your signal gets traced!\n \nAfter winning awards on PSVR, Oculus Rift, and Gear VR, Darknet is now available for the HTC Vive and also INCLUDES A NON-VR VERSION for those without a headset!Features\n\n \n\nDEEP GAMEPLAY: “Darknet is the closest thing to a killer app for the system...",
@@ -7365,6 +7953,10 @@
   },
   "death end request 2": {
    "fetchedAt": "2026-10-22T17:14:38Z",
+   "miss": true
+  },
+  "death mark": {
+   "fetchedAt": "2026-10-25T04:43:04Z",
    "miss": true
   },
   "death stranding 2 on the beach": {
@@ -8193,6 +8785,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2149120/ss_62974ba852efbc48f0414581bab30677e8a2223e.1920x1080.jpg?t=1721387478"
    ]
   },
+  "dont die mr robot": {
+   "fetchedAt": "2026-10-25T04:43:06Z",
+   "miss": true
+  },
   "doom": {
    "about": "Developed by id software, the studio that pioneered the first-person shooter genre and created multiplayer Deathmatch, DOOM returns as a brutally fun and challenging modern-day shooter experience. Relentless demons, impossibly destructive guns, and fast, fluid movement provide the foundation for intense, first-person combat – whether you’re obliterating demon hordes through the depths of Hell in the single-player campaign, or competing against your friends in numerous multiplayer modes.",
    "ageRating": 17,
@@ -9015,6 +9611,55 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/237850/ss_dddefa4aab903c5b88ac496fc00563cbb4e4c0c6.1920x1080.jpg?t=1783003404"
    ]
   },
+  "dreamworks gabbys dollhouse ready to party": {
+   "about": "Inspired by DreamWorks Animation’s Gabby’s Dollhouse, fans can now throw the greatest party ever with Gabby and Pandy Paws! Hop into the catavator and see the colorful world come to life. \n\nFirst stop, Crafting World with Mama and Baby Box. Get creative with items you find around the house. Then see what awaits you in the Fairy Tail Garden with Kitty Fairy. Does floating through space sound like a groovy plan? DJ Catnip thinks so. Boogie down to the music room and blast off to planet Caturn.",
+   "ageRating": null,
+   "appId": 3222830,
+   "developer": "Infinigon Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:43:11Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Danish",
+    "Dutch",
+    "Finnish",
+    "Norwegian",
+    "Polish",
+    "Portuguese - Brazil",
+    "Simplified Chinese",
+    "Spanish - Latin America",
+    "Swedish",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "DreamWorks Gabby’s Dollhouse: Ready to Party",
+   "publisher": "Outright Games Ltd.",
+   "releaseDate": "2025-09-19",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3222830/107542214814fdd66babd8f88c3e064ab2d83de8/ss_107542214814fdd66babd8f88c3e064ab2d83de8.1920x1080.jpg?t=1786451788",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3222830/c5d585ce6d356650137e6d6a6d8c30c204d2d2d9/ss_c5d585ce6d356650137e6d6a6d8c30c204d2d2d9.1920x1080.jpg?t=1786451788",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3222830/1965160a50fffbb97187094d147f0fe1d89512b0/ss_1965160a50fffbb97187094d147f0fe1d89512b0.1920x1080.jpg?t=1786451788",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3222830/2bcdcb8906724d750e486f9e6072bc039ecddc63/ss_2bcdcb8906724d750e486f9e6072bc039ecddc63.1920x1080.jpg?t=1786451788",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3222830/1d5df1efe2351568b1981298e3c96b6063651279/ss_1d5df1efe2351568b1981298e3c96b6063651279.1920x1080.jpg?t=1786451788",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3222830/6d71ed6903dab1ecc17fe5bdfd5f2c016c7e6eb9/ss_6d71ed6903dab1ecc17fe5bdfd5f2c016c7e6eb9.1920x1080.jpg?t=1786451788",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3222830/cf160fa6e892f501edf83f9d3e34c210e59de7c3/ss_cf160fa6e892f501edf83f9d3e34c210e59de7c3.1920x1080.jpg?t=1786451788",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3222830/a1207a6d00c64acd287c21dc545a8a3a7fbb9ea2/ss_a1207a6d00c64acd287c21dc545a8a3a7fbb9ea2.1920x1080.jpg?t=1786451788"
+   ]
+  },
   "dredge": {
    "about": "Captain your fishing trawler to explore a collection of remote isles, and their surrounding depths, to see what lies below. Sell your catch to the locals and complete quests to learn more about each area’s troubled past. Outfit your boat with better equipment to trawl deep-sea trenches and navigate to far-off lands, but keep an eye on the time. You might not like what finds you in the dark...",
    "ageRating": null,
@@ -9060,6 +9705,10 @@
   },
   "driveclub": {
    "fetchedAt": "2026-10-22T17:14:36Z",
+   "miss": true
+  },
+  "ducati 90th anniversary the official videogame": {
+   "fetchedAt": "2026-10-25T04:43:14Z",
    "miss": true
   },
   "dungeon and gravestone": {
@@ -9141,6 +9790,10 @@
   },
   "dungeons 3 complete collection": {
    "fetchedAt": "2026-10-24T04:38:11Z",
+   "miss": true
+  },
+  "dungeons and dragons dark alliance": {
+   "fetchedAt": "2026-10-25T04:43:16Z",
    "miss": true
   },
   "dusk diver 2": {
@@ -9875,6 +10528,10 @@
    "fetchedAt": "2026-10-21T00:42:21Z",
    "miss": true
   },
+  "endless dungeon": {
+   "fetchedAt": "2026-10-25T04:43:19Z",
+   "miss": true
+  },
   "ep0177 00 divaft39future00 a0000 v0100": {
    "fetchedAt": "2026-10-22T17:14:51Z",
    "miss": true
@@ -9996,6 +10653,36 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1303140/ss_b4461dc246c3ff9925ae59e66d7c12e70d1e03e8.1920x1080.jpg?t=1624885543",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1303140/ss_1ddb0925c43867976361004fa0c2f3328a2f168f.1920x1080.jpg?t=1624885543",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1303140/ss_29cc436913714ed4cdcf983e71fae64850e55325.1920x1080.jpg?t=1624885543"
+   ]
+  },
+  "escape plan": {
+   "about": "Escape Plan is a top down strategy style game with narrative mechanics similar to Dwarf Fortress and & gameplay similar to The Escapists that together with interacting with the prison and it's residents you will find a way to plan your escape.\n\nIn here who are you going to trust, attack, create a gang with, bribe, avoid or are you just going to do it all on your own. \n\nWho has a certain talent or skill that would be helpful in escaping.",
+   "ageRating": null,
+   "appId": 4543950,
+   "developer": "Fuzzy Visions",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-25T04:43:24Z",
+   "genres": [
+    "Strategy"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Escape Plan",
+   "publisher": "Fuzzy Visions",
+   "releaseDate": "",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4543950/31665f7e045a9a229e7589d77ade77ab2133d071/ss_31665f7e045a9a229e7589d77ade77ab2133d071.1920x1080.jpg?t=1792703874",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4543950/414989fe2d926f3345c3c700840c340f1dd22280/ss_414989fe2d926f3345c3c700840c340f1dd22280.1920x1080.jpg?t=1792703874",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4543950/2253468acba36d223d578ca4ff5a5fed3f457eda/ss_2253468acba36d223d578ca4ff5a5fed3f457eda.1920x1080.jpg?t=1792703874",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4543950/54bf6981c072432d05718db9a521348c8f82a6f0/ss_54bf6981c072432d05718db9a521348c8f82a6f0.1920x1080.jpg?t=1792703874",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4543950/b6cba27a2537cf73b6a0b25dbdaa5038ef0bb194/ss_b6cba27a2537cf73b6a0b25dbdaa5038ef0bb194.1920x1080.jpg?t=1792703874",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4543950/4600e36a18073060bc0157a16c92a988b71e3942/ss_4600e36a18073060bc0157a16c92a988b71e3942.1920x1080.jpg?t=1792703874",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4543950/d08c6ef950941ac0df05745816862b6110d22d5c/ss_d08c6ef950941ac0df05745816862b6110d22d5c.1920x1080.jpg?t=1792703874",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4543950/3bb3bfc785d3c21065ebfd92ab85a430ef62cd2c/ss_3bb3bfc785d3c21065ebfd92ab85a430ef62cd2c.1920x1080.jpg?t=1792703874"
    ]
   },
   "escapists": {
@@ -11094,6 +11781,57 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1902690/ss_c0e555e56348ce29544f7f9611e06d70dada29e6.1920x1080.jpg?t=1760594680",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1902690/ss_6b4967d47e21ea49022a94e6691ae11c4c389206.1920x1080.jpg?t=1760594680"
    ]
+  },
+  "fia european truck racing championship": {
+   "about": "The European Truck Racing Championship is one of the most spectacular and challenging motor racing competitions. \n\r\n\n\r\nThe driving difficulty and many unique race features have been faithfully reproduced with the KT Engine (WRC).\n\r\nIn ETRC, like on real-life race tracks, you need to control the temperature of your brakes so they don't overheat. You must also consider the weight of the truck when cornering, monitor tyre wear and find the best tactics for overtaking.",
+   "ageRating": null,
+   "appId": 940580,
+   "developer": "N-RACING",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-25T04:43:29Z",
+   "genres": [
+    "Racing",
+    "Sports",
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Korean",
+    "Spanish - Latin America",
+    "Japanese",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Arabic"
+   ],
+   "metacritic": null,
+   "name": "FIA European Truck Racing Championship",
+   "publisher": "Nacon",
+   "releaseDate": "2019-07-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/940580/ss_bc8589a204ccafe280ce93c52e589c9fd13fb157.1920x1080.jpg?t=1725351040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/940580/ss_6a00d7828e42b7f6df1027fb293315e1e4190782.1920x1080.jpg?t=1725351040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/940580/ss_703c89ff7e9bc92edbc952b4a76a5dec122cdc04.1920x1080.jpg?t=1725351040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/940580/ss_af02867887b895af5f08ca43bda436f95291501b.1920x1080.jpg?t=1725351040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/940580/ss_fb73685c984ba665942e1448e71378a8f66843df.1920x1080.jpg?t=1725351040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/940580/ss_a6d859703852047142c52d223853a3fdbc8ae6e9.1920x1080.jpg?t=1725351040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/940580/ss_038f46cc9cf026b29d2e9f73e8650b55f2356903.1920x1080.jpg?t=1725351040",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/940580/ss_4f2a5f1a171d6f2b7446aff9702b8a27dd539fa1.1920x1080.jpg?t=1725351040"
+   ]
+  },
+  "fifa 16": {
+   "fetchedAt": "2026-10-25T04:43:31Z",
+   "miss": true
   },
   "fifa 17": {
    "fetchedAt": "2026-10-23T18:25:02Z",
@@ -36204,6 +36942,6 @@
    ]
   }
  },
- "updatedAt": "2026-10-24T22:34:26Z",
+ "updatedAt": "2026-10-25T04:43:34Z",
  "version": 1
 }
