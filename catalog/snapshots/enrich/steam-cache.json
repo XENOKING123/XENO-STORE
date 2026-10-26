@@ -85,6 +85,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/735580/ss_ce1d1e4d8dc20acc2cf3ed4a04ba66a5f278f3d5.1920x1080.jpg?t=1754333248"
    ]
   },
+  "2md vr football head 2 head edition": {
+   "fetchedAt": "2026-10-26T20:00:35Z",
+   "miss": true
+  },
   "3d billiards billiards and snooker": {
    "fetchedAt": "2026-10-24T04:37:11Z",
    "miss": true
@@ -125,6 +129,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/362830/ss_fed14e5ccd5cddfbe043e689674defa8d3979bd9.1920x1080.jpg?t=1726474795",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/362830/ss_348b2b1acc65db2f8762a0f4024fc16a02048a9a.1920x1080.jpg?t=1726474795"
    ]
+  },
+  "3m spain foundation stem vr": {
+   "fetchedAt": "2026-10-26T20:00:37Z",
+   "miss": true
   },
   "63 days": {
    "about": "I'm part of the first generation born in a free Poland, after 123 years of foreign occupation. I grew up believing our freedom was safe, but the outbreak of World War II shattered that hope. We're angry and tired, but also determined. We're itching to do something, to reclaim our normal lives. My companions and I feel we have only one choice: to get revenge and win back independence for our city and nation, or die trying.",
@@ -271,6 +279,10 @@
   },
   "aaa dynamic scenes": {
    "fetchedAt": "2026-10-18T11:05:33Z",
+   "miss": true
+  },
+  "abandoned realtime trailers demo": {
+   "fetchedAt": "2026-10-26T20:00:50Z",
    "miss": true
   },
   "absolum": {
@@ -885,6 +897,93 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3150480/ss_d1fc66269cb0d13ab2531250046242ebcf754def.1920x1080.jpg?t=1771345621"
    ]
   },
+  "agatha christie hercule poirot the london case": {
+   "about": "From the brilliant mind of the BAFTA Award-Winning studio, Blazing Griffin, get ready in 2023 for a new adventure as the famous detective Hercule Poirot travels to London for a seemingly simple task of delivering a painting for an exhibition, that will be unfortunately stolen during the grand opening.\n\nFor the first time ever, players will have the opportunity to team up with Poirot’s beloved sidekick in the books, Hastings, as they uncover a new mystery.",
+   "ageRating": null,
+   "appId": 2223740,
+   "developer": "Blazing Griffin",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-26T20:00:55Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Korean",
+    "Japanese",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Czech"
+   ],
+   "metacritic": null,
+   "name": "Agatha Christie - Hercule Poirot: The London Case",
+   "publisher": "Microids",
+   "releaseDate": "2023-08-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2223740/ss_06b5faa3bbc8a3e97df09aa5b7cd8e63117898b2.1920x1080.jpg?t=1743171937",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2223740/ss_2f8695a5b31b324d6a749943a146916d8fc1e393.1920x1080.jpg?t=1743171937",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2223740/ss_ee432bc3ef68142c0a3148fbd1002f13f7a3befe.1920x1080.jpg?t=1743171937",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2223740/ss_408f57f3df9f0b4eeabdb50cda4b66a4c0b670d8.1920x1080.jpg?t=1743171937",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2223740/ss_834366c6a58db31ecea4f7c18f9094ac23c82006.1920x1080.jpg?t=1743171937"
+   ]
+  },
+  "agatha christie murder on the orient express": {
+   "about": "Discover a modernized and revisited version of the Agatha Christie's classic. Set in 2023, Murder on the Orient Express brings the classic tale to life in a way that will surprise even the most dedicated fans. With brand-new elements added to the original story, experience the mystery and suspense like never before and rediscover one of the most famous case of Hercule Poirot.\n\nA crime is committed on board the Orient Express.",
+   "ageRating": null,
+   "appId": 1904790,
+   "developer": "Microids Studio Lyon",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-26T20:01:00Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Korean",
+    "Japanese",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Czech"
+   ],
+   "metacritic": null,
+   "name": "Agatha Christie - Murder on the Orient Express",
+   "publisher": "Microids",
+   "releaseDate": "2023-10-19",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1904790/ss_31859f6e015758610e2e9bdf566ed0569fb264e0.1920x1080.jpg?t=1743171940",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1904790/ss_97fadf57b34c092dc588caed79fe936965c39c03.1920x1080.jpg?t=1743171940",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1904790/ss_c50b3023ae8b5cd5aad32e7f46421d7449610a89.1920x1080.jpg?t=1743171940",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1904790/ss_9822f11f994b5b9cf9500c4c95e8116da59e77fa.1920x1080.jpg?t=1743171940",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1904790/ss_ac12148eb8293e1b72d49bee5535ff68325b5710.1920x1080.jpg?t=1743171940",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1904790/ss_508d0faed62e2630267cd25905ab7467b4abad90.1920x1080.jpg?t=1743171940",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1904790/ss_0c11e9446afcd4132656c4ed671e8c1fa15d563a.1920x1080.jpg?t=1743171940",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1904790/ss_4fbed324189e540825a5a29d9b9b210758800afd.1920x1080.jpg?t=1743171940"
+   ]
+  },
   "age of wonders planetfall": {
    "about": "Emerge from the cosmic dark age of a fallen galactic empire to build a new future for your people. Age of Wonders: Planetfall is the new strategy game from Triumph Studios, creators of the critically acclaimed Age of Wonders series, bringing all the exciting tactical turn-based combat and in-depth empire building of its predecessors to space in an all-new, sci-fi setting.",
    "ageRating": null,
@@ -997,6 +1096,14 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2407270/6c54c0fb13369aae7fc5d4be4639d94100c37633/ss_6c54c0fb13369aae7fc5d4be4639d94100c37633.1920x1080.jpg?t=1790139241"
    ]
   },
+  "air conflicts pacific carriers playstation 4 edition": {
+   "fetchedAt": "2026-10-26T20:01:02Z",
+   "miss": true
+  },
+  "air conflicts secret wars": {
+   "fetchedAt": "2026-10-26T20:01:05Z",
+   "miss": true
+  },
   "akibas trip undead and undressed": {
    "about": "Akihabara. \"Akiba,\" for short.\n\nThis suburban Tokyo ward's seen it all, from Japan's post-war reconstruction to the economic bubblegum crisis of the '80s. Always on the cutting edge of progress, with a little something to offer even the most fetishistic of appetites, it was almost inevitable that this singular technocracy of indulgence would give birth to a whole new kind of appetite altogether.",
    "ageRating": null,
@@ -1035,6 +1142,10 @@
   },
   "alan wake 2": {
    "fetchedAt": "2026-10-18T04:32:11Z",
+   "miss": true
+  },
+  "alan wake remastered": {
+   "fetchedAt": "2026-10-26T20:01:07Z",
    "miss": true
   },
   "alex kidd in miracle world dx": {
@@ -1241,6 +1352,106 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1549970/ss_79561b151ad9f129f9ece9d7a9c7158a516a3e96.1920x1080.jpg?t=1727102951"
    ]
   },
+  "all in one sports vr": {
+   "about": "★ FEATURES :\n\n■ A variety of sports titles experiences\n- Baseball, Archery, Ping Pong, Basketball, Bowling, Badminton, Golf, Dart, Billiard, Boxing, Tennis, Volleyball, squash\n\n■ Real time PvP by multiplay\n\n■ Realistic virtual sports experiences by advanced physics\n\n■ Player customization \n\n■ Simple UI and easy control can help anyone to play\n\n■ 5 different difficulties from beginner to professional\n\n* The game format is the same as the official Olympic rules, so you can learn sports training…",
+   "ageRating": null,
+   "appId": 1514840,
+   "developer": "Appnori Inc.",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-26T20:01:12Z",
+   "genres": [
+    "Action",
+    "Sports",
+    "Simulation",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Portugal",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Turkish"
+   ],
+   "metacritic": null,
+   "name": "All-In-One Sports VR",
+   "publisher": " Appnori Inc.",
+   "releaseDate": "2023-04-07",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1514840/ss_3502aad9de300f3ca469e255dad44c415fcdd17b.1920x1080.jpg?t=1778225064",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1514840/ss_7b8cdf83ee272a7212d586d6b4f3db2ee5110a5c.1920x1080.jpg?t=1778225064",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1514840/ss_9f6acb3e5c37666ba4589170dd9b7ce6324b85bf.1920x1080.jpg?t=1778225064",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1514840/ss_e7584c9b20ded9586564aa03a20e96cf63ed5069.1920x1080.jpg?t=1778225064",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1514840/ss_eab95c30834d1a873295e81ee712315912b20d04.1920x1080.jpg?t=1778225064",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1514840/ss_81c57879dfd93ea1adcef5a0edc78a04fde678f5.1920x1080.jpg?t=1778225064",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1514840/ss_44c412b07daf186ac084d0c7917b476975c548e3.1920x1080.jpg?t=1778225064",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1514840/ss_d5aebacc96acc44daca5b36837793ec0fd0886da.1920x1080.jpg?t=1778225064"
+   ]
+  },
+  "almost there the platformer": {
+   "about": "Sprint between saw blades while dodging homing missiles. Duck under lasers while the floor crumbles beneath you. Almost There was designed specifically for fans of the hardcore platforming genre - you've been warned.\n\n100% Dexterity Platforming\n\nAlmost There provides uninterrupted platforming awesomeness.\n\nHours and Hours of Gameplay\n\nWith over 150 stages and timed challenges, Almost There will kill you thousands of times.",
+   "ageRating": null,
+   "appId": 951940,
+   "developer": "Bony Yousuf",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-26T20:01:17Z",
+   "genres": [
+    "Action",
+    "Strategy",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Czech",
+    "Danish",
+    "Dutch",
+    "Finnish",
+    "Hungarian",
+    "Japanese",
+    "Korean",
+    "Norwegian",
+    "Polish",
+    "Portuguese - Portugal",
+    "Russian",
+    "Simplified Chinese",
+    "Swedish",
+    "Thai",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Almost There: The Platformer",
+   "publisher": "The Quantum Astrophysicists Guild",
+   "releaseDate": "2019-02-19",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/951940/ss_1be210644571165444cdf695c6a422ac728efd91.1920x1080.jpg?t=1730751443",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/951940/ss_7454b073e2e07c0e85e09f58adc23288f673982d.1920x1080.jpg?t=1730751443",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/951940/ss_777d2870df7e1b1532c3e2620122e9fff6f8074e.1920x1080.jpg?t=1730751443",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/951940/ss_0eb875ed5ed9b569d92b5bf168c879d78afc6807.1920x1080.jpg?t=1730751443",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/951940/ss_f52a3ce13c76014ba3be31493007fa0085aa4d77.1920x1080.jpg?t=1730751443",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/951940/ss_2da0c919aae66cc78d697943bcc6a6cd26382091.1920x1080.jpg?t=1730751443",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/951940/ss_8a7f72fa2a9258a6f84f45a609a777db9e1c10dd.1920x1080.jpg?t=1730751443",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/951940/ss_0f7d5631f978bbbf61a38b181fdc93317b0a3d64.1920x1080.jpg?t=1730751443"
+   ]
+  },
   "alone in the dark": {
    "about": "Alone in the Dark weaves a chilling tapestry of psychological horror and Southern Gothic charm, reimagining the iconic game that set the benchmark for the genre. We invite you to join us on a journey into madness, where each encounter could be your last. With each step you take closer to unravelling Derceto's mystery, the eyes that watch from the darkness grow hungrier. Every bullet means the difference between survival and an unthinkable end.",
    "ageRating": null,
@@ -1288,9 +1499,72 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1310410/ss_a21a787d1340069540f854e70fa26c898995647a.1920x1080.jpg?t=1754066311"
    ]
   },
+  "alone in the dark 2": {
+   "about": "The sequel to the critically acclaimed Alone in the Dark, this new adventure sees our hero, Edward Carnby, in 1923 confronting the many faces of evil in the darkness of Derceto, a house in which entering is the easy part and leaving could be hell!",
+   "ageRating": null,
+   "appId": 548890,
+   "developer": "Infogrames",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-26T20:01:22Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain"
+   ],
+   "metacritic": null,
+   "name": "Alone in the Dark 2",
+   "publisher": "THQ Nordic",
+   "releaseDate": "2016-12-13",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/548890/ss_96d8e42a3e033ce65c1117e652842c888d1e6f54.1920x1080.jpg?t=1725004268",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/548890/ss_2fd5bc6ddabe057fba07d6432711a0b207dce3e1.1920x1080.jpg?t=1725004268",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/548890/ss_f7a7f94e92f0b396f4f6b56708c519a5569c0e1b.1920x1080.jpg?t=1725004268",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/548890/ss_ef43cb8ba31733f8de8b885a9d676cb41089cfb0.1920x1080.jpg?t=1725004268",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/548890/ss_c33ac1c7206724afbada3e3d253595636dea3e98.1920x1080.jpg?t=1725004268"
+   ]
+  },
   "alone in the dark 2 1996": {
    "fetchedAt": "2026-10-16T21:10:34Z",
    "miss": true
+  },
+  "alternate jake hunter daedalus the awakening of golden jazz": {
+   "about": "The latest addition of the Detective Saburo Jinguji, \na hard-boiled adventure series that boasts a 30 year history. \nThe adventure will intrigue newcomers, and delight long time fans.\nJinguji's adolescence is explored in this never before told origin story!\n\nThat was one month ago today.\nSomeone has murdered Saburo's grandfather, Kyosuke, while he was living in New York.\n\nSaburo sets off to New York to sort through \nthe belongings and memories his grandfather left behind.",
+   "ageRating": null,
+   "appId": 836600,
+   "developer": "Neilo Inc.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-26T20:01:27Z",
+   "genres": [
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "Traditional Chinese",
+    "Japanese",
+    "Korean"
+   ],
+   "metacritic": null,
+   "name": "Alternate Jake Hunter: DAEDALUS The Awakening of Golden Jazz",
+   "publisher": "Arc System Works",
+   "releaseDate": "2019-07-04",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/836600/ss_c62e1933c45531ff1655b91f6c04f0245220f691.1920x1080.jpg?t=1769579860",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/836600/ss_60990762153fc869302b96282965111ae2c0abfd.1920x1080.jpg?t=1769579860",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/836600/ss_2bf456484d5eae4c32ae493fcbd80a2b763cc4da.1920x1080.jpg?t=1769579860",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/836600/ss_2170093d66930f8cedcb381e61af763eea9e789e.1920x1080.jpg?t=1769579860",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/836600/ss_a7d0abef42022004902768bc432526d1955f50c4.1920x1080.jpg?t=1769579860"
+   ]
   },
   "alters": {
    "about": "You have crash-landed on a lethal, radiation-soaked planet, and you are running out of time. A scorching sun that burns everything in its path is coming your way. Your only hope of survival is a massive mobile base too complex for one person to operate. You are forced to make a decision no human has ever faced: creating a crew of alternative versions of yourself.\n\nBut your solution may just become your biggest problem.\n\nYou crashed. You are entirely alone.",
@@ -1338,6 +1612,10 @@
    "fetchedAt": "2026-10-21T13:51:40Z",
    "miss": true
   },
+  "american ninja warrior challenge": {
+   "fetchedAt": "2026-10-26T20:01:30Z",
+   "miss": true
+  },
   "amnesia collection": {
    "fetchedAt": "2026-10-22T17:14:01Z",
    "miss": true
@@ -1345,6 +1623,156 @@
   "amplitude": {
    "fetchedAt": "2026-10-22T17:14:03Z",
    "miss": true
+  },
+  "ancient amuletor": {
+   "fetchedAt": "2026-10-26T20:01:32Z",
+   "miss": true
+  },
+  "angry alligator": {
+   "about": "Embark on a swamptastic adventure to grow into the biggest, baddest gator!\n\nCome on down to the swamp and go on an adventure like no other! Start as a small baby gator and grow into the biggest, baddest reptile around. Eat everything that moves, and more, so you can grow big and strong to face all challenges ahead.\n\nThe fate of the swamp and all that reside within, lies on your scaled shoulders! Horrible hoomans have taken over and only you can scare them away! But never fear!",
+   "ageRating": null,
+   "appId": 1459790,
+   "developer": "BACKUP PLAN",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-26T20:01:37Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Dutch",
+    "Japanese",
+    "Korean",
+    "Portuguese - Portugal",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Angry Alligator",
+   "publisher": "Lion Castle Entertainment",
+   "releaseDate": "",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1459790/ss_d7a3ceee5f1e94c9584cf2a90c66329b89b59dac.1920x1080.jpg?t=1652774936",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1459790/ss_8fe2d783370945c3fa54acb8fafa33285a51513e.1920x1080.jpg?t=1652774936",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1459790/ss_87964a456a56904b2f76177671c1b87fc1417e26.1920x1080.jpg?t=1652774936",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1459790/ss_36dd206aa81f51c01e6755d708c39702f9865fa7.1920x1080.jpg?t=1652774936",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1459790/ss_a817810cfd85d9a3d418e75ce2a7bf76b44f1c07.1920x1080.jpg?t=1652774936"
+   ]
+  },
+  "angry birds vr isle of pigs": {
+   "about": "Join Red, Chuck, Bomb and the Blues to save the stolen eggs in Angry Birds VR: Isle of Pigs, an immersive VR game adventure of more than 100 fun-filled levels from Resolution Games! \n\nExplore the remote island where the greedy green pigs take their vacation, slingshot your way to victory by defeating the evil Dr. Frankenswine, and create/share/discover an infinite number of levels with the online level builder.",
+   "ageRating": null,
+   "appId": 1001140,
+   "developer": "Resolution Games",
+   "features": [
+    "Single-player",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-26T20:01:42Z",
+   "genres": [
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Japanese",
+    "Korean",
+    "Spanish - Latin America"
+   ],
+   "metacritic": 79,
+   "name": "Angry Birds VR: Isle of Pigs",
+   "publisher": "Resolution Games",
+   "releaseDate": "2019-02-07",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1001140/ss_35db98cf4e9dfff763e590f2b9fa11b2a0516bdc.1920x1080.jpg?t=1697719549",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1001140/ss_448d84a0625958d92f46669884bea2c75507e662.1920x1080.jpg?t=1697719549",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1001140/ss_36c8b4ce9fde9743a46e0fbf900877e23582a008.1920x1080.jpg?t=1697719549",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1001140/ss_0d78273a74d57ec65b1ef5373a4669fe0e8ef1f3.1920x1080.jpg?t=1697719549",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1001140/ss_ef6911eba7494ddfdf5389507ccb3bec661688a6.1920x1080.jpg?t=1697719549",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1001140/ss_5ed6d7d62edfabf7ec4fdeb765d6d63cbf90d424.1920x1080.jpg?t=1697719549",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1001140/ss_fb37bc5baaede5901285281da1c14022dd2b4e76.1920x1080.jpg?t=1697719549",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1001140/ss_8b0dc03edd29c3c78707c9d64c1c5ec0f1c7ccea.1920x1080.jpg?t=1697719549"
+   ]
+  },
+  "animal doctor": {
+   "about": "Make your dreams come true with Animal Doctor!\n\nWould you like to spend your life caring for animals? With Animal Doctor you will be surrounded by animal friends and pets. Look after creatures large and small while you train as an intern at an animal doctor! Treat and aid the recovery of wonderful pets, farm animals and working beasts.\n\nA unique adventure for the whole family, allowing you to engage fully in 1st person mode after choosing your in-game character.",
+   "ageRating": null,
+   "appId": 1033930,
+   "developer": "Caipirinha Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-26T20:01:47Z",
+   "genres": [
+    "RPG",
+    "Simulation",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain"
+   ],
+   "metacritic": null,
+   "name": "Animal Doctor",
+   "publisher": "Toplitz Productions",
+   "releaseDate": "2021-03-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1033930/ss_7fac6229cd8e17c4eb8290bb3866a61af1ee1494.1920x1080.jpg?t=1642666774",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1033930/ss_23df3c12c57880d03e54e11d1ce359084f01b4c3.1920x1080.jpg?t=1642666774",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1033930/ss_9e87581adf3607f173f1ba88c6491fdd58ce6663.1920x1080.jpg?t=1642666774",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1033930/ss_6297bff7491660b2d091da46a8093e76fb76ee6d.1920x1080.jpg?t=1642666774",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1033930/ss_73b091e99d6c471d268eabd65da36080f2445357.1920x1080.jpg?t=1642666774",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1033930/ss_c1bf8bb1809770e16890c11ecf116f1b148266bf.1920x1080.jpg?t=1642666774",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1033930/ss_23c2119118a4affb643f9014434b244dde66243a.1920x1080.jpg?t=1642666774",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1033930/ss_d696219214cbf83814f8074565ddfeb5e7e0b9f6.1920x1080.jpg?t=1642666774"
+   ]
+  },
+  "animal kart racer 2": {
+   "about": "Three, two, one - STEP ON IT!\n\nAnything goes in these races: Risky overtaking manoeuvres, shameless crashes and insane pile-ups. Hurtle through deep gorges, glittering diamond caves, icy polar regions and yawning canyons. Dodge obstacles at full speed, catapult your vehicle over jumps and fire items at your opponents.",
+   "ageRating": null,
+   "appId": 2649820,
+   "developer": "Raylight Games S.r.l.s.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-26T20:01:52Z",
+   "genres": [
+    "Racing"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Dutch",
+    "Portuguese - Portugal"
+   ],
+   "metacritic": null,
+   "name": "Animal Kart Racer 2",
+   "publisher": "Markt+Technik Verlag GmbH",
+   "releaseDate": "2024-03-26",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2649820/ss_1ce78d07c11c0717974ad4517066205d19651544.1920x1080.jpg?t=1739364948",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2649820/ss_ddb25a0aa35da79dc0a9fd285a118e20f693c74a.1920x1080.jpg?t=1739364948",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2649820/ss_4ae40f3041571cbbc9ac16114d7637f48da08f4b.1920x1080.jpg?t=1739364948",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2649820/ss_2a83f9126bb7a67b12a09e4eb3598ee7aca9433b.1920x1080.jpg?t=1739364948",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2649820/ss_4ff3f192aac5730fb10d0c5120aa79afc15b7087.1920x1080.jpg?t=1739364948"
+   ]
   },
   "animal well": {
    "about": "Hatch from your flower and spelunk through the beautiful and sometimes haunting world of Animal Well, a pixelated wonder rendered in intricate audio and visual detail. Encounter lively creatures small and large, helpful and ominous as you discover unconventional upgrades and unravel the well’s secrets. This is a truly unique experience that can make you laugh in fear, surprise, or delight.",
@@ -1393,6 +1821,38 @@
    "fetchedAt": "2026-10-20T04:50:41Z",
    "miss": true
   },
+  "anonymous code": {
+   "about": "This is the latest work by STEINS;GATE creator Chiyomaru Shikura, in collaboration with returning staff from the Science Adventure Series.\n\n2037. Nakano, Tokyo. Pollon Takaoka and his best friend Cross Yumikawa make a living as a pro hackers wherever they can; wherever hasn't been affected by the \"Sad Morning\" disaster that occurred February 6th, 2036.\n\nOne day, Pollon declares he is going to \"elope,\" despite the fact that he is single.",
+   "ageRating": null,
+   "appId": 2291020,
+   "developer": "MAGES. Inc.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-26T20:01:57Z",
+   "genres": [
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "Japanese",
+    "Traditional Chinese",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "ANONYMOUS;CODE",
+   "publisher": "Spike Chunsoft Co., Ltd.",
+   "releaseDate": "2023-09-08",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2291020/ss_60ca2b8e1eec88ca579a1a58b0a8bc47973ded74.1920x1080.jpg?t=1715703521",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2291020/ss_63f7a925fa080170a593df046f202e2b5db0a313.1920x1080.jpg?t=1715703521",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2291020/ss_9c83e291521dbdaf2dc6d67d1d21f77744fcb83b.1920x1080.jpg?t=1715703521",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2291020/ss_e2c92c8227abb298ba18c65ec32efa3e5b126bfe.1920x1080.jpg?t=1715703521",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2291020/ss_1c2ca56e3aa37a172dd5a1c30dd2b0ebb61b094e.1920x1080.jpg?t=1715703521",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2291020/ss_e05b6f440133f8e536fb805d4ae46641492f9db8.1920x1080.jpg?t=1715703521"
+   ]
+  },
   "another world": {
    "about": "It was an average day for Steve the intern, until he gets a strange call late at night telling him to go back to work.\n\r\nWhen he arrives, Steve gets lost in his own paranoid delusions until tragedy strikes.\n\r\nLeft with no way out, Steve decides to end it all. But instead, he finds himself in..\n\r\n\n\r\n..another world...\n\r\n\n\r\nAnother_World is a Silent Hill/P.T. inspired psychological horror game. This is my first independently developed game made with Unreal Engine 4.",
    "ageRating": null,
@@ -1429,6 +1889,10 @@
   },
   "ape escape": {
    "fetchedAt": "2026-10-20T11:38:05Z",
+   "miss": true
+  },
+  "ape escape 2": {
+   "fetchedAt": "2026-10-26T20:02:00Z",
    "miss": true
   },
   "ape escape on the loose": {
@@ -1608,6 +2072,30 @@
    "fetchedAt": "2026-10-24T18:52:16Z",
    "miss": true
   },
+  "argonauts agency 1 golden fleece": {
+   "fetchedAt": "2026-10-26T20:02:02Z",
+   "miss": true
+  },
+  "argonauts agency 2 pandoras box": {
+   "fetchedAt": "2026-10-26T20:02:05Z",
+   "miss": true
+  },
+  "argonauts agency 3 chair of hephaestus": {
+   "fetchedAt": "2026-10-26T20:02:07Z",
+   "miss": true
+  },
+  "argonauts agency 4 glove of midas": {
+   "fetchedAt": "2026-10-26T20:02:10Z",
+   "miss": true
+  },
+  "argonauts agency 5 captive of circe": {
+   "fetchedAt": "2026-10-26T20:02:12Z",
+   "miss": true
+  },
+  "argonauts agency 6 missing daughter": {
+   "fetchedAt": "2026-10-26T20:02:15Z",
+   "miss": true
+  },
   "ark survival ascended": {
    "about": "Respawn into a new dinosaur survival experience beyond your wildest dreams… as ARK is reimagined from the ground-up into the next-generation of videogame technology with Unreal Engine 5! You awake on a mysterious island, your senses overwhelmed by the blinding sunlight and brilliant colors bouncing off every surface around you, the azure waters of a verdant Island lapping at your bare feet.",
    "ageRating": null,
@@ -1716,6 +2204,53 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/346110/ss_ffd48da603fa700d10738ae4ee44ce2b9113cb64.1920x1080.jpg?t=1765677889"
    ]
   },
+  "arkanoid eternal battle": {
+   "about": "Discover or re-discover, the emblematic block breaker game in a fully modernized version! Classic elements from the franchise will definitely make a comeback, with a brand-new look, new rules, as well as new effects, bonuses and features! Including, for the very first time, a Battle Royale mode called \"Eternal Battle\".\n \nGuaranteed to take veteran players by surprise!\n\nArkanoid is an iconic arcade game, developed by TAITO Corporation in 1986.",
+   "ageRating": null,
+   "appId": 1717270,
+   "developer": "Pastagames",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Cross-platform multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-26T20:02:20Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Czech",
+    "Dutch",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Turkish"
+   ],
+   "metacritic": null,
+   "name": "Arkanoid - Eternal Battle",
+   "publisher": "Microids",
+   "releaseDate": "2022-10-27",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1717270/ss_bb9b24f4dc10b73ec5b1b2bd101e6651eea0e8e3.1920x1080.jpg?t=1727356241",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1717270/ss_4e33b58a62136e6f3eb4c45732d6b881dbb09670.1920x1080.jpg?t=1727356241",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1717270/ss_d65a6716d653b5da1c586b42f0a5f3bcdfa8af24.1920x1080.jpg?t=1727356241",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1717270/ss_083fba3e14035bebac96efce0ddde6b2bd498d34.1920x1080.jpg?t=1727356241",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1717270/ss_e3696884045b79598b471e51a16d1c8f58220540.1920x1080.jpg?t=1727356241",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1717270/ss_8f111e340ae45f2d8224e2b2f99166d7175163a3.1920x1080.jpg?t=1727356241",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1717270/ss_bb3b1642512cd005ea498d23af533247aac73c1f.1920x1080.jpg?t=1727356241"
+   ]
+  },
   "armored core vi fires of rubicon": {
    "about": "Combining FromSoftware’s longstanding expertise in mech games with their signature action gameplay, ARMORED CORE VI FIRES OF RUBICON brings a brand-new action experience to the series.\n\nDynamic, Omni-directional Battles\nPlayers will pilot their mech in fast-paced, omni-directional battles, taking advantage of massive stages and their mech’s mobility on land and in the air to ensure victory.",
    "ageRating": 13,
@@ -1758,6 +2293,48 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1888160/ss_88767c4785d5b7e839a5434e988a8aee1836e1ad.1920x1080.jpg?t=1748630736",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1888160/ss_15c13c66ab68af7fc733afb0bd0bd3358e6e842f.1920x1080.jpg?t=1748630736",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1888160/ss_ef41adedb3c5c5977b60ae255440c4bdcc9b6f52.1920x1080.jpg?t=1748630736"
+   ]
+  },
+  "arrog": {
+   "about": "Arrog is an enigmatic puzzle adventure game featuring hand-drawn art and set in a bizarre black-and-white world with color accents. \n\nFeatures\n\nA tale about the journey of a man accepting his death through his dreams.\n\nA unique black-and-white art style and traditional animations used in a bizarre world.\n\nAn intense 30-minute narrative experience.\n\nA hand-crafted soundtrack for each section of the game.",
+   "ageRating": null,
+   "appId": 1185700,
+   "developer": "LEAP Game Studios, Hermanos Magia",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-26T20:02:25Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Spanish - Latin America",
+    "Italian",
+    "Korean",
+    "Japanese",
+    "Portuguese - Portugal",
+    "Portuguese - Brazil",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "Arrog",
+   "publisher": "indienova",
+   "releaseDate": "2020-07-28",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1185700/ss_099fda926c4c217c5f0bd2fc7b917c30df2af956.1920x1080.jpg?t=1729491414",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1185700/ss_9a1d863c5e35ba55614c92c9b40d4e5757d52b95.1920x1080.jpg?t=1729491414",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1185700/ss_d270c4938476116d17a599d479ad1dff44ebdfea.1920x1080.jpg?t=1729491414",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1185700/ss_c54362c0ee4944c41c0c19a86b840bddcdac2103.1920x1080.jpg?t=1729491414",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1185700/ss_66738352b1e65d0528067485b13874120cfbee11.1920x1080.jpg?t=1729491414",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1185700/ss_9ff2e0b3efd2f16797e6507ba556c1f320a3d1dd.1920x1080.jpg?t=1729491414",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1185700/ss_308f9de2ab323657329c3752c5c6aed07747a661.1920x1080.jpg?t=1729491414"
    ]
   },
   "art of rally": {
@@ -2790,6 +3367,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/622020/ss_cef387936d87762aaf81987b65ff6a09271e598e.1920x1080.jpg?t=1568971138",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/622020/ss_0d637ea3cc8abcae2e4fc7cf76e9c4d80f7ec2eb.1920x1080.jpg?t=1568971138"
    ]
+  },
+  "atv renegades": {
+   "fetchedAt": "2026-10-26T20:00:47Z",
+   "miss": true
   },
   "avatar frontiers of pandora": {
    "about": "RISE AGAINST THE ASH CLAN IN THE FROM THE ASHES EXPANSION\n\nAvatar: Frontiers of Pandora™ is a third and first-person action-adventure game set in the Western Frontier. Abducted by the RDA, you, a Na’vi, were molded to serve their purpose. Fifteen years later, you are free, but find yourself a stranger in your birthplace. Reconnect with your lost heritage and discover what it truly means to be Na'vi as you join other clans to protect Pandora.",
@@ -17940,6 +18521,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1771300/ss_77abcbc203685b38a50a8cee383bd7f47488f090.1920x1080.jpg?t=1777975568"
    ]
   },
+  "kings tale final fantasy xv": {
+   "fetchedAt": "2026-10-26T20:00:40Z",
+   "miss": true
+  },
   "kitaria fables": {
    "about": "Kitaria Fables is a delightfully cute action adventure RPG with farming and crafting! Enter the cute world of Kitaria and take on the quests of your animal neighbours as they face a rising tide of darkness. Real time combat, exploration and dungeoneering sit alongside farming for provisions and the crafting of weapons and armour, and forging new spells to increase your power.\n\nA peaceful land where nature lives in harmony - until now.",
    "ageRating": null,
@@ -20057,6 +20642,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1392860/3317c0038f9ebdc75beb8ce4b92368285cc17f94/ss_3317c0038f9ebdc75beb8ce4b92368285cc17f94.1920x1080.jpg?t=1790849221",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1392860/f1cf2440771caf401fd5af3010a3dd30100494c5/ss_f1cf2440771caf401fd5af3010a3dd30100494c5.1920x1080.jpg?t=1790849221",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1392860/a385f2bcf0b138bcd65e1c1bb70d126478eec6b3/ss_a385f2bcf0b138bcd65e1c1bb70d126478eec6b3.1920x1080.jpg?t=1790849221"
+   ]
+  },
+  "little to the left": {
+   "about": "Sort, stack, and organize household objects into just the right spot in A Little to the Left, a tidy puzzle game with a mischievous cat who likes to shake things up!\n\n \n\nPuzzles hidden among household objects\n\nMultiple solutions make for intuitive and satisfying puzzle design\n\nA puzzle unique for you every day with The Daily Tidy Delivery\n\nPerfect for casual puzzle game fans and those who get a jolt of satisfaction from a well organized space\n\nFeel free to skip levels with the \"Let It Be\"…",
+   "ageRating": null,
+   "appId": 1629520,
+   "developer": "Max Inferno",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-26T20:00:45Z",
+   "genres": [
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Turkish"
+   ],
+   "metacritic": 75,
+   "name": "A Little to the Left",
+   "publisher": "Secret Mode",
+   "releaseDate": "2022-11-08",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1629520/ss_dfd3c87efd52db3ea48b4de22de569bd9eb42ca2.1920x1080.jpg?t=1791454263",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1629520/ss_830a67e3cace3216bfb5b591b86a441fce3bc6fb.1920x1080.jpg?t=1791454263",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1629520/ss_503c02f55a3e873a0bd5a177aee5a07c462b27b8.1920x1080.jpg?t=1791454263",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1629520/ss_fd61e2eff377c9ecae9ea5ade13876d88eef9e47.1920x1080.jpg?t=1791454263",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1629520/ss_d6cbf5f38a4d14b673f8d7e2cc595a3da3a18dd6.1920x1080.jpg?t=1791454263",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1629520/ss_e6cd2f2ed8d46c018fd78ad0857478156380caf9.1920x1080.jpg?t=1791454263"
    ]
   },
   "loading human chapter 1": {
@@ -32574,6 +33199,10 @@
    "fetchedAt": "2026-10-23T07:33:53Z",
    "miss": true
   },
+  "star ocean integrity and faithlessness": {
+   "fetchedAt": "2026-10-26T20:00:27Z",
+   "miss": true
+  },
   "star ocean the divine force": {
    "about": "[Fly Around Areas Freely]\nIn STAR OCEAN THE DIVINE FORCE, characters can freely move in 360° degrees and roam the skies.\n\n[Move and explore freely in three dimensions: everything you see can be explored!]\nYou can move in three dimensions whilst flying around the largest environment ever. \nWhether you’re flying around and exploring rockfaces and roofs of buildings in the city, or leaping off cliffs to seamlessly enter battles, you’ll have more freedom in terms of both adventuring and battling.",
    "ageRating": null,
@@ -40764,6 +41393,53 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/427030/ss_fc1ef5986482e73f7b88126158223b67cd5d7221.1920x1080.jpg?t=1728970889"
    ]
   },
+  "yaga": {
+   "about": "Smash, clobber and bash the murderous legends of Slavic mythology in this darkly funny action role-playing game that changes every time you play. Play as Ivan, a one-handed blacksmith with incredibly bad luck, who must take on the impossible tasks given to him by the tzar. All the while the mysterious witch, Baba Yaga, watches over Ivan's fate.\n\nThe world of Yaga is a world steeped in Slavic folklore and ancient Pagan beliefs.",
+   "ageRating": null,
+   "appId": 888530,
+   "developer": "Breadcrumbs Interactive",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-26T20:00:32Z",
+   "genres": [
+    "Action",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Russian",
+    "Italian",
+    "Simplified Chinese",
+    "Arabic",
+    "Dutch",
+    "Japanese",
+    "Korean",
+    "Portuguese - Brazil",
+    "Romanian",
+    "Traditional Chinese",
+    "Turkish",
+    "Polish",
+    "Spanish - Latin America"
+   ],
+   "metacritic": null,
+   "name": "Yaga",
+   "publisher": "Versus Evil, tinyBuild",
+   "releaseDate": "2021-01-12",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/888530/ss_8d8a4ee8decae9e6367dbb1508d366f8e023c303.1920x1080.jpg?t=1773308763",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/888530/ss_5713fdda165f26a416bc203ae80fb515150d9e65.1920x1080.jpg?t=1773308763",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/888530/ss_555d0d99b7c51e129a79bb9144919e810ba1c597.1920x1080.jpg?t=1773308763",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/888530/ss_11ecdc5954b4121e5c83b419f7bac9a5ee91e7f1.1920x1080.jpg?t=1773308763",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/888530/ss_07287d1f97aa7d198703145129cbbd4f1599ef35.1920x1080.jpg?t=1773308763",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/888530/ss_22b31cb1878b5e9ebd3bf04005e6d806ab21287a.1920x1080.jpg?t=1773308763"
+   ]
+  },
   "yakuza 0 directors cut": {
    "about": "Yakuza 0 Director's Cut is the definitive edition of the critically acclaimed prequel to the Yakuza series. \n\nFight like hell through Tokyo and Osaka entertainment districts as yakuza Kazuma Kiryu and cabaret club manager Goro Majima in an epic crime drama of intertwined fates that created legends.\n\n■ CREATIVELY CRUSH ENEMIES \nKiryu and Majima each have three unique fighting styles to dynamically switch between to creatively crack skulls with your fists, makeshift weapons and more.",
    "ageRating": 17,
@@ -41411,6 +42087,6 @@
    "miss": true
   }
  },
- "updatedAt": "2026-10-26T13:02:36Z",
+ "updatedAt": "2026-10-26T20:02:25Z",
  "version": 1
 }
