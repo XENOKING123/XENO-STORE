@@ -11205,6 +11205,10 @@
    "fetchedAt": "2026-10-27T12:13:37Z",
    "miss": true
   },
+  "disney pixar toy story 2 buzz lightyear to the rescue": {
+   "fetchedAt": "2026-10-27T18:03:23Z",
+   "miss": true
+  },
   "dnf duel": {
    "about": "THE SEEDS OF VOLITION BRING FORTH A CHALLENGER\nAction fighting at its extreme! One of the most popular and widely played RPGs in the world, Dungeon and Fighter is now back as a 2.5D action fighting game. Choose from 16 charming characters, each with their distinct skills and personalities.",
    "ageRating": null,
@@ -11243,6 +11247,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1216060/ss_6a2591873419ee6ea41e46ab4a5f207eb924bec8.1920x1080.jpg?t=1718155570",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1216060/ss_64ccd7399669e4f933692589f63f287bfb9d62a2.1920x1080.jpg?t=1718155570",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1216060/ss_1dc80a975590d0b7dedd678954fee54e4ffa08db.1920x1080.jpg?t=1718155570"
+   ]
+  },
+  "dodgeball academia": {
+   "about": "In a world where dodgeball is life, you join Otto at the academy and train to become the ultimate dodgeball champion. Across eight episodes, you’ll forge friendships and create rivals, all in the name of developing the best dodgeball team. \n\nLevel up Otto and develop a dynamic team across a vast and customizable party progression system. All the while, explore the vast Dodgeball Academia and uncover the long hidden truths that reside within the very walls you live, learn, and dominate in.",
+   "ageRating": null,
+   "appId": 1422420,
+   "developer": "Pocket Trap",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:03:28Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Sports",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Japanese",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Latin America"
+   ],
+   "metacritic": null,
+   "name": "Dodgeball Academia",
+   "publisher": "Balor Games",
+   "releaseDate": "2021-08-05",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1422420/ss_9efdaf753be82ee9a4d01c83e519619a77c9df42.1920x1080.jpg?t=1773691649",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1422420/ss_611c521e28e081a07dcb4a76d87d44b1bfbfebaf.1920x1080.jpg?t=1773691649",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1422420/ss_49329b05df1dea70d26ae96c3d2db27fd2be6f2f.1920x1080.jpg?t=1773691649",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1422420/ss_33da374efdc4af3d7678f6228ed5139d5cb2e679.1920x1080.jpg?t=1773691649",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1422420/ss_6155ac00f32ac4967dbc01ca1118b6402b2f26a2.1920x1080.jpg?t=1773691649",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1422420/ss_f3205a582a7652a0c34d2bd45b9678353bbd9e62.1920x1080.jpg?t=1773691649",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1422420/ss_35cd291de366c600b65880851d28370716ca240a.1920x1080.jpg?t=1773691649"
    ]
   },
   "dolphin spirit ocean mission": {
@@ -11291,6 +11338,51 @@
   "dont die mr robot": {
    "fetchedAt": "2026-10-25T04:43:06Z",
    "miss": true
+  },
+  "dont starve console edition": {
+   "fetchedAt": "2026-10-27T18:03:30Z",
+   "miss": true
+  },
+  "donut county": {
+   "about": "Donut County is a story-based physics puzzle game where you play as an ever-growing hole in the ground. Meet cute characters, steal their trash, and throw them in a hole.\n\nWhere Trash is Treasure\nRaccoons have taken over Donut County with remote-controlled trash-stealing holes. You play as BK, a hole-driving raccoon who swallows up his friends and their homes to earn idiotic prizes.",
+   "ageRating": null,
+   "appId": 702670,
+   "developer": "Ben Esposito",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:03:35Z",
+   "genres": [
+    "Adventure",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Polish",
+    "Spanish - Latin America"
+   ],
+   "metacritic": 77,
+   "name": "Donut County",
+   "publisher": "Annapurna Interactive",
+   "releaseDate": "2018-08-28",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/702670/ss_c239e5c7c2d64002ac68b9646866d36ad96d3e14.1920x1080.jpg?t=1729099497",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/702670/ss_9cdb67986354f1e941cf17b3548ebf7a419c775b.1920x1080.jpg?t=1729099497",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/702670/ss_7405195faef4577455e514343a61116f45c919f4.1920x1080.jpg?t=1729099497",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/702670/ss_c47fb82dc7f0bc53a33f95295ffa4a18931ae69b.1920x1080.jpg?t=1729099497",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/702670/ss_e68be680fba205ff77f075732cdd0047c7420960.1920x1080.jpg?t=1729099497"
+   ]
   },
   "doom": {
    "about": "Developed by id software, the studio that pioneered the first-person shooter genre and created multiplayer Deathmatch, DOOM returns as a brutally fun and challenging modern-day shooter experience. Relentless demons, impossibly destructive guns, and fast, fluid movement provide the foundation for intense, first-person combat – whether you’re obliterating demon hordes through the depths of Hell in the single-player campaign, or competing against your friends in numerous multiplayer modes.",
@@ -12900,6 +12992,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3125750/b91ddc88691444dca55877dc3f8b22404bd99304/ss_b91ddc88691444dca55877dc3f8b22404bd99304.1920x1080.jpg?t=1782369349"
    ]
   },
+  "efootball pes 2020": {
+   "fetchedAt": "2026-10-27T18:03:38Z",
+   "miss": true
+  },
   "efootball pes 2021 season update": {
    "fetchedAt": "2026-10-23T18:24:09Z",
    "miss": true
@@ -13119,6 +13215,125 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2567620/ss_57a75466bbe3980ee852168e91dba7f708cb153c.1920x1080.jpg?t=1763207171",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2567620/ss_5a24be126d0e927d02d67d23242d80601bebd2dc.1920x1080.jpg?t=1763207171",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2567620/ss_cf5b9905172112940cd24af2c234ff0f61f84a10.1920x1080.jpg?t=1763207171"
+   ]
+  },
+  "elemental war 2": {
+   "about": "Elemental War 2 takes you into a threatened world: hordes of monsters suddenly pour out of the abysses of hell from a faulty summoned portal. Will you manage to build a defense line of defense towers against the forces of evil in time?\n\nElemental War 2 offers you the popular tower defense feeling combined with innovative game mechanics: as soon as you defeat an elemental - a particularly strong enemy that will demand everything from you - you'll receive its element stone, which you can use to…",
+   "ageRating": null,
+   "appId": 1063020,
+   "developer": "Clockwork Origins",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Cross-platform multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:03:45Z",
+   "genres": [
+    "Strategy",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "German",
+    "Italian",
+    "Romanian",
+    "Traditional Chinese",
+    "Simplified Chinese",
+    "Japanese",
+    "Hungarian",
+    "French",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Korean",
+    "Russian",
+    "Ukrainian",
+    "Polish"
+   ],
+   "metacritic": null,
+   "name": "Elemental War 2",
+   "publisher": "Clockwork Origins",
+   "releaseDate": "2022-05-06",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1063020/ss_1365ee2e700826b11c462fe8f281ced9c4c028df.1920x1080.jpg?t=1747239058",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1063020/ss_470534900c5d0c539fc8b0965d61f0bf50d57e77.1920x1080.jpg?t=1747239058",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1063020/ss_01f5ea7355e4b153829b38812bff88567d7ca003.1920x1080.jpg?t=1747239058",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1063020/ss_5f63eabaf9dbfdd0e727bd75052b081773034824.1920x1080.jpg?t=1747239058",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1063020/ss_cf7015c5729b61b8bcbc7f24427c8554d4efe7f2.1920x1080.jpg?t=1747239058"
+   ]
+  },
+  "elex 2": {
+   "about": "ELEX II is the sequel to ELEX, the vintage open-world role-playing experience from the award-winning creators of the Gothic and Risen series, Piranha Bytes. ELEX II returns to the post-apocalyptic Science Fantasy world of Magalan – with massive environments that can be explored with unrivaled freedom via jetpack, you will be able to move through the epic story any way you want.",
+   "ageRating": null,
+   "appId": 900040,
+   "developer": "Piranha Bytes",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:03:50Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "German",
+    "French",
+    "Polish",
+    "Russian",
+    "Simplified Chinese",
+    "Italian",
+    "Spanish - Spain",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "ELEX II",
+   "publisher": "THQ Nordic",
+   "releaseDate": "2022-03-01",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/900040/ss_af99e2938256e9f2dab061fb88190d45ed5c7ec6.1920x1080.jpg?t=1744710699",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/900040/ss_baac5b6dcce1e8e0f091684c4eae96a0465b01ed.1920x1080.jpg?t=1744710699",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/900040/ss_5ad736bd7696afcf460443b29b8c89026d0f0d69.1920x1080.jpg?t=1744710699",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/900040/ss_39922cae5a1bd08f48b1bec9ea18202c1ffc08b4.1920x1080.jpg?t=1744710699",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/900040/ss_5c4b8acb694d99fd92decd8c3663d7f355fac063.1920x1080.jpg?t=1744710699",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/900040/ss_b6fd3f3086211b9d422ad8f5c9abd0aa220ed320.1920x1080.jpg?t=1744710699"
+   ]
+  },
+  "emergency call the attack squad": {
+   "fetchedAt": "2026-10-27T18:03:52Z",
+   "miss": true
+  },
+  "emergency crew volcano eruption": {
+   "about": "An earthquake occurred in Coastland! The Emergency Crew by Stephen Shepard immediately went to rescue people. Starting its mission from the coast, the group quickly moved to the city center, where buildings collapsed because of the earthquake and victims remained under the rubble. Having evacuated the city, the heroes understand that the size of the disaster exceeds all expectations – forests are burning, a volcano is in eruption.",
+   "ageRating": null,
+   "appId": 1690240,
+   "developer": "GameOn Production",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-27T18:03:57Z",
+   "genres": [
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "Emergency Crew Volcano Eruption",
+   "publisher": "8floor",
+   "releaseDate": "2021-08-17",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1690240/ss_cfbd781febc8f44e1cef6634f9e3ad2e607a3d11.1920x1080.jpg?t=1629515095",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1690240/ss_e648a4ffd926c086b26ecd87731575fecba055dc.1920x1080.jpg?t=1629515095",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1690240/ss_b3576a0b10ef31236387c9667c08d6d37976db64.1920x1080.jpg?t=1629515095",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1690240/ss_8765d0848ee7a5e598ef8cd10904a32fb30b0a31.1920x1080.jpg?t=1629515095",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1690240/ss_333494b8aee24dc3892afba9cb77262724f14d36.1920x1080.jpg?t=1629515095"
    ]
   },
   "empire of the ants": {
@@ -13407,6 +13622,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/641990/ss_fbe51beaf5081f76a1319c99f79793ee6beff01a.1920x1080.jpg?t=1791478007"
    ]
   },
+  "esp ra de psi": {
+   "fetchedAt": "2026-10-27T18:03:40Z",
+   "miss": true
+  },
   "eternal cylinder": {
    "about": "You were born on a dangerous planet. Surreal and fantastical environments, teeming with exotic creatures that defy description. This world is both terrifying and awe-inspiring, as full of wonder and mystery as it is dangerous. But whatever dangers can be found pale in comparison to this world’s biggest threat: The Cylinder. This gargantuan, ancient rolling structure crushes everything in its path. But where did it come from?",
    "ageRating": null,
@@ -13692,6 +13911,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/516820/ss_1b0b89b4232083be69f13046da6ed1b30a2a3c3f.1920x1080.jpg?t=1572015050"
    ]
   },
+  "f1 2019": {
+   "fetchedAt": "2026-10-27T18:04:00Z",
+   "miss": true
+  },
   "f1 2020": {
    "fetchedAt": "2026-10-24T04:38:18Z",
    "miss": true
@@ -13879,6 +14102,42 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1378370/ss_a30c2a76d7148891a071a51b8a1097117fd59d42.1920x1080.jpg?t=1792071862",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1378370/ss_3bacb19d39018fca211144980a585626753bd4e2.1920x1080.jpg?t=1792071862",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1378370/ss_ea4dd24e8661f3d4a0de811b4238888046cd000a.1920x1080.jpg?t=1792071862"
+   ]
+  },
+  "fallen legion rise to glory": {
+   "about": "Will you restore glory to your homeland or overthrow the monarchy and claim the throne in your name? Fallen Legion+ doubles the intensity on Steam with Fallen Legion: Sins of an Empire and Fallen Legion: Flames of Rebellion bundled together!\n\nEmbark on a personal journey with Princess Cecille and an enigmatic talking grimoire to restore glory to your crumbling home in Sins of an Empire.",
+   "ageRating": null,
+   "appId": 612820,
+   "developer": "YummyYummyTummy",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:04:10Z",
+   "genres": [
+    "Action",
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Japanese",
+    "Korean"
+   ],
+   "metacritic": 66,
+   "name": "Fallen Legion: Rise to Glory",
+   "publisher": "YummyYummyTummy",
+   "releaseDate": "2018-01-05",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/612820/ss_94b2c8bddc90d6fa47de3b5fa149beed7361a294.1920x1080.jpg?t=1743957072",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/612820/ss_ae1ccf92043f3780da6f63de24ceb67b17d46c2b.1920x1080.jpg?t=1743957072",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/612820/ss_8e31e0909c8645957b64659fc208ea5eebf24571.1920x1080.jpg?t=1743957072",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/612820/ss_1cd30814f957d572a68716905fc11271052534c2.1920x1080.jpg?t=1743957072",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/612820/ss_4d7acc0d54f7e2551ca7f88af82e41b50f477bae.1920x1080.jpg?t=1743957072",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/612820/ss_25614ca02caa4a4dc034b2ee7afe0e8ab85b7dd3.1920x1080.jpg?t=1743957072",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/612820/ss_ea95237a307c777abef8ccb0687d27729d1db3a3.1920x1080.jpg?t=1743957072",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/612820/ss_e44559e6bfb551e99d9fd59e62888f1dcb467e58.1920x1080.jpg?t=1743957072"
    ]
   },
   "fallout 4": {
@@ -14277,6 +14536,54 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/673950/ss_7ad6da85a3b6bbcd64940abb49b6c828381564c5.1920x1080.jpg?t=1791993129"
    ]
   },
+  "farming simulator 19": {
+   "about": "The best-selling franchise returns this year with a complete overhaul of the graphics engine, offering the most striking and immersive visuals and effects, along with the deepest and most complete farming experience ever.\n\nFarming Simulator 19 takes the biggest step forward yet with the franchise’s most extensive vehicle roster ever!",
+   "ageRating": null,
+   "appId": 787860,
+   "developer": "GIANTS Software",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:04:15Z",
+   "genres": [
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Czech",
+    "Dutch",
+    "Hungarian",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Portugal",
+    "Portuguese - Brazil",
+    "Romanian",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Turkish"
+   ],
+   "metacritic": 73,
+   "name": "Farming Simulator 19",
+   "publisher": "GIANTS Software",
+   "releaseDate": "2018-11-19",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/787860/ss_76263e9a07621e454477c3ec715709fd06062c93.1920x1080.jpg?t=1786447399",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/787860/ss_fa32d926d8115d648588ffa8da2b5f61053b7b10.1920x1080.jpg?t=1786447399",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/787860/ss_81606c80db5fec103f5f88b24cc2e6832a1bc158.1920x1080.jpg?t=1786447399",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/787860/ss_409aca7beb98362696c7905a191fb39819c9e9c6.1920x1080.jpg?t=1786447399",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/787860/ss_acff97e497d75d34f4b13eacd32cbec6188f98a1.1920x1080.jpg?t=1786447399",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/787860/ss_93eef48f077663a49afd5801239cb21c150f6091.1920x1080.jpg?t=1786447399"
+   ]
+  },
   "farming simulator 22": {
    "about": "Take on the role of a modern farmer! Agriculture, animal husbandry and forestry offer a huge variety of farming activities while you face the challenges of the four seasons, especially when winter sets in. Creatively build your own farm and extend your farming operations with production chains - forming an agricultural empire! Even run your farm together with friends and enjoy crossplatform multiplayer together.",
    "ageRating": null,
@@ -14424,6 +14731,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3920610/11fb543d7f62fb1bbfdbe1ce2e238f5ad1e22568/ss_11fb543d7f62fb1bbfdbe1ce2e238f5ad1e22568.1920x1080.jpg?t=1782174544"
    ]
   },
+  "fatal fury battle archives volume 2": {
+   "fetchedAt": "2026-10-27T18:04:18Z",
+   "miss": true
+  },
   "fatal fury city of the wolves": {
    "about": "SNK’s beloved Fatal Fury series first hit the market in 1991, spearheading the fighting game boom of the 1990s that swept the industry thereafter. GAROU: MARK OF THE WOLVES (released in 1999) has, for some time, served as the franchise’s most recent installment.",
    "ageRating": null,
@@ -14470,6 +14781,45 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2492040/ss_f82b6cbd8f3f592707d5376fc518706759152799.1920x1080.jpg?t=1790572698"
    ]
   },
+  "fate reawakened": {
+   "about": "Reexperience the iconic FATE series like never before! \n\nRevisit the quaint town of Grove and the realms beyond as you prepare to enter the Dungeon Gate once again! The award-winning FATE series has gotten a modern facelift while remaining true to the nostalgic dungeon crawler classic. Will you tempt fate on your journey to fame and fortune?Enhanced for a New Generation \n\nExperience everything you already love about the FATE series in higher definition.",
+   "ageRating": null,
+   "appId": 3030720,
+   "developer": "gamigo US Inc., Tableflip Entertainment AB",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:04:05Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Spanish - Spain"
+   ],
+   "metacritic": null,
+   "name": "FATE: Reawakened",
+   "publisher": "gamigo US Inc., WildTangent",
+   "releaseDate": "2025-03-12",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3030720/ss_fe985e564177b8ab2e224f215bdf8051d0cf526a.1920x1080.jpg?t=1778690510",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3030720/ss_c400bbd30257eecb6188d228f997b611fffdd725.1920x1080.jpg?t=1778690510",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3030720/ss_fa7a20b1637204b62a5a2533dec83b84af499f85.1920x1080.jpg?t=1778690510",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3030720/ss_c260e75c2c87c9e5b05d4ee1694b1aa37bc13e8a.1920x1080.jpg?t=1778690510",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3030720/ss_4fa6083b643f71a1c7f4e7fe92c88e167ac2abce.1920x1080.jpg?t=1778690510",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3030720/ss_443ee6fc52451680d474f76655d733bdf6384956.1920x1080.jpg?t=1778690510",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3030720/ss_4fb322723dd5fb1411458b2fc655eddd2c368976.1920x1080.jpg?t=1778690510",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3030720/ss_c6b00117d146c86204530173b2e183c0171b3b65.1920x1080.jpg?t=1778690510"
+   ]
+  },
   "fate samurai remnant": {
    "about": "The battle over the Waxing Moon which could grant any and all wishes — the Waxing Moon Ritual. The seven individuals seeking their wish, or Masters, are the bearers of the Ritual. The seven Heroic Spirits, or Servants, are summoned to this world by their Masters. The curtain rises on the battle between the seven Masters with their seven Servants.\n\nTraverse the city of Edo and become victorious in the Waxing Moon Ritual. Fight, explore, converse...",
    "ageRating": null,
@@ -14504,6 +14854,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1902690/ss_c17433cf1769b8756ad497b7bdec5284d6bf5c18.1920x1080.jpg?t=1760594680",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1902690/ss_c0e555e56348ce29544f7f9611e06d70dada29e6.1920x1080.jpg?t=1760594680",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1902690/ss_6b4967d47e21ea49022a94e6691ae11c4c389206.1920x1080.jpg?t=1760594680"
+   ]
+  },
+  "fearmonium": {
+   "about": "Fearmonium is a psychedelic metroidvania where suspense intertwines with humour. Beginning the game as an unpleasant memory, you must progress and become a true phobia by breaking through all boundaries to uncover the most hidden corners of Max's mind.\n\nThe whole game will unfold in the inner world of a boy who once saw several clowns at a fair.",
+   "ageRating": null,
+   "appId": 1068360,
+   "developer": "Redblack Spade",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:04:22Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Russian",
+    "German",
+    "Portuguese - Brazil",
+    "French",
+    "Spanish - Spain",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Fearmonium",
+   "publisher": "Redblack Spade",
+   "releaseDate": "2021-05-20",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1068360/ss_15d748339c1ae1a050cf26c23fea4e5bea626068.1920x1080.jpg?t=1745847536",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1068360/ss_d6cef7886565dbefc4fc3daf90b6b3f94d7bc53f.1920x1080.jpg?t=1745847536",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1068360/ss_52b7a3043f168dd8fd1288cf5dae65de08ede029.1920x1080.jpg?t=1745847536",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1068360/ss_7d2cfcc6fd084d701147925aeca09c61e1001df6.1920x1080.jpg?t=1745847536",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1068360/ss_ff73b1e04ab3e8ef11adba3ca40473f4a88e9f39.1920x1080.jpg?t=1745847536",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1068360/ss_7204b44308d01c140cc56b322052a0a95948bd77.1920x1080.jpg?t=1745847536",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1068360/ss_4971475ea00746581509e0e9d4944e2856890841.1920x1080.jpg?t=1745847536",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1068360/ss_8ba0a33d83944e658314b8936287b947bca7f589.1920x1080.jpg?t=1745847536"
    ]
   },
   "fia european truck racing championship": {
@@ -15583,8 +15973,53 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1551360/ss_78e4f63e05d50e59b9966ba8da9a53dbf84fd8f4.1920x1080.jpg?t=1788546569"
    ]
   },
+  "foul play": {
+   "about": "Play as the daemon-hunter Baron Dashforth in a side-scrolling co-op brawler set entirely on the grand spectacle of a theatre stage that rewards performance over pummeling. Perform shattering takedowns and reversals! Electrify the audience with devastating linked attacks as you have a friend join as sidekick Scampwick and use every stage-trick you know to bring the house down!",
+   "ageRating": null,
+   "appId": 244810,
+   "developer": "Mediatonic",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:04:28Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Portuguese - Brazil"
+   ],
+   "metacritic": 69,
+   "name": "Foul Play",
+   "publisher": "Epic Games",
+   "releaseDate": "2013-09-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/244810/ss_7994c1bd5a9cdfc3fd1f38cf5d5144f032cb2085.1920x1080.jpg?t=1777052862",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/244810/ss_5a31561124079e9e0f4a4ae5b4dc1b0762dcb533.1920x1080.jpg?t=1777052862",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/244810/ss_de492242871cdccd53779b947f751398db91f332.1920x1080.jpg?t=1777052862",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/244810/ss_aea594c9b3abbfd045ca46a81bfbcd882d374543.1920x1080.jpg?t=1777052862",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/244810/ss_3f26117f3ccf35b6725740054a02547c92929ada.1920x1080.jpg?t=1777052862",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/244810/ss_5a944da68a48b89a5144d70efee54d32df010d1c.1920x1080.jpg?t=1777052862"
+   ]
+  },
   "frantics": {
    "fetchedAt": "2026-10-22T21:38:33Z",
+   "miss": true
+  },
+  "freddys fazbears pizzeria simulator": {
+   "fetchedAt": "2026-10-27T18:04:30Z",
    "miss": true
   },
   "freedom finger": {
@@ -15626,6 +16061,39 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1005410/ss_ca8bda3213b70087f627a7f392858d2d72bc7aa6.1920x1080.jpg?t=1745460317",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1005410/ss_635f73935d5a421622a98151e281cfc1dd58759a.1920x1080.jpg?t=1745460317",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1005410/ss_600afa68c3c1eb01e890b2f2d42c1eb8facf9182.1920x1080.jpg?t=1745460317"
+   ]
+  },
+  "freedom planet 2": {
+   "about": "Join the heroes of Avalice as they face their greatest challenge yet! An ancient terror has emerged from the depths of the ocean. Merga, a water dragon from Avalice's oldest and deadliest war, has been freed from her crystal prison as a consequence of the Kingdom Stone's destruction. War is imminent once again, but this time, the heroes are split between sides.",
+   "ageRating": null,
+   "appId": 595500,
+   "developer": "GalaxyTrail",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:04:35Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Freedom Planet 2",
+   "publisher": "GalaxyTrail",
+   "releaseDate": "2022-09-13",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/595500/ss_3875304afd31b3f18f4f307fb9b3c1e69c6bb6c0.1920x1080.jpg?t=1745527989",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/595500/ss_50e3fa96e49341d9bf92c8758f2691ffe3635da2.1920x1080.jpg?t=1745527989",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/595500/ss_586ef521b6c97362582e36bbdb71d6eefd753371.1920x1080.jpg?t=1745527989",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/595500/ss_4991b897ea6d6fb086bb383720f02c4e048d7688.1920x1080.jpg?t=1745527989",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/595500/ss_e61d504edca5817cb53315bcb1a85c38f3e38bc3.1920x1080.jpg?t=1745527989",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/595500/ss_1cebd8651aa97fd0649aa210cb078c717a13bd95.1920x1080.jpg?t=1745527989",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/595500/ss_d3c601f2add8d72fa9e9f9ef4c4ea0ecf3e44a5e.1920x1080.jpg?t=1745527989",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/595500/ss_f76694f95096de4d5e0c1bcad0f572a37c83092f.1920x1080.jpg?t=1745527989"
    ]
   },
   "freedom wars remastered contribution edition": {
@@ -15762,6 +16230,39 @@
   "furi modore edition": {
    "fetchedAt": "2026-10-20T17:04:38Z",
    "miss": true
+  },
+  "furwind": {
+   "about": "Ф FIGHT A TERRIBLE DARKNESS Ф\n\n \nThe old war between ancestors​ ended with the imprisonment of one of them. Darhûn, who was caged for eras, has been released from his captivity and is ready to take the dark and madness to the forest.\n\n​Furwind, a young inhabitant of Moontail, is not aware that soon will go to one of the biggest and most dangerous adventures of his life.​◤​If you like the classic platform games, colorfull pixel art style, an OST that will inmerse you and challenging adventures,…",
+   "ageRating": null,
+   "appId": 881750,
+   "developer": "Boomfire Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:04:40Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Furwind",
+   "publisher": "Boomfire Games",
+   "releaseDate": "2018-10-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/881750/ss_659b84346d98a168acad07a2e55a47368eb271d5.1920x1080.jpg?t=1540588512",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/881750/ss_7f06b9f1a6889fbc51fca98aa35b9faa16ab8e7c.1920x1080.jpg?t=1540588512",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/881750/ss_5e2d57e856ea01e0ee54a6a84c9b3dce86f9b71e.1920x1080.jpg?t=1540588512",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/881750/ss_0b5f2b543a1234b1fb6ec7f07f40d88182c11937.1920x1080.jpg?t=1540588512",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/881750/ss_043a2f6a92520ef0bab9442573d4eb31915342c4.1920x1080.jpg?t=1540588512",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/881750/ss_4cf107dc2f210ac4ee524a306efd0e9787773c93.1920x1080.jpg?t=1540588512",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/881750/ss_5aedd9e22fbb6795cda35650c7222e153f2ad58b.1920x1080.jpg?t=1540588512",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/881750/ss_86d995d2f21617f44743772d1ce15b79a01e050a.1920x1080.jpg?t=1540588512"
+   ]
   },
   "futuridium ep deluxe": {
    "about": "Futuridium EP Deluxe is a psychedelic retro inspired shoot’em up with a modern twist, that blends together frantic action, puzzle elements, a vibrant low poly aesthetic and an heart pumping electronic soundtrack. As a lone starship pilot lost in a dimensional loop just before a big space battle, with a limited and constantly depleting energy tank, your only hope is to fly as fast as possible over enormous space dreadnoughts, destroying their defenses and the cyan power cubes to get some energy…",
@@ -16051,6 +16552,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3183970/ss_5cc2a12d3da9dc88bf7576a62d8936ecb56c1ec0.1920x1080.jpg?t=1756932930",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3183970/d7c61fade2d21aba024da00c0b66ce37bd27d82b/ss_d7c61fade2d21aba024da00c0b66ce37bd27d82b.1920x1080.jpg?t=1756932930"
    ]
+  },
+  "ghost giant vr": {
+   "fetchedAt": "2026-10-27T18:04:45Z",
+   "miss": true
   },
   "ghost master resurrection": {
    "about": "The classic Ghost Master returns from the depths of the underworld, resurrected in a glorious rebirth of terror and intrigue. This faithful remake of the beloved original brings back the essence of the classic, now infused with stunning new graphics, a powerful new engine, and refined mechanics that will leave you screaming for more.",
@@ -16463,6 +16968,39 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1177020/ss_191d63c96ff937e079155040481c5112895d4463.1920x1080.jpg?t=1727090083"
    ]
   },
+  "ginga force": {
+   "about": "Fight over the Earth-like planet of Seventia and its scarce resources of Septonium. A vertical shoot ’em up at its core with an added focus towards immersive storytelling. Follow the story of Alex and Margaret, two exceptional pilots, for the first time on Steam.",
+   "ageRating": null,
+   "appId": 885910,
+   "developer": "Qute",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:04:50Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "Japanese",
+    "French",
+    "German"
+   ],
+   "metacritic": null,
+   "name": "Ginga Force",
+   "publisher": "Rising Star Games",
+   "releaseDate": "2020-09-24",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/885910/ss_05b010b83799fd7a369acad603cb03f79f1489b1.1920x1080.jpg?t=1601283457",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/885910/ss_8546a341ff32511bfbc0c40dc78ffdfb9bb70d44.1920x1080.jpg?t=1601283457",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/885910/ss_82f78c2152bebf2a8bcbf936412e6c425da44696.1920x1080.jpg?t=1601283457",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/885910/ss_76d338090e49c3d88c516d6181d9a17f681e8aae.1920x1080.jpg?t=1601283457",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/885910/ss_aecc0277d716a0749fe495fc265d34be78399f8c.1920x1080.jpg?t=1601283457",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/885910/ss_797fd5bccb448f2be3ec53aba7ff44e6e155975f.1920x1080.jpg?t=1601283457",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/885910/ss_ff4484166853b507ecba1c903c357a2a1dad7a72.1920x1080.jpg?t=1601283457"
+   ]
+  },
   "girl and the robot": {
    "about": "The Girl and the Robot is a unique third person action/adventure game set in a fairy tale world. You take on the role of a young girl trying to escape from a castle ruled by an evil queen. On her way, she meets a mysterious robot that can be controlled remotely and together they encounter many challenges that test the strength of their new found friendship. This game is the first act of the fairy tale.",
    "ageRating": null,
@@ -16503,6 +17041,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/270070/ss_b498c5df2916adf1c1c98b18bbf9220fa61d1394.1920x1080.jpg?t=1667159777",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/270070/ss_914679b517848cb6ea9f497177e8ec05d66d04ce.1920x1080.jpg?t=1667159777"
    ]
+  },
+  "girls und panzer dream tank match": {
+   "fetchedAt": "2026-10-27T18:04:52Z",
+   "miss": true
   },
   "glitch hero": {
    "about": "Ada is a young yet bright girl who, after visiting her father’s laboratory, decides to \ndive without his permission into Codeland, a virtual world being developed by him, just for fun but...\nA fatal error, Codeland filled with bugs, an unfriendly bunny as a guide, her father and his colleagues are trapped and unresponsive, there are enemies and errors all around! Only someone worthy to wield the hammer.exe can debug it all!",
@@ -17011,6 +17553,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2157560/ss_f8705b09219e15592206cdab95287fad1f0594c3.1920x1080.jpg?t=1792026279"
    ]
   },
+  "grand theft auto 3": {
+   "fetchedAt": "2026-10-27T18:04:55Z",
+   "miss": true
+  },
   "grand theft auto 5": {
    "fetchedAt": "2026-10-16T04:32:35Z",
    "miss": true
@@ -17037,6 +17583,10 @@
   },
   "grand theft auto vice city the definitive edition": {
    "fetchedAt": "2026-10-25T11:27:01Z",
+   "miss": true
+  },
+  "grandia hd collection": {
+   "fetchedAt": "2026-10-27T18:04:57Z",
    "miss": true
   },
   "graven": {
@@ -17223,6 +17773,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1307710/ss_638b3ff188ff5842cf77710b0fe1ca7fac361d9f.1920x1080.jpg?t=1777395535"
    ]
   },
+  "grip": {
+   "fetchedAt": "2026-10-27T18:04:42Z",
+   "miss": true
+  },
   "gris": {
    "about": "Gris is a hopeful young girl lost in her own world, dealing with a painful experience in her life. Her journey through sorrow is manifested in her dress, which grants new abilities to better navigate her faded reality. As the story unfolds, Gris will grow emotionally and see her world in a different way, revealing new paths to explore using her new abilities.\n\r\n\n\r\nGRIS is a serene and evocative experience, free of danger, frustration or death.",
    "ageRating": null,
@@ -17347,6 +17901,43 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1384160/ss_62f0d3414e2a2c76051747f4615499c3cbc737d7.1920x1080.jpg?t=1788400087"
    ]
   },
+  "gun club vr": {
+   "about": "Take to the range with an arsenal of the world’s most powerful weaponry in Gun Club VR. Addictive gameplay and unsurpassed realism combine to make Gun Club VR the ultimate virtual weapon simulator. The only thing missing is the smell of the gunpowder. \n\n \n\nALLIED UPDATE\n\nBringing the historic theatre of World War II right into the Gun Club VR experience, the Allied range includes an all new environment hosting dozens of new weapons & events to progress through.",
+   "ageRating": null,
+   "appId": 691320,
+   "developer": "The Binary Mill",
+   "features": [
+    "Single-player",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-27T18:05:02Z",
+   "genres": [
+    "Action",
+    "Simulation",
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Gun Club VR",
+   "publisher": "The Binary Mill",
+   "releaseDate": "2018-08-27",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/691320/ss_75d108ea50742db20f18aba492fe0cadeda1175d.1920x1080.jpg?t=1785475334",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/691320/ss_ebdbe370c1e1c14ef0560412a0826d6f22ab8ab8.1920x1080.jpg?t=1785475334",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/691320/ss_0cea175a008ef86ead8d147b717b55239a666321.1920x1080.jpg?t=1785475334",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/691320/ss_31052659dcac193b28d473d64301d403aeb76c50.1920x1080.jpg?t=1785475334",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/691320/ss_654f84f312a86222bcfc2aacd58ba1ac2ddd5a91.1920x1080.jpg?t=1785475334",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/691320/ss_7c1455c7bf60f1ec48fac554f40fa90e42c09140.1920x1080.jpg?t=1785475334",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/691320/ss_750e192c4c34216fa21a7c90a4176f675c2c80fd.1920x1080.jpg?t=1785475334",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/691320/ss_04556be3ab3bb4ebfcbec9b430e32e8ef20be01c.1920x1080.jpg?t=1785475334"
+   ]
+  },
+  "gundam breaker 3": {
+   "fetchedAt": "2026-10-27T18:05:05Z",
+   "miss": true
+  },
   "gungrave gore": {
    "fetchedAt": "2026-10-21T00:42:04Z",
    "miss": true
@@ -17439,6 +18030,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2806050/6773ca4386fb78b10c987902bf2f66a1038d7829/ss_6773ca4386fb78b10c987902bf2f66a1038d7829.1920x1080.jpg?t=1786379031",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2806050/37857172e4a235fd8032d8d0ad1d5d511973368e/ss_37857172e4a235fd8032d8d0ad1d5d511973368e.1920x1080.jpg?t=1786379031",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2806050/3696511ddbe8cc4d80706d435f6dbe77620ef64d/ss_3696511ddbe8cc4d80706d435f6dbe77620ef64d.1920x1080.jpg?t=1786379031"
+   ]
+  },
+  "has been heroes": {
+   "about": "Has-Been Heroes is a challenging, lane-based roguelike game of strategy and action, featuring a band of heroes on a quest to escort the King's twin princesses to school!\n\nPlayers control three characters during the journey and must focus on coordinating melee attacks, managing cooldowns and combining hundreds of different spells to create devastating combo effects, all in order to defeat an endless army of undead, summoned in their path by the Great Ghoul!\n\nThe rewarding strategy game features…",
+   "ageRating": null,
+   "appId": 492290,
+   "developer": "Frozenbyte",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:05:10Z",
+   "genres": [
+    "Action",
+    "RPG",
+    "Strategy",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Japanese"
+   ],
+   "metacritic": 63,
+   "name": "Has-Been Heroes",
+   "publisher": "GameTrust Games",
+   "releaseDate": "2017-03-27",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492290/ss_7cf2ae37a04e20ece729832e42ea6b7e815ce668.1920x1080.jpg?t=1694422848",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492290/ss_a21b795cf7092ceca7e0bd8c055dd0d6252b928f.1920x1080.jpg?t=1694422848",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492290/ss_d99f55496145cda1e4bd2684478d7ef7f271efd8.1920x1080.jpg?t=1694422848",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492290/ss_c340217452a62d1e75e890127a7aad5da894e448.1920x1080.jpg?t=1694422848",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492290/ss_e49aa5a485032c587955ac66f04ff4e821db3831.1920x1080.jpg?t=1694422848",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492290/ss_bfc61d4cccf9f433504d1a7f8d9bf9bdc83f274c.1920x1080.jpg?t=1694422848",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492290/ss_5d15f28f5ca30a0382aefac3bbc6eab1382e9119.1920x1080.jpg?t=1694422848",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492290/ss_ebbbfb08fdf27bccf471e68b9eaefc37ee30be0e.1920x1080.jpg?t=1694422848"
    ]
   },
   "hasbro family fun pack": {
@@ -17534,6 +18165,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1620730/e26aca4af87e70b9a910b8d5d9c5545bdc431495/ss_e26aca4af87e70b9a910b8d5d9c5545bdc431495.1920x1080.jpg?t=1791467530",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1620730/c4b06aca02973e521e0257e77ff5c2f058bc5364/ss_c4b06aca02973e521e0257e77ff5c2f058bc5364.1920x1080.jpg?t=1791467530"
    ]
+  },
+  "helldivers super earth": {
+   "fetchedAt": "2026-10-27T18:05:12Z",
+   "miss": true
   },
   "hello kitty island adventure": {
    "about": "Explore a Massive World with 80+ Hours of Heartfelt Quests\n\nDiscover eight unique regions, from the ocean's depths to an island in the clouds! Run, float, swim, and dive around the world to uncover hidden treasures and mysteries, all while listening to over 50 tracks of original music.",
@@ -17715,6 +18350,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2069250/20c6a400f4eb18340bbc1c1e04ec54d0d36b0788/ss_20c6a400f4eb18340bbc1c1e04ec54d0d36b0788.1920x1080.jpg?t=1784740206",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2069250/6f4be7097bdc30a303e4ca71a310053e38b481aa/ss_6f4be7097bdc30a303e4ca71a310053e38b481aa.1920x1080.jpg?t=1784740206"
    ]
+  },
+  "hishou same same same toaplan arcade garage": {
+   "fetchedAt": "2026-10-27T18:05:15Z",
+   "miss": true
   },
   "hitman": {
    "fetchedAt": "2026-10-21T07:41:56Z",
@@ -17950,6 +18589,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/617160/ss_29eb415ce59b14cf1456b72902f92cbb4017c958.1920x1080.jpg?t=1544779603",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/617160/ss_67ca56377b1076e27e399e7e87c699e40432ae29.1920x1080.jpg?t=1544779603",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/617160/ss_d8fbdeaadef2ef60f2093c9d73628a09fbfcceb6.1920x1080.jpg?t=1544779603"
+   ]
+  },
+  "homefront the revolution": {
+   "about": "Story\n\nFour years into the brutal military occupation, America is on its knees.\n\nPhiladelphia - once the birthplace of Independence - has become a ghetto, where surveillance drones and armoured patrols keep the population at heel, crushing any dissent with savage force.\n\nHer once-proud citizens live in a police state, forced to collaborate just to survive, their dreams of freedom long since extinguished.",
+   "ageRating": 17,
+   "appId": 223100,
+   "developer": "Dambuster Studios",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-27T18:03:20Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Czech",
+    "Japanese",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian"
+   ],
+   "metacritic": 54,
+   "name": "Homefront®: The Revolution",
+   "publisher": "Deep Silver",
+   "releaseDate": "2016-05-17",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/223100/ss_b626c873683553b5b69f29d8c4fe3030a36210d1.1920x1080.jpg?t=1614763860",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/223100/ss_38f747232d317dc052c90ca87718bb1b84250e49.1920x1080.jpg?t=1614763860",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/223100/ss_0483487de3676963c5898ecc7b41e7ddc4b60805.1920x1080.jpg?t=1614763860",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/223100/ss_e38f8546ef491c658e42fc4f1dacc761017de279.1920x1080.jpg?t=1614763860",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/223100/ss_12433a9b54ff9854d72ae6d88573c71f35658988.1920x1080.jpg?t=1614763860",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/223100/ss_664226957dccc9efe7c6c8d85d7101382ea6269b.1920x1080.jpg?t=1614763860",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/223100/ss_5ee6bc3b46bb88debbef86496c7dce1ceddef84f.1920x1080.jpg?t=1614763860",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/223100/ss_051c4b3b4d698a6f5461cadd636239a6aef4fd85.1920x1080.jpg?t=1614763860"
    ]
   },
   "homefront the revolution 10 dlc part1": {
@@ -44190,6 +44872,6 @@
    "miss": true
   }
  },
- "updatedAt": "2026-10-27T12:13:37Z",
+ "updatedAt": "2026-10-27T18:05:15Z",
  "version": 1
 }
