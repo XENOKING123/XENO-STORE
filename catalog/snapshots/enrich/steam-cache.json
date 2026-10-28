@@ -25342,6 +25342,50 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/774511/ss_cef3faa129897966118221273f14a2b397b8ccd3.1920x1080.jpg?t=1776730985"
    ]
   },
+  "megaton musashi": {
+   "fetchedAt": "2026-10-28T01:23:33Z",
+   "miss": true
+  },
+  "megaton rainfall": {
+   "about": "'Megaton Rainfall' is a first-person superhero game. A global alien invasion is taking place and you must face it – alone. Chase massive destruction devices at supersonic speeds around an Earth that's as large as the real thing and populated with semi-procedurally generated cities.\n\r\n\n\r\nThen finish off the alien devices with your lethal energy blasts. Just be careful to avoid human casualties!",
+   "ageRating": null,
+   "appId": 430210,
+   "developer": "Pentadimensional Games, SL",
+   "features": [
+    "Single-player",
+    "Controller support",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-28T01:23:38Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Korean",
+    "Japanese",
+    "Portuguese - Brazil",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "Megaton Rainfall",
+   "publisher": "Pentadimensional Games, SL",
+   "releaseDate": "2017-11-17",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/430210/ss_dcd6e7de207b31ab2cd0239e753501a64607cc4a.1920x1080.jpg?t=1572861367",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/430210/ss_83265599639cae86366c989db13932e74d5f8826.1920x1080.jpg?t=1572861367",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/430210/ss_d9044df0aab447d2d54e8a0d5f44179d8ec4649e.1920x1080.jpg?t=1572861367",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/430210/ss_20781e960acfcaadafb532aa2c281f6fb82594a6.1920x1080.jpg?t=1572861367",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/430210/ss_f0cf4973dc58312b8bc9a017c328de53dafd22c8.1920x1080.jpg?t=1572861367"
+   ]
+  },
   "memoir blue": {
    "about": "From Cloisters Interactive, A Memoir Blue is an interactive poem about a superstar athlete and the all-encompassing love between mother and daughter. \n\r\n\n\r\nA unique aesthetic combining hand-drawn and 3D art brings Miriam's magical-realist journey to life, as she swims into the depths of her memories. A series of gameplay vignettes blends sacrifice and heartbreak with victory and pride as she reconnects with her inner child and deepens the love she shares with her mother.",
    "ageRating": null,
@@ -25383,6 +25427,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1497450/ss_03e0c2b31ca103f7b77908437a14f7a350ec02e0.1920x1080.jpg?t=1763720738",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1497450/ss_0761cc3b684dfa2c2441a649f08463ac6fd5204b.1920x1080.jpg?t=1763720738"
    ]
+  },
+  "memory": {
+   "fetchedAt": "2026-10-28T01:23:40Z",
+   "miss": true
   },
   "memory holder the colors": {
    "fetchedAt": "2026-10-25T16:18:04Z",
@@ -25427,6 +25475,40 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/764790/ss_9b2577846d890f6fd008bfe465322126b5ce1c54.1920x1080.jpg?t=1751460481",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/764790/ss_875fe259c26f29d959efba0eca47e1b63d844c75.1920x1080.jpg?t=1751460481",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/764790/ss_1e3c0e79c6f85bd6700c617a219169851cee9619.1920x1080.jpg?t=1751460481"
+   ]
+  },
+  "metal gear and metal gear 2 solid snake": {
+   "about": "Metal Gear\n\r\nThe first title in the METAL GEAR series, released in 1987. This praised game series was born from the idea of avoiding combat and infiltrating enemy territory undetected, a complete reversal of common action gameplay resulting in the creation of a brand-new game genre: stealth action.\n\r\n\n\r\nPlease note that certain parts of the game have been modified from the original for better payability and adjusted difficulty levels, while maintaining the gameplay as it was back then.",
+   "ageRating": null,
+   "appId": 2131680,
+   "developer": "KONAMI",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T01:23:45Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "METAL GEAR & METAL GEAR 2: Solid Snake",
+   "publisher": "KONAMI",
+   "releaseDate": "2023-10-24",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2131680/ss_38da6d05a4c68875eaa3ad45c4140408dfcb899d.1920x1080.jpg?t=1724876235",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2131680/ss_f9ba7d85b3eb2ed45cb811601f1bc246e5ef4612.1920x1080.jpg?t=1724876235",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2131680/ss_2bfcd7253137e5dbe140f18e1dd3fbd7dcb71ea8.1920x1080.jpg?t=1724876235",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2131680/ss_c93ffbc505f72285e6964eb621cd2918906b4352.1920x1080.jpg?t=1724876235",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2131680/ss_6f16f9f897ebda4a01f120a5d093067d64f47b15.1920x1080.jpg?t=1724876235",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2131680/ss_863e4c3a8ea9c16913d04ee6dff2f8dea33f09fb.1920x1080.jpg?t=1724876235"
    ]
   },
   "metal gear solid 2 sons of liberty master collection": {
@@ -25605,6 +25687,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1590760/ss_81ccb4192564bce54f7b0c0ca3b9446288b023dc.1920x1080.jpg?t=1791877230",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1590760/ss_23d2460b717d7d3f94746331ae43058eb6842c6f.1920x1080.jpg?t=1791877230",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1590760/ss_7351ea9ebc788e724a4b013438c6c1eff9193870.1920x1080.jpg?t=1791877230"
+   ]
+  },
+  "metal wolf chaos xd": {
+   "about": "The country is in peril as President Michael Wilson defends the nation against a full-scale rebellion led by Vice-President Richard Hawk and the mechanized legions he commands. As the 47th President of the United States, it is your sworn duty to take your country back by any means necessary and end this unjust coup d'etat! Battle in your advanced mech - armed to the teeth - across iconic American landscapes including the Brooklyn Bridge, the Grand Canyon, and the front steps of the White House.",
+   "ageRating": null,
+   "appId": 820630,
+   "developer": "General Arcade, FromSoftware, Inc",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T01:23:50Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "Japanese",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Korean",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": 65,
+   "name": "Metal Wolf Chaos XD",
+   "publisher": "Devolver Digital",
+   "releaseDate": "2019-08-06",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820630/ss_41dafaec5ccb948240f54c7029a2794e209dd36a.1920x1080.jpg?t=1659054912",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820630/ss_f497e2a3a01636bd1fcd8ab471566ac065dc3b04.1920x1080.jpg?t=1659054912",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820630/ss_80e89acdd9eb324c65b8e384444d49479acf26a9.1920x1080.jpg?t=1659054912",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820630/ss_44b1864174e0bb4e58d9d052034baaed1d426957.1920x1080.jpg?t=1659054912",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820630/ss_ec6f75635ba48f7fe987750dca0ae2838059f1c9.1920x1080.jpg?t=1659054912",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820630/ss_72768b90ddbe34181288abd72bb12e4feeb49ed4.1920x1080.jpg?t=1659054912",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820630/ss_7712b3ade3d2017f374bb130ca2eff783a4326d2.1920x1080.jpg?t=1659054912",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820630/ss_df3b655ae6227e7fe2a3ac996c603d64c316ad07.1920x1080.jpg?t=1659054912"
    ]
   },
   "metaphor refantazio": {
@@ -25914,6 +26036,45 @@
    "fetchedAt": "2026-10-17T18:33:17Z",
    "miss": true
   },
+  "mini motor racing 10": {
+   "about": "Welcome to the world of Mini Motor Racing X! Strap yourself in, or strap on your VR headset, and jump into a nitro fuelled world where little cars mean BIG fun! Spanning across reclaimed ruins and scorched outbacks through to rain soaked docks and sunkissed tropical islands - Mini Motor Racing X will take you on a micro driving journey across the globe like no other.",
+   "ageRating": null,
+   "appId": 1303990,
+   "developer": "The Binary Mill",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Cross-platform multiplayer",
+    "Controller support",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-28T01:23:55Z",
+   "genres": [
+    "Racing",
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Mini Motor Racing X",
+   "publisher": "Nextgen Reality Pty Ltd.",
+   "releaseDate": "2020-06-23",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1303990/ss_c148858cec1d8ef8c4234b3a91bf17d0bab6566b.1920x1080.jpg?t=1592954720",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1303990/ss_20fe71809e5c416368bfaac8c317664c9db10847.1920x1080.jpg?t=1592954720",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1303990/ss_d2f3da2350a8520736f7bd274363aeaf9ebafd45.1920x1080.jpg?t=1592954720",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1303990/ss_9bb5e33f61672de66ee320c63093fa7f310d03bb.1920x1080.jpg?t=1592954720",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1303990/ss_d2cc15825a03cf2d5ed76c59190a014d69ef1a79.1920x1080.jpg?t=1592954720",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1303990/ss_2fd97db1e8477cac811ada56f094291959659d45.1920x1080.jpg?t=1592954720"
+   ]
+  },
+  "miniwood vr": {
+   "fetchedAt": "2026-10-28T01:23:58Z",
+   "miss": true
+  },
   "miraculous rise of the sphinx": {
    "about": "Be Strong…Be Brave…Be Miraculous!\n\r\n\n\r\nParis needs a hero! Once again, the city of lights is in trouble as it faces a new menace—the most threatening sentimonster ever created is about to take control! As you take on the personas of the globally renowned superheroez Ladybug and Cat Noir, you’ll need to unveil the diabolical plan hatched by archvillain Hawk Moth—and squash it!",
    "ageRating": null,
@@ -26188,6 +26349,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/882020/ss_b1424c2db18906b5ab2eb6e8c851da8026874ed8.1920x1080.jpg?t=1728478491"
    ]
   },
+  "monster energy supercross the official videogame 3": {
+   "about": "The only Official Monster Energy AMA Supercross Championship videogame is back!\nEverything is official, from real teams to the training compound, Monster Energy Supercross 3 is the exact replica of the Supercross world!OFFICIAL 2019 SEASON\n\nRelive the 2019 AMA Monster Energy Supercross season with 100 riders of both 450SX and 250SX categories, 15 official stadiums and tracks and - for the very first time - race with the official Supercross teams of the 2019 Championship in the career mode.CO-OP…",
+   "ageRating": null,
+   "appId": 1089830,
+   "developer": "Milestone S.r.l.",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T01:24:03Z",
+   "genres": [
+    "Racing",
+    "Sports",
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Spanish - Latin America"
+   ],
+   "metacritic": 72,
+   "name": "Monster Energy Supercross - The Official Videogame 3",
+   "publisher": "Milestone S.r.l.",
+   "releaseDate": "2020-02-04",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1089830/ss_7ddc66821b1960b9ba27998a7be88c27e2069021.1920x1080.jpg?t=1728478013",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1089830/ss_e56bc03159549be096d7e31a53dab86d7b539a4d.1920x1080.jpg?t=1728478013",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1089830/ss_74e1ed6a350263a56d1819635fb1f0fb1517abe8.1920x1080.jpg?t=1728478013",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1089830/ss_fdfb063d23ed11b11fabea786f5a2bb91bc9c761.1920x1080.jpg?t=1728478013",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1089830/ss_fe8994254469f54637adb386e8f3e5311b65044c.1920x1080.jpg?t=1728478013",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1089830/ss_988d6ba277b259e513856e603a91c8658f81a3cd.1920x1080.jpg?t=1728478013",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1089830/ss_7bc9385c5d3ce79af41dfc66b0d18f3a0ded0b95.1920x1080.jpg?t=1728478013",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1089830/ss_e2cc9cef893d23eddf38e959033c780aeaf86422.1920x1080.jpg?t=1728478013"
+   ]
+  },
   "monster energy supercross the official videogame 6": {
    "fetchedAt": "2026-10-14T12:08:15Z",
    "miss": true
@@ -26423,6 +26624,42 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2350280/ss_c278cd392b32a3b18b31b928fbee782432790ee1.1920x1080.jpg?t=1791531721"
    ]
   },
+  "moon raider": {
+   "about": "Ava is the young daughter of the brilliant-but-aging scientist Dr. Cavor and Selene, the former queen of the moon. As a selenite, Selene's life depends on the special energy only moon gems can provide. With none left and time running out, Dr. Cavor enlists his daughter to raid the moon of as many gems as she can find! \n\nAva must survive the treacherous catacombs deep beneath the surface of the moon.",
+   "ageRating": null,
+   "appId": 1327810,
+   "developer": "Cascadia Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T01:24:08Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Moon Raider",
+   "publisher": "Cascadia Games",
+   "releaseDate": "2020-09-10",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1327810/ss_5728840cdcf9957f55dbf446a3dc3d9a07ac9aca.1920x1080.jpg?t=1721098150",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1327810/ss_5a14166a33503aa0d97c1012c2d9c2d59cadb74c.1920x1080.jpg?t=1721098150",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1327810/ss_b360b3da6090a8aeb997ac9333be437be1189f51.1920x1080.jpg?t=1721098150",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1327810/ss_9cb6ed4fdbab37d7afeee738ee12250b1b959531.1920x1080.jpg?t=1721098150",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1327810/ss_cb574894101b101d7ead7fe1c0592badbfc7084c.1920x1080.jpg?t=1721098150",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1327810/ss_4c37dbc063af32a16c81e7155286fe992bd5cd6b.1920x1080.jpg?t=1721098150",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1327810/ss_6cdea9b34a346673d8852935e1e20d112d7b26b9.1920x1080.jpg?t=1721098150",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1327810/ss_d8a3a4daa065142991ca3ddcf0f8d6a5e2f4fc2c.1920x1080.jpg?t=1721098150"
+   ]
+  },
   "morbid the lords of ire": {
    "about": "Even in defeat, the Gahars never truly die. They retreat into darkness and bide their time until the opportunity to arise again is upon them...\n\nMorbid: The Lords of Ire is a continuation and reinvention of the critically acclaimed isometric Souls-like ARPG “Morbid: The Seven Acolytes” with the heroic Striver returning once more to do battle with horrific creatures in a dark and twisted world of pain and suffering.\n\nTake on gruesome foes in an all-new 3D perspective.",
    "ageRating": null,
@@ -26461,6 +26698,48 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2171560/ss_7709b2b248d68beac1873f3db8910f0d5b57ca51.1920x1080.jpg?t=1787164744",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2171560/ss_0d845c101154eb9f4fe30c2b89000056d7b38d73.1920x1080.jpg?t=1787164744",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2171560/ss_a868cff349d119db4eb8e292bee36f3dcc0ac8b1.1920x1080.jpg?t=1787164744"
+   ]
+  },
+  "morbid the seven acolytes": {
+   "about": "You are the last surviving Striver of Dibrom. Your duty, for which you have trained your whole life, is to defeat the Seven Acolytes, accursed and powerful beings, possessed by malevolent deities called Gahars. \n\nExperience epic bosses and a multitude of bloodthirsty encounters as you build your character. \n\nChallenging foes, mini-bosses, and memorable large-scale boss fights with fully orchestrated music, are central to the world of Morbid.",
+   "ageRating": null,
+   "appId": 1140890,
+   "developer": "Still Running",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T01:24:13Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Russian",
+    "Japanese",
+    "Simplified Chinese",
+    "Korean",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Morbid: The Seven Acolytes",
+   "publisher": "Silver Lining Interactive",
+   "releaseDate": "2020-12-03",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1140890/ss_20e54b52a82d79efe89ed5218cea38fac836dcd7.1920x1080.jpg?t=1738068071",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1140890/ss_10a622a283edc12075ef1f8ae8101f9c8de3e24c.1920x1080.jpg?t=1738068071",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1140890/ss_6abb17a60b19d7d523177b6f86fcb86691417574.1920x1080.jpg?t=1738068071",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1140890/ss_fc2263ee2d1985f7cb69d9eb2a3ad5c5eb8b8ddb.1920x1080.jpg?t=1738068071",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1140890/ss_4ace2f7a78b72739d06ede4f89da9ab6a6877007.1920x1080.jpg?t=1738068071",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1140890/ss_3d65239c953cd71d0c6a4b09c7a918101c1e0c14.1920x1080.jpg?t=1738068071",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1140890/ss_0908dae6e00edbbe51f0ed5d7f1d46169615f274.1920x1080.jpg?t=1738068071",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1140890/ss_b0b369a6b6a8e6db333e320489fb43fc0eaff6d9.1920x1080.jpg?t=1738068071"
    ]
   },
   "mortal kombat 1": {
@@ -26878,6 +27157,41 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/996770/ss_a11e5312bf750176f72219bbf39ca17b791ab452.1920x1080.jpg?t=1781014487"
    ]
   },
+  "mozart requiem": {
+   "about": "It's 1788 and Mozart is in Prague. He is giving the inaugural showing of his famous opera, Don Giovanni. The plaudits he receives are universal, but very quickly the events that are shaking the capital of Bohemia will take his mind off the music.\n\nFar from the footlights, a terrible conspiracy is underway, designed to de-throne Joseph II, Austro-Hungarian Emperor and Mozart's benefactor.",
+   "ageRating": null,
+   "appId": 2116930,
+   "developer": "Hoplite Research LLC",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-28T01:24:18Z",
+   "genres": [
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Korean"
+   ],
+   "metacritic": null,
+   "name": "Mozart Requiem",
+   "publisher": "GS2 Games Inc, Funbox Media Ltd",
+   "releaseDate": "2022-09-07",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2116930/ss_f54bfca8be006a74fa164ee90fdb0fa5a9d83089.1920x1080.jpg?t=1662629896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2116930/ss_0eef814230dd9a62f5a1a1a251d54e8243118abb.1920x1080.jpg?t=1662629896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2116930/ss_77e96117ba4ab68b8581f6a237c416a9aa29f647.1920x1080.jpg?t=1662629896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2116930/ss_2cd87755816a3f11d62d3f1a1374e7d837f0cc65.1920x1080.jpg?t=1662629896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2116930/ss_6182a787223874d8dcff3ae33199c9ba63dcc656.1920x1080.jpg?t=1662629896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2116930/ss_2f8f3079ccd74d56acdb3f6e6db3cd197d845984.1920x1080.jpg?t=1662629896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2116930/ss_28deb5fe3c0c231134e66fea72031128e5165d03.1920x1080.jpg?t=1662629896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2116930/ss_b8ad045be86da01e2d08e25956526523a5928e89.1920x1080.jpg?t=1662629896"
+   ]
+  },
   "mudrunner": {
    "about": "MudRunner is the ultimate off-road experience, putting the players in the driver seat and daring them to take charge of incredible all-terrain vehicles, venturing across extreme Siberian landscapes with only a map and compass as guides!\n\nDrive 19 powerful all-terrain vehicles, each with its own characteristics and attachable equipment. Complete your objectives and deliveries by enduring perilous conditions across wild, untamed landscapes in extreme conditions with dynamic day-night cycles.",
    "ageRating": null,
@@ -27026,6 +27340,87 @@
    "fetchedAt": "2026-10-21T07:40:53Z",
    "miss": true
   },
+  "my life pet vet": {
+   "about": "Take care of sick and injured animals in your own small animal practice. Use various examination techniques, make the right diagnosis and give your little patients the right treatment – just like a real-life vet. Aftercare and nursing care are also your responsibility.",
+   "ageRating": null,
+   "appId": 1962100,
+   "developer": "Caipirinha Games",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-28T01:24:23Z",
+   "genres": [
+    "Simulation",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "My Life: Pet Vet",
+   "publisher": "Markt+Technik Verlag GmbH",
+   "releaseDate": "2022-12-14",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1962100/ss_6b45e5719c7855085c44dd9eeb2cbc15f41c197e.1920x1080.jpg?t=1671087955",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1962100/ss_3cca390031c00d39173f481c25bad7c7ba0d07c8.1920x1080.jpg?t=1671087955",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1962100/ss_cb332ca9eff50e1e46d78d4acb87820d3d50553c.1920x1080.jpg?t=1671087955",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1962100/ss_dc9af7f64a8d51f426fccaefbaeff6ab2c5e216a.1920x1080.jpg?t=1671087955",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1962100/ss_88b45840db9d6b7b826c7ce3c089752cc78fdbb7.1920x1080.jpg?t=1671087955",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1962100/ss_b94a333419a95362f68bd184acd9bca612e8ca1f.1920x1080.jpg?t=1671087955"
+   ]
+  },
+  "my little pony a maretime bay adventure": {
+   "about": "Bring magic back to Equestria and play with the new generation of MY LITTLE PONY characters, in an adventure full of fun, fashion and good friends!\n\nEarth Pony Sunny wants to make the world a better place by hosting Maretime Bay Day, a forgotten celebration of friendship and magic.",
+   "ageRating": null,
+   "appId": 1600780,
+   "developer": "Melbot Studios",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T01:24:28Z",
+   "genres": [
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Arabic",
+    "Danish",
+    "Dutch",
+    "Finnish",
+    "Japanese",
+    "Norwegian",
+    "Polish",
+    "Spanish - Latin America",
+    "Swedish"
+   ],
+   "metacritic": null,
+   "name": "MY LITTLE PONY: A Maretime Bay Adventure",
+   "publisher": "Outright Games Ltd.",
+   "releaseDate": "2022-05-27",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1600780/ss_45240ddfb53bebc3cdeef91a9d74d70e2953b70f.1920x1080.jpg?t=1726843216",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1600780/ss_23806a3918b4f84642201462f399a4f15178916a.1920x1080.jpg?t=1726843216",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1600780/ss_b830ede1f9a94f4624fc00ebfdd1fdeeb5583c08.1920x1080.jpg?t=1726843216",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1600780/ss_c4c3cdee4e3aaecbd2bbbafd7e3c2d390195baa3.1920x1080.jpg?t=1726843216",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1600780/ss_9dfb200ec0b53b05bc68bbb1ad0677e415519ca5.1920x1080.jpg?t=1726843216",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1600780/ss_b4dee368645e0165a9080bd4f76ef006918a93d3.1920x1080.jpg?t=1726843216",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1600780/ss_40cea2690cd9dd13afa10116eb07b5993de82dbf.1920x1080.jpg?t=1726843216",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1600780/ss_092998054c372c5747618ee23b3ad03bec697df2.1920x1080.jpg?t=1726843216"
+   ]
+  },
   "my little riding champion": {
    "about": "Your horse. Your passion.\n\nGet ready to fulfil your dreams at a gallop. The village's riding club needs you to win the next major competitions. Choose your favourite horse, train it and win medals for your club!\n\nCreate a bond by going out riding in the countryside and taking care of it. Together you will set out on a large number of missions and earn new outfits and equipment for both of you.",
    "ageRating": null,
@@ -27097,6 +27492,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1437340/ss_0acce4065f4fa9c8b88f0a28646732f22b3c13cf.1920x1080.jpg?t=1717194449",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1437340/ss_4d9b4c21774533fce21ebd81910bdf839196c202.1920x1080.jpg?t=1717194449"
    ]
+  },
+  "my riding stables 2 a new adventure": {
+   "fetchedAt": "2026-10-28T01:24:30Z",
+   "miss": true
   },
   "my time at portia": {
    "about": "Start a new life in the enchanting town of Portia! Restore your Pa's neglected workshop to its former glory by fulfilling commissions, growing crops, raising animals, and befriending the quirky inhabitants of this charming post-apocalyptic land!\n\nArmed with your Pa's old handbook and workbench, you must gather, mine and craft your way to being crowned the number one workshop in Portia. Help the locals rebuild the town and uncover the secrets locked deep away beneath it.",
@@ -27320,6 +27719,10 @@
   },
   "nascar heat 3": {
    "fetchedAt": "2026-10-25T16:18:22Z",
+   "miss": true
+  },
+  "natural doctrine": {
+   "fetchedAt": "2026-10-28T01:24:38Z",
    "miss": true
   },
   "nba 2k playgrounds 2": {
@@ -27769,6 +28172,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2420660/ss_bfe21ed7ce40011fa0a83e3d112ef3b95abd4e99.1920x1080.jpg?t=1771587898"
    ]
   },
+  "never grave the witch and the curse": {
+   "about": "Authentic 2D action\n\nNever Grave is 2D action game where you journey with the aid of a cursed hat. Identify enemy attacks, fight with magic, and sometimes use the terrain to win! Dungeons such as ruins and botanical gardens are auto-generated and change each time you play. Furthermore, there are obstacles and puzzles waiting to block the player's path in the dungeons.\n\n \n\nPossession system\n\nPossess enemies using a cursed hat.",
+   "ageRating": null,
+   "appId": 2395770,
+   "developer": "Frontside 180",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T01:24:43Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Never Grave: The Witch and The Curse",
+   "publisher": "Pocketpair Publishing",
+   "releaseDate": "2026-03-04",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2395770/ss_c4e61aad5335b3631d42519c4283f12a100f5696.1920x1080.jpg?t=1773129554",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2395770/ss_6ef541b64a796d3368eec5137145f66796670958.1920x1080.jpg?t=1773129554",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2395770/ss_df6b0a2b3cb6959c18490cad63244a7914c73cac.1920x1080.jpg?t=1773129554",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2395770/ss_e095e117958388a1b7885e47ef2bd78dd9e1f6de.1920x1080.jpg?t=1773129554",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2395770/ss_440aa613b412a5b2669f848cf3327aa157965244.1920x1080.jpg?t=1773129554",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2395770/ss_34c08ddb377a1f9d8f04161232761f8c794afe05.1920x1080.jpg?t=1773129554",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2395770/ss_1728fc4f90c6d3c8ac9b08889f019b1f853d6b00.1920x1080.jpg?t=1773129554",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2395770/ss_4966537b07fc4bcbd519dfd79fd555fa202cb306.1920x1080.jpg?t=1773129554"
+   ]
+  },
   "new gundam breaker": {
    "about": "Collect Gunpla parts with friends, and make the ultimate Gundam!\n\r\nDefeat your enemies with your Gunpla model, collect their parts, and use them to make and battle with your own custom Gundam in this all-new Gunpla action game!\n\r\n\n\r\nAll’s fair in love and Gunpla parts in New Gundam Breaker?!\n\r\nPower is everything at this school, and the evil Laplace Nest team rules from on high.",
    "ageRating": null,
@@ -27921,6 +28362,14 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1454970/ss_3196c51621ccfd9864fd69249f4ce88c137459f0.1920x1080.jpg?t=1728609086",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1454970/ss_59f7a978f5872366a5e4bd1a221b6865ada93c54.1920x1080.jpg?t=1728609086"
    ]
+  },
+  "nhl 17": {
+   "fetchedAt": "2026-10-28T01:24:33Z",
+   "miss": true
+  },
+  "nhl 18": {
+   "fetchedAt": "2026-10-28T01:24:35Z",
+   "miss": true
   },
   "ni no kuni ii revenant kingdom": {
    "about": "Welcome to the beautiful world of Ni no Kuni!\n\nAfter being overthrown in a coup, the young king Evan sets out on an extraordinary quest to found a new kingdom, unite his world and protect its inhabitants from the dark forces that threaten them.\n\nJoin him on an unforgettable adventure which blurs the line between animated feature film and video game.",
@@ -28248,6 +28697,48 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/636570/ss_9dca05448ff564799255b1f48dfcc4c6c71e916e.1920x1080.jpg?t=1775540802",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/636570/ss_da9b9bb12ca637ed9b835975b0e6c7192f2b69df.1920x1080.jpg?t=1775540802",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/636570/ss_f9ca120e92be6e62b2c71680957f08823e6156b3.1920x1080.jpg?t=1775540802"
+   ]
+  },
+  "nikoderiko the magical world directors cut": {
+   "about": "Adventure calls in Nikoderiko: The Magical World - Director's Cut, our love letter to platformers! Run, jump, and ride with Niko and Luna through colorful levels full of danger, treasures, and super-sized bosses. Play on your own or together with a friend in couch co-op—also, play anywhere with your Steam Deck!\n\nNikoderiko: The Magical World - Director’s Cut features all-new levels, more treasures, and new challenges to master in Hard Mode.",
+   "ageRating": null,
+   "appId": 2374190,
+   "developer": "VEA Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T01:24:48Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": 82,
+   "name": "Nikoderiko: The Magical World — Director’s Cut",
+   "publisher": "Knights Peak",
+   "releaseDate": "2024-12-05",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374190/ss_d7505d14db36aebc0f44fa2c4693522a57578ba5.1920x1080.jpg?t=1782382960",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374190/ss_d8218680d47b99538d2161a9557bef3988d27b62.1920x1080.jpg?t=1782382960",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374190/ss_5f30af854aff29f95ee9dd7ba1d1744f2b8c19e1.1920x1080.jpg?t=1782382960",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374190/ss_ba6adc1badaea4347dfcd48ba2e73f3873eb4f9b.1920x1080.jpg?t=1782382960",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374190/ss_e38a5376f72c7a2cc5f168c8b4753f430a26cd77.1920x1080.jpg?t=1782382960",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374190/ss_0e269acc6ba870d87a5afa11c14197439a9da8dc.1920x1080.jpg?t=1782382960",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374190/ss_f4cd0cdaad65dcac13bd09a41f84450133734762.1920x1080.jpg?t=1782382960"
    ]
   },
   "ninja gaiden 2 black": {
@@ -28779,6 +29270,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/242680/ss_f316ed0096275d91fba3c88cb0ab7b9173b4494a.1920x1080.jpg?t=1764957456"
    ]
   },
+  "o my genesis vr": {
+   "fetchedAt": "2026-10-28T01:24:50Z",
+   "miss": true
+  },
   "observer system redux": {
    "about": "The year is 2084. The future has turned out much darker than anyone could imagine. First, there was the Nanophage. A digital plague that killed thousands upon thousands of those who chose to augment their minds and bodies. Then came the War, leaving both the West and the East decimated and shattered. With no one left to seize power, corporations took over and forged their own crooked empires.\n\nYou are an Observer – a tool of corporate oppression.",
    "ageRating": null,
@@ -28905,6 +29400,78 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/224480/ss_89caf581bd3879f22ce051506ca61e1d02ceb526.1920x1080.jpg?t=1748894325"
    ]
   },
+  "octopath traveler 2": {
+   "about": "The story takes place in Solistia, a land comprising an eastern and western continent divided by the sea. \n\nIt is a bustling era, wherein large vessels navigate busy sea routes and the power of steam gives birth to new technologies.\n\nSome people thrill to glamorous stars of the stage and industry, while others are brought to tears by war, plague, and poverty.\n\nIn this faraway realm, eight travelers hailing from different regions venture forth for their own reasons.",
+   "ageRating": null,
+   "appId": 1971650,
+   "developer": "Square Enix, ACQUIRE Corp.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T01:24:55Z",
+   "genres": [
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "OCTOPATH TRAVELER II",
+   "publisher": "Square Enix",
+   "releaseDate": "2023-02-24",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1971650/ss_063d6228ccd9256814aec0cd46ebb4c093b56fea.1920x1080.jpg?t=1788247720",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1971650/ss_dd347306294990fbb93e88a9fb6d694a7a2eec13.1920x1080.jpg?t=1788247720",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1971650/ss_ffcc9f56fdf7d36ad4c0414dd2d85ed7389b42fe.1920x1080.jpg?t=1788247720",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1971650/ss_d94d1bdba59a0a021225949f13fa8036b85808a7.1920x1080.jpg?t=1788247720",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1971650/ss_cd859f6ff08f678304dac0d8c36299b0a2f82a32.1920x1080.jpg?t=1788247720",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1971650/ss_dee5d3b75c3e94f48b7bca073e0ed83ca98484d5.1920x1080.jpg?t=1788247720"
+   ]
+  },
+  "oddworld abes oddysee": {
+   "about": "Selected by the fickle finger of fate, Abe™, floor-waxer first class for RuptureFarms, was catapulted into a life of adventure when he overheard plans by his boss, Molluck the Glukkon™, to turn Abe and his fellow Mudokons into Tasty Treats as part of a last-ditch effort to rescue Molluck's failing meat-packing empire.",
+   "ageRating": null,
+   "appId": 15700,
+   "developer": "Oddworld Inhabitants",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-28T01:25:00Z",
+   "genres": [
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Italian",
+    "Japanese",
+    "Spanish - Spain"
+   ],
+   "metacritic": null,
+   "name": "Oddworld: Abe's Oddysee®",
+   "publisher": "Oddworld Inhabitants",
+   "releaseDate": "2008-08-28",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/15700/0000004903.1920x1080.jpg?t=1728644292",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/15700/0000004904.1920x1080.jpg?t=1728644292",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/15700/0000004905.1920x1080.jpg?t=1728644292",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/15700/0000004906.1920x1080.jpg?t=1728644292",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/15700/0000004907.1920x1080.jpg?t=1728644292",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/15700/0000004908.1920x1080.jpg?t=1728644292",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/15700/0000004909.1920x1080.jpg?t=1728644292",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/15700/0000004910.1920x1080.jpg?t=1728644292"
+   ]
+  },
   "oddworld soulstorm": {
    "about": "As 300 freshly liberated slaves celebrate their escape from the industrial megacomplex of RuptureFarms, a new menace rises. They will soon discover that, although their physical bonds were broken, they are far from free. \n\nJoin the revolution as you guide their savior, Abe, on an almost impossible journey to uncover the truth behind the generations of disinformation and misleading news that have brainwashed his people.",
    "ageRating": null,
@@ -28986,6 +29553,49 @@
   "olliolli 1 2": {
    "fetchedAt": "2026-10-25T16:18:39Z",
    "miss": true
+  },
+  "omen of sorrow": {
+   "about": "Monsters of classic horror and mythology clash to take back the night!\n\nIn a hidden underworld ruled by creatures of the night, a new terror has awakened! Omen of Sorrow brings monsters of horror, literature and mythology together for a fighting game experience unlike any other.",
+   "ageRating": null,
+   "appId": 457260,
+   "developer": "AOne Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Cross-platform multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T01:25:05Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Spanish - Latin America",
+    "Portuguese - Brazil",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Omen of Sorrow",
+   "publisher": "Eastasiasoft Limited",
+   "releaseDate": "2023-03-23",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/457260/ss_11c642fa992f404ef365288d59b4c9bef47dbd4d.1920x1080.jpg?t=1790842507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/457260/ss_9d6b3fb52a6f3a64ec911266cbc2984cbda3231f.1920x1080.jpg?t=1790842507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/457260/ss_9ba9082d3641eb90cfbe4dcdfc3c660e1e3b459e.1920x1080.jpg?t=1790842507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/457260/ss_0c432026c41627b955e363a1ef6891db933a6e70.1920x1080.jpg?t=1790842507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/457260/ss_4063ec1b2d5b6dc5f9004388fb6848c4f77715fc.1920x1080.jpg?t=1790842507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/457260/ss_3001782fd1b8c3a039604d3c8bd79bc8395dd3c7.1920x1080.jpg?t=1790842507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/457260/ss_4299e289acc8ec2903426496153320827b903778.1920x1080.jpg?t=1790842507",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/457260/ss_f8017d002dc344394ae6d87873d7a70d7316215f.1920x1080.jpg?t=1790842507"
+   ]
   },
   "on the road the truck simulator": {
    "about": "From 18 tonners to the Gigaliner, ON THE ROAD – The Truck Simulator offers everything a trucker’s heart desires.\n\nIn this realistic truck simulation, you have more than 6500 km of motorway and country roads at your disposal – including numerous detailed motorway interchanges. Get behind the steering wheel of a MAN TGX or Scania R Series and discover more than 16 German cities like Hamburg, Bremen, Cologne, Hannover, and Berlin, with unique road designs and sights.",
@@ -29363,6 +29973,80 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2638890/884ef55e720a36debf01d36f742a6db07e12320f/ss_884ef55e720a36debf01d36f742a6db07e12320f.1920x1080.jpg?t=1790383151",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2638890/ca28a3116080d0d6ab309545d08171d1b4cc7dc5/ss_ca28a3116080d0d6ab309545d08171d1b4cc7dc5.1920x1080.jpg?t=1790383151",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2638890/38db13c961be5bb407a0c42387e7c111886ced5f/ss_38db13c961be5bb407a0c42387e7c111886ced5f.1920x1080.jpg?t=1790383151"
+   ]
+  },
+  "operation wolf returns first mission": {
+   "about": "Experience once again the iconic Rail Shooter released for Arcade back in 1987, now reinterpreted in a regular or VR version. \n\nOperation Wolf Returns: First Mission captures the essence of the original game, immersing you in an action-packed atmosphere reminiscent of the non-stop action films of the 1980s.\n\nA few months ago, a new criminal organization made its appearance. In addition to trafficking arms and drugs, it has developed a new, superpowerful weapon.",
+   "ageRating": null,
+   "appId": 1852650,
+   "developer": "VIRTUALLYZ GAMING",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-28T01:25:10Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Operation Wolf Returns: First Mission",
+   "publisher": "Microids",
+   "releaseDate": "2023-07-13",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1852650/ss_1cdf364604b109f5125d88423ffebe2714ac31aa.1920x1080.jpg?t=1706697439",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1852650/ss_164b261b2da02ffcea3822ba66bdd92a13f66cf3.1920x1080.jpg?t=1706697439",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1852650/ss_cb5d312a643b13f01524f625f8e5734321aa78a0.1920x1080.jpg?t=1706697439",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1852650/ss_c8f1fe18b35bba3876fee0337fc1e163731c80d5.1920x1080.jpg?t=1706697439",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1852650/ss_3863c54119574016193c653aaa6dd8ecd0ade0dd.1920x1080.jpg?t=1706697439",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1852650/ss_ef624d3bfa1d623524b47dbe099c7e665193dc8e.1920x1080.jpg?t=1706697439",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1852650/ss_66e77b7bb18cb3da0ad6ba2e936867ccb2ecab7d.1920x1080.jpg?t=1706697439",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1852650/ss_688a3fb9a2b4bd3628761d4c4a3f3d95dfa31813.1920x1080.jpg?t=1706697439"
+   ]
+  },
+  "opus castle": {
+   "about": "Opus Castle it's a 3D horror, adventure and mysterious game with a narrative based on the real tragic history of the little castle on Apa Street, located in the city of São Paulo, Brazil.\n\nThe Game\n\nThe player must explore Castelinho's secret rooms and environments, encountering the famous supernatural apparitions, noises from nowhere and the laments of spirits from the past. In the meantime, you wake up in one of the rooms beside a body riddled with bullets. Suicide or murder?",
+   "ageRating": null,
+   "appId": 1725660,
+   "developer": "Messier Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T01:25:15Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "Portuguese - Brazil"
+   ],
+   "metacritic": null,
+   "name": "Opus Castle",
+   "publisher": "QUByte Interactive",
+   "releaseDate": "2021-11-09",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1725660/ss_7ec07353a8225081093f03ec33d78fd70eeec1ed.1920x1080.jpg?t=1792719539",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1725660/ss_50c19c4b3246b037a87d0dab98c9ff9a6a56e36f.1920x1080.jpg?t=1792719539",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1725660/ss_64df1b985bb3bff312a10b5761cad46a957e6853.1920x1080.jpg?t=1792719539",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1725660/ss_561f226a5e5b4468076a04b53937691252ef7149.1920x1080.jpg?t=1792719539",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1725660/ss_850f7ef0a1564c3fe2fba661ef42fbc54ad66957.1920x1080.jpg?t=1792719539",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1725660/ss_a3f7456f71de788cc8ebd1f42d47d393d9755a91.1920x1080.jpg?t=1792719539"
    ]
   },
   "orc slayer": {
@@ -29757,6 +30441,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1243830/ss_90421f24a5e9a631deb83e5128ead001f7b6e13f.1920x1080.jpg?t=1788969190",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1243830/ss_98d28a41af2047ce17c455a0dbe7765c7b141402.1920x1080.jpg?t=1788969190"
    ]
+  },
+  "overcooked gourmet edition": {
+   "fetchedAt": "2026-10-28T01:25:18Z",
+   "miss": true
   },
   "overpass 2": {
    "about": "The only simulation that blends racing and obstacles is back with new content and game modes.\n\nPut your skills to the test in 5 game modes in which you have to come to grips with demanding challenges: off-road sprint, off-road circuit, hill climb, obstacle course, closed circuit.\n\nYour results will depend on how well you can analyse the course and pick the best routes.",
@@ -30183,6 +30871,56 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/758730/ss_c26a87233dbff73279128935c3bd2d85701081b2.1920x1080.jpg?t=1694774487"
    ]
   },
+  "paw patrol the movie adventure city calls": {
+   "about": "A big city means a bigger adventure! When Ryder and the PAW Patrol learn that Mayor Humdinger has taken over a buzzing metropolis, they must race into action to save Adventure City from his selfish scheming. The pups need YOU to join Team PAWsome! So, Adventure City here we come! \n\nBe your favorite pups including Chase, Skye, Marshall, and new streetwise city girl, Liberty – and use their unique abilities in high-adrenaline rescue missions. Use next-level gadgets and vehicles to explore all-new…",
+   "ageRating": null,
+   "appId": 1434310,
+   "developer": "Drakhar Studio",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T01:25:23Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Arabic",
+    "Danish",
+    "Dutch",
+    "Finnish",
+    "Norwegian",
+    "Portuguese - Brazil",
+    "Russian",
+    "Spanish - Latin America",
+    "Swedish",
+    "Japanese",
+    "Polish"
+   ],
+   "metacritic": null,
+   "name": "PAW Patrol The Movie: Adventure City Calls",
+   "publisher": "Outright Games Ltd.",
+   "releaseDate": "2021-08-13",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1434310/ss_c717b08b4fc23f328ceeeedd09f6f5bf117d77cb.1920x1080.jpg?t=1670334798",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1434310/ss_4a4421608fb86d1c2393a6366dcfa0a7a2e782bd.1920x1080.jpg?t=1670334798",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1434310/ss_fd9c6aadb982f5bf311ad0e643502888a062a627.1920x1080.jpg?t=1670334798",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1434310/ss_c0a2286718d8e1b3c61ccd057149c799295c4a62.1920x1080.jpg?t=1670334798",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1434310/ss_9e9077358b5c90ae23fb60ffc7185b4dc51069cf.1920x1080.jpg?t=1670334798",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1434310/ss_a941b67e56c3e8cb667100e41f57c48dac8cbecc.1920x1080.jpg?t=1670334798",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1434310/ss_2b30f12b29983f81a150f69deefc8271fccfccef.1920x1080.jpg?t=1670334798",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1434310/ss_b926d269f385e061716d9e5823f905aebfc48ab1.1920x1080.jpg?t=1670334798"
+   ]
+  },
   "paw patrol world": {
    "about": "Please note: Controller required for 2 player split screen mode. \n\nSave the day all over Adventure Bay, Jake’s Mountain, the Jungle, and Barkingburg\n\nExplore the world of PAW Patrol like never before, in a 3D action adventure where anything is PAWsible. Play as your favorite pups, drive their vehicles and save the day by taking on fun rescues and missions. It’s the ultimate PAW Patrol playtime!\n\nUse your pup treats to unlock new pup outfits, postcard stamps, emotes, vehicle stickers and more.",
    "ageRating": null,
@@ -30511,6 +31249,48 @@
   "phoenix point behemoth edition": {
    "fetchedAt": "2026-10-23T00:44:38Z",
    "miss": true
+  },
+  "phogs": {
+   "about": "Play as Red and Blue, a duo of dogs on a captivating, puzzle-filled adventure for all ages!\n\nStretch, bark and bounce your way through obstacles and challenges across three vibrant worlds, filled with hilarious physics-based gameplay and sneaky secrets.\n\n One Phog, Two Phog, Red Phog, Blue Phog \n\nYour faithful companions. \nRed and Blue are the goodest of doggos who will accompany you through your entire fun-filled adventure.\n\nDouble-ended doggos.",
+   "ageRating": null,
+   "appId": 850320,
+   "developer": "Bit Loom Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T01:25:28Z",
+   "genres": [
+    "Adventure",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Simplified Chinese"
+   ],
+   "metacritic": 75,
+   "name": "PHOGS!",
+   "publisher": "Coatsink",
+   "releaseDate": "2020-12-03",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/850320/ss_29eea0f2d64d29e588679191d97a6e687df05b1f.1920x1080.jpg?t=1741171193",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/850320/ss_e224a0054bb3dfabc4c4c5238b5e9d8d4404e085.1920x1080.jpg?t=1741171193",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/850320/ss_aec40537a97e60ffe0017421c87be8fad28e6b43.1920x1080.jpg?t=1741171193",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/850320/ss_79346576cf737446746464d7ab4c7f0213eb902f.1920x1080.jpg?t=1741171193",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/850320/ss_e1ceac425e54aaa16c4a369d771a2e9ff3f3db6d.1920x1080.jpg?t=1741171193",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/850320/ss_49bf1b3c88c61f01737aaa38574233821906717b.1920x1080.jpg?t=1741171193",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/850320/ss_599cb891c1c056d75e3964135db01aa8d13549f7.1920x1080.jpg?t=1741171193",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/850320/ss_89e313d58c7ec052dccb24870e792a22b2429133.1920x1080.jpg?t=1741171193"
+   ]
   },
   "pier solar and the great architects": {
    "about": "Being originally designed and developed for the SEGA Mega Drive & SEGA Genesis, Pier Solar is a turn-based RPG with state-of-the-art aesthetics about the journey of three young heroes from the town of Reja. In this prospered and peaceful town there live three best friends: Hoston, Alina and Edessot. Young and curious, they want to go on a herb-seeking quest to help cure Hoston's father's mysterious illness. Little do they know ...",
@@ -45597,6 +46377,6 @@
    "miss": true
   }
  },
- "updatedAt": "2026-10-27T22:17:19Z",
+ "updatedAt": "2026-10-28T01:25:30Z",
  "version": 1
 }
