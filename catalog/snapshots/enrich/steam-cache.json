@@ -30543,6 +30543,10 @@
    "fetchedAt": "2026-10-26T23:58:02Z",
    "miss": true
   },
+  "pac man museum plus": {
+   "fetchedAt": "2026-10-28T08:30:16Z",
+   "miss": true
+  },
   "pac man world 2 re pac": {
    "fetchedAt": "2026-10-25T16:18:54Z",
    "miss": true
@@ -31007,6 +31011,36 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/466630/ss_f404773474d4b6e4386a46c5e694d317bbffe507.1920x1080.jpg?t=1765919336"
    ]
   },
+  "penn and teller vr frankly unfair unkind unnecessary and underhanded": {
+   "about": "Legendary entertainers Penn & Teller bring their unique brand of magical mayhem to a virtual stage! Penn & Teller VR: F U, U, U, & U is a virtual torturous toy box of frankly unfair, unkind, unnecessary, and underhanded magic tricks and simulations that will absolutely baffle and humiliate your friends.FOOL YOUR FRIENDS \n\nPerform 10+ cruel magic tricks (disguised as cutting-edge science) that will leave your loved ones screaming and you cackling maniacally.",
+   "ageRating": null,
+   "appId": 677610,
+   "developer": "Gearbox Software",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-28T08:30:21Z",
+   "genres": [
+    "Family"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Penn & Teller VR: Frankly Unfair, Unkind, Unnecessary, & Underhanded",
+   "publisher": "Gearbox Publishing",
+   "releaseDate": "2019-06-27",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/677610/ss_eda84b4bf0d35fe59626f68628549033d9ba7eae.1920x1080.jpg?t=1573062026",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/677610/ss_600063af39f3372f417d4d8701c104c68379648f.1920x1080.jpg?t=1573062026",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/677610/ss_1c2155e48a8f94f162e2b7fbdad1d178095416d1.1920x1080.jpg?t=1573062026",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/677610/ss_ac5136bf7034d3dfb3a44c21b4a04ff518e72ada.1920x1080.jpg?t=1573062026",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/677610/ss_1aa5802e1d663d4152063e07c601b801df5f1615.1920x1080.jpg?t=1573062026"
+   ]
+  },
   "persistence": {
    "fetchedAt": "2026-10-18T11:04:51Z",
    "miss": true
@@ -31329,6 +31363,63 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/286220/ss_214908074aac48fdc19dfc530ca054754e349b35.1920x1080.jpg?t=1447360795"
    ]
   },
+  "pile up box by box": {
+   "about": "Pile Up! ticks all the right boxes as a family-friendly cooperative 3D platformer!\nJump up, slide down, play together and carry the load!\n\nCoordinate with your friends or rely on your own creativity to navigate cardboard worlds full of uniquely joyful levels. Unfold mysteries, solve puzzles and quests as a team, help the friendly citizens of sunbaked islands, amber forests, magical caves, and visit the fantastic feather theater.",
+   "ageRating": null,
+   "appId": 1109820,
+   "developer": "Seed by Seed",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:30:26Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Simulation",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Bulgarian",
+    "Czech",
+    "Danish",
+    "Dutch",
+    "Finnish",
+    "Greek",
+    "Hungarian",
+    "Japanese",
+    "Korean",
+    "Norwegian",
+    "Polish",
+    "Portuguese - Portugal",
+    "Portuguese - Brazil",
+    "Romanian",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "Pile Up! Box by Box",
+   "publisher": "THQ Nordic Mobile",
+   "releaseDate": "2021-03-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1109820/ss_514430cc9491835f6fd6d8a6436235f3c90ccc5d.1920x1080.jpg?t=1791462398",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1109820/ss_0e6e32d2c536cce0e38ea26ef417b24ed23a7939.1920x1080.jpg?t=1791462398",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1109820/ss_be1c7e507ade4dfc99b04a5024223f9555b18ae0.1920x1080.jpg?t=1791462398",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1109820/ss_0ba8fea43ebee88730b531ea4f5117c58889bd0f.1920x1080.jpg?t=1791462398",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1109820/ss_d2ffe07f0de1e47859eb31eb7058e6c502aead0f.1920x1080.jpg?t=1791462398",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1109820/ss_3629f11b13164b1847bafca5a3c829c7ad12123b.1920x1080.jpg?t=1791462398",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1109820/ss_1afe66e34f35bd668421c40b83b059c9fabfb4fe.1920x1080.jpg?t=1791462398",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1109820/ss_3f49f8fb708b57561ace542220b559be10e55334.1920x1080.jpg?t=1791462398"
+   ]
+  },
   "pillars of eternity 2 deadfire": {
    "fetchedAt": "2026-10-23T00:44:40Z",
    "miss": true
@@ -31406,6 +31497,46 @@
    "fetchedAt": "2026-10-23T00:44:48Z",
    "miss": true
   },
+  "pixeljunk monsters 2": {
+   "about": "The spirit of the forest, Tikiman, is in trouble.\nAn army of mysterious monsters has invaded his peaceful forest!\nRepel the fire and fury of your assaulting foes!\nBuild towers within the woods and level them up to vanquish the invaders!\nProtect the Chibis, the future of the Tiki tribe!\n\nGAME FEATURES\nProtect the Chibis!\nEvil monsters have invaded the peaceful Tiki forest!\nProtect the 20 Chibis back home at all costs!\n\nWaves?",
+   "ageRating": null,
+   "appId": 749800,
+   "developer": "Q-Games Ltd.",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:30:31Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "Traditional Chinese",
+    "Japanese",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain"
+   ],
+   "metacritic": null,
+   "name": "PixelJunk™ Monsters 2",
+   "publisher": "Spike Chunsoft Co., Ltd.",
+   "releaseDate": "2018-05-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/749800/ss_02730553f5077eefddeb3aa76fd2458e5bd9ffde.1920x1080.jpg?t=1715700492",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/749800/ss_363215729a9495bb857ec6827ca914820b3fbf26.1920x1080.jpg?t=1715700492",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/749800/ss_df17936b4b4f002b24d278f82f8f7a6e1f0b6b4b.1920x1080.jpg?t=1715700492",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/749800/ss_e2a1ae330f7d1926ae7a94926ee14669460b2378.1920x1080.jpg?t=1715700492",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/749800/ss_24ff3352883818d48707a593826337117901a160.1920x1080.jpg?t=1715700492",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/749800/ss_976c660144746ed5e11aa954bb79d93693777cba.1920x1080.jpg?t=1715700492",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/749800/ss_f8044ef34922ed2806b476b86d6acf1455db286c.1920x1080.jpg?t=1715700492",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/749800/ss_99d66236f544bbcd16020c83805a6cb113773562.1920x1080.jpg?t=1715700492"
+   ]
+  },
   "pj masks heroes of the night": {
    "about": "Who goes into the night to save the day? You do! Get your PJs on and become heroes Catboy, Owlette, and Gekko in the most exciting PJ Masks video game yet.\n\nStarting out at Mission Control HQ, you’ll set off on a platforming adventure for little heroes. Use your superpowers – like Catboy’s speed, Owlette’s super flying moves, and mighty Gekko’s muscles – to stop the most popular night-time baddies.",
    "ageRating": null,
@@ -31450,6 +31581,50 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1635600/ss_273746fddaf1f22eb7979c8c2baebc31a2b84f6f.1920x1080.jpg?t=1727089924",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1635600/ss_4baddfeec84499b67b6337f691da7295787437ed.1920x1080.jpg?t=1727089924",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1635600/ss_9a8e9d120a965d5ad3d845ff3a4e4c21c31880f3.1920x1080.jpg?t=1727089924"
+   ]
+  },
+  "pj masks power heroes mighty alliance": {
+   "about": "Catboy, Owlette, and Gekko are teaming up with An Yu, Newton Star, Ice Cub, Lilyfay, and Bastet to form a Mighty Alliance.\n\nAfter a big accident at PJ Power Q scatters valuable pieces of technology and gems across Earth, these extraordinary heroes must rebuild it. \n\nLand, sky or sea, the Explorider will get your Power Heroes there.\n\nHop into the Explorider and begin the night-time adventure scouring the deserted streets in The City.",
+   "ageRating": null,
+   "appId": 2223440,
+   "developer": "Petoons Studio",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:30:13Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Arabic",
+    "Danish",
+    "Dutch",
+    "Finnish",
+    "Norwegian",
+    "Polish",
+    "Portuguese - Brazil",
+    "Spanish - Latin America",
+    "Swedish"
+   ],
+   "metacritic": null,
+   "name": "PJ Masks Power Heroes: Mighty Alliance",
+   "publisher": "Outright Games Ltd.",
+   "releaseDate": "2024-03-15",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2223440/ss_001e15f5e655bd192a01adf34d58dbc4aec4dd3c.1920x1080.jpg?t=1710494683",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2223440/ss_04ef606b7b65c19dba5fd1870ed87c1c0ac72ca5.1920x1080.jpg?t=1710494683",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2223440/ss_d2f7bf1a0dd0baa5433790b9b4fcc703299e2588.1920x1080.jpg?t=1710494683",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2223440/ss_f3b65cf95a4cbc9a3f3c0b1a1d1fbebb6db6eb2e.1920x1080.jpg?t=1710494683",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2223440/ss_3429f5ef08f47f8dcd10d5d51c054481f006dc9e.1920x1080.jpg?t=1710494683",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2223440/ss_83ea20cc3f4a9130a83824c8f2ba7e432e826e98.1920x1080.jpg?t=1710494683",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2223440/ss_a172e8128bdcfdc5eb99568ccfd28923e191eb7e.1920x1080.jpg?t=1710494683"
    ]
   },
   "plague tale innocence": {
@@ -31645,6 +31820,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1627570/ss_fcf2f97a5d4e658bc98a0ef36032ade02cf33d6d.1920x1080.jpg?t=1757545827"
    ]
   },
+  "plumbers dont wear ties definitive edition": {
+   "fetchedAt": "2026-10-28T08:30:33Z",
+   "miss": true
+  },
   "pneumata": {
    "about": "Prepare to question what is reality, and what is insanity in one of the scariest psychological horrors in years. The tenants are going missing, screams echo and blood seeps through the walls of Clover Hill. As a detective, unravel the truth that lays within and recover your fragmented memories, or succumb to the horrors that lurk in the shadows within this sinister blend of Survival & Psychological horror. Pneumata will scare even the most seasoned horror players.",
    "ageRating": null,
@@ -31676,6 +31855,104 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1183850/ss_3543225181a7e36dc491c0a16c93f94bf559705d.1920x1080.jpg?t=1727798894",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1183850/ss_b89f6225d72f507052cf388a918c1a62649e8a6e.1920x1080.jpg?t=1727798894",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1183850/ss_fbbe543a06d4ae15944692c38a8fdb5fe353f8f8.1920x1080.jpg?t=1727798894"
+   ]
+  },
+  "poker pretty girls battle fantasy world edition": {
+   "about": "Come play some hot rounds of poker at the Fantasy World casino! Try your luck against a total of 16 Pretty Girls including elves, magical girls, female swordsmen, and demons who are awaiting your arrival!■ Play poker against Fantasy World Pretty Girls\n\nThere are 16 \"kawaii\" Fantasy girls to choose from, each coming your way all dolled up in her own unique Fantasy World outfit. Start with four girls and as you progress through the game more will become available.",
+   "ageRating": null,
+   "appId": 1498680,
+   "developer": "Zoo Corporation",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-28T08:30:38Z",
+   "genres": [
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "Japanese",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Poker Pretty Girls Battle : Fantasy World Edition",
+   "publisher": "Zoo Corporation",
+   "releaseDate": "2021-01-21",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1498680/ss_ed17a962375e2651c6fc781a968f2c3811ba64d8.1920x1080.jpg?t=1770962323",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1498680/ss_40e152a3d0200b6d2f13a82e20f2b4c727c81f6b.1920x1080.jpg?t=1770962323",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1498680/ss_57fede64af48dcdae67a62121518eaeaf3027a6b.1920x1080.jpg?t=1770962323",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1498680/ss_cb1d8b8a80696c11eaa87cc4dbca746c025bd81f.1920x1080.jpg?t=1770962323",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1498680/ss_731d57b0d729ac5ea24f92cf9c2f011f89e63fdc.1920x1080.jpg?t=1770962323",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1498680/ss_350d377e725990fa74dccf60e493311f705a4cc8.1920x1080.jpg?t=1770962323",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1498680/ss_2cf44ec1380d46570c32bd6f51bdd94d3e14e073.1920x1080.jpg?t=1770962323",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1498680/ss_75c9ab9e5f88deb7c7e1ce605798792f00dabaf0.1920x1080.jpg?t=1770962323"
+   ]
+  },
+  "police chase": {
+   "about": "You're a fleeing delinquent, you're being chased by the police. At the wheel of many cars you try to avoid being caught by the police while collecting as much money as possible!\n\nYour enrichment will allow you to unlock many more powerful and tougher cars, as well as new maps where your driving skills will be put to the test.\n\nChoose your getaway vehicle according to its power, life points, handling or the damage it inflicts!\n\nYou will find 2 items on your way.",
+   "ageRating": null,
+   "appId": 1355140,
+   "developer": "Studio Inward",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:30:43Z",
+   "genres": [
+    "Action",
+    "Simulation",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "Simplified Chinese",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "Police Chase",
+   "publisher": "Studio Inward",
+   "releaseDate": "2020-09-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1355140/ss_1f399d39b509ff2ba1b097ae0229c79360b42d74.1920x1080.jpg?t=1694986939",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1355140/ss_8e0e040ab9d26efe9104c05dcdc0228221ffba30.1920x1080.jpg?t=1694986939",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1355140/ss_85e776a534b2ede2e0091beb2fc7edece606c83c.1920x1080.jpg?t=1694986939",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1355140/ss_8f1c838cdc1e59254a1e0b7a776f8ab5b490a177.1920x1080.jpg?t=1694986939",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1355140/ss_7ec0dad7a657b52a545d1613e8d460c04de9bfb1.1920x1080.jpg?t=1694986939"
+   ]
+  },
+  "poop slinger": {
+   "about": "Poop and Slingshots United, make every Elimination Count!\n\r\n\n\r\nGrab hold of your favorite Poop Slinger, load it with your favorite poop and start slinging.\n\r\n\n\r\nIncluding the FREE Zombie DLC\n\r\n\n\r\nThere are 12 different Poop Slingers and 4 different types to choose from. Blast big turds up close or shoot smaller pellets from a distance. Every map and game mode as the right Poop Slinger for the job.\n\r\n\n\r\nPoop Slinger includes a casual progression system.",
+   "ageRating": null,
+   "appId": 849410,
+   "developer": "Diggidy.net",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:30:48Z",
+   "genres": [
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Poop Slinger",
+   "publisher": "Diggidy.net",
+   "releaseDate": "2018-08-07",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/849410/ss_2396f43a79656dbf66696837c22c7cd14efaf85e.1920x1080.jpg?t=1610654659",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/849410/ss_9804063881a7cf8c7f5c406ea757fa6d49f4681b.1920x1080.jpg?t=1610654659",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/849410/ss_cfc7feef8d37f2cc70723e7d03f24a7a9849df74.1920x1080.jpg?t=1610654659",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/849410/ss_c61f56d2782b7d6d47a8c0efdd67e733ff6aed8a.1920x1080.jpg?t=1610654659",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/849410/ss_5eebc496ce85aafafa2a82310c3ea2d2c5bcbccc.1920x1080.jpg?t=1610654659",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/849410/ss_99fdfde2228108ea741fbc09904aee1aef46b3a3.1920x1080.jpg?t=1610654659",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/849410/ss_970d6b7225572b15c78a40e48353ad5bf3880a44.1920x1080.jpg?t=1610654659",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/849410/ss_4f22974de03ff64a0908d6709eb3555972b95f27.1920x1080.jpg?t=1610654659"
    ]
   },
   "poppy playtime chapter 1": {
@@ -32050,6 +32327,14 @@
    "fetchedAt": "2026-10-25T16:18:52Z",
    "miss": true
   },
+  "psikyo shooting library vol 1": {
+   "fetchedAt": "2026-10-28T08:30:51Z",
+   "miss": true
+  },
+  "psikyo shooting library vol 2": {
+   "fetchedAt": "2026-10-28T08:30:53Z",
+   "miss": true
+  },
   "psychonauts in the rhombus of ruin": {
    "about": "**Note: This game is a VR-only experience and requires a VIVE or Oculus headset**\n\r\n\n\r\nOnce again players will assume the role of Raz, an intrepid young psychic and now fully fledged member of the Psychonauts — an elite group of international psychic secret agents!\n\r\n\n\r\nThe story picks up exactly where it left off at the end of Psychonauts (2005)—with Raz, Lili, Sasha, Milla, and Coach Oleander flying off to rescue Truman Zannotto, the Grand Head of the Psychonauts.",
    "ageRating": null,
@@ -32077,6 +32362,39 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/788690/ss_34f77a0976584c707eda7307b1c6e392c1f2dd30.1920x1080.jpg?t=1776459161",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/788690/ss_a1168e1dea07569b53480e5c82d491896f59acd8.1920x1080.jpg?t=1776459161",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/788690/ss_475d2020e0d71b10203f8a4ced2d86d76606a514.1920x1080.jpg?t=1776459161"
+   ]
+  },
+  "psyvariar delta": {
+   "about": "Psyvariar Delta features the \"BUZZ System,\" a high-stakes gameplay mechanic where grazing enemy fire is the key to powering up.\n\nThis unique system blends white-knuckle thrills with deep strategic depth, redefining the classic shoot 'em up experience.\n\nThis definitive edition seamlessly integrates the 2000 arcade classic Psyvariar Medium Unit with its refined successor, Psyvariar Revision.",
+   "ageRating": null,
+   "appId": 998990,
+   "developer": "CITY CONNECTION",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:30:58Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Psyvariar Delta",
+   "publisher": "CITY CONNECTION",
+   "releaseDate": "2019-01-30",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/998990/ss_9e9f25c55f1c5189ee723388dd1525476abdc35f.1920x1080.jpg?t=1773047564",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/998990/ss_0dc2efde89119bebb451d5f0cd93061cd850c38c.1920x1080.jpg?t=1773047564",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/998990/ss_0065a06f8890dde1f24c1e943c4d2598acbfe9c7.1920x1080.jpg?t=1773047564",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/998990/ss_b6f73196a01f09c8a8a980fd9f0f2e65a4043be5.1920x1080.jpg?t=1773047564",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/998990/ss_1579f38920127c7cb028f00d42c7524f0f507258.1920x1080.jpg?t=1773047564",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/998990/ss_25fdf1ccf9926a27b78f5b1ea82e4d7d19b87d6c.1920x1080.jpg?t=1773047564"
    ]
   },
   "punch line": {
@@ -32147,6 +32465,50 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/534370/ss_9a5cefa717a5571d3fe4a9928e2c034e14ea2b8c.1920x1080.jpg?t=1639505951",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/534370/ss_4d4f935868f5a835d1fe631950c80525c9b1f3ca.1920x1080.jpg?t=1639505951"
    ]
+  },
+  "puyo puyo champions": {
+   "about": "Fun, fast-paced, competitive puzzle action!\n\nEasy to learn, tough to master! Jump straight into fast-paced puzzle action with features fit for both friendly rivalries and competitive tournaments in Puyo Puyo Champions. Challenge your friends and family in local multiplayer or compete against players from around the world through online matchmaking. Built for all ages, this classic puzzle game comes with a surprisingly competitive edge.",
+   "ageRating": null,
+   "appId": 971620,
+   "developer": "Sonic Team",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:31:03Z",
+   "genres": [
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Puyo Puyo Champions",
+   "publisher": "SEGA",
+   "releaseDate": "2019-05-06",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/971620/ss_7997d0a147b881436bcd17b6b9f895abf0cf44ae.1920x1080.jpg?t=1769706695",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/971620/ss_31c711a2ef75cb54fc822acd40be972827aeb420.1920x1080.jpg?t=1769706695",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/971620/ss_3589c8bc81d76349f3e9a50a51020aad6b024c30.1920x1080.jpg?t=1769706695",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/971620/ss_fdf741b4c3649a9db4d471bd9606ef7739d210c1.1920x1080.jpg?t=1769706695",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/971620/ss_35c3c5dcfe83b0facf6ee9b910ebda22edd6cd19.1920x1080.jpg?t=1769706695",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/971620/ss_89fbe2d2c90bf9073101478ef008437cbe275f5d.1920x1080.jpg?t=1769706695",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/971620/ss_d0bff0b52653daed593b79db1296474121ad7d43.1920x1080.jpg?t=1769706695",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/971620/ss_fde0036bf2061748c957ab67a358fd6569388523.1920x1080.jpg?t=1769706695"
+   ]
+  },
+  "puyo puyo tetris": {
+   "fetchedAt": "2026-10-28T08:31:06Z",
+   "miss": true
   },
   "puyo puyo tetris 2": {
    "about": "Two Legends Reunite for the Ultimate Puzzle Match\n\nJapan’s beloved puzzle game series Puyo Puyo and the world-renowned Tetris® game franchise have teamed up again to deliver even more Puyo-popping and Tetrimino-clearing fun!\n\n Competitive and Co-op Play Engage in up to 4 player online and local play, including competitive Puzzle Leagues and the new online co-op Boss Raid mode.",
@@ -32235,6 +32597,92 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2310/ss_0b388ca675630958a440ba751059c36d647c36fe.1920x1080.jpg?t=1786035741"
    ]
   },
+  "quake 2": {
+   "about": "Developed by id Software in 1997, Quake II is a critically acclaimed first-person shooter that introduces an entirely new science fiction narrative and setting. Now, experience the authentic, enhanced and complete version of the original.Features \n\nExperience the Military Sci-fi FPS, Enhanced \n\nGet the Original Mission Packs: The Reckoning and Ground Zero \n\nPlay the All-New Expansion “Call of the Machine” \n\nGet Quake II 64 for Free \n\nEnjoy Online & Local Multiplayer/CO-OP \n\nPlay Together with…",
+   "ageRating": 17,
+   "appId": 2320,
+   "developer": "id Software, Nightdive Studios",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Cross-platform multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:31:11Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "Quake II",
+   "publisher": "Bethesda Softworks",
+   "releaseDate": "2007-08-03",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2320/ss_5b85c7ee18c210a2f75320331b22abb860a10471.1920x1080.jpg?t=1750784724",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2320/ss_8b699b0ffdb585386e3092b31efbd487f9dcf011.1920x1080.jpg?t=1750784724",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2320/ss_863a58fb51dbc1d64b05358b61359ad297fe9459.1920x1080.jpg?t=1750784724",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2320/ss_7df88eccd9b900a60ecd40e50dbce10acad877c3.1920x1080.jpg?t=1750784724",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2320/ss_b54d1ba9801d9b8ef5f6f5dbb8c6c8e283214e31.1920x1080.jpg?t=1750784724",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2320/ss_0fd985f0c53e261ac78f2dda6b95db34aec02f46.1920x1080.jpg?t=1750784724",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2320/ss_01fcdf3053970797cadecf12f4acd386340dc988.1920x1080.jpg?t=1750784724",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2320/ss_b55e7f9c953cd81fe9557b2eb99399bd15086731.1920x1080.jpg?t=1750784724"
+   ]
+  },
+  "quest hunter": {
+   "about": "Welcome to the Dark World. The world that is ruled by its own laws. The world where fire is the main treasure, and a shovel is a loyal friend and assistant. There’s enough trouble for villains here but there's double trouble for heroes. As a hero you will have to:\n\n Level up and equip yourself.\n\n Claim some space for your camp from the Dark World.\n\n Assemble a team of friends and helpers.\n\n Build and protect your camp.\n\n Solve the puzzles of old times.\n\n Destroy the insidious plans of enemies.",
+   "ageRating": null,
+   "appId": 487000,
+   "developer": "2 Zombie Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Cross-platform multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:31:16Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Russian",
+    "German",
+    "French",
+    "Simplified Chinese",
+    "Japanese",
+    "Portuguese - Brazil",
+    "Traditional Chinese",
+    "Spanish - Spain"
+   ],
+   "metacritic": null,
+   "name": "Quest Hunter",
+   "publisher": "2 Zombie Games",
+   "releaseDate": "2019-03-08",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/487000/ss_a7b623ee0c7ad03cafd3c2eaa0b240da3210523d.1920x1080.jpg?t=1722253731",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/487000/ss_5ad7ac72060a902231f203075eb2a4b69ae4c2d0.1920x1080.jpg?t=1722253731",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/487000/ss_fe9b72b3c0dac223f658209a5b6b19be0dfa9043.1920x1080.jpg?t=1722253731",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/487000/ss_987fa85160926ea95f155b42d2f5fbe199480769.1920x1080.jpg?t=1722253731",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/487000/ss_49a3050d40011729a2cedeeae54acd6cbdbe107a.1920x1080.jpg?t=1722253731",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/487000/ss_819e3026f01044b38c2a24814f6b75a0d809f0c7.1920x1080.jpg?t=1722253731",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/487000/ss_8869e50848a8b89ddf489e7821c71984095472f2.1920x1080.jpg?t=1722253731",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/487000/ss_e3ff3e4355a5c2710b37b0d59ac4749f94f31f45.1920x1080.jpg?t=1722253731"
+   ]
+  },
   "quiet place the road ahead": {
    "about": "A Quiet Place: The Road Ahead is a single-player horror adventure game inspired by the critically acclaimed blockbuster movie franchise that highlights a unique survivor story after an invasion of deadly creatures. In this exclusive spin-off, experience the journey of a young woman who must endure a treacherous apocalypse in the midst of interpersonal family conflicts, all while coming to terms with her own inner fears.",
    "ageRating": null,
@@ -32317,6 +32765,39 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378080/ss_1ef045a7dcad36688bbe2ede82258a2c36c3c843.1920x1080.jpg?t=1447377024",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378080/ss_98960fca42d5deeff3844389d72bd32bf41d8b95.1920x1080.jpg?t=1447377024",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/378080/ss_89f00692b9f57aa11cadb0fc327f8ba60f4282a4.1920x1080.jpg?t=1447377024"
+   ]
+  },
+  "racket fury table tennis vr": {
+   "about": "After an all-out war that took almost 2 millennia and claimed many lives of the Zen - Racket Fury Tournament emerged as the remedy to maintain peace in the Crown Galaxy. A fast-paced, strategic game that became an interplanetary phenomenon, bringing all the Zen together. As an aspiring Zen, you are challenged to join the most prestigious team that dominated the entire competition - the Division of Steel.",
+   "ageRating": null,
+   "appId": 555050,
+   "developer": "Pixel Edge Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-28T08:31:21Z",
+   "genres": [
+    "Sports",
+    "Simulation",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Racket Fury: Table Tennis VR",
+   "publisher": "Pixel Edge Games",
+   "releaseDate": "2017-11-09",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/555050/7ab240950dd1b5903e62b80b5a2316328092e24c/ss_7ab240950dd1b5903e62b80b5a2316328092e24c.1920x1080.jpg?t=1787570124",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/555050/f3d175099e0626a623fe85731863b60f6def6579/ss_f3d175099e0626a623fe85731863b60f6def6579.1920x1080.jpg?t=1787570124",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/555050/ss_3b6523ad4ac6efc69edf7e8bdd2cc89ef4f0a415.1920x1080.jpg?t=1787570124",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/555050/fd80855fc72c84b71bc2f5fad8157d9be6a0f3bb/ss_fd80855fc72c84b71bc2f5fad8157d9be6a0f3bb.1920x1080.jpg?t=1787570124",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/555050/ss_d5429ad4e022f373b95a6b177090e88b3898556f.1920x1080.jpg?t=1787570124",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/555050/8f539a6cb549b15dc087774c12841af04a46a354/ss_8f539a6cb549b15dc087774c12841af04a46a354.1920x1080.jpg?t=1787570124"
    ]
   },
   "rad": {
@@ -32402,6 +32883,45 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/805660/ss_0d8f2d25bf40d49d82f554bf0a6c668fb3be9d84.1920x1080.jpg?t=1791462465",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/805660/ss_0a55b4a091d9a067364d0428a250a9f53c0cba97.1920x1080.jpg?t=1791462465",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/805660/ss_2801ef5987bf9080fc52a4e9244f3d4d9de9af40.1920x1080.jpg?t=1791462465"
+   ]
+  },
+  "rage of the dragons neo": {
+   "about": "Get ready for the fury!\n\nRage of the Dragons brings back the adrenaline of 2D battles with refined gameplay, charismatic characters and a dual combat system that demands strategy and precision. In this game, every blow counts and every decision can be the difference between victory and defeat. \n\nRage of the Dragons NEO is a PC version of Rage of the Dragons, released in 2002 for arcades.",
+   "ageRating": null,
+   "appId": 2892130,
+   "developer": "QUByte Interactive",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:31:26Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "Portuguese - Brazil",
+    "Japanese",
+    "Spanish - Latin America"
+   ],
+   "metacritic": null,
+   "name": "Rage of the Dragons NEO",
+   "publisher": "QUByte Interactive, Piko Interactive",
+   "releaseDate": "2024-11-13",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2892130/ss_814abdca460b21f25ff36eb780a7e80ae5409617.1920x1080.jpg?t=1772736220",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2892130/ss_4b7c86201d16da88c81c0bb4dad7cc2887f1b677.1920x1080.jpg?t=1772736220",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2892130/ss_72c1434b20a2bd59e9f99ea103798c77edb987e3.1920x1080.jpg?t=1772736220",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2892130/ss_d07990a29f85b8b18b5f9c63679bc72a2904aee0.1920x1080.jpg?t=1772736220",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2892130/ss_00832535a40902430e42732584a78c0e8f3dd611.1920x1080.jpg?t=1772736220",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2892130/ss_f08b38bec67b0d1b2d99d9e39860a73e033b5ba5.1920x1080.jpg?t=1772736220",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2892130/ss_a3dd37aa84143b08f547f23b7c9e30f3e9e69403.1920x1080.jpg?t=1772736220",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2892130/ss_2beca9d69edba9ca1d9f4a96f609667de824def3.1920x1080.jpg?t=1772736220"
    ]
   },
   "raiden iii x mikado maniax": {
@@ -32808,6 +33328,41 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1203630/ss_bd8e697cb0695f467607004079330e7ce91d451c.1920x1080.jpg?t=1774922378",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1203630/ss_911fd1c2e0925b0c3c145fefbb92f5b6353d286a.1920x1080.jpg?t=1774922378",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1203630/ss_7234b5c5838c91188c5ab9c91be3b322ea8c3df1.1920x1080.jpg?t=1774922378"
+   ]
+  },
+  "red dead revolver": {
+   "fetchedAt": "2026-10-28T08:31:28Z",
+   "miss": true
+  },
+  "red faction": {
+   "about": "JOIN THE REVOLUTION!\n Lured to Mars by the Ultor Corporation's promise of a better life, thousands have come to seek their fortune and work for the massive mining company. But all is not as it seems. A deadly plague is sweeping through the barracks, and miners suffer daily abuse at the hands of the Ultor guards. Is a revolution on the horizon?\n Red Faction revolutionizes gaming with Geo-Mod technology, the ability to completely alter and destroy the environment in real-time.",
+   "ageRating": null,
+   "appId": 20530,
+   "developer": "Volition",
+   "features": [
+    "Single-player",
+    "Online multiplayer"
+   ],
+   "fetchedAt": "2026-10-28T08:31:33Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": 78,
+   "name": "Red Faction",
+   "publisher": "Deep Silver",
+   "releaseDate": "2009-08-05",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/20530/0000006722.1920x1080.jpg?t=1709553303",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/20530/0000006723.1920x1080.jpg?t=1709553303",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/20530/0000006724.1920x1080.jpg?t=1709553303",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/20530/0000006725.1920x1080.jpg?t=1709553303",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/20530/0000006726.1920x1080.jpg?t=1709553303",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/20530/0000006727.1920x1080.jpg?t=1709553303",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/20530/0000006728.1920x1080.jpg?t=1709553303",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/20530/0000006729.1920x1080.jpg?t=1709553303"
    ]
   },
   "redemption reapers": {
@@ -33612,6 +34167,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1399690/ss_166e444e9dd25e42e4e91c03e499a952f5506fb2.1920x1080.jpg?t=1789563630"
    ]
   },
+  "revita": {
+   "about": "A fast paced twin-stick roguelite platformer. Climb an ominous clock tower in a series of procedural encounter rooms and past challenging boss fights on your way to reclaiming your lost memory.\n\nExchange health for power in fast paced glass cannon gameplay.",
+   "ageRating": null,
+   "appId": 1175460,
+   "developer": "BenStar",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:31:38Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Spanish - Latin America",
+    "Portuguese - Brazil"
+   ],
+   "metacritic": null,
+   "name": "Revita",
+   "publisher": "Dear Villagers, Doyoyo Games",
+   "releaseDate": "2022-04-21",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1175460/ss_3e443e9e6107abb697fc76fe9885ae737946a813.1920x1080.jpg?t=1744981718",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1175460/ss_358a0643d2dae62446e8d1e213e161a438aa6c6e.1920x1080.jpg?t=1744981718",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1175460/ss_2c08ef938f747a0c4760681734bfdf169bbb73df.1920x1080.jpg?t=1744981718",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1175460/ss_5cf240ad6aec1b52fcda970b1a2e02fdcf8eb966.1920x1080.jpg?t=1744981718",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1175460/ss_e46d061dfed0423316e3eba45b7b1e3d7e065f57.1920x1080.jpg?t=1744981718",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1175460/ss_34201a526ff90e73e53e1288e9d8b0d861eaf5a2.1920x1080.jpg?t=1744981718",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1175460/ss_662301fe269e2b87fd323bda427c8b4c3d4fc77c.1920x1080.jpg?t=1744981718",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1175460/ss_965a817c5481e1fdabb195e08e4ce6a0a29cb307.1920x1080.jpg?t=1744981718"
+   ]
+  },
   "reynatis": {
    "fetchedAt": "2026-10-18T18:42:56Z",
    "miss": true
@@ -34021,6 +34616,41 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/657000/ss_d2962197158454047da8721445425293ea30fe04.1920x1080.jpg?t=1744190622"
    ]
   },
+  "river city saga three kingdoms next": {
+   "about": "Introduction\n\nIn this second part of River City Saga: Three Kingdoms, our beloved hot-blooded high-schooler from River City, Kunio (Guan Yu) charges his way through to the apex chapter of the Romance of the Three Kingdoms, the Battle of Wuzhang Plains.",
+   "ageRating": null,
+   "appId": 2881520,
+   "developer": "Arc System Works",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:31:43Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "Japanese",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Korean"
+   ],
+   "metacritic": null,
+   "name": "River City Saga: Three Kingdoms Next",
+   "publisher": "Arc System Works",
+   "releaseDate": "2024-11-06",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2881520/ss_d6a39dea5e68e758728263ca409f0b3769fc9954.1920x1080.jpg?t=1730979422",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2881520/ss_48ad94bf698dc7ccd339c02f7e20aaa69e74a655.1920x1080.jpg?t=1730979422",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2881520/ss_6fac852fe52375d31a9d15df4bcaecf9808bea1a.1920x1080.jpg?t=1730979422",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2881520/ss_f1fc79dd5f60bb9d2ceec6771487ab33c53a6651.1920x1080.jpg?t=1730979422",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2881520/ss_4902416db5600bcfba4c37ee5eee61eb4b2fefc9.1920x1080.jpg?t=1730979422"
+   ]
+  },
   "road maintenance simulator": {
    "about": "Experience the everyday life in a German street maintenance service and complete a variety of realistic tasks in the area of road construction and maintenance! For your work you will have unique vehicles and various usable tools at your disposal.\n\nNumerous tasks await you! In Street maintenance service, 30 extensive missions await you in a freely navigable road network.",
    "ageRating": null,
@@ -34056,6 +34686,34 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1419040/ss_6fc5a5ded794bc1ce61690b0340288175eb5a261.1920x1080.jpg?t=1759929584",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1419040/ss_79dae1eb8740eebb5b6bcbec3f7953cc87f25d82.1920x1080.jpg?t=1759929584",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1419040/ss_62c6acd05a36dbc7ad01961a5847d15296a6b288.1920x1080.jpg?t=1759929584"
+   ]
+  },
+  "road of death": {
+   "about": "This is a fun and casual puzzle game where you can continuously shoot, eliminate more monsters, and challenge your strongest score!\n\r\n\n\r\n\n\r\n\n\r\nAmazing game content, very exciting shooting game!\n\r\n\n\r\nThere are no headache inducing tasks. Your only task is to continuously kill monsters with a gun!\n\r\n\n\r\nBring endless possibilities, showcase your unique game challenges, rich game mode content, choose your favorite charm, and immerse yourself in game challenges!",
+   "ageRating": null,
+   "appId": 2784240,
+   "developer": "road of death",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-28T08:31:48Z",
+   "genres": [
+    "Simulation",
+    "Indie"
+   ],
+   "languages": [
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "road of death",
+   "publisher": "road of death",
+   "releaseDate": "2024-02-07",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2784240/ss_e404db49997635fd1d249e7b938c4a46192a9ac1.1920x1080.jpg?t=1707377202",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2784240/ss_6eb4c366dc5b1ca4a4d5a4522b71d730d75de7c1.1920x1080.jpg?t=1707377202",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2784240/ss_1a94882197f284435efe0c4231cbc3af36f11842.1920x1080.jpg?t=1707377202",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2784240/ss_6a31913759bce9b0b07c491b98dc8e1debe9f255.1920x1080.jpg?t=1707377202",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2784240/ss_f44c5dcdf2e93a26c9b03be2fc82bd7e112231ad.1920x1080.jpg?t=1707377202"
    ]
   },
   "road to exotics": {
@@ -34249,6 +34907,153 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2455640/ss_aaf6143db4851aef28e4d1825b9381fd3739e553.1920x1080.jpg?t=1777013886",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2455640/ss_ee6dc4449e56a1bcc9903fb9e3400e5ff412f0b7.1920x1080.jpg?t=1777013886",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2455640/ss_3a120a736074c9f052910eb39c8008088f90aa8c.1920x1080.jpg?t=1777013886"
+   ]
+  },
+  "romancing saga 3": {
+   "about": "The celebrated RPG classic comes west for the first time! Developed by industry veterans including the legendary developer Akitoshi Kawazu, Romancing SaGa™ 3 was originally released in Japan in 1995. This HD remaster of the legendary RPG masterpiece introduces optimized graphics, a new dungeon to explore, new scenarios and a new game+ function.",
+   "ageRating": null,
+   "appId": 952540,
+   "developer": "Square Enix, ArtePiazza",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:31:53Z",
+   "genres": [
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Romancing SaGa 3™",
+   "publisher": "Square Enix",
+   "releaseDate": "2019-11-11",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/952540/ss_6c009576790067ab39804d504b00dd0a339b6119.1920x1080.jpg?t=1777013511",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/952540/ss_982671189377bf1f2484c1111df2294cb64ea61d.1920x1080.jpg?t=1777013511",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/952540/ss_b05818c38325c291dc44e8c2aef7d907183e44fc.1920x1080.jpg?t=1777013511",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/952540/ss_a07ad1558a4b026c4b4d7cd0427514a135cf18e0.1920x1080.jpg?t=1777013511",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/952540/ss_7fe00105e0feeff1af9137343dbbc30a6f54a59b.1920x1080.jpg?t=1777013511",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/952540/ss_98678cfa11fb9a22cf0a95e4d5083eb197a58ad2.1920x1080.jpg?t=1777013511",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/952540/ss_9e02eb2c6c10c5014beba32fba55d1b0a843f372.1920x1080.jpg?t=1777013511",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/952540/ss_5bf01609b6da24c534c0ced8c88e0f745396d886.1920x1080.jpg?t=1777013511"
+   ]
+  },
+  "rue valley": {
+   "about": "Break free from a mysterious time loop! Embark on a journey of self-discovery and resilience. Delve into the enigmatic depths of the small godforsaken town: Rue Valley. \n\nEach day feels like an uphill battle against the shadows of your own mind. Along the way, you will encounter a captivating ensemble of characters, each wrestling with their own emotional complexities and revealing hidden depths as you get to know them.",
+   "ageRating": null,
+   "appId": 2126190,
+   "developer": "Emotion Spark Studio",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:31:58Z",
+   "genres": [
+    "Adventure",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "Rue Valley",
+   "publisher": "Owlcat Games",
+   "releaseDate": "2025-11-11",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2126190/4b0ea37b3d8f7eee1775fefd8e80eacd8cb505af/ss_4b0ea37b3d8f7eee1775fefd8e80eacd8cb505af.1920x1080.jpg?t=1767634911",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2126190/af8614e19d574163ea90e061e335130d1092a0df/ss_af8614e19d574163ea90e061e335130d1092a0df.1920x1080.jpg?t=1767634911",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2126190/cfd3547756b8c8d876ecd2467a7dd2672f036ff2/ss_cfd3547756b8c8d876ecd2467a7dd2672f036ff2.1920x1080.jpg?t=1767634911",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2126190/03da0707e9078b23aa91c0777d559d3f270c17a7/ss_03da0707e9078b23aa91c0777d559d3f270c17a7.1920x1080.jpg?t=1767634911",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2126190/797f3001762826677c659ae42066a1b0fdbfe310/ss_797f3001762826677c659ae42066a1b0fdbfe310.1920x1080.jpg?t=1767634911",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2126190/758834c90d52fa89430aab300e7c7b75e7ddfc24/ss_758834c90d52fa89430aab300e7c7b75e7ddfc24.1920x1080.jpg?t=1767634911",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2126190/ss_30ff80b2e30cc38cebfb3dde42b522d396cf6c99.1920x1080.jpg?t=1767634911",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2126190/ss_00842160333cfbd21e7c50f9fc331adc87d1e462.1920x1080.jpg?t=1767634911"
+   ]
+  },
+  "rugby 25": {
+   "about": "Experience the rush as Rugby 25 immerses you in the world of rugby like no game before it. From local club clashes to the grandest international championships. Every pass, every tackle, and every try flawlessly crafted to capture the true essence of rugby. With lifelike gameplay, strategic depth, and heart-stopping action, you'll feel the energy of the field at your fingertips.",
+   "ageRating": null,
+   "appId": 2340870,
+   "developer": "Big Ant Studios",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:32:03Z",
+   "genres": [
+    "Sports"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean"
+   ],
+   "metacritic": null,
+   "name": "Rugby 25",
+   "publisher": "Nacon",
+   "releaseDate": "2025-02-13",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2340870/ss_f1cf1ad9b456316e24b31154fc92124c9511833e.1920x1080.jpg?t=1780526990",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2340870/ss_6df135375bdc6f0a6bae8fa2d929ce196d2de1ad.1920x1080.jpg?t=1780526990",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2340870/ss_79e9d14a6ba9f52e43e2c08f14066b6b8b972a2f.1920x1080.jpg?t=1780526990",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2340870/ss_890743f8ffe098cd891055f564364e617aa3f7ba.1920x1080.jpg?t=1780526990",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2340870/ss_1bd94e55759550dfcdcb7435510d80c664cdc8d2.1920x1080.jpg?t=1780526990",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2340870/ss_0ce8273b498353ff6976f1ad4e180752fb871292.1920x1080.jpg?t=1780526990",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2340870/ss_f6b0d981a6ad8d43f177d82918545dc9612782ab.1920x1080.jpg?t=1780526990"
+   ]
+  },
+  "runbow": {
+   "about": "Runbow, and all its 9-player madness, is now on Steam!\nWith tons of competitive modes for up to 9 players--locally and online--and a massive Single Player Adventure, Runbow is the crazy, colour-based platformer you've been waiting for. \n\nThe world of Runbow changes with each swipe of the background, so you'll have to stay on your toes as platforms and obstacles disappear--If you can't see something, it doesn't exist.",
+   "ageRating": null,
+   "appId": 464650,
+   "developer": "13AM Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-28T08:32:08Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Racing",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Runbow",
+   "publisher": "13AM Games",
+   "releaseDate": "2016-11-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/464650/ss_81eb632b4ab4f8db3dd87284ae1d980a680dd7a8.1920x1080.jpg?t=1572362744",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/464650/ss_071700e063716f61b0f1f488b8305ea0a5e5e160.1920x1080.jpg?t=1572362744",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/464650/ss_1de3661805c81e5ae609008f13e4d011f4730240.1920x1080.jpg?t=1572362744",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/464650/ss_f6bbbbe23b8c34de7637175210c6fc72d65dd2f2.1920x1080.jpg?t=1572362744",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/464650/ss_2b4066e02e312a39fae751d87cf4a9d5a4e86d59.1920x1080.jpg?t=1572362744",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/464650/ss_30ddcd7e50402089ee253e58e2a940df458f98ae.1920x1080.jpg?t=1572362744"
    ]
   },
   "rune factory guardians of azuma": {
@@ -46377,6 +47182,6 @@
    "miss": true
   }
  },
- "updatedAt": "2026-10-28T01:25:30Z",
+ "updatedAt": "2026-10-28T08:32:08Z",
  "version": 1
 }
