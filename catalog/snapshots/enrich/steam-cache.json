@@ -43363,6 +43363,51 @@
    "fetchedAt": "2026-10-23T13:29:11Z",
    "miss": true
   },
+  "thems fightin herds": {
+   "fetchedAt": "2026-10-29T05:48:11Z",
+   "miss": true
+  },
+  "thenightfall": {
+   "about": "TheNighfall\n\nVictoria moves with her family to a new city to start her new job. But the first \nnight in her new house is completely different than expected.\nAs her husband and their two children are coming a day later she has to stay \nthe first night alone in their new house. \nWhat starts with insomnia and a slight malaise first becomes an absolute \nnightmare during the night.",
+   "ageRating": null,
+   "appId": 611620,
+   "developer": "VIS-Games",
+   "features": [
+    "Single-player",
+    "VR",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:48:08Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "German",
+    "French",
+    "Italian",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "TheNightfall",
+   "publisher": "SilentFuture",
+   "releaseDate": "2018-01-12",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/611620/ss_a022fa882ff1dde5b6532a46e6326529d90fc3ae.1920x1080.jpg?t=1667176837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/611620/ss_596bf8ab369dabe8541d8f4494c0ef19c305b8b1.1920x1080.jpg?t=1667176837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/611620/ss_3ec16861be4dd38283f3f3c8038dbcb6c0d5c50f.1920x1080.jpg?t=1667176837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/611620/ss_1c97aed2e8e6e903ca20b68d77207cb0219307d2.1920x1080.jpg?t=1667176837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/611620/ss_bcf918d602e38caf1b888ad2096fa0ff91539f2f.1920x1080.jpg?t=1667176837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/611620/ss_75c02778dea641268cf52a19f27673f383a64602.1920x1080.jpg?t=1667176837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/611620/ss_b9662ee26de94ff4a45898f01e6a55948d5d8d97.1920x1080.jpg?t=1667176837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/611620/ss_239d4bdbe1eb3dffc2801b20d8a4afc00d87950c.1920x1080.jpg?t=1667176837"
+   ]
+  },
   "there came an echo": {
    "about": "***Note: There Came an Echo, though designed primarily for voice commands, is fully playable without them.***\n\nEnder Wiggin. Admiral Ackbar. That dude who commands the G.I. Joes. These totally rad commanders knew that battles are won not by a single footsoldier, but by issuing precise commands that put their units in position to achieve victory.",
    "ageRating": null,
@@ -43478,6 +43523,34 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2958970/ss_f0e09e66cac6be17be947c6d7fdb329ee4aeb918.1920x1080.jpg?t=1773067625",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2958970/ss_f4e08180be2985478cd9cf6da8ffe080b11c791a.1920x1080.jpg?t=1773067625",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2958970/ss_f8511aab2e0bfe6eec7db765c9949fe8b154177f.1920x1080.jpg?t=1773067625"
+   ]
+  },
+  "thomas was alone": {
+   "about": "Thomas Was Alone. And then, well, he Wasn't.\n\nThomas Was Alone is an indie minimalist 2D platformer about friendship and jumping and floating and anti-gravity. Starting with Thomas, become acquainted with a group of rectangles-slash-sentient-AIs, learn their individual abilities, and navigate them through 120 levels of obstacles.\n\nListen to a critically acclaimed score by David Housden. Jump over blocks and barriers meticulously placed by Mike Bithell.",
+   "ageRating": null,
+   "appId": 220780,
+   "developer": "Bithell Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:48:16Z",
+   "genres": [
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": 77,
+   "name": "Thomas Was Alone",
+   "publisher": "Bithell Games",
+   "releaseDate": "2012-11-12",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/220780/ss_73e40e9d0fb3e79c4c83384f84615b86a14b0dc5.1920x1080.jpg?t=1758896562",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/220780/ss_60eb235e73b8030607392244f036f8922cb42913.1920x1080.jpg?t=1758896562",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/220780/ss_24be64a8b3821c6d09ccd13816b8882725c17a99.1920x1080.jpg?t=1758896562",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/220780/ss_8f81598dd2955d8662df83628a1f3626ffaaa559.1920x1080.jpg?t=1758896562",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/220780/ss_55db73f10b2eb3d7556304b5c7939999ae6ba4d4.1920x1080.jpg?t=1758896562"
    ]
   },
   "those who remain": {
@@ -43648,9 +43721,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2678080/0d048569d27d7766bddd784e843edc7eeb1897f9/ss_0d048569d27d7766bddd784e843edc7eeb1897f9.1920x1080.jpg?t=1785310422"
    ]
   },
+  "tilting tiles micro challenge": {
+   "fetchedAt": "2026-10-29T05:48:18Z",
+   "miss": true
+  },
   "tintin reporter cigars of the pharaoh": {
    "fetchedAt": "2026-10-19T23:41:50Z",
    "miss": true
+  },
+  "titan attacks": {
+   "about": "As the last surviving tank commander on Earth, single-handedly turn back the evil invading alien army, drive back the Titans across the Solar System, and defeat them on their homeworld...\n Titan Attacks has the same easy-to-learn and addictive gameplay of the classic arcade shoot 'em up, but is packed full of extras - new features, new strategies, and stylish neo-retro visuals.",
+   "ageRating": null,
+   "appId": 203210,
+   "developer": "Puppygames",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:48:23Z",
+   "genres": [
+    "Action",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Titan Attacks!",
+   "publisher": "Puppygames",
+   "releaseDate": "2012-02-03",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/203210/ss_28c3c9bc61eecd5ddda75a1078c51963f5739d08.1920x1080.jpg?t=1593159498",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/203210/ss_e949bb285fa942a1d18593e1c7df40c73879cf7a.1920x1080.jpg?t=1593159498",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/203210/ss_c3dd0656c36ca4fea91cc396b092d6a833cba61b.1920x1080.jpg?t=1593159498",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/203210/ss_c4cdcfb722e7f5d844cfb9c3714829791e567a7c.1920x1080.jpg?t=1593159498",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/203210/ss_53334cd67cb022a4d0268f8feb11b3d7d3a07e35.1920x1080.jpg?t=1593159498",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/203210/ss_1331b2aa62a5581050bafdb8aeae6b4f37eac9c3.1920x1080.jpg?t=1593159498",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/203210/ss_9d6819e117e8b2637f876eee6781543e446a2620.1920x1080.jpg?t=1593159498",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/203210/ss_3e91b71f24add82578b99b287bbd88b59a088081.1920x1080.jpg?t=1593159498"
+   ]
   },
   "titan quest": {
    "about": "For its 10 year anniversary, Titan Quest will shine in new splendour. This Anniversary Edition combines both Titan Quest and Titan Quest Immortal Throne in one game, and has been given a massive overhaul for the ultimate ARPG experience.Anniversary Edition update\n\nRestored and improved multiplayer functionality, including new features like a built-in voice chat and NAT resolving for best multiplayer connectivity\n\nSupport for more resolutions, larger camera distance and scaleable UI…",
@@ -43842,6 +43952,40 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/490450/ss_524d0e5492c8a5de3cd40f8e71b951407de6c689.1920x1080.jpg?t=1573493424",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/490450/ss_5c7c9d5b942dd0987f548d81e2df27931f746741.1920x1080.jpg?t=1573493424",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/490450/ss_bb5f6b7c5f1f375cd4e9cee65b045a174b3a6e10.1920x1080.jpg?t=1573493424"
+   ]
+  },
+  "tokyo twilight ghost hunters daybreak special gigs": {
+   "about": "As a new transfer student at Kurenai Academy in Shinjuku, you join a school magazine that turns out to be a front for a ghost hunting organization. Come face to face with the ghosts haunting Tokyo, learn why they linger in this world, and banish them! \n\nWith an expanded story, the new ‘Daybreak’ scenario, and an improved battle system, Tokyo Twilight Ghost Hunters: Daybreak Special Gigs is the ultimate edition of Tokyo Twilight Ghost Hunters!Features\n\n13 episodes of ghostly mysteries – Choose…",
+   "ageRating": null,
+   "appId": 425460,
+   "developer": "Arc System Works, TOYBOX Inc.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:48:28Z",
+   "genres": [
+    "Adventure",
+    "RPG",
+    "Strategy"
+   ],
+   "languages": [
+    "English",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Tokyo Twilight Ghost Hunters Daybreak: Special Gigs",
+   "publisher": "PQube",
+   "releaseDate": "2017-03-17",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/425460/ss_da98102f83833f65d87b7db1abbb2ba7047909a5.1920x1080.jpg?t=1792060621",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/425460/ss_d5eb36331b02d2a11e32bd22d43e9b491e222528.1920x1080.jpg?t=1792060621",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/425460/ss_2b9d5a92058d3708889cad3f357386cf36deedc2.1920x1080.jpg?t=1792060621",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/425460/ss_871f0510520bedb6d5c8565ac5c773f35e29fe30.1920x1080.jpg?t=1792060621",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/425460/ss_5e1e5512902f494dd7666fa5db9c8ece5632d9ba.1920x1080.jpg?t=1792060621",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/425460/ss_5e61908504d51080206cee6041ed8d6cce12857e.1920x1080.jpg?t=1792060621",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/425460/ss_7748f8077b9e96049aed51d1606a47ac6e4777be.1920x1080.jpg?t=1792060621",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/425460/ss_b9eb3d54fc9b80ea546299fc96bd7434b60d8a4c.1920x1080.jpg?t=1792060621"
    ]
   },
   "tokyo xtreme racer": {
@@ -44068,6 +44212,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2525380/ss_b13a0f85a6055d67468362aa9d1b84619bfb1aed.1920x1080.jpg?t=1788752633",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2525380/ss_fa57372c2f1f64dd599825dc0f89c8b6605a4659.1920x1080.jpg?t=1788752633"
    ]
+  },
+  "tombi": {
+   "fetchedAt": "2026-10-29T05:48:31Z",
+   "miss": true
   },
   "tony hawks pro skater 1 2": {
    "fetchedAt": "2026-10-25T22:38:12Z",
@@ -44302,6 +44450,14 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1011670/ss_a42b6f5040560ea65c025467f489c0e46b6b00a7.1920x1080.jpg?t=1773072467",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1011670/ss_2e2204d4fe58df7dea6de1ffde450aa650e852af.1920x1080.jpg?t=1773072467"
    ]
+  },
+  "touhou kobuto v burst battle": {
+   "fetchedAt": "2026-10-29T05:48:33Z",
+   "miss": true
+  },
+  "tour de france 2019": {
+   "fetchedAt": "2026-10-29T05:48:36Z",
+   "miss": true
   },
   "tour de france 2023": {
    "about": "Create your own cyclist and become a professional in Pro Leader mode. Choose your specialisation and physical attributes, then compete in races to upgrade your skills and ultimately become the best cyclist in the world. The Tour de France 2023 and the year's major classics are yours to win!\n\nIn Tour de France 2023, you can manage your own team over a full cycling season in Pro Team mode.",
@@ -44539,6 +44695,41 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/775960/ss_32b73e6af5691dfde3452f759c834ebdc19274a3.1920x1080.jpg?t=1667049736"
    ]
   },
+  "towerfall ascension": {
+   "about": "TowerFall Ascension is the definitive version of the hit archery combat game. Inspired by classics from the golden age of couch multiplayer, it's a 4-player local party game centering around hilarious, intense versus matches. The core mechanics are simple and accessible, but hard to master and combat is fierce. Loot treasure chests for game-changing power-ups, master the art of catching arrows out of the air, or descend on your foes and stomp them into submission.",
+   "ageRating": null,
+   "appId": 251470,
+   "developer": "Maddy Makes Games Inc., Extremely OK Games, Ltd.",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:48:41Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": 87,
+   "name": "TowerFall Ascension",
+   "publisher": "Maddy Makes Games Inc.",
+   "releaseDate": "2014-03-11",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251470/ss_5f5782e7f91f99dbeb7f9a561771378f850ae872.1920x1080.jpg?t=1715114308",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251470/ss_aa0f804052ab6b93994c5893837445c789bf35ea.1920x1080.jpg?t=1715114308",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251470/ss_01a805ebff71a1b5fb392f7c09ee0b8f73707ed7.1920x1080.jpg?t=1715114308",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251470/ss_eebc6b6dbf2ceec96946b4e67e3ddd31fd8a50b0.1920x1080.jpg?t=1715114308",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251470/ss_e01d3cb9357cf583f4e9be1d7d22c48d2e24f600.1920x1080.jpg?t=1715114308",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251470/ss_8a230efea8416904a3d7e6a3aa145e9fa40a356b.1920x1080.jpg?t=1715114308",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251470/ss_15d95c4c3c19032a44985faabe531282698196c8.1920x1080.jpg?t=1715114308",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251470/ss_28af47e432b9107da2c32e758103d5bced88e243.1920x1080.jpg?t=1715114308"
+   ]
+  },
   "toy odyssey the lost and found": {
    "about": "Toy Odyssey is a Metroidvania style action-platformer that takes you back to a world made from the nightmares of your childhood. Join Brand—an action figure that has come to life—in his fight against the darkness to save his owner, Felix. Nightmares are only the start of his troubles: Brand needs to uncover the secrets of the house before it's too late.",
    "ageRating": null,
@@ -44573,6 +44764,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/392410/ss_03daa1182bda2e6010db64b161f6f44a42485bef.1920x1080.jpg?t=1487303774",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/392410/ss_063c7db57ad69430cf1fa7c28f71f8dc33c0eb58.1920x1080.jpg?t=1487303774"
    ]
+  },
+  "track lab vr": {
+   "fetchedAt": "2026-10-29T05:48:43Z",
+   "miss": true
   },
   "trackmania turbo": {
    "about": "Test your skills in outlandish tracks and challenge your friends at home (offline splitscreen) or online.\n\n4 ENVIRONMENTS = 4 GAMEPLAYS\n- Rollercoaster Lagoon: Defy gravity in a tropical paradise, racing on magnetic tracks.\n- International Stadium: Use your driving skills to master the tracks of this worldwide competition. \n- Canyon Grand Drift: Drift your way through narrow tracks in this red canyon landscape.",
@@ -44703,6 +44898,50 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3375780/0b0c14124beade271d8ecf516b4492ee839830c5/ss_0b0c14124beade271d8ecf516b4492ee839830c5.1920x1080.jpg?t=1791225209"
    ]
   },
+  "train life a railway simulator": {
+   "about": "For the first time in a railway simulator, you are the driver and the company manager!TAKE THE CONTROLS OF YOUR TRAIN AND TRAVEL EUROPE\n\nDrive your passengers or goods across 10 countries and explore the countryside, towns, forests and mountains of Europe from your cab.",
+   "ageRating": null,
+   "appId": 1330660,
+   "developer": "Simteract",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:48:48Z",
+   "genres": [
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Dutch",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Portuguese - Brazil",
+    "Turkish"
+   ],
+   "metacritic": null,
+   "name": "Train Life: A Railway Simulator",
+   "publisher": "Nacon",
+   "releaseDate": "2022-08-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1330660/ss_162836393bdb275243cfbc1c3ff44e722f5b6ec4.1920x1080.jpg?t=1764149287",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1330660/ss_29b07e5823fa9ecfe062b4106c1dcb2ef39051da.1920x1080.jpg?t=1764149287",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1330660/ss_2e651f48aad70a316448cc1dc63c3b45b6946687.1920x1080.jpg?t=1764149287",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1330660/ss_a1ba039e422c73d5993a5b3cca29f2fb30754973.1920x1080.jpg?t=1764149287",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1330660/ss_c57afc2926d4558a4f18d19aad8d678ddb7cebc4.1920x1080.jpg?t=1764149287",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1330660/ss_25ed83e25c3baf629cbdfbbbbf882d0888d7ea23.1920x1080.jpg?t=1764149287",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1330660/ss_1c7a462f59f6c1e69c6f2265682ecc9e2a82ced4.1920x1080.jpg?t=1764149287",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1330660/ss_7cd55cba616ff5c43ed4c9accbd667f7b4444699.1920x1080.jpg?t=1764149287"
+   ]
+  },
   "train sim world 2020": {
    "about": "Train Sim World is an immersive first-person simulator perfect for everyone, with complete in-cab interactivity, accurate detail on locos, real-world routes and hours of gameplay. Take to the rails with the brand-new Train Sim World 2020 Edition and find everything you need to master new skills, from general to advanced operation of locomotives as you operate smooth passenger and freight services, scenarios and much more.",
    "ageRating": null,
@@ -44776,6 +45015,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_46dc027be102517e729b85f7ca909e4010db7559.1920x1080.jpg?t=1764602266",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_3599ebccafb53952681e37a76e1820f420ee8e82.1920x1080.jpg?t=1764602266",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1944790/ss_64a53eb6312a03c81eb6c3a3d9360d12055e2ee2.1920x1080.jpg?t=1764602266"
+   ]
+  },
+  "train sim world 5": {
+   "about": "Take on new challenges and new roles as you master the tracks and trains of iconic cities across 3 new routes. Immerse yourself in the ultimate rail hobby and embark on your next journey. From sleek, tilting marvels to the grunt of mighty, modern diesels - The Rails are Yours in Train Sim World 5!\n\nLONDON\n\nBe swept off your feet with the commuter mayhem of the WEST COAST MAIN LINE.",
+   "ageRating": null,
+   "appId": 2967990,
+   "developer": "Dovetail Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:48:53Z",
+   "genres": [
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Russian",
+    "Simplified Chinese",
+    "Polish",
+    "Italian"
+   ],
+   "metacritic": null,
+   "name": "Train Sim World® 5",
+   "publisher": "Dovetail Games - TSW",
+   "releaseDate": "2024-09-17",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2967990/ss_d6b12ba4467b9ee28c6fc01eef47e9cd4f279e83.1920x1080.jpg?t=1764602050",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2967990/ss_6078b3f94d988fb549fa55f34ddfaa81c26cd73f.1920x1080.jpg?t=1764602050",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2967990/ss_c1ff50c9ee69b66b063701e8ef943fef94255f85.1920x1080.jpg?t=1764602050",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2967990/ss_6eb2056df9a260f474e7c4bb4c2da23e3c15e0f5.1920x1080.jpg?t=1764602050",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2967990/ss_339aca0e268d20d5c17f4312fdb004567acb5630.1920x1080.jpg?t=1764602050",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2967990/ss_32c816ccae5d56a0df941e311f10b3e0c1b8718f.1920x1080.jpg?t=1764602050",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2967990/ss_2aa6ccd68ca9e6f916c86f9ae52c33ddbf8af05d.1920x1080.jpg?t=1764602050",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2967990/ss_f66de58b39619dc323183f413f5841bb1e27ffa0.1920x1080.jpg?t=1764602050"
    ]
   },
   "trainervr": {
@@ -45260,6 +45537,59 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1850510/ss_2622f447c38ed99e00e5a5d388158ea43028be55.1920x1080.jpg?t=1790952967"
    ]
   },
+  "tricky towers": {
+   "about": "Grab your wizard’s robe and spell book, time to use your engineering skills and build some Tricky Towers! \n\nStack your bricks and use your spells to create the tallest stable tower, for what self-respecting wizard wouldn’t want to show off their skills by towering literally over their peers! But be wary of jealous rivals, who will try and push your tower down with nefarious dark spells to ensure their dominance.",
+   "ageRating": null,
+   "appId": 437920,
+   "developer": "WeirdBeard",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:48:58Z",
+   "genres": [
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Russian",
+    "Portuguese - Portugal",
+    "Dutch",
+    "Simplified Chinese",
+    "Arabic",
+    "Finnish",
+    "Korean",
+    "Norwegian",
+    "Polish",
+    "Portuguese - Brazil",
+    "Swedish",
+    "Turkish",
+    "Romanian",
+    "Traditional Chinese"
+   ],
+   "metacritic": 80,
+   "name": "Tricky Towers",
+   "publisher": "WeirdBeard",
+   "releaseDate": "2016-08-02",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/437920/ss_c6b902a57834cf3d86ac3298671590e4d6800ead.1920x1080.jpg?t=1764332173",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/437920/ss_4639cd76c0675f8400eda2b72954cc8a99fd7978.1920x1080.jpg?t=1764332173",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/437920/ss_07caed261e7cf891c48e817e01b1dac1bc441331.1920x1080.jpg?t=1764332173",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/437920/ss_c66132de16791216cd1b539ce3a286539d788446.1920x1080.jpg?t=1764332173",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/437920/ss_a6f45834adb3a1655f248c546a927cb4877a6377.1920x1080.jpg?t=1764332173",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/437920/ss_bb7840339372b1ae4e2844efc9991d8cb1199e57.1920x1080.jpg?t=1764332173",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/437920/ss_0e7849e50a9239969259511fb3e440ba5308834f.1920x1080.jpg?t=1764332173",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/437920/ss_e5d6036840fb7ffeeb75a91a2f0767ba0f342d21.1920x1080.jpg?t=1764332173"
+   ]
+  },
   "trifox": {
    "about": "Trifox is a colourful and cartoonish twin stick action-adventure featuring a phenomenal fox with a multitude of talents! Choose from a trio of classes – Warrior, Mage, Engineer – or mix-and-match abilities to create a tailor-made hero! Inspired by the golden age of 3D platformers. \n\nAfter his home is attacked and his TV remote stolen, Trifox sets out in pursuit of the mysterious looters in an action-packed adventure.",
    "ageRating": null,
@@ -45300,6 +45630,47 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1211240/ss_8deb73ca65a0a66395ea8d798a13042245fd23a7.1920x1080.jpg?t=1769790417",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1211240/ss_78fcdb9d2bc1fcfda5782ce609e3e009d228913c.1920x1080.jpg?t=1769790417",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1211240/ss_9374b4d40803236d9580043ba18892e2aade2a66.1920x1080.jpg?t=1769790417"
+   ]
+  },
+  "trigger witch": {
+   "about": "Recalling the visual style and intuitive gameplay of 16-bit action-adventure classics, Trigger Witch puts an ultra-violent spin on cute and colorful pixel art. With a compelling and original narrative, puzzling environments to explore, a dynamic soundtrack, twin-stick shooter mechanics and a vast array of enemies to blast into smithereens, this is a tale that will grip you from start to bloody finish.",
+   "ageRating": null,
+   "appId": 1880230,
+   "developer": "Rainbite Ltd",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:49:03Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Trigger Witch",
+   "publisher": "Rainbite Ltd",
+   "releaseDate": "2022-05-27",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1880230/ss_0ff0d76c9f143faba42bcb7171222279301257a5.1920x1080.jpg?t=1653680726",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1880230/ss_701a9fdd6a94d7d8e952ca41b1fd7df8f1a42cb2.1920x1080.jpg?t=1653680726",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1880230/ss_0846980b6d82adb2785be6989fc188d92ff0cc90.1920x1080.jpg?t=1653680726",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1880230/ss_01298b9933d50684c8c47de7f9c71e6ddad72696.1920x1080.jpg?t=1653680726",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1880230/ss_3891b5fe94690b6a1f02ade3da4d51233845d75e.1920x1080.jpg?t=1653680726",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1880230/ss_2f77eb39cd334f7eacd3dc6143d654cfb6bc3187.1920x1080.jpg?t=1653680726",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1880230/ss_3847aa988a6e1d9ab044bd3042b6292785f01bc3.1920x1080.jpg?t=1653680726",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1880230/ss_1f233c2168c12714b5863025f74a9a05aa844ea7.1920x1080.jpg?t=1653680726"
    ]
   },
   "trine 4 the nightmare prince": {
@@ -45384,6 +45755,92 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/392000/ss_94e68aba396b96aa4dbe7cecbdb7562b90e106d0.1920x1080.jpg?t=1741820808",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/392000/ss_a012447941f4d32169dc54011a6afdae4ed0fe6c.1920x1080.jpg?t=1741820808",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/392000/ss_2e4896b9c3e72d7d559b5a3a83e92afc500e2ec6.1920x1080.jpg?t=1741820808"
+   ]
+  },
+  "tropico 5": {
+   "about": "Return to the remote island nation of Tropico in the next installment of the critically acclaimed and hugely popular ‘dictator sim’ series. Expand your Dynasty’s reign from the early colonial period to beyond the 21st Century, facing an all-new set of challenges, including advanced trading mechanics, technology and scientific research, exploration and for the first time in Tropico history – cooperative and competitive MULTIPLAYER for up to 4 players.",
+   "ageRating": null,
+   "appId": 245620,
+   "developer": "Haemimont Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Cross-platform multiplayer"
+   ],
+   "fetchedAt": "2026-10-29T05:49:08Z",
+   "genres": [
+    "RPG",
+    "Strategy",
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Russian",
+    "Polish",
+    "Japanese"
+   ],
+   "metacritic": 75,
+   "name": "Tropico 5",
+   "publisher": "Kalypso Media Digital",
+   "releaseDate": "2014-05-23",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/245620/ss_a4d69563734f14d5a05628e5699188d05d80655f.1920x1080.jpg?t=1755702263",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/245620/ss_d254f02db9453c6931b0850a62341d8651329095.1920x1080.jpg?t=1755702263",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/245620/ss_b81a5412d6d1edb80b7f90899a63c42043f5abcb.1920x1080.jpg?t=1755702263",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/245620/ss_8cec5977dcde9eb70b4793b1f04cb5a602ef7258.1920x1080.jpg?t=1755702263",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/245620/ss_ca56bd7c7cf60337f169d29115aa3f761422f551.1920x1080.jpg?t=1755702263",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/245620/ss_850797c851ab64c3d60ef7c0afdc08b19389a514.1920x1080.jpg?t=1755702263",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/245620/ss_48bb8b8874175b55a0661d242eec349cdaf5bad0.1920x1080.jpg?t=1755702263",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/245620/ss_d152d37b798f48d4b0ce66c12f9e127b0c3fa54d.1920x1080.jpg?t=1755702263"
+   ]
+  },
+  "tropico 6": {
+   "about": "El Presidente is back!\n\nIn times of political turmoil and social unrest, the people are calling for visionary leaders, who will steer the fate of their country with foresight and ingenuity. Prove yourself once again as a feared dictator or peace-loving statesman on the island state of Tropico and shape the fate of your very own banana republic through four distinctive eras. Face new challenges on the international stage and always keep the needs of your people in mind.",
+   "ageRating": 13,
+   "appId": 492720,
+   "developer": "Limbic Entertainment, Realmforge Studios",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:49:13Z",
+   "genres": [
+    "Strategy",
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Russian",
+    "Korean",
+    "Portuguese - Brazil",
+    "Simplified Chinese",
+    "Arabic",
+    "Japanese"
+   ],
+   "metacritic": 78,
+   "name": "Tropico 6",
+   "publisher": "Kalypso Media",
+   "releaseDate": "2019-03-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492720/ss_b42df2bcf6dfa639490169474181bec8f2929b27.1920x1080.jpg?t=1755702256",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492720/ss_436ad59ec875edddf5db2a255189eed6dba3bf3f.1920x1080.jpg?t=1755702256",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492720/ss_0549f2698a70ac1136e6e59eacb261aeaf5054f0.1920x1080.jpg?t=1755702256",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492720/ss_4d93898fe41ee43b1f25bd24d0711226c283afd0.1920x1080.jpg?t=1755702256",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492720/ss_d5a58d25a040b0b4d008ec3a39f10484fe7e1c66.1920x1080.jpg?t=1755702256",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492720/ss_c16410e4fd74ef21eeb2b689240d0ab879b9144a.1920x1080.jpg?t=1755702256",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492720/ss_435ee50f438d0bdabc99039c2cb113d1f869c2ab.1920x1080.jpg?t=1755702256",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/492720/ss_142c569b3e22c6c348e069e7ddb76485a9f191f5.1920x1080.jpg?t=1755702256"
    ]
   },
   "trover saves the universe": {
@@ -45607,6 +46064,10 @@
    "fetchedAt": "2026-10-23T18:23:32Z",
    "miss": true
   },
+  "turrican anthology vol 2": {
+   "fetchedAt": "2026-10-29T05:49:16Z",
+   "miss": true
+  },
   "twin robots": {
    "fetchedAt": "2026-10-24T16:00:57Z",
    "miss": true
@@ -45800,6 +46261,83 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/386940/ss_61edb3f0e1956596523b5870279233246730f091.1920x1080.jpg?t=1765298731",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/386940/ss_0446c14aabed53206fbe493e5650d30ea73ae563.1920x1080.jpg?t=1765298731",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/386940/ss_7e7ebc6e52e020afab1e692d7355cc1402e9eb7b.1920x1080.jpg?t=1765298731"
+   ]
+  },
+  "ultrawings flat": {
+   "about": "Ultrawings FLAT is the non-VR version of the popular flight game where you pilot multiple aircraft to complete a variety of missions across an island-themed world. \n\nThis is the version of the game for those that either A) have weak stomachs or B) do not have VR. \n\nKey Features\n\n- Pilot 4 distinct aircraft using your preferred controls (gamepad, mouse and keyboard, HOTAS).\n \n- Soar around 4 unique, beautifully stylized islands! \n\n- Earn money to buy new airports and new aircraft!",
+   "ageRating": null,
+   "appId": 974620,
+   "developer": "Bit Planet Games, LLC",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:49:21Z",
+   "genres": [
+    "Adventure",
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Japanese",
+    "Portuguese - Brazil"
+   ],
+   "metacritic": null,
+   "name": "Ultrawings FLAT",
+   "publisher": "Bit Planet Games, LLC",
+   "releaseDate": "2019-04-30",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/974620/ss_7eaeea8ff082a294d3d680cb42e37328dcc83506.1920x1080.jpg?t=1556650370",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/974620/ss_794f81bdae805e1c4312d8b5170a657e893490c3.1920x1080.jpg?t=1556650370",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/974620/ss_9b5926eea06ab3890dc7ee117ce82a8ebea45dbb.1920x1080.jpg?t=1556650370",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/974620/ss_557590b7810824e9696d0610f21a1ecfaa49bdf5.1920x1080.jpg?t=1556650370",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/974620/ss_d78f0a47a2c7468658aadb769fdebe25c3ed2e14.1920x1080.jpg?t=1556650370",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/974620/ss_6d4401465d6bb5150d0300a9714a6a9e731ece78.1920x1080.jpg?t=1556650370",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/974620/ss_393e5e05533673db167a6db15820772bf3992aed.1920x1080.jpg?t=1556650370",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/974620/ss_969d572d98deb9fec459d1f4bf8cd0ce7b75c3e2.1920x1080.jpg?t=1556650370"
+   ]
+  },
+  "umamusume pretty derby party dash": {
+   "about": "Includes:\n\n・Umamusume: Pretty Derby - Party Dash Game \n\n*Content details and specifications are subject to change without prior notice.\n\n*Actual items may differ from the image shown.\n\n*The \"Umamusume: Pretty Derby\" Item Set (Redeemable Code) is not included in the Steam® version.\n\n*Please confirm the details regarding the included content before making a purchase.\n\n*Please confirm the differences between each edition before making a purchase.",
+   "ageRating": null,
+   "appId": 2313020,
+   "developer": "Cygames, Inc., Arc System Works",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:49:26Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "Japanese",
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Korean"
+   ],
+   "metacritic": null,
+   "name": "Umamusume: Pretty Derby - Party Dash",
+   "publisher": "Cygames, Inc.",
+   "releaseDate": "2024-08-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2313020/ss_818b2d549ac3adaab0c6df960cc6e486513bc6f0.1920x1080.jpg?t=1759219347",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2313020/ss_86059676d7b543a1bf2a3f326f0a2386e46778bf.1920x1080.jpg?t=1759219347",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2313020/ss_808e1af5bbe768d8a0fa937688ad4829348796b0.1920x1080.jpg?t=1759219347",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2313020/ss_20db86e5ec3c678d4894c8ae24d5ca601cf60ebf.1920x1080.jpg?t=1759219347",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2313020/ss_9823be801741839854df31c28b19705d2bcc5777.1920x1080.jpg?t=1759219347",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2313020/ss_4c2469f8eab425148f70a751f0dd20dda29a76b1.1920x1080.jpg?t=1759219347",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2313020/ss_3c7073c297de92b2a4e7d535642ac10a2d03db68.1920x1080.jpg?t=1759219347"
    ]
   },
   "unbound worlds apart": {
@@ -46009,6 +46547,56 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1451190/ss_de1de705f4711b0acbb03ef6a14f814640ac5aab.1920x1080.jpg?t=1766067946"
    ]
   },
+  "unepic": {
+   "about": "Daniel was just an average guy. He was a great videogame player, a big fan of sci-fi movies, and a novice RPG player. In the midst of an RPG, he was teleported to a castle. At first, Daniel believed that he was having a massive hallucination. Eager to keep playing within the RPG to create his own adventure, he decides to go along for te ride until his delirium comes to an end. \nOnce inside the castle, Daniel is inhabited by a mysterious shadow.",
+   "ageRating": null,
+   "appId": 233980,
+   "developer": "@unepic_fran",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:49:31Z",
+   "genres": [
+    "Action",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "German",
+    "French",
+    "Italian",
+    "Korean",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Russian",
+    "Portuguese - Portugal",
+    "Polish",
+    "Hungarian",
+    "Czech",
+    "Portuguese - Brazil",
+    "Japanese",
+    "Dutch"
+   ],
+   "metacritic": 68,
+   "name": "UnEpic",
+   "publisher": "Unepic Games",
+   "releaseDate": "2014-07-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/233980/ss_e0a17e5765e25d8ccfd57163f101409ffb2dcfee.1920x1080.jpg?t=1706997556",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/233980/ss_89fb3baf2ce1d428f972789a0cdb27952b826410.1920x1080.jpg?t=1706997556",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/233980/ss_d5ed8ad1fa2105eeb44f712d6f704bef1a64de3b.1920x1080.jpg?t=1706997556",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/233980/ss_bfd4ca4947ceeacdf74ec14de63350d694beda65.1920x1080.jpg?t=1706997556",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/233980/ss_ad97fb0810090a2d2685a06e56dd4859fdc4afc9.1920x1080.jpg?t=1706997556",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/233980/ss_91179d5b7db8cbf7a10fbb5f87ad3f35dc08aea2.1920x1080.jpg?t=1706997556",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/233980/ss_dc4a74f92a7c13f4cdcc0cfcd4f03bc6f1455fce.1920x1080.jpg?t=1706997556",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/233980/ss_4aafc047c72406ded0a66c4e2f405bd5746882c7.1920x1080.jpg?t=1706997556"
+   ]
+  },
   "unfinished swan": {
    "about": "From the creators of What Remains of Edith Finch.\n\r\n\n\r\nExplore a mysterious all-white landscape by splatting paint to reveal the world around you in The Unfinished Swan. As Monroe, a 10-year-old orphan, you'll follow a swan that's stepped out of an unfinished painting and wandered off into a surreal, storybook-inspired kingdom.",
    "ageRating": null,
@@ -46179,6 +46767,40 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1135690/ss_2066e90763952aac24e03657038977abcf1f7453.1920x1080.jpg?t=1789426289"
    ]
   },
+  "unravel": {
+   "about": "Unravel introduces Yarny — a new, lovable, and endearing character made from a single thread of yarn that slowly unravels as you move. Inspired by the unique and breath-taking environments of Northern Scandinavia, Unravel is a visually stunning, physics-based puzzle platformer. Using yarn to swing from tree branch to tree branch or hitch a ride on a flying kite, no feat is too big. Yarny is brought to life as the representation of the ties that bind loved-ones together.",
+   "ageRating": null,
+   "appId": 1225560,
+   "developer": "Coldwood Interactive",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:49:36Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese"
+   ],
+   "metacritic": 81,
+   "name": "Unravel",
+   "publisher": "Electronic Arts",
+   "releaseDate": "2020-06-04",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1225560/ss_222b64545eaedb17f47dae9898a4054a18251c75.1920x1080.jpg?t=1777484649",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1225560/ss_107b49291a2cdc76a73b1c84191dbf0b86a6c8ef.1920x1080.jpg?t=1777484649",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1225560/ss_cb4dfb299872bccb2b9a7d7505abd5cb81ef5765.1920x1080.jpg?t=1777484649",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1225560/ss_36ad54e8d93463e65133eeb46b440179850ea6f5.1920x1080.jpg?t=1777484649",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1225560/ss_dc020a2272f1d0949be22dee31b281b9c128e827.1920x1080.jpg?t=1777484649"
+   ]
+  },
   "unravel two": {
    "about": "PLAY ON STEAM USING THE REMOTE PLAY TOGETHER FEATURE\n\nWhen you cut ties to the past, new bonds form. In Unravel Two, create a Yarny of your very own. Then build relationships with other Yarnys in local co-op or as a single player, fostering friendship and support as you journey together. Begin your adventure in a cold and imposing land, then watch your surroundings blossom with new life as you chase the spark of adventure.",
    "ageRating": null,
@@ -46312,6 +46934,42 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/837470/ss_f85be4e268c984bcdec7c35138830fe1a7e50484.1920x1080.jpg?t=1699052664",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/837470/ss_d468130acce4745c613402bf5c3923d904e1dca1.1920x1080.jpg?t=1699052664",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/837470/ss_401d26ae8efe2eb0e7b784355c5253d6d3580b09.1920x1080.jpg?t=1699052664"
+   ]
+  },
+  "utawarerumono zan": {
+   "about": "Turn up the music, grab your warfan, and get ready to mow down some mooks in this action-packed take on the Utawarerumono series!\n\nHACK AND SLASH\n\nLand big damage, juggle foes, and build up a combo counter into the hundreds! Carve your mark onto the battlefield while grooving out to over 80 tracks, including upbeat remixes of Utawarerumono's legendary soundtrack!FOUR'S A PARTY\n\nBuild a team of four characters and switch anytime! Every fighter in your squad brings unique stats and abilities.",
+   "ageRating": null,
+   "appId": 3074840,
+   "developer": "AQUAPLUS",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:49:41Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "Japanese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Utawarerumono: ZAN",
+   "publisher": "DMM GAMES, Shiravune",
+   "releaseDate": "2025-12-15",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3074840/ss_8247239b8c03823f8da78cc5a4c31c32edfb8a01.1920x1080.jpg?t=1782997627",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3074840/ss_0db9fcc8c3f596af50b116282f5c7614c1ce0efd.1920x1080.jpg?t=1782997627",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3074840/ss_7b9b1037b527291693c319888944ab5aaa622d7d.1920x1080.jpg?t=1782997627",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3074840/ss_f9938b0f2b30ef284af4940658213eb04d1af8b0.1920x1080.jpg?t=1782997627",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3074840/ss_ace9f5b2857a715ad6dc7a4a801b55a31c830418.1920x1080.jpg?t=1782997627",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3074840/ss_75dc617d9e8f9ac1b2e436edf732c89d9698a43d.1920x1080.jpg?t=1782997627",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3074840/ss_e2dbed7679d9e3ec7e0c10b7c16ff4bcc100b502.1920x1080.jpg?t=1782997627",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3074840/ss_3180a9693c8037b949cd211ffeac79b6ecac02e4.1920x1080.jpg?t=1782997627"
    ]
   },
   "v rally 4": {
@@ -46586,6 +47244,10 @@
    "fetchedAt": "2026-10-15T19:59:12Z",
    "miss": true
   },
+  "velocity 2x": {
+   "fetchedAt": "2026-10-29T05:49:51Z",
+   "miss": true
+  },
   "videoball": {
    "about": "VIDEOBALL is a sport everyone can play!\n\nWe researched basketball, football, soccer, first-person shooters, and real-time strategy games. VIDEOBALL is a compact expression of all sports' mechanics.\n\nUse either analog stick or the directional buttons to maneuver. Use any button or trigger to project a triangle. Only triangles can displace balls. Hold your button or trigger to charge a bigger triangle. Bigger triangles push harder. Stun opponents or cancel triangles with other triangles.",
    "ageRating": null,
@@ -46842,6 +47504,40 @@
   "void terrarium": {
    "fetchedAt": "2026-10-24T16:00:09Z",
    "miss": true
+  },
+  "vrobot": {
+   "fetchedAt": "2026-10-29T05:49:43Z",
+   "miss": true
+  },
+  "vrog": {
+   "about": "Be a frog!\n\nYour HTC Vive/Oculus Rift is your window to the VRog world, allowing you to see through the eyes of a frog. Leap your way across the beautiful pond and see what's on the menu.Arcade Mode:\n\nCatch tasty insects in Arcade Mode and beat the high score. But watch out for those nasty wasps – they'll leave a bad taste. This makes the dragonflies (slow motion) and ladybugs (night vision) taste all the better.Survival Mode:\n\nOr outrun the stork in Survival Mode.",
+   "ageRating": null,
+   "appId": 589380,
+   "developer": "ByteRockers' Games",
+   "features": [
+    "Single-player",
+    "VR",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:49:48Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "VRog",
+   "publisher": "ByteRockers' Games",
+   "releaseDate": "2017-02-09",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/589380/ss_04829a27bf4f62c1405161d45cda8635f91e9927.1920x1080.jpg?t=1712257674",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/589380/ss_071392163d12890cf3486fe7759ffb92d951e04d.1920x1080.jpg?t=1712257674",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/589380/ss_99b27cefc8a1b63c250a0833eef940c347754a8e.1920x1080.jpg?t=1712257674",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/589380/ss_b9c56a21bdcdf1da35501a83b21692ee76875bb7.1920x1080.jpg?t=1712257674",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/589380/ss_10b74a0a41a90afa070db77ad43caaa8fa6054de.1920x1080.jpg?t=1712257674"
+   ]
   },
   "walking dead destinies": {
    "about": "Begin your journey as Rick Grimes, waking alone in a hospital surrounded by the dead. Assemble allies and fight your way through the walker apocalypse across iconic locations from The Walking Dead, including Atlanta, the Greene family farm, the prison, and Woodbury. In crucial choice-driven moments, you’ll forever shape the destiny of your team of characters from the series.",
@@ -47533,6 +48229,50 @@
    "fetchedAt": "2026-10-16T04:32:48Z",
    "miss": true
   },
+  "witness": {
+   "about": "You wake up, alone, on a strange island full of puzzles that will challenge and surprise you.\n\r\n\n\r\nYou don't remember who you are, and you don't remember how you got here, but there's one thing you can do: explore the island in hope of discovering clues, regaining your memory, and somehow finding your way home.\n\r\n\n\r\nThe Witness is a single-player game in an open world with dozens of locations to explore and over 500 puzzles.",
+   "ageRating": null,
+   "appId": 210970,
+   "developer": "Thekla, Inc.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:47:58Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Polish",
+    "Portuguese - Portugal",
+    "Portuguese - Brazil",
+    "Russian",
+    "Arabic",
+    "Japanese",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Korean",
+    "Hungarian"
+   ],
+   "metacritic": 87,
+   "name": "The Witness",
+   "publisher": "Thekla, Inc.",
+   "releaseDate": "2016-01-26",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/210970/ss_9c73ac83c8acfb69db6166f239fdba2ffa099b32.1920x1080.jpg?t=1720810823",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/210970/ss_6a7964a4dede8ad7d8b4e413e8b291defbbaa55b.1920x1080.jpg?t=1720810823",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/210970/ss_583fdbf6aa66a179d60a2261bab7b10c102e36e8.1920x1080.jpg?t=1720810823",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/210970/ss_05033717114ac8a697fbf45c149d26bb1cfc6893.1920x1080.jpg?t=1720810823",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/210970/ss_86c4e2f0fd7cc62d3bfbc4a6cd8f7423650610bb.1920x1080.jpg?t=1720810823",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/210970/ss_fabb0939200a1f2bbb40b775c8e07645f21dc44a.1920x1080.jpg?t=1720810823"
+   ]
+  },
   "wizards": {
    "about": "Use motion controllers to destroy your enemies by weaving magic into lightning, fireballs, and other elemental spells. Chain combos and use different tactics against the hostile creatures. Make the game as challenging or as casual as you like with Fate Cards, and become the hero you’ve always wanted to be with powerful spells at your fingertips!\n\nAction-adventure VR spellcaster set in a rich fantasy world\n\nCampaign featuring time travel, heroic battles, and dragons\n\nIntuitive system of casting…",
    "ageRating": null,
@@ -47614,6 +48354,39 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1448440/ss_cd96ce49fcf8ce741662d8535e44bdaa17a98378.1920x1080.jpg?t=1780891625",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1448440/ss_8a5b4063c83ad2216a23134511fe2ab8bb8c06cf.1920x1080.jpg?t=1780891625",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1448440/ss_94092c0b508bf16f90ece74338dae524d6f00a35.1920x1080.jpg?t=1780891625"
+   ]
+  },
+  "wolf among us": {
+   "about": "From the makers of the 2012 Game of the Year: The Walking Dead, comes a gritty, violent and mature thriller based on the award-winning Fables comic books (DC Comics/Vertigo). As Bigby Wolf - THE big bad wolf - you will discover that a brutal, bloody murder is just a taste of things to come in a game series where your every decision can have enormous consequences.",
+   "ageRating": 17,
+   "appId": 250320,
+   "developer": "Telltale",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T05:48:03Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Family"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": 85,
+   "name": "The Wolf Among Us",
+   "publisher": "Telltale",
+   "releaseDate": "2013-10-11",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250320/ss_97605e426c7bc76cd891cfe966da2c7979165b0f.1920x1080.jpg?t=1734104991",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250320/ss_dedc5e68e74788af4d714392a231d090d2511af9.1920x1080.jpg?t=1734104991",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250320/ss_1efe728df9f54a9663630e64370e6a43988ed1a3.1920x1080.jpg?t=1734104991",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250320/ss_6936b061c105487ab9ba98fa3db8508dd237c7d4.1920x1080.jpg?t=1734104991",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250320/ss_29a49b21ba1b93fc31b60707560195f7ef3fbf44.1920x1080.jpg?t=1734104991",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250320/ss_be6d5010313dae1668d150f1da64802be0a37a06.1920x1080.jpg?t=1734104991",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250320/ss_0ac9145dfb5bc9f729649cc5ce25d32ac09eeaaa.1920x1080.jpg?t=1734104991",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/250320/ss_cf263a545dbf1f3f60ca5fe19cbcbdff8a4bfcfc.1920x1080.jpg?t=1734104991"
    ]
   },
   "wolfenstein the new order": {
@@ -48840,6 +49613,6 @@
    "miss": true
   }
  },
- "updatedAt": "2026-10-28T22:38:36Z",
+ "updatedAt": "2026-10-29T05:49:53Z",
  "version": 1
 }
