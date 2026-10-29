@@ -7116,6 +7116,42 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3595230/31deb49ee3bb53f0639a389c0ece1b97931017ea/ss_31deb49ee3bb53f0639a389c0ece1b97931017ea.1920x1080.jpg?t=1778886532"
    ]
   },
+  "call of duty modern warfare 2 2009": {
+   "about": "The most-anticipated game of the year and the sequel to the best-selling first-person action game of all time, Modern Warfare 2 continues the gripping and heart-racing action as players face off against a new threat dedicated to bringing the world to the brink of collapse. \n Call of Duty®: Modern Warfare 2 features for the first time in video games, the musical soundtrack of legendary Academy Award®, Golden Globe® Award, Grammy® Award and Tony winning composer Hans Zimmer.",
+   "ageRating": null,
+   "appId": 10180,
+   "developer": "Infinity Ward",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op"
+   ],
+   "fetchedAt": "2026-10-29T19:42:11Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Italian",
+    "Spanish - Spain"
+   ],
+   "metacritic": 86,
+   "name": "Call of Duty®: Modern Warfare® 2 (2009)",
+   "publisher": "Activision",
+   "releaseDate": "2009-11-11",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/10180/ss_51a130e076354ed7aa025fda1ef9ba62c3ed767a.1920x1080.jpg?t=1780962606",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/10180/ss_9a8893322d2e4718bb3ad762fa2d9deb07a012a6.1920x1080.jpg?t=1780962606",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/10180/ss_5e5937d034aeec6baad838229c2466165e4e0950.1920x1080.jpg?t=1780962606",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/10180/ss_6a0b262647f584bf40f91b812a4e6cc8e37ba808.1920x1080.jpg?t=1780962606",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/10180/ss_d39fd5f8c2a50078eb055e7772cb25885cf688a4.1920x1080.jpg?t=1780962606",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/10180/ss_7240600b8d19d9eebe7939bcc8d86f44e573db43.1920x1080.jpg?t=1780962606",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/10180/ss_8d0d8d549e44c3a2819548e569a8e9d5cda43b6c.1920x1080.jpg?t=1780962606",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/10180/ss_2d00f1abd0b9726fb8965ac0d40242c58bf59b57.1920x1080.jpg?t=1780962606"
+   ]
+  },
   "call of duty modern warfare 2 campaign remastered": {
    "fetchedAt": "2026-10-26T13:01:26Z",
    "miss": true
@@ -8925,6 +8961,18 @@
    "fetchedAt": "2026-10-27T12:12:32Z",
    "miss": true
   },
+  "crocs world": {
+   "fetchedAt": "2026-10-29T19:41:51Z",
+   "miss": true
+  },
+  "crocs world 2": {
+   "fetchedAt": "2026-10-29T19:41:53Z",
+   "miss": true
+  },
+  "crocs world 3": {
+   "fetchedAt": "2026-10-29T19:42:53Z",
+   "miss": true
+  },
   "croixleur sigma": {
    "about": "High-speed hack & slash action!\n\nWielding magical blades, four girls must fight back the encroaching waves of monsters in this exhilarating hack-and-slash action game! Mix and match four different weapons and find the fighting style that best suits you as you slice your way through various types of battle! \n\nStory Mode focuses on the girls' charming friendship, and is fully voiced in Japanese.",
    "ageRating": null,
@@ -10371,6 +10419,50 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/45740/ss_f1fef2b8ef899f7f733a9a27324163386df7b92c.1920x1080.jpg?t=1768868174",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/45740/ss_3e78c0d2aade801b819c8088aa85146403b0b857.1920x1080.jpg?t=1768868174",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/45740/ss_e0fff64a6ba141956c3ee503fc414501abb10a16.1920x1080.jpg?t=1768868174"
+   ]
+  },
+  "dead rising deluxe remaster": {
+   "about": "Dead Rising returns with modern graphics!\nMore than just a remaster, this Deluxe Remaster is a full graphical overhaul of the first game in zombie-slaughtering action game series \"Dead Rising.\"\nThis remaster has also been fully voiced, supports auto-saves, and has various other quality-of-life features.\nWitness the unmatched mayhem and freedom for yourself!\n\n- Story:\nOne day, the peaceful town of Willamette, Colorado, found itself put under quarantine by the U.S. army.",
+   "ageRating": 17,
+   "appId": 2527390,
+   "developer": "CAPCOM Co., Ltd.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:41:58Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Spanish - Latin America",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Arabic"
+   ],
+   "metacritic": 79,
+   "name": "Dead Rising Deluxe Remaster",
+   "publisher": "CAPCOM Co., Ltd.",
+   "releaseDate": "2024-09-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2527390/ss_b13acca0db1cfb646f5f967af0c16074e3b685ca.1920x1080.jpg?t=1768869459",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2527390/ss_d2940e11d547184bb796764240c9def6af92fd66.1920x1080.jpg?t=1768869459",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2527390/ss_3a806a30acd43b96ad5f71df088be57e6ea639e2.1920x1080.jpg?t=1768869459",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2527390/ss_2906287591c4f8b7d09ede7674a44a6dbcd8d331.1920x1080.jpg?t=1768869459",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2527390/ss_9eef385f6ba91e3224f0022cd30a790bc9c09a2c.1920x1080.jpg?t=1768869459",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2527390/ss_4a8fd157c4934ac4c409fa0d67cabc68525602d1.1920x1080.jpg?t=1768869459",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2527390/ss_2a8b6122d64ab779d814cb1d124e61c2296c78c9.1920x1080.jpg?t=1768869459"
    ]
   },
   "dead space": {
@@ -12209,6 +12301,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/574050/ss_c37d03ef7f99ac99b73d127151a2d23e96d83345.1920x1080.jpg?t=1778838737",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/574050/ss_bf67c663c9b836384ec60d69597c0f4179192b57.1920x1080.jpg?t=1778838737"
    ]
+  },
+  "dragon quest heroes the world trees woe and the blight below": {
+   "fetchedAt": "2026-10-29T19:42:13Z",
+   "miss": true
   },
   "dragon quest iii hd 2d remake": {
    "about": "DRAGON QUEST III HD-2D Remake is a stunning reimagining of the beloved masterpiece and narrative beginning to The Erdrick Trilogy.\n\nStory:\n\nYears ago, the great hero Ortega bid farewell to his wife and child as he set off on a quest to defeat the villainous Archfiend, Baramos. Ortega failed his quest, and Baramos still threatens the world.",
@@ -17227,6 +17323,49 @@
    "fetchedAt": "2026-10-27T18:04:52Z",
    "miss": true
   },
+  "gladiator blades of fury": {
+   "about": "Gladiator: Blades of Fury is a melee combat action fighting game set during the medieval period. Players can play as a gladiator from four different clans, namely the Barbarians, the Assassins, the Knights, and the Dwarves. All heroes are unique and have their own weapons, skills, and fighting styles.\n\r\n\n\r\nTest your combat skills in the tournament mode and claim the ultimate price, to be crowned the champion gladiator.",
+   "ageRating": null,
+   "appId": 1007490,
+   "developer": "Yash Future Tech Solutions Pvt Ltd",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:42:19Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Dutch",
+    "Japanese",
+    "Russian",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Gladiator: Blades of Fury",
+   "publisher": "Yash Future Tech Solutions Pvt Ltd",
+   "releaseDate": "2019-03-07",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1007490/ss_d4c4eb1cbd0dc733d8909af63c419ca1959e6f42.1920x1080.jpg?t=1551984386",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1007490/ss_cf05ad3cd4d6d7491ab9d079597cc05e401abc18.1920x1080.jpg?t=1551984386",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1007490/ss_4bf2de6b35147615173b923322221b365fec9429.1920x1080.jpg?t=1551984386",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1007490/ss_223c322b55cdebd3bd15f8a36bde738f0a883cb6.1920x1080.jpg?t=1551984386",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1007490/ss_48e9178e2251e6c7b72d979b453fb4c842aba67d.1920x1080.jpg?t=1551984386",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1007490/ss_83f4fb4c69eaa15e65da19b5924188fe7cc5eca5.1920x1080.jpg?t=1551984386",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1007490/ss_5f19e3ac8cf84d9fea7885b5ca60d11684343a79.1920x1080.jpg?t=1551984386",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1007490/ss_d54a0f6ba5b74dffcc89c76d7c0ce12b8fa4608d.1920x1080.jpg?t=1551984386"
+   ]
+  },
   "glitch hero": {
    "about": "Ada is a young yet bright girl who, after visiting her father’s laboratory, decides to \ndive without his permission into Codeland, a virtual world being developed by him, just for fun but...\nA fatal error, Codeland filled with bugs, an unfriendly bunny as a guide, her father and his colleagues are trapped and unresponsive, there are enemies and errors all around! Only someone worthy to wield the hammer.exe can debug it all!",
    "ageRating": null,
@@ -18044,6 +18183,40 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/275390/ss_0a75af214e5633e5999653cb6346df6c29ab1bc0.1920x1080.jpg?t=1764280942"
    ]
   },
+  "guardian of lore": {
+   "about": "Play as Prince Sayri, and save the memory of ancient civilizations from wicked magic that aims to destroy the stories that contain it. Become part of beautifully crafted 2.5D worlds from Native-American folktales, and battle against an evil invader army threatening their disappearance. How much of each story will you be able to preserve for future generations to come? Become a Guardian of Lore and find out!",
+   "ageRating": null,
+   "appId": 1211740,
+   "developer": "Round 2 Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:42:23Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Spanish - Latin America"
+   ],
+   "metacritic": null,
+   "name": "Guardian of Lore",
+   "publisher": "Round 2 Games",
+   "releaseDate": "2021-05-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1211740/ss_54b3ce7a251a9d319baf5a95dc7bcbff860a87a2.1920x1080.jpg?t=1764171901",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1211740/ss_1336d077bf88d6c78853f6c7d5e1c8044181c4aa.1920x1080.jpg?t=1764171901",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1211740/ss_4c1e82810f6f81c6f8c9778fd4f2fa254faad258.1920x1080.jpg?t=1764171901",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1211740/ss_3ec80c486a7efcf12b4dc19cc4cbdebefe2eb5a8.1920x1080.jpg?t=1764171901",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1211740/ss_5360687e057373eac32f39a1aa6bdbcb50e310c3.1920x1080.jpg?t=1764171901",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1211740/ss_8713a12187433717b45bb14dffd92c4c26370937.1920x1080.jpg?t=1764171901",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1211740/ss_5cdb3ecea553c8b3213ac4e936bddf3d30e76366.1920x1080.jpg?t=1764171901"
+   ]
+  },
   "guilty gear strive": {
    "about": "Discover the Smell of the Game with Guilty Gear -Strive-! Immerse yourself in new gameplay mechanics designed to be simple and welcoming for fighting game newcomers, yet deep and creative for veterans. Ride the Fire into a heavy metal inspired alternate future full of over-the-top action, style and fun! Blazing!\n\n“Guilty Gear -Strive-“ is the latest entry in the critically acclaimed Guilty Gear fighting game franchise.",
    "ageRating": 13,
@@ -18349,6 +18522,54 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1620730/f4cef688c7cc24635e730deec5d5dad5a4288b87/ss_f4cef688c7cc24635e730deec5d5dad5a4288b87.1920x1080.jpg?t=1791467530",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1620730/e26aca4af87e70b9a910b8d5d9c5545bdc431495/ss_e26aca4af87e70b9a910b8d5d9c5545bdc431495.1920x1080.jpg?t=1791467530",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1620730/c4b06aca02973e521e0257e77ff5c2f058bc5364/ss_c4b06aca02973e521e0257e77ff5c2f058bc5364.1920x1080.jpg?t=1791467530"
+   ]
+  },
+  "hell warders": {
+   "about": "ACTION RPG MEETS TOWER DEFENSE\nControl powerful Heroes, unleash devastating abilities and deploy strategic defensive units in this brand new sub-genre title.\n\nCREATE YOUR DEFENSES\nSet up archers, knights, mages and catapults - choose their position, upgrade their abilities and create the strongest resistance possible.\n\n4 PLAYER CO-OP\nCombine forces with up to four players and battle the legions of evil! Hell Warders supports co-operative play with friends and online matchmaking.",
+   "ageRating": null,
+   "appId": 628710,
+   "developer": "Anti Gravity Game Studios",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:42:28Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Strategy",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Hell Warders",
+   "publisher": "PQube",
+   "releaseDate": "2019-02-21",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/628710/ss_bfa100db425707edbf235f7285bbb1e97ad76cb6.1920x1080.jpg?t=1792062437",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/628710/ss_145676f61f3e810f7c0db4cb1c0d16980a03c37d.1920x1080.jpg?t=1792062437",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/628710/ss_145f8ab82e212f3ea7267624773b99fb671745d7.1920x1080.jpg?t=1792062437",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/628710/ss_b0f78a5e9f9f533da73bab2b4a72f6daad434d03.1920x1080.jpg?t=1792062437",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/628710/ss_48739bcdcd6294cb1b93d88e3b2bf22a994c375f.1920x1080.jpg?t=1792062437",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/628710/ss_61d99fc8b2e4feac241c3e2f8e41e2246affd7d6.1920x1080.jpg?t=1792062437",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/628710/ss_92acaada37a537adf3126fe5c9de0e8a7df33fcc.1920x1080.jpg?t=1792062437",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/628710/ss_32cbb9b5da22fe732948d58d183644822259f4dd.1920x1080.jpg?t=1792062437"
    ]
   },
   "helldivers super earth": {
@@ -23647,6 +23868,53 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3061810/ss_9921e72c49a769e5149ebf9a52ddb7ceb4d905d8.1920x1080.jpg?t=1781258528"
    ]
   },
+  "little big adventure twinsens quest": {
+   "about": "Step into Twinsun's fantastical world in this action-adventure remake! Little Big Adventure - Twinsen's Quest brings brand new visuals, new music by the original composer, and smoother gameplay to the iconic classic released back in 1994.\n\nEmbark on a Timeless Adventure, Reimagined\nTwinsen is back in this remake featuring a new stylish makeover and modernized gameplay.",
+   "ageRating": null,
+   "appId": 2318070,
+   "developer": "[2.21]",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:43:06Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Dutch",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "Little Big Adventure – Twinsen’s Quest",
+   "publisher": "[2.21]",
+   "releaseDate": "2024-11-14",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2318070/ss_b1628bc75402f3db0984553007e3e52a762714eb.1920x1080.jpg?t=1791795952",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2318070/ss_f1a8db85beb89ca21e4482624c206bd48b4c25d1.1920x1080.jpg?t=1791795952",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2318070/ss_27a636992a8d6b1033096433313c129653e3c5a4.1920x1080.jpg?t=1791795952",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2318070/ss_13441afcc14f7f3a032cfd727eca6fd8332670a7.1920x1080.jpg?t=1791795952",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2318070/ss_b300435c11d5b746e8bc2a8bb0cef2e063a30854.1920x1080.jpg?t=1791795952",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2318070/ss_315594974515e171870c42fd846c1cbb8d316cb4.1920x1080.jpg?t=1791795952",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2318070/ss_c6caa28e9e49a183f8173a776b44def889e301f3.1920x1080.jpg?t=1791795952",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2318070/ss_a053b38bc0424887a01c2b8aefcfa4232e32bb4a.1920x1080.jpg?t=1791795952"
+   ]
+  },
   "little dragons cafe": {
    "about": "Little Dragons Café opens with a twin brother and sister learning to cook and manage a small café with their mother. All was routine until one morning when the twins discover that their mother won’t wake up. Suddenly, a strange old man appears and tells them that they must raise a dragon to save her. Working with three quirky café employees, the twins must wrangle a dragon and run the family business while finding a way to save their mother.",
    "ageRating": null,
@@ -24132,6 +24400,52 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2058190/ss_0e6499eea014409ea82d3651afe8280543fb1755.1920x1080.jpg?t=1781263270",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2058190/ss_4969eaac269aadba421d7af10b57758b82cba9bd.1920x1080.jpg?t=1781263270",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2058190/ss_fba7e988e5e6799694658d7ed28863460e0db327.1920x1080.jpg?t=1781263270"
+   ]
+  },
+  "lost soul aside": {
+   "about": "Edition includes:\n\nLost Soul Aside™\n\nFight to save your world. Save your sister. Save your soul.\n\nA HERO’S JOURNEY\n\nLouisa’s gone. She’s gone?! How could this happen?\n\nWe had plans, a future. Everything was going to be better. But… it’s over?\n\nNo. We have to fight on, the rest of us cannot give up. \n\nAnd now I have an unlikely ally… I’m becoming more powerful. \n\nCan I save her?",
+   "ageRating": null,
+   "appId": 3378960,
+   "developer": "Ultizero Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:42:33Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Portuguese - Portugal",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Latin America",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Lost Soul Aside™",
+   "publisher": "PlayStation Publishing LLC",
+   "releaseDate": "2025-08-28",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3378960/ss_81f66d9aea777dd2ff35aab97ce6718c7d88a662.1920x1080.jpg?t=1756465896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3378960/ss_1d52b0eb04bc0fd516d220986d50c2b5a0b4cab8.1920x1080.jpg?t=1756465896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3378960/ss_8b129b2fdaa9186a7a5230de29f9b69167072997.1920x1080.jpg?t=1756465896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3378960/ss_d938efdcf3f977f0ca6a422340915992e2892fe0.1920x1080.jpg?t=1756465896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3378960/ss_3cdfeec83174278f31ef4c7b5b6956627982982b.1920x1080.jpg?t=1756465896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3378960/ss_898609366cbbd28e1426ad55cabac2bf362141fe.1920x1080.jpg?t=1756465896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3378960/ss_3e8b1894008ebf6a077d519bffb7ff36f932a044.1920x1080.jpg?t=1756465896",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3378960/ss_2e77385617fe1d3701189179136d4458ba45bc46.1920x1080.jpg?t=1756465896"
    ]
   },
   "love is all around": {
@@ -25279,6 +25593,39 @@
    "fetchedAt": "2026-10-27T22:17:14Z",
    "miss": true
   },
+  "max and the book of chaos": {
+   "about": "“Max and the book of chaos” is an arcade 2D action game with elements of run and gun and shoot ´em up classic video games, focused on giving to the player a true arcade feeling experience. The game also offers mechanics of upgrading equipment and some features for Max. And all of this mixed with and interesting and funny story to create a unique narrative lore with a cool cartoon graphic style.\n\r\n\n\r\nMAIN REFERENCES\n\r\nSuper pang: For the levels structure.",
+   "ageRating": null,
+   "appId": 1370000,
+   "developer": "Orenji Games Entertainment",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:42:58Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Spanish - Spain"
+   ],
+   "metacritic": null,
+   "name": "Max and the Book of Chaos",
+   "publisher": "Orenji Games Entertainment",
+   "releaseDate": "2020-07-30",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1370000/ss_629e887453306e995072490a6f58b557ebd66c1e.1920x1080.jpg?t=1596131991",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1370000/ss_43cca02ada9f25b4ecc1b460edcc7da5fa26a435.1920x1080.jpg?t=1596131991",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1370000/ss_b89740e72fa9f86025795bd112a39bd39071e0e8.1920x1080.jpg?t=1596131991",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1370000/ss_a5e00d5e1db14bdb0046016ca4b52e74a93bf1e7.1920x1080.jpg?t=1596131991",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1370000/ss_7430b544eb12536822a29c647c2435c382adc8db.1920x1080.jpg?t=1596131991",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1370000/ss_833712687b4035307ed287bd1739d8c8a0934a70.1920x1080.jpg?t=1596131991",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1370000/ss_f32016193d33c4de8d99fd938829d45f077def21.1920x1080.jpg?t=1596131991"
+   ]
+  },
   "max payne": {
    "about": "Max Payne is a man with nothing to lose in the violent, cold urban night. A fugitive undercover cop framed for murder, hunted by cops and the mob, Max is a man with his back against the wall, fighting a battle he cannot hope to win. Max Payne is a relentless story-driven game about a man on the edge, fighting to clear his name while struggling to uncover the truth about his slain family amongst a myriad of plot-twists and twisted thugs in the gritty bowels of New York during the century's worst…",
    "ageRating": 17,
@@ -26398,6 +26745,41 @@
   "mistover": {
    "fetchedAt": "2026-10-25T16:17:34Z",
    "miss": true
+  },
+  "mitsurugi kamui hikae": {
+   "about": "The smash hit action game from Comic Market 84 is finally available on Steam!\n\nMisa is a Blade Templar, a secret defender of humanity, who also happens to be a high school student. When her classmate Suzuka succumbs to the dark seduction of the Demon Blade, Misa realizes she must protect the world at all costs. The evil sword has already begun draining Suzuka's life force, and if Misa can’t destroy the Blade alone, she may very well need to strike her friend down.",
+   "ageRating": null,
+   "appId": 263620,
+   "developer": "Zenith Blue",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:41:38Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Japanese",
+    "Simplified Chinese",
+    "Korean"
+   ],
+   "metacritic": null,
+   "name": "Mitsurugi Kamui Hikae",
+   "publisher": "PLAYISM",
+   "releaseDate": "2014-03-10",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/263620/ss_b2369f98c05086b758406a2c02f3103dbf6b1b65.1920x1080.jpg?t=1667298840",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/263620/ss_b3a761bd4eda171ed0b24058c85f15ebc7848e5b.1920x1080.jpg?t=1667298840",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/263620/ss_74b1eed6183ffe694baf136913c24fee2f6b2199.1920x1080.jpg?t=1667298840",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/263620/ss_24705c53d18424f69a79a037a7606fdbb50d3da0.1920x1080.jpg?t=1667298840",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/263620/ss_19943df43ba131582c554ae61eda94060adf21b9.1920x1080.jpg?t=1667298840",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/263620/ss_385a1a559e2eb075618dd0210b893870691bf718.1920x1080.jpg?t=1667298840",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/263620/ss_cb4375a490f3017a44d18e40b6eb954abfd48ceb.1920x1080.jpg?t=1667298840",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/263620/ss_c04c6ce6f3fc84a74f17d9d2af277a1c00764e7a.1920x1080.jpg?t=1667298840"
+   ]
   },
   "mlb the show 20": {
    "fetchedAt": "2026-10-24T10:59:54Z",
@@ -27960,6 +28342,37 @@
   "nascar heat 3": {
    "fetchedAt": "2026-10-25T16:18:22Z",
    "miss": true
+  },
+  "natsuki chronicles": {
+   "about": "New dramatic horizontal shoot ’em up that takes place in the same setting as Ginga Force. An immersive story that follows protagonist Natsuki. Discover the story of her past as a rookie pilot up to present day with events that are parallel to those in Ginga Force.",
+   "ageRating": null,
+   "appId": 1175190,
+   "developer": "Qute",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:42:03Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "Japanese",
+    "French",
+    "German"
+   ],
+   "metacritic": null,
+   "name": "Natsuki Chronicles",
+   "publisher": "Rising Star Games",
+   "releaseDate": "2021-02-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1175190/ss_4550cec2fd8c08c201eb64d106d5e8d01d3699e3.1920x1080.jpg?t=1613660617",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1175190/ss_fa64aaccb4e99a9e3953d663a53e9c619f49fc9e.1920x1080.jpg?t=1613660617",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1175190/ss_25a13d85951fb89d6a6a98fa3a7daf12949b48d9.1920x1080.jpg?t=1613660617",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1175190/ss_dcea055f2d16890b10b3b7beb386ba9b95c57bad.1920x1080.jpg?t=1613660617",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1175190/ss_21c70c115d32a8a47dc55e979b0279821e9c0d2b.1920x1080.jpg?t=1613660617"
+   ]
   },
   "natural doctrine": {
    "fetchedAt": "2026-10-28T01:24:38Z",
@@ -29594,6 +30007,51 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/765880/ss_5f310fbbd2bbb786d4c7821b48153bc48519511c.1920x1080.jpg?t=1786607394"
    ]
   },
+  "oceanhorn monster of uncharted seas": {
+   "about": "You wake up and find a letter from your father. He is gone… The only lead is his old notebook and a mysterious necklace. What happened?\n\r\n\n\r\nOceanhorn: Monster of Uncharted Seas combines captivating storytelling, breathtaking 3D visuals and exciting gameplay into one epic action-adventure experience. In the game you explore the islands of Uncharted Seas, a world filled with many dangers, puzzles and secrets.",
+   "ageRating": null,
+   "appId": 339200,
+   "developer": "Cornfox & Brothers Ltd.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:43:11Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Finnish",
+    "Japanese",
+    "Korean",
+    "Portuguese - Brazil",
+    "Russian",
+    "Traditional Chinese",
+    "Turkish"
+   ],
+   "metacritic": 74,
+   "name": "Oceanhorn: Monster of Uncharted Seas",
+   "publisher": "Cornfox & Brothers Ltd.",
+   "releaseDate": "2015-03-17",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/339200/ss_3aec7d29bec57d27f2973ff4d09b53d90b0eeb44.1920x1080.jpg?t=1667398786",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/339200/ss_b0283d2933d603eb3316ff120ed39fca0edc5faf.1920x1080.jpg?t=1667398786",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/339200/ss_5b32afdab098a8117f27a86ca5eca8ff17ee4a94.1920x1080.jpg?t=1667398786",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/339200/ss_839d569906615c1178b3e65721626d7f49da1206.1920x1080.jpg?t=1667398786",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/339200/ss_060e98617294cd79f99e44df49ea1eb4cde822c7.1920x1080.jpg?t=1667398786",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/339200/ss_026c8d6752e2c8cff33a62e7629f7df458210d2c.1920x1080.jpg?t=1667398786",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/339200/ss_64f426a190f266813d468d27fc0816beb700201d.1920x1080.jpg?t=1667398786",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/339200/ss_abe132bf1dd7ab7ea0d814194616d9a81c3b292c.1920x1080.jpg?t=1667398786"
+   ]
+  },
   "octodad dadliest catch": {
    "about": "Octodad: Dadliest Catch is a game about destruction, deception, and fatherhood. The player controls Octodad, a dapper octopus masquerading as a human, as he goes about his life. Octodad's existence is a constant struggle, as he must master mundane tasks with his unwieldy boneless tentacles while simultaneously keeping his cephalopodan nature a secret from his human family.",
    "ageRating": null,
@@ -30586,6 +31044,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238320/ss_4f899a81061c6acedd6a2682ebd380eff8a24788.1920x1080.jpg?t=1666817106"
    ]
   },
+  "outlast and outlast whistleblower": {
+   "fetchedAt": "2026-10-29T19:43:13Z",
+   "miss": true
+  },
   "outward definitive edition": {
    "about": "The Definitive Edition delivers the ultimate experience for Outward players.\n\nExperience the overhauled and complete Outward experience in the Definitive Edition, which natively includes the content of The Soroboreans and The Three Brothers. Beside the new weapons, dungeons and unique mechanics, you can also expect quality of life improvements.",
    "ageRating": null,
@@ -30879,6 +31341,48 @@
   "panda hero remastered": {
    "fetchedAt": "2026-10-22T11:52:42Z",
    "miss": true
+  },
+  "pang adventures": {
+   "about": "The Pang series is a beloved collection of arcade video games from the early 90s. Guide two brothers on a quest around the world to save humankind from a massive alien invasion! \n\nFor the first time in the series, the Pang Brothers come face-to-face with the nefarious Alien Commanders!",
+   "ageRating": null,
+   "appId": 415150,
+   "developer": "Dotemu",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:43:18Z",
+   "genres": [
+    "Action",
+    "Strategy",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "Pang Adventures",
+   "publisher": "Dotemu",
+   "releaseDate": "2016-04-18",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/415150/ss_3fd8f6529e4aee8797c52cc5a67d3ca6cf8127dd.1920x1080.jpg?t=1758874889",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/415150/ss_9bc5a76927b0572ba7f6be3d6201d4cda55f5485.1920x1080.jpg?t=1758874889",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/415150/ss_b04b4ef0179745ea439d82775d3bc50af0f90995.1920x1080.jpg?t=1758874889",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/415150/ss_56dd3551fe55976668be9e69bf6cfec615f70a0f.1920x1080.jpg?t=1758874889",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/415150/ss_c374b253cb8d6def24946cc1dc249400d8466727.1920x1080.jpg?t=1758874889",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/415150/ss_47d7b2742dd04e9cbe3c696d703a885a28b44843.1920x1080.jpg?t=1758874889",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/415150/ss_667633040a975870692c99859ee7e50e16186b9f.1920x1080.jpg?t=1758874889",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/415150/ss_4685f87ecd29e910e9cc5b00d469545991e9cf84.1920x1080.jpg?t=1758874889"
+   ]
   },
   "parappa the rapper 2": {
    "fetchedAt": "2026-10-19T23:43:20Z",
@@ -33574,6 +34078,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1203630/ss_7234b5c5838c91188c5ab9c91be3b322ea8c3df1.1920x1080.jpg?t=1774922378"
    ]
   },
+  "red dead redemption": {
+   "about": "This product includes the digital version of Red Dead Redemption and Undead Nightmare for PC.\n\nFeaturing the complete single-player experiences of both games, including bonus content from the Game of the Year Edition. Red Dead Redemption does not feature multiplayer content.\n\nExperience the story of former outlaw John Marston as he tracks down the last remaining members of the notorious Van der Linde Gang in the PC debut of the critically acclaimed predecessor to Red Dead Redemption 2.",
+   "ageRating": 17,
+   "appId": 2668510,
+   "developer": "Rockstar Games, Double Eleven",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:41:43Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Korean",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Latin America",
+    "Traditional Chinese",
+    "Japanese",
+    "Polish",
+    "Portuguese - Brazil"
+   ],
+   "metacritic": null,
+   "name": "Red Dead Redemption",
+   "publisher": "Rockstar Games",
+   "releaseDate": "2024-10-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2668510/ss_ba2c07c5db3da423ea658a49dd7a1aef30cdd43f.1920x1080.jpg?t=1781132266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2668510/ss_b44b734bf7ffdb7f6c4b5b3d1001f31f8eee01fc.1920x1080.jpg?t=1781132266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2668510/ss_05772b62ff72903c917ed271ee31fb540a334325.1920x1080.jpg?t=1781132266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2668510/ss_6577ffb3592613a13366aa3680d23578dd9099a2.1920x1080.jpg?t=1781132266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2668510/ss_8d45239f5f6ed57bcf7a3b6bf7f5b23fa7d76a57.1920x1080.jpg?t=1781132266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2668510/ss_c9731b7e8e20d342786d47955bb55cecb0d163d7.1920x1080.jpg?t=1781132266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2668510/ss_5dfb3b435eb75fb5546a1f0aeb64b34e7feb4dea.1920x1080.jpg?t=1781132266",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2668510/ss_5504aba34531a564f15b3345ae96464bcdf36298.1920x1080.jpg?t=1781132266"
+   ]
+  },
   "red dead revolver": {
    "fetchedAt": "2026-10-28T08:31:28Z",
    "miss": true
@@ -34043,6 +34590,10 @@
   },
   "resident evil 7 biohazard": {
    "fetchedAt": "2026-10-17T07:00:42Z",
+   "miss": true
+  },
+  "resident evil directors cut": {
+   "fetchedAt": "2026-10-29T19:43:01Z",
    "miss": true
   },
   "resident evil hd remaster": {
@@ -34823,6 +35374,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/391220/ss_08273833fededcf921783ed723787bfb860245ad.1920x1080.jpg?t=1766187095"
    ]
   },
+  "risen 3 titan lords": {
+   "fetchedAt": "2026-10-29T19:42:36Z",
+   "miss": true
+  },
   "rising hell": {
    "about": "Fight your way through hordes of blood-lusting demons and escape hell as you unlock new characters and talents to create chaos in the randomly generated and ever-changing landscape of hell!\n\nHeavy-metal riffs and pixelated madness will accompany you as you fight your way out from the depths of fiery hell, facing the bugs-ridden Beelzebub’s Lair, and other pits of hell with different creatures, bosses, and living traps lurking around.",
    "ageRating": null,
@@ -34894,6 +35449,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2881520/ss_f1fc79dd5f60bb9d2ceec6771487ab33c53a6651.1920x1080.jpg?t=1730979422",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2881520/ss_4902416db5600bcfba4c37ee5eee61eb4b2fefc9.1920x1080.jpg?t=1730979422"
    ]
+  },
+  "road fury": {
+   "fetchedAt": "2026-10-29T19:42:06Z",
+   "miss": true
   },
   "road maintenance simulator": {
    "about": "Experience the everyday life in a German street maintenance service and complete a variety of realistic tasks in the area of road construction and maintenance! For your work you will have unique vehicles and various usable tools at your disposal.\n\nNumerous tasks await you! In Street maintenance service, 30 extensive missions await you in a freely navigable road network.",
@@ -36278,6 +36837,10 @@
   },
   "scott pilgrim vs the world the game": {
    "fetchedAt": "2026-10-16T04:32:18Z",
+   "miss": true
+  },
+  "scourge bringer": {
+   "fetchedAt": "2026-10-29T19:41:46Z",
    "miss": true
   },
   "screamer": {
@@ -40904,6 +41467,52 @@
    "fetchedAt": "2026-10-23T23:13:22Z",
    "miss": true
   },
+  "super bomberman r": {
+   "about": "Super Bomberman R is coming to PC!\n\r\n\n\r\nPlay alone or with a friend in a Story Mode jam-packed with different levels. Re-experience classic Battle Mode,\n\r\nor discover the brand new Grand Prix Mode in which team play is just as important as individual skills!\n\r\nNew characters are joining the fight.",
+   "ageRating": null,
+   "appId": 702700,
+   "developer": "KONAMI",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:42:41Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Dutch",
+    "Japanese",
+    "Korean",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Portuguese - Portugal"
+   ],
+   "metacritic": null,
+   "name": "Super Bomberman R",
+   "publisher": "KONAMI",
+   "releaseDate": "2018-06-12",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/702700/ss_5a611cf39fe1d32d315c8cab4b0aa245ed39c88c.1920x1080.jpg?t=1734545772",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/702700/ss_988fcf2890810c8272c54df0e71e3cce2efe891a.1920x1080.jpg?t=1734545772",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/702700/ss_9eb1eea42cfcad520952f0ee47ae7560bb71d362.1920x1080.jpg?t=1734545772",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/702700/ss_e14a0e065d79ebacfcdbbf4bac47040279610082.1920x1080.jpg?t=1734545772",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/702700/ss_4498bc47563a7ce6b7f94cd3dce92d36f2596422.1920x1080.jpg?t=1734545772",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/702700/ss_90db9189b3a9102d0840bcd7c5787d3bce9fd3c5.1920x1080.jpg?t=1734545772",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/702700/ss_d5ee0a5f439c328280e5dd3e03d1292dae494643.1920x1080.jpg?t=1734545772",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/702700/ss_560477a6da636c7646c066b5f7e5708f1022859d.1920x1080.jpg?t=1734545772"
+   ]
+  },
   "super bomberman r 2": {
    "about": "The latest title of the party battle games series SUPER BOMBERMAN R!\n\r\nWith new adventures and game modes, it has the largest content volume in the series' history!\n\r\n\n\r\nThe game features not only offline battles that can be played with family and friends, but also online battles that connect players from all over the world, as well as a single player mode.",
    "ageRating": null,
@@ -40998,6 +41607,39 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1812560/ss_ba32ffd15d3f5b5a19fa872b13e3cb97c5780b84.1920x1080.jpg?t=1769071965",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1812560/ss_9754a7bcffe05639fdbc0434998421ea457291d5.1920x1080.jpg?t=1769071965",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1812560/ss_f95811519c17810dcce46f2a8e1bcef4eb48805c.1920x1080.jpg?t=1769071965"
+   ]
+  },
+  "super cyborg": {
+   "about": "Super Cyborg is an old school non-stop hardcore run'n'gun action game! You are an elite battle cyborg who is sent in to investigate a series of anomalies on a mysterious island. The merciless and powerful alien known only as the 'Xirxul life form' has been awakened by unwitting scientists and now: all humanity is in danger! Shoot, run and jump through 7 levels filled with endless hordes of biological terrors and some of the fiercest boss fights in any title.",
+   "ageRating": null,
+   "appId": 341550,
+   "developer": "Artur Games, Music by Darkman007",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:43:23Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Super Cyborg",
+   "publisher": "Artur Games",
+   "releaseDate": "2015-07-08",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/341550/ss_94935a0ef6b1b8070f3e20cb3cd6d0ebd2af4803.1920x1080.jpg?t=1572862070",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/341550/ss_9dee2eeaab1df7594c7257447d0d2f051ba73079.1920x1080.jpg?t=1572862070",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/341550/ss_1d3ffa0f510c250db38d1f830677b63c8afe9465.1920x1080.jpg?t=1572862070",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/341550/ss_760167d4ac7f0f1b3872a8ab5eb6ed699633ae13.1920x1080.jpg?t=1572862070",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/341550/ss_2d589f9852af81bae20be47e3e2f304c58722fe3.1920x1080.jpg?t=1572862070",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/341550/ss_0caabb6b05352366032fdb543cbfe860986ef1ce.1920x1080.jpg?t=1572862070"
    ]
   },
   "super hyperactive ninja": {
@@ -42811,6 +43453,10 @@
    "fetchedAt": "2026-10-24T11:01:31Z",
    "miss": true
   },
+  "teenage mutant ninja turtles mutants in manhattan": {
+   "fetchedAt": "2026-10-29T19:41:48Z",
+   "miss": true
+  },
   "teenage mutant ninja turtles mutants unleashed": {
    "about": "Mutants and humans have been kickin’ it together in New York City. But then, Leonardo, Raphael, Michelangelo, and Donatello discovered several shipments of mutagenic ooze were scattered, contaminating areas of the City. \n\nIt didn’t seem so bad until they realised new mutants, a.k.a. 'Mewbies', spawned from this mess. Not all these Mewbies are evil, but some have lost their way, and the citizens don't feel safe anymore.",
    "ageRating": null,
@@ -43592,6 +44238,47 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2958970/ss_f8511aab2e0bfe6eec7db765c9949fe8b154177f.1920x1080.jpg?t=1773067625"
    ]
   },
+  "this war of mine the little ones": {
+   "about": "This War of Mine: The Little Ones DLC \n10% from each purchase goes to War Child, a charity helping children in conflict-affected areas \n\nThis War of Mine: The Little Ones explores the hardships of wartime survival as seen from an entirely new perspective―that of a child. This DLC puts you in charge of a group of adults and children stuck in a besieged city, struggling with basic necessities.",
+   "ageRating": null,
+   "appId": 481090,
+   "developer": "11 bit studios",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:42:46Z",
+   "genres": [
+    "Adventure",
+    "Simulation",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Polish",
+    "Russian",
+    "Italian",
+    "Portuguese - Brazil",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Turkish",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "This War of Mine: The Little Ones",
+   "publisher": "11 bit studios",
+   "releaseDate": "2016-06-01",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/481090/ss_38b9be5a14a132de7a79f8774e04fcff79ee5db3.1920x1080.jpg?t=1733932125",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/481090/ss_e8335cd0ac8303ec34aeb8eb917ba8f920a8179a.1920x1080.jpg?t=1733932125",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/481090/ss_f5c8a39acb250a36573fd42dccd9160ee93aaeb1.1920x1080.jpg?t=1733932125",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/481090/ss_0f12bf54728e5d26ffa797aaac6486a365641f25.1920x1080.jpg?t=1733932125",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/481090/ss_7040cac1feccabb6f4fad67eeb48a44db6cd1f4c.1920x1080.jpg?t=1733932125"
+   ]
+  },
   "thomas was alone": {
    "about": "Thomas Was Alone. And then, well, he Wasn't.\n\nThomas Was Alone is an indie minimalist 2D platformer about friendship and jumping and floating and anti-gravity. Starting with Thomas, become acquainted with a group of rectangles-slash-sentient-AIs, learn their individual abilities, and navigate them through 120 levels of obstacles.\n\nListen to a critically acclaimed score by David Housden. Jump over blocks and barriers meticulously placed by Mike Bithell.",
    "ageRating": null,
@@ -43792,8 +44479,16 @@
    "fetchedAt": "2026-10-29T05:48:18Z",
    "miss": true
   },
+  "timesplitters": {
+   "fetchedAt": "2026-10-29T19:42:48Z",
+   "miss": true
+  },
   "tintin reporter cigars of the pharaoh": {
    "fetchedAt": "2026-10-19T23:41:50Z",
+   "miss": true
+  },
+  "tiny troopers joint ops": {
+   "fetchedAt": "2026-10-29T19:43:26Z",
    "miss": true
   },
   "titan attacks": {
@@ -46278,6 +46973,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295970/ss_ff28fe02f96d864942fea2fa3df37d10f9fb2062.1920x1080.jpg?t=1722245303",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295970/ss_1105e9c7cbbca9d95709d289b59a3e929b4d33d5.1920x1080.jpg?t=1722245303",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295970/ss_d0b856cfba626edbcf8476d9c9afcaff70c3baaa.1920x1080.jpg?t=1722245303"
+   ]
+  },
+  "ufouria the saga 2": {
+   "about": "Upyo! How's everyone been?\nSUNSOFT's Ufouria is back!- An authentic evolution of the original \"Ufouria\"!\n\nRampage through the fluffy feltwork arts-and-crafts recreation of the world of Ufouria, with your trusty crew from the original game in this exploration-based action side-scroller.",
+   "ageRating": null,
+   "appId": 2685090,
+   "developer": "SUNSOFT",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-29T19:43:31Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "Japanese",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Ufouria: The Saga 2",
+   "publisher": "SUNSOFT",
+   "releaseDate": "2024-02-28",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2685090/ss_4bc76503be8810a8de846d806940c2ae17f70ec0.1920x1080.jpg?t=1724906422",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2685090/ss_4c8500890a148ac73c472c4d99eef08e8417fa13.1920x1080.jpg?t=1724906422",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2685090/ss_419ea5813fdfff407b608a43e24247913ed92307.1920x1080.jpg?t=1724906422",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2685090/ss_c803c4a7d324066f02693916d1948cba4edc9936.1920x1080.jpg?t=1724906422",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2685090/ss_4b5a9cf682cc2f8bb2f870ac0aa1c80a1717cecd.1920x1080.jpg?t=1724906422",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2685090/ss_79b517eec12b36da0565dbab53c962db6f451b1e.1920x1080.jpg?t=1724906422",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2685090/ss_769518a3a835df63a3b19d2a73498a71f5803b19.1920x1080.jpg?t=1724906422",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2685090/ss_30ac36887976c3de3c494818e4d138088deccc3e.1920x1080.jpg?t=1724906422"
    ]
   },
   "ultimate chicken horse": {
@@ -50368,8 +51101,12 @@
   "zombieland double tap road trip": {
    "fetchedAt": "2026-10-26T04:48:17Z",
    "miss": true
+  },
+  "zone of the enders the 2nd runner m rs": {
+   "fetchedAt": "2026-10-29T19:42:51Z",
+   "miss": true
   }
  },
- "updatedAt": "2026-10-29T13:02:32Z",
+ "updatedAt": "2026-10-29T19:43:33Z",
  "version": 1
 }
