@@ -1,7 +1,7 @@
 {
   "audit": {
-    "auditedAt": "2026-10-29T19:44:31Z",
-    "droppedDead": 10861,
+    "auditedAt": "2026-10-30T00:02:14Z",
+    "droppedDead": 11443,
     "droppedLinks": [
       "lapy20016-homebrew https://pkg-zone.com/download/ps4/LAPY20016/latest",
       "ppsa01615-homebrew https://pkg-zone.com/download/ps4/PPSA01615/latest",
@@ -11,6 +11,8 @@
       "p-t-ps4 https://www.mediafire.com/file/nldop5h8o9jqpxo/hako-hff.v1.00-07208.rar",
       "p-t-ps4 https://www.mediafire.com/file/ms11e6c515subgs/hako-duplex-dead.cells.ps4.rar",
       "p-t-ps4 https://www.mediafire.com/file/6jpr83587pwgt7w/duplex-indivisible.ps4-hako.rar",
+      "p-t-ps4 https://www.mediafire.com/file/xjdpmny7bbj7cg8/hako-duplex-horse.club.ps4.rar",
+      "p-t-ps4 https://www.mediafire.com/file/wfckjzxyl3nabzb/hako-duplex-marsupilami.hoobadventure.ps4.rar",
       "p-t-ps4 https://filecrypt.cc/Container/8309D1E0FC.html",
       "p-t-ps4 https://filecrypt.cc/Container/E7B502B7F8.html",
       "p-t-ps4 https://downloadgameps3.net/archives/25780",
@@ -31,6 +33,7 @@
       "p-t-ps4 https://www.mediafire.com/file/am4gm08b9s0ajj2/[Downloadgameps3.com]-Hardcore_Mecha.pkg/file",
       "p-t-ps4 https://1fichier.com/?0988m54i0644v506wtzf",
       "p-t-ps4 https://filecrypt.cc/Container/0E5494BD4D.html",
+      "p-t-ps4 https://www.mediafire.com/file/snbgvgutmf0c2f5/EP2148-CUSA01243_00-A0100-V0103-Bodinka17-[DLPSGAME.COM].pkg/file",
       "p-t-ps4 https://mega.nz/folder/w8hWwBBa#Jl7-y4ynozmkxH3WSOo0eA",
       "p-t-ps4 https://filecrypt.cc/Container/592D913344.html",
       "p-t-ps4 https://downloadgameps3.net/archives/17902",
@@ -87,7 +90,6 @@
       "p-t-ps4 https://1fichier.com/?48oc53qomvhyps7sroc4",
       "p-t-ps4 https://filecrypt.cc/Container/04FF7C4F4B.html",
       "p-t-ps4 https://downloadgameps3.net/archives/23984",
-      "p-t-ps4 https://filecrypt.cc/Container/B6C4B77E33.html",
       "p-t-ps4 https://1fichier.com/?8a8rmmxdxbsjaes0s0ng&af=3662447",
       "p-t-ps4 https://filecrypt.cc/Container/EE52C6D3B4.html",
       "p-t-ps4 https://filecrypt.cc/Container/4EBD0D2751.html",
@@ -100,24 +102,22 @@
       "p-t-ps4 https://filecrypt.cc/Container/B5CA83292C.html",
       "p-t-ps4 https://filecrypt.cc/Container/73F7AF83C6.html",
       "p-t-ps4 https://filecrypt.cc/Container/DCAF278C5A.html",
-      "p-t-ps4 https://downloadgameps3.net/archives/23034",
-      "p-t-ps4 https://filecrypt.cc/Container/0C394169C0.html",
-      "p-t-ps4 https://akirabox.com/0rpmvpdDDzRg/file"
+      "p-t-ps4 https://downloadgameps3.net/archives/23034"
     ],
-    "flaky": 5087,
-    "ok": 10755,
+    "flaky": 4344,
+    "ok": 10916,
     "page": 0,
-    "results": 28335,
-    "unaudited": 1
+    "results": 28336,
+    "unaudited": 3
   },
   "backports": 38,
-  "bytes": 12527100,
+  "bytes": 12160536,
   "changed": true,
   "droppedGames": {
-    "audit_dead": 1392
+    "audit_dead": 1462
   },
   "droppedReleases": {
-    "audit_dead": 10861,
+    "audit_dead": 11443,
     "duplicate_url": 2873
   },
   "droppedSamples": [
@@ -129,6 +129,8 @@
     "dlpsgame: audit_dead: p-t-ps4 https://www.mediafire.com/file/nldop5h8o9jqpxo/hako-hff.v1.00-07208.rar",
     "dlpsgame: audit_dead: p-t-ps4 https://www.mediafire.com/file/ms11e6c515subgs/hako-duplex-dead.cells.ps4.rar",
     "dlpsgame: audit_dead: p-t-ps4 https://www.mediafire.com/file/6jpr83587pwgt7w/duplex-indivisible.ps4-hako.rar",
+    "dlpsgame: audit_dead: p-t-ps4 https://www.mediafire.com/file/xjdpmny7bbj7cg8/hako-duplex-horse.club.ps4.rar",
+    "dlpsgame: audit_dead: p-t-ps4 https://www.mediafire.com/file/wfckjzxyl3nabzb/hako-duplex-marsupilami.hoobadventure.ps4.rar",
     "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/8309D1E0FC.html",
     "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/E7B502B7F8.html",
     "dlpsgame: audit_dead: p-t-ps4 https://downloadgameps3.net/archives/25780",
@@ -149,6 +151,7 @@
     "dlpsgame: audit_dead: p-t-ps4 https://www.mediafire.com/file/am4gm08b9s0ajj2/[Downloadgameps3.com]-Hardcore_Mecha.pkg/file",
     "dlpsgame: audit_dead: p-t-ps4 https://1fichier.com/?0988m54i0644v506wtzf",
     "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/0E5494BD4D.html",
+    "dlpsgame: audit_dead: p-t-ps4 https://www.mediafire.com/file/snbgvgutmf0c2f5/EP2148-CUSA01243_00-A0100-V0103-Bodinka17-[DLPSGAME.COM].pkg/file",
     "dlpsgame: audit_dead: p-t-ps4 https://mega.nz/folder/w8hWwBBa#Jl7-y4ynozmkxH3WSOo0eA",
     "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/592D913344.html",
     "dlpsgame: audit_dead: p-t-ps4 https://downloadgameps3.net/archives/17902",
@@ -205,7 +208,6 @@
     "dlpsgame: audit_dead: p-t-ps4 https://1fichier.com/?48oc53qomvhyps7sroc4",
     "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/04FF7C4F4B.html",
     "dlpsgame: audit_dead: p-t-ps4 https://downloadgameps3.net/archives/23984",
-    "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/B6C4B77E33.html",
     "dlpsgame: audit_dead: p-t-ps4 https://1fichier.com/?8a8rmmxdxbsjaes0s0ng&af=3662447",
     "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/EE52C6D3B4.html",
     "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/4EBD0D2751.html",
@@ -218,11 +220,9 @@
     "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/B5CA83292C.html",
     "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/73F7AF83C6.html",
     "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/DCAF278C5A.html",
-    "dlpsgame: audit_dead: p-t-ps4 https://downloadgameps3.net/archives/23034",
-    "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/0C394169C0.html",
-    "dlpsgame: audit_dead: p-t-ps4 https://akirabox.com/0rpmvpdDDzRg/file"
+    "dlpsgame: audit_dead: p-t-ps4 https://downloadgameps3.net/archives/23034"
   ],
-  "elapsed": 398.9,
+  "elapsed": 392.5,
   "enrichment": {
     "psStoreCache": 3597,
     "psstore": {
@@ -233,71 +233,71 @@
       "skipped": 3581
     },
     "seeds": {
-      "cheats": 1085,
-      "conceptIds": 7027,
-      "covers": 436,
-      "games": 16732,
+      "cheats": 1083,
+      "conceptIds": 6974,
+      "covers": 435,
+      "games": 16662,
       "namesResolved": 0,
       "regions": 2702,
       "titleIdsFilled": 1908
     },
     "steam": {
       "errors": 0,
-      "hits": 17,
-      "looked": 31,
-      "misses": 14,
-      "skipped": 1712,
+      "hits": 19,
+      "looked": 29,
+      "misses": 10,
+      "skipped": 1743,
       "stoppedBy": 0
     },
-    "steamCache": 1747
+    "steamCache": 1776
   },
   "formats": {
     "7z": 92,
-    "FFPFSC": 229,
+    "FFPFSC": 227,
     "FFPKG": 1,
-    "PAGE": 10190,
+    "PAGE": 9625,
     "PKG": 3812,
-    "RAR": 337,
+    "RAR": 324,
     "ZIP": 483,
     "exFAT": 699
   },
-  "games": 7844,
-  "generatedAt": "2026-10-30T00:00:03Z",
+  "games": 7774,
+  "generatedAt": "2026-10-30T05:46:44Z",
   "genres": {
-    "Action": 735,
-    "Adventure": 507,
-    "Family": 131,
+    "Action": 733,
+    "Adventure": 504,
+    "Family": 125,
     "Fighting": 26,
     "Horror": 52,
-    "Indie": 258,
+    "Indie": 254,
     "Music": 2,
     "Puzzle": 18,
-    "RPG": 224,
+    "RPG": 222,
     "Racing": 80,
     "Shooter": 40,
-    "Simulation": 123,
-    "Sports": 61,
-    "Strategy": 69
+    "Simulation": 120,
+    "Sports": 60,
+    "Strategy": 68
   },
   "httpFailures": 4,
-  "httpRequests": 1404,
+  "httpRequests": 1405,
   "kinds": {
     "app": 179,
     "backport": 32,
-    "dlc": 782,
-    "game": 12256,
-    "update": 2594
+    "dlc": 709,
+    "game": 12043,
+    "update": 2300
   },
   "mergedGroups": 1451,
   "mode": "online",
-  "nodes": 399240,
+  "nodes": 387352,
   "platforms": {
     "HOMEBREW": 174,
-    "PS4": 6396,
-    "PS5": 1274
+    "PS4": 6327,
+    "PS5": 1273
   },
-  "releases": 15843,
-  "revision": 67,
+  "releases": 15263,
+  "revision": 68,
   "sources": [
     {
       "draftGames": 1611,
@@ -314,44 +314,44 @@
     {
       "draftGames": 7781,
       "draftReleases": 19839,
-      "dropped": 10733,
-      "elapsed": 216.2,
+      "dropped": 11297,
+      "elapsed": 233.8,
       "error": "",
-      "games": 6986,
+      "games": 6932,
       "id": "dlpsgame",
       "name": "DLPSGAME",
-      "releases": 17389,
+      "releases": 17268,
       "status": "live"
     },
     {
-      "draftGames": 3119,
-      "draftReleases": 3235,
+      "draftGames": 3121,
+      "draftReleases": 3237,
       "dropped": 56,
-      "elapsed": 268.3,
+      "elapsed": 262.5,
       "error": "",
-      "games": 3119,
+      "games": 3121,
       "id": "archive_org",
       "name": "Archive.org",
-      "releases": 3179,
+      "releases": 3181,
       "status": "live"
     },
     {
       "draftGames": 2517,
       "draftReleases": 2517,
-      "dropped": 2162,
-      "elapsed": 91.3,
+      "dropped": 2163,
+      "elapsed": 76.3,
       "error": "",
-      "games": 2480,
+      "games": 2479,
       "id": "superpsx",
       "name": "SuperPSX",
-      "releases": 362,
+      "releases": 361,
       "status": "live"
     },
     {
       "draftGames": 4,
       "draftReleases": 4,
       "dropped": 0,
-      "elapsed": 3.1,
+      "elapsed": 3.2,
       "error": "",
       "games": 4,
       "id": "romsfun",
@@ -363,7 +363,7 @@
       "draftGames": 13,
       "draftReleases": 13,
       "dropped": 6,
-      "elapsed": 9.3,
+      "elapsed": 9.2,
       "error": "",
       "games": 7,
       "id": "romspure",
@@ -386,20 +386,20 @@
     {
       "draftGames": 1127,
       "draftReleases": 1130,
-      "dropped": 572,
-      "elapsed": 127.2,
+      "dropped": 587,
+      "elapsed": 123.6,
       "error": "",
-      "games": 559,
+      "games": 544,
       "id": "espacypkg",
       "name": "Espacypkg",
-      "releases": 558,
+      "releases": 543,
       "status": "live"
     },
     {
       "draftGames": 100,
       "draftReleases": 123,
       "dropped": 9,
-      "elapsed": 4.1,
+      "elapsed": 3.9,
       "error": "",
       "games": 100,
       "id": "pkggames",
@@ -411,12 +411,12 @@
       "draftGames": 176,
       "draftReleases": 176,
       "dropped": 7,
-      "elapsed": 179.2,
+      "elapsed": 179.1,
       "error": "",
-      "games": 171,
+      "games": 172,
       "id": "pspkg",
       "name": "pspkg.com",
-      "releases": 171,
+      "releases": 172,
       "status": "live"
     },
     {
@@ -432,10 +432,10 @@
       "status": "live"
     }
   ],
-  "verifiedReleases": 4806,
-  "withCheats": 500,
+  "verifiedReleases": 4844,
+  "withCheats": 498,
   "withMetacritic": 405,
-  "withPsStoreUrl": 3124,
-  "withScreenshots": 1399,
-  "withTitleIds": 3141
+  "withPsStoreUrl": 3071,
+  "withScreenshots": 1393,
+  "withTitleIds": 3088
 }

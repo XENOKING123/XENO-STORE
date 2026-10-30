@@ -222,6 +222,72 @@
    "fetchedAt": "2026-10-26T20:00:37Z",
    "miss": true
   },
+  "41 hours": {
+   "about": "41 Hours is a first-person shooter dramatic game that follows the narrative of Ethan, a workaholic scientist in search of his long-lost wife. The story is intriguing and it takes several surprising turns as it develops over 11 Chapters and 20 hours of gameplay.",
+   "ageRating": null,
+   "appId": 1358020,
+   "developer": "Texelworks",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-30T05:46:54Z",
+   "genres": [
+    "Action"
+   ],
+   "languages": [
+    "English",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "41 Hours",
+   "publisher": "ValkyrieInitiative",
+   "releaseDate": "2021-05-21",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1358020/ss_9c02ddd0bec53664f0ce2c9ff786a7cb8d59b62f.1920x1080.jpg?t=1649862702",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1358020/ss_d31d9b7ffb0173fdf41e5be8bea7e6c2388b33ad.1920x1080.jpg?t=1649862702",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1358020/ss_0c2b314007fc1721e3d216ec2c304728e610862d.1920x1080.jpg?t=1649862702",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1358020/ss_ebd797964182ae4481bf66f39a8513ea6338edb9.1920x1080.jpg?t=1649862702",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1358020/ss_a016b15edf61805752ccc067926191339f4d875e.1920x1080.jpg?t=1649862702",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1358020/ss_94cf73eea32126aec29080c6699d7f8461066436.1920x1080.jpg?t=1649862702",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1358020/ss_08930dae77dff34aacc105f5f1dae395ea1ff80c.1920x1080.jpg?t=1649862702",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1358020/ss_4ea97a5b4d08540edc4889200ddb41723011f4f0.1920x1080.jpg?t=1649862702"
+   ]
+  },
+  "428 shibuya scramble": {
+   "about": "A kidnapping on the streets of Shibuya brings together a hot-blooded detective, hard-hitting journalist, former gang leader, the head researcher of a big pharma manufacturer and a part-timer stuck in cat costume for a series of events each more unexpected and outrageous than the last.",
+   "ageRating": null,
+   "appId": 648580,
+   "developer": "Spike Chunsoft Co., Ltd., Abstraction Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:46:59Z",
+   "genres": [
+    "Adventure"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "428: Shibuya Scramble",
+   "publisher": "Spike Chunsoft Co., Ltd.",
+   "releaseDate": "2018-09-04",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/648580/ss_4113b43614179ab5d446153097c065fde4be2710.1920x1080.jpg?t=1715700496",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/648580/ss_8c70eb79516c72a18310b5432fd39beecb07e134.1920x1080.jpg?t=1715700496",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/648580/ss_17e6b6920479579c06874bc8f83ece33940a6616.1920x1080.jpg?t=1715700496",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/648580/ss_2d9c2ccfae82933321499c4ae6578f86b8a84d0f.1920x1080.jpg?t=1715700496",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/648580/ss_6cf3ebea2f0b4b35bc5ff4f4f55400ac7e57414b.1920x1080.jpg?t=1715700496",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/648580/ss_af91aea6cc919c2b289f0cec15a1be64652b9f23.1920x1080.jpg?t=1715700496",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/648580/ss_a5a5e40ed8a8d9b1bde757f1dae3acac92eefe88.1920x1080.jpg?t=1715700496"
+   ]
+  },
+  "5 star wrestling regenesis": {
+   "fetchedAt": "2026-10-30T05:47:01Z",
+   "miss": true
+  },
   "63 days": {
    "about": "I'm part of the first generation born in a free Poland, after 123 years of foreign occupation. I grew up believing our freedom was safe, but the outbreak of World War II shattered that hope. We're angry and tired, but also determined. We're itching to do something, to reclaim our normal lives. My companions and I feel we have only one choice: to get revenge and win back independence for our city and nation, or die trying.",
    "ageRating": null,
@@ -326,6 +392,10 @@
    "fetchedAt": "2026-10-18T11:05:26Z",
    "miss": true
   },
+  "8 to glory the official game of the pbr": {
+   "fetchedAt": "2026-10-30T05:47:04Z",
+   "miss": true
+  },
   "9 years of shadows": {
    "about": "9 Years of Shadows is a side-scrolling Metroidvania by Halberd Studios. Travel alongside Europa, a brave warrior determined to enter the mechanical giant Talos and stop the corruption within before it swallows the world in darkness. Battle through tainted creatures, meet charismatic musicians and uncover the truth behind the curse that robbed the land of all color.",
    "ageRating": null,
@@ -369,9 +439,124 @@
    "fetchedAt": "2026-10-18T11:05:33Z",
    "miss": true
   },
+  "aaero": {
+   "about": "Trace ribbons of light to release the energy in the music as you speed through stylised alien worlds. Battle strange enemies and fight epic boss battles all driven by an incredible licensed soundtrack.\n\nIndependent micro-studio ‘Mad Fellows’ brings you a unique and innovative game featuring music from Noisia, Flux Pavilion, Katy B, The Prototypes, Neosignal and many more.\n\nN.B. A controller with dual analogue sticks is required to play Aaero. (e.g. Xbox 360/One, PlayStation DualShock etc.)",
+   "ageRating": null,
+   "appId": 499890,
+   "developer": "Mad Fellows",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:47:24Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "Aaero",
+   "publisher": "Wired Productions",
+   "releaseDate": "2017-04-11",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499890/ss_08e5fdcca8cb23fbb8c9bbfe19f891326e45aaa9.1920x1080.jpg?t=1773239955",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499890/ss_3298b415436946603cb2f20e5954c88b1942fb73.1920x1080.jpg?t=1773239955",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499890/ss_b3e3f9852681925a5b81859356ae738b8976bd44.1920x1080.jpg?t=1773239955",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499890/ss_f6f765265dc6ea5db802dab5e6fcc1a467820d0a.1920x1080.jpg?t=1773239955",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499890/ss_31871d55084ef0a883924114d7d50a5c813fce78.1920x1080.jpg?t=1773239955",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499890/ss_2ef10fe5339d01de4339d4228ff62d84889b01e7.1920x1080.jpg?t=1773239955",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499890/ss_a1ad1ac8ff4f486f795122ab0ecee72168ec34ef.1920x1080.jpg?t=1773239955",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/499890/ss_a8e4ce1020d9cc82dde3d1d92a1795278b752684.1920x1080.jpg?t=1773239955"
+   ]
+  },
+  "aarus awakening": {
+   "about": "Aaru's Awakening is a hand-drawn, fast-paced 2D action platformer. The game puts players in charge of Aaru, a mythical creature with two unique abilities teleportation and charging. He uses these abilities as he travels through the dangerous world of Lumenox to defeat an evil entity. These two abilities are at the heart of every level design throughout the game, to make for a challenging and fluid experience.",
+   "ageRating": null,
+   "appId": 294060,
+   "developer": "Lumenox ehf",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:47:29Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Danish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Spanish - Spain"
+   ],
+   "metacritic": null,
+   "name": "Aaru's Awakening",
+   "publisher": "Lumenox ehf",
+   "releaseDate": "2015-02-23",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/294060/ss_e0018c5711089edc2a05daf12799f3f482f19f84.1920x1080.jpg?t=1447361265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/294060/ss_13f8b9315cb70e95cf1ed336f30490a827f6ff6c.1920x1080.jpg?t=1447361265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/294060/ss_94cece3916a4fe043697c7a2ae6a5f2560ca506a.1920x1080.jpg?t=1447361265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/294060/ss_eb69b25f519114ec3b4f4e8d428c9f3ef5fd9eab.1920x1080.jpg?t=1447361265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/294060/ss_f8b149bc1231e797e1ba7a43b50c63f0cd05a3fb.1920x1080.jpg?t=1447361265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/294060/ss_a3d31ec9cb2a0aefb42c4dfb259c444b75bee2f0.1920x1080.jpg?t=1447361265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/294060/ss_d146bd81bf9c3d0688fa9de9b883a83629199443.1920x1080.jpg?t=1447361265",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/294060/ss_1d09221a27078d9c6f2693209072e1e76bd4b9cc.1920x1080.jpg?t=1447361265"
+   ]
+  },
   "abandoned realtime trailers demo": {
    "fetchedAt": "2026-10-26T20:00:50Z",
    "miss": true
+  },
+  "abo khashem": {
+   "about": "Abo Khashem is a comedic role playing game, where after awaking in the middle of nowhere with amnesia, you try to piece together what happened to you. With your trusty lizard companion, the two of you must uncover a massive conspiracy involving a powerful monolith.",
+   "ageRating": null,
+   "appId": 662840,
+   "developer": "Moving Dimensions",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:47:34Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "Arabic"
+   ],
+   "metacritic": null,
+   "name": "Abo Khashem",
+   "publisher": "Moving Dimensions",
+   "releaseDate": "2018-02-22",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/662840/ss_4ca40f4ccdd517a8ecab470fd31b463bac00d239.1920x1080.jpg?t=1522447132",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/662840/ss_ad56ba7bab5554c2b751465f1d445a35e78850d0.1920x1080.jpg?t=1522447132",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/662840/ss_b60fcc6544022bbdc3bb3130b32e6b34a6be6756.1920x1080.jpg?t=1522447132",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/662840/ss_6320f687638ef8d8a348601e38aad0be25f82bda.1920x1080.jpg?t=1522447132",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/662840/ss_494330c53a7b6d68c3979443647ed4eb8be16f66.1920x1080.jpg?t=1522447132",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/662840/ss_40300ee460c7b149606eed57fd79d874af0202f4.1920x1080.jpg?t=1522447132",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/662840/ss_1137f33051749959264dcba9c360835a7de9dd3e.1920x1080.jpg?t=1522447132",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/662840/ss_23721fe1696fd02a2d09e2a17ad3c21fa623ecfa.1920x1080.jpg?t=1522447132"
+   ]
   },
   "absolum": {
    "about": "Crafted with passion by the dream team that redefined side-scrolling beat 'em ups, Absolum mixes top-of-the-class combat action with modern roguelite elements, bringing all the vibes of the fantasy arcade hits of the past into an immersive adventure set in the original world of Talamh.\n\nTalamh has been shattered by a magical cataclysm caused by ambitious wizards, leaving magic mistrusted by the common folk.",
@@ -457,6 +642,46 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/320140/ss_64a181e5339061c736566c64fd7028ac5e869bb5.1920x1080.jpg?t=1778227928"
    ]
   },
+  "absolute tactics daughters of mercy": {
+   "about": "Absolute Tactics: Daughters of Mercy is a vibrant, turn-based RPG adventure that puts a modern spin on classic tactics-style games. Featuring a diverse cast of characters, enormous boss monsters, and a dark world embroiled in war, Absolute Tactics: Daughters of Mercy plunges players right into the action as our hero Huxley and his dog Max build their team of friends and allies to defend their home against a mysterious invading army.",
+   "ageRating": null,
+   "appId": 1636660,
+   "developer": "Curious Fate",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:47:39Z",
+   "genres": [
+    "Action",
+    "Strategy"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Japanese",
+    "Korean",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Latin America"
+   ],
+   "metacritic": null,
+   "name": "Absolute Tactics: Daughters of Mercy",
+   "publisher": "Akupara Games",
+   "releaseDate": "2022-09-15",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1636660/ss_f1bf16fca90e6963c6e8f76749045613c3af880d.1920x1080.jpg?t=1791217389",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1636660/ss_946c3ff3bb168c6b0de32c82bccbd5672cb75822.1920x1080.jpg?t=1791217389",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1636660/ss_e58aa2e120fd1cc9eb9f8746939561bf430bf0d6.1920x1080.jpg?t=1791217389",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1636660/ss_6dddbf7073c3e655561c0df9517796a0160db55a.1920x1080.jpg?t=1791217389",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1636660/ss_44551ef805d0b03eb069567bfaa89e820fdab605.1920x1080.jpg?t=1791217389",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1636660/ss_e2a96cb2edc9e737f8d390f164fb9c7fa5850178.1920x1080.jpg?t=1791217389",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1636660/ss_1ebb994706a654723dbf9b83086e702d643b4ca1.1920x1080.jpg?t=1791217389",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1636660/ss_b266badfdd99a2a98582b67c0355fcc6640bfee8.1920x1080.jpg?t=1791217389"
+   ]
+  },
   "abzu": {
    "about": "From the art director of Journey® and Flower®, ABZÛ is a beautiful underwater adventure that evokes the dream of diving.\n\nImmerse yourself in a vibrant ocean world full of mystery and bursting with color and life. Perform fluid acrobatics as the Diver using graceful swimming controls. Discover hundreds of unique species based on real creatures and form a powerful connection with the abundant sea life.",
    "ageRating": null,
@@ -497,6 +722,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/384190/ss_b5138022d32b69aa5157630dee665433934017d7.1920x1080.jpg?t=1786125758"
    ]
   },
+  "aca neogeo blues journey": {
+   "fetchedAt": "2026-10-30T05:47:19Z",
+   "miss": true
+  },
   "accel world vs sword art online": {
    "about": "Svart Alfheim and the Accelerated World have begun to merge. In the midst of the chaos, Yui has gone missing. Kirito must challenge the Seven Kings of pure color from the Accelerated World to gain access to her location. This version of the game includes the DLC \"Castaway From Another World\".\n\r\n\n\r\nRECRUIT YOUR FAVOURITE CHARACTERS among a large roster from the anime and novel series.",
    "ageRating": null,
@@ -535,6 +764,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/607880/ss_6c4f73d419a514f308f3650240a85c7dd010bd0a.1920x1080.jpg?t=1750782333",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/607880/ss_2a6451f6f2431363050528e2dd2877872c122755.1920x1080.jpg?t=1750782333"
    ]
+  },
+  "ace combat 5 the unsung war": {
+   "fetchedAt": "2026-10-30T05:47:41Z",
+   "miss": true
   },
   "ace combat 8 wings of theve": {
    "about": "Step into the cockpit and take flight as an elite pilot across stunning skies. Enter intense dogfights, eliminate threats, and rise through gripping missions to earn your wings in this game developed by PROJECT ACES, the acclaimed team behind the franchise.\n\nCampaign Mode showcases stunning visuals with dynamic multi-layered cloudscapes that capture the majesty of living skies. Feel the rush of fast-paced arcade-style gameplay while deploying powerful weapons to dominate the battlefield.",
@@ -618,6 +851,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/859350/ss_272bd3c11a742baa8e6afa0b252a8ae72aeb6874.1920x1080.jpg?t=1791459442",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/859350/ss_b040d30ce455bc2c93455d8b2761bc9c3a109dc8.1920x1080.jpg?t=1791459442",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/859350/ss_bb9666b6ec7e4e0846812c26d695ec378fc04f91.1920x1080.jpg?t=1791459442"
+   ]
+  },
+  "achtung cthulhu tactics": {
+   "about": "Challenge the horrifying reign of Nazi terror and battle an immortal evil in Achtung! Cthulhu Tactics; a turn-based tactical strategy game set in the award-winning Achtung! Cthulhu universe.\n\nIn this raging Secret War across Europe, an untold darkness spreads deep beneath the Earth and throughout the Forest of Fear.",
+   "ageRating": null,
+   "appId": 874460,
+   "developer": "Auroch Digital",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:47:46Z",
+   "genres": [
+    "Action",
+    "RPG",
+    "Strategy",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain"
+   ],
+   "metacritic": 56,
+   "name": "Achtung! Cthulhu Tactics",
+   "publisher": "Ripstone",
+   "releaseDate": "2018-10-04",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/874460/ss_f5cb6f10b669330f12ae51c71853be3b8456d1cf.1920x1080.jpg?t=1668080083",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/874460/ss_dad341deda9c9773005af5433271c19fe447c9da.1920x1080.jpg?t=1668080083",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/874460/ss_854cc38c6071ace23c3b539079a1bf69e7b187af.1920x1080.jpg?t=1668080083",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/874460/ss_4a0fce55b6b4c82a984603908fa5e2e27ee10f1c.1920x1080.jpg?t=1668080083",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/874460/ss_e8606fcfd64c477365feca8328a0bc72fa61e1f5.1920x1080.jpg?t=1668080083",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/874460/ss_9fee95ea237af66d895d083200685fa02fee33c0.1920x1080.jpg?t=1668080083",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/874460/ss_0bc25a68e4c57f1a313d6c17d653918d0beef366.1920x1080.jpg?t=1668080083",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/874460/ss_84d12148ea729d825be8099857e8a8c018102861.1920x1080.jpg?t=1668080083"
    ]
   },
   "adventure academia the fractured continent": {
@@ -742,6 +1013,58 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331870/ss_2f64497e2ba07bf791ca50cd8dc52e355e523e95.1920x1080.jpg?t=1789381357",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331870/ss_8565740d92842c4a0fdf2c5abfc52d96c7e6ec9a.1920x1080.jpg?t=1789381357",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331870/ss_7acfd58316939ba1104f3fc66f1ed2648ab47b80.1920x1080.jpg?t=1789381357"
+   ]
+  },
+  "aerea": {
+   "about": "The world needs you!\n\nAereA is a music themed Action RPG in which you play as one of Great Maestro Guido’s disciples and explore Aezir; a floating island that was broken into pieces. Your mission is to find and return the nine primordial instruments to restore balance and peace to the world. You have to find your way through all parts of the scattered islands; complete quests, solve puzzles, defeat bosses and discover the truth behind the islands.",
+   "ageRating": null,
+   "appId": 573660,
+   "developer": "SOEDESCO",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:47:51Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Arabic",
+    "Dutch",
+    "Japanese",
+    "Polish",
+    "Portuguese - Brazil",
+    "Romanian",
+    "Russian",
+    "Simplified Chinese",
+    "Turkish",
+    "Traditional Chinese",
+    "Korean"
+   ],
+   "metacritic": 53,
+   "name": "AereA",
+   "publisher": "SOEDESCO",
+   "releaseDate": "2017-06-02",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/573660/ss_aca0043cd8c46450a502db5f922db81484eddfc2.1920x1080.jpg?t=1786528580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/573660/ss_cc4515fd28bcaa152b12d80eb7602e13e83b0057.1920x1080.jpg?t=1786528580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/573660/ss_4aad756abe09c19f8f7cebf3bcbfefef5b2c787c.1920x1080.jpg?t=1786528580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/573660/ss_6e26673583ce9603e22c69e02b98c916cb0ce987.1920x1080.jpg?t=1786528580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/573660/ss_c98e527ebae867073dd0fbf27e378c64930713b1.1920x1080.jpg?t=1786528580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/573660/ss_244811322880fa679194ff3d1818dcd9b147142c.1920x1080.jpg?t=1786528580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/573660/ss_9d942a8c8f1634f5e713b4aefb302294536a42bd.1920x1080.jpg?t=1786528580",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/573660/ss_1799465850c7de55625d74452c7c2891365eb5f4.1920x1080.jpg?t=1786528580"
    ]
   },
   "aeterna noctis": {
@@ -1112,6 +1435,51 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/718850/ss_c567b4e3c82b42ae011b29d77b338eea21d4ccb5.1920x1080.jpg?t=1726491706"
    ]
   },
+  "ages of mages the last keeper": {
+   "about": "The kingdom is under attack and the princess has been taken! \nCan our four mages assume the responsibility of Guardian and reinvigorate the ages of the mages?\n\n-------------------------------------------------------------------------------------------------\n Main Features \n\n■ Third-person shooter beat 'em up game with RPG and Rogue-Lite elements.\n■ 4 kinds of mages, each with its own characteristics.\n■ 20+ wands, each wand has different maigc skill.\n■ Skill tree, unlocking your powerful magic.",
+   "ageRating": null,
+   "appId": 820610,
+   "developer": "YFC games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:47:56Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Portuguese - Brazil",
+    "German",
+    "Korean",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Italian"
+   ],
+   "metacritic": null,
+   "name": "Ages of Mages: The last keeper",
+   "publisher": "YFC games",
+   "releaseDate": "2019-02-13",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820610/ss_4b290ede8e4613407824071af3e5068f807dc9c2.1920x1080.jpg?t=1667267979",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820610/ss_20766c2284a825f3963ec351e7869ce509dbe161.1920x1080.jpg?t=1667267979",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820610/ss_d1e686260e3286aa7e37477189ec7049c45d4509.1920x1080.jpg?t=1667267979",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820610/ss_c0a3f2a39ae5c898ddbb0bb56cea2bea2b65d1a9.1920x1080.jpg?t=1667267979",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820610/ss_5eabd39b28851829ad01e280e26da8c9352a4ef8.1920x1080.jpg?t=1667267979",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820610/ss_0a396a4dceb1c459f6971d1b31360ef2992e104a.1920x1080.jpg?t=1667267979",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820610/ss_0039cf958ec8699540773ad6004a291416f0f59b.1920x1080.jpg?t=1667267979",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/820610/ss_085a9625263bcb86c3a28eaf62d4b977d54263a3.1920x1080.jpg?t=1667267979"
+   ]
+  },
   "agony": {
    "about": "Do you often think of what is there, beneath the towns and the cities we live in? Sewer systems, bombshelters, scientific objects... \nAre you ready to find yourself in a place on the edge of the reality plane you are used to? \n\nThat day promised nothing bad. But a usual walk with a girlfriend ended up in runnung for ones lives from bandits, which lead the main characters into strange catacombs, where the usual laws of the universe fail.",
    "ageRating": null,
@@ -1192,8 +1560,65 @@
    "fetchedAt": "2026-10-26T20:01:05Z",
    "miss": true
   },
+  "airoheart": {
+   "about": "Our story begins in the land of Engard, where our beloved hero Airoheart sets out on a journey to stop his brother's diabolical plan to unleash an ancient evil that has been sealed in the shadows for generations, and to trigger a war using the power of the Draoidh Stone. \n\nWill you confront your own brother and stop him from executing his wicked plans?Features\n\nEngage in real-time combat\nFight your way through dangerous monsters in real-time combat.",
+   "ageRating": null,
+   "appId": 1493940,
+   "developer": "Pixel Heart Studio",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:48:01Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Danish",
+    "Dutch",
+    "Finnish",
+    "Japanese",
+    "Korean",
+    "Norwegian",
+    "Polish",
+    "Portuguese - Portugal",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Swedish",
+    "Traditional Chinese",
+    "Turkish"
+   ],
+   "metacritic": null,
+   "name": "Airoheart",
+   "publisher": "SOEDESCO",
+   "releaseDate": "2022-09-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1493940/ss_99f01fc61a3c1550e6b3f587c5537c4c73d6b19c.1920x1080.jpg?t=1751535320",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1493940/ss_c03708b9ff7a4e34fbaab484f13731c1f259f68f.1920x1080.jpg?t=1751535320",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1493940/ss_b4d425ad029f4e4d27dae1c7da08904ba237c8ad.1920x1080.jpg?t=1751535320",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1493940/ss_bde431010b14e8a7787d6636c3b6442c4b7f4814.1920x1080.jpg?t=1751535320",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1493940/ss_0f6b5e7cbf099bafb13b4a4e91c70dcb072caabf.1920x1080.jpg?t=1751535320",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1493940/ss_93c30b22186de86dc28fc2fe6d1bdaec5f42aab1.1920x1080.jpg?t=1751535320",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1493940/ss_80ea6c808ecd5cb2a07152d021405616e188e249.1920x1080.jpg?t=1751535320",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1493940/ss_1919be9efba5a11d5de1e51fd75d15fad777bb35.1920x1080.jpg?t=1751535320"
+   ]
+  },
   "airport simulator day and night": {
    "fetchedAt": "2026-10-30T00:01:23Z",
+   "miss": true
+  },
+  "akibas trip 2 directors cut": {
+   "fetchedAt": "2026-10-30T05:48:04Z",
    "miss": true
   },
   "akibas trip undead and undressed": {
@@ -1232,6 +1657,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/333980/ss_351266012a6ee88fd30d3e9c70f2b5790c8ff6f0.1920x1080.jpg?t=1740441159"
    ]
   },
+  "aladdin": {
+   "fetchedAt": "2026-10-30T05:48:06Z",
+   "miss": true
+  },
   "alan wake 2": {
    "fetchedAt": "2026-10-18T04:32:11Z",
    "miss": true
@@ -1239,6 +1668,75 @@
   "alan wake remastered": {
    "fetchedAt": "2026-10-26T20:01:07Z",
    "miss": true
+  },
+  "albacete warrior": {
+   "about": "Albacete Warrior is a satirical combat game where you take on the role of Benito Waters, ninja from Albacete, Spain, in his worldwide adventure on an important task given to him by his master, Paco sensei. With his trusty companion, friend and also main weapon, Pepito the chicken, cockslap waves of enemies whose only wish is to see you dead and fulfill the ancient prophecy to become the chosen one, like many that have come before him.",
+   "ageRating": null,
+   "appId": 1605480,
+   "developer": "FAS3 Estudios S.L.",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:48:11Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Spanish - Spain"
+   ],
+   "metacritic": null,
+   "name": "Albacete Warrior",
+   "publisher": "FAS3 Estudios S.L",
+   "releaseDate": "2021-12-15",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1605480/ss_dc438e65b596fa950ea76f364f32e1a64671b3c3.1920x1080.jpg?t=1683627353",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1605480/ss_cb6663ccb77ed29645064e9b325a6d350acb91d9.1920x1080.jpg?t=1683627353",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1605480/ss_66f1e36602a1be7f616b0fb8360538a52e314a73.1920x1080.jpg?t=1683627353",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1605480/ss_57a272a0a08aefb4446befb1e71053328d4fc5ca.1920x1080.jpg?t=1683627353",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1605480/ss_7a5c82e3cc0d62c841f796cc86541184b051e20a.1920x1080.jpg?t=1683627353",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1605480/ss_758da4d445b9817644b0938bfad95bb93ff4aeef.1920x1080.jpg?t=1683627353"
+   ]
+  },
+  "alchemists castle": {
+   "about": "Discovering the philosopher's stone turned the wise and kind alchemist into a power hungry, selfish tyrant. Task of stopping him falls upon you, the former apprintice of the alchemist. Discover the secrets of the Alchemist's Castle, survive and destroy the philosopher's stone!\n\nAlchemists's Castle is a 2D side-scroller platformer, inspired by old-school Metroid and Castlevania games.Key Features\n\n Non-linear exploration\n\n Old-school metroidvania experience\n\n Intriguing story",
+   "ageRating": null,
+   "appId": 726340,
+   "developer": "Kabuk Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:48:16Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Russian",
+    "Turkish"
+   ],
+   "metacritic": null,
+   "name": "Alchemist's Castle",
+   "publisher": "Kabuk Games",
+   "releaseDate": "2017-11-02",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/726340/ss_f00cac0d3fc7eadf3b85474dddd62e2b258b1f9b.1920x1080.jpg?t=1569073037",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/726340/ss_effd05f643a03d6a881ee4963e6da097608820c4.1920x1080.jpg?t=1569073037",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/726340/ss_12db35183ffe60cb5b48cf75bd778d084a5c02bd.1920x1080.jpg?t=1569073037",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/726340/ss_267eb7308005cceee983179283e29fa53839ca5a.1920x1080.jpg?t=1569073037",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/726340/ss_d11267ce4fef76745b40e6db6979bc3c7f5a9a49.1920x1080.jpg?t=1569073037",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/726340/ss_af1a3d02374260cb169271cf874babf08e1849f3.1920x1080.jpg?t=1569073037",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/726340/ss_e6d05def5e2fae7cdbcc61ca89f0beb8630c42cf.1920x1080.jpg?t=1569073037"
+   ]
   },
   "alex kidd in miracle world dx": {
    "about": "The legendary Alex Kidd returns with Alex Kidd in Miracle World DX!\n\nSince his first appearance in 1986 with Alex Kidd in Miracle World, the iconic Alex Kidd makes his return to smash rocks, collect coins and tackle bosses once again in Alex Kidd in Miracle World DX!Return The Kingdom of Radaxian to its former glory and destroy the evil Janken the Great!\n\nComprising of all levels from the original title as well as brand new levels which expand the lore of Alex Kidd, experience Miracle World…",
@@ -1355,6 +1853,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/214490/ss_c57e1d21eca518001e25e83f271c20448683d082.1920x1080.jpg?t=1763647113",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/214490/ss_b1e245fecbcb2b93f48d76f4031f303076b4a6bc.1920x1080.jpg?t=1763647113"
    ]
+  },
+  "alien isolation ps3 pt br dublado": {
+   "fetchedAt": "2026-10-30T05:48:19Z",
+   "miss": true
   },
   "aliens dark descent": {
    "about": "In Aliens: Dark Descent, command a squad of hardened Colonial Marines to stop a terrifying Xenomorph outbreak on Planet Lethe. Lead your soldiers in real-time combat against iconic Xenomorphs, rogue operatives from the insatiable Weyland-Yutani Corporation, and a host of horrifying creatures new to the Alien franchise. \n\nYou are the commander. They are your weapon.",
@@ -1627,6 +2129,66 @@
    "fetchedAt": "2026-10-16T21:10:34Z",
    "miss": true
   },
+  "alone in the dark the new nightmare": {
+   "about": "From the moment Edward Carnby and Aline Cedrac set foot on Shadow Island, they are confronted by mysterious, evil creatures intent on thwarting their progress to recover 3 ancient tablets believed to hold the secret key to some incredible menacing phenomena. Danger threatens from every corner. The slightest shadow could be hiding deep secrets, or concealing worse nightmares... Can you see beyond your fear?\n\nEdward Carnby, the supernatural detective is back! And this time it's for revenge.",
+   "ageRating": 17,
+   "appId": 259190,
+   "developer": "Darkworks, Spiral House",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-30T05:48:29Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": 66,
+   "name": "Alone in the Dark: The New Nightmare",
+   "publisher": "THQ Nordic",
+   "releaseDate": "2013-10-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/259190/ss_fee58265a8a3f9902761f67896c924bbef12e3c8.1920x1080.jpg?t=1727860478",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/259190/ss_25fd08d09cd1faf7c03ec7883bfb0fb42b6438a5.1920x1080.jpg?t=1727860478",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/259190/ss_245e020c89b57b7e0564666963a59f0ba09dab54.1920x1080.jpg?t=1727860478",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/259190/ss_e103532f016a403ee5f58f01f5826871c5d932de.1920x1080.jpg?t=1727860478",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/259190/ss_6417e0b825f707980068dc9226db51c79998be5c.1920x1080.jpg?t=1727860478"
+   ]
+  },
+  "alone with you": {
+   "about": "STORY\n\nYou’re the last survivor of a doomed space colony, trying to escape a planet before it implodes around you. Equipped with a scanner, you’ll reveal clues, solve puzzles, and discover the fates of over two-dozen colonists and the secrets of their interwoven lives. By day you’ll explore this richly detailed world with the help of the colony’s troubled AI.",
+   "ageRating": null,
+   "appId": 564940,
+   "developer": "BancyCo",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:48:24Z",
+   "genres": [
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": 74,
+   "name": "Alone With You",
+   "publisher": "BancyCo",
+   "releaseDate": "2017-02-09",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/564940/4f030ddbb88b76107635186136f9de641ee9ab34/ss_4f030ddbb88b76107635186136f9de641ee9ab34.1920x1080.jpg?t=1788449210",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/564940/0f4169e92818bdc578e697d2e76b3b84093f617e/ss_0f4169e92818bdc578e697d2e76b3b84093f617e.1920x1080.jpg?t=1788449210",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/564940/a634f76315aa457a6505b48b79fde05a87f822ae/ss_a634f76315aa457a6505b48b79fde05a87f822ae.1920x1080.jpg?t=1788449210",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/564940/82a6b8da43ad47c777f562d6be99dc260c60b781/ss_82a6b8da43ad47c777f562d6be99dc260c60b781.1920x1080.jpg?t=1788449210",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/564940/04e5482348436bc047f854ceb999dee38f42d98a/ss_04e5482348436bc047f854ceb999dee38f42d98a.1920x1080.jpg?t=1788449210",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/564940/f193cec5c1ba28068be33a0f4b3d07b1ec6f2b5e/ss_f193cec5c1ba28068be33a0f4b3d07b1ec6f2b5e.1920x1080.jpg?t=1788449210",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/564940/2aaa0641fd1b6962defc9f1f06c57d4888a45004/ss_2aaa0641fd1b6962defc9f1f06c57d4888a45004.1920x1080.jpg?t=1788449210",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/564940/93dc95609b5151f4bd14b2100ebf259b394dd8cc/ss_93dc95609b5151f4bd14b2100ebf259b394dd8cc.1920x1080.jpg?t=1788449210"
+   ]
+  },
   "alternate jake hunter daedalus the awakening of golden jazz": {
    "about": "The latest addition of the Detective Saburo Jinguji, \na hard-boiled adventure series that boasts a 30 year history. \nThe adventure will intrigue newcomers, and delight long time fans.\nJinguji's adolescence is explored in this never before told origin story!\n\nThat was one month ago today.\nSomeone has murdered Saburo's grandfather, Kyosuke, while he was living in New York.\n\nSaburo sets off to New York to sort through \nthe belongings and memories his grandfather left behind.",
    "ageRating": null,
@@ -1700,6 +2262,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1601570/338dd0f40d3de28872a808d3650a773283368f0e/ss_338dd0f40d3de28872a808d3650a773283368f0e.1920x1080.jpg?t=1789118254"
    ]
   },
+  "amazing breaker": {
+   "fetchedAt": "2026-10-30T05:48:31Z",
+   "miss": true
+  },
   "amazing spider man 2": {
    "fetchedAt": "2026-10-21T13:51:40Z",
    "miss": true
@@ -1711,6 +2277,52 @@
   "amnesia collection": {
    "fetchedAt": "2026-10-22T17:14:01Z",
    "miss": true
+  },
+  "among us": {
+   "about": "Play with 4-15 player online or via local WiFi as you attempt to prepare your spaceship for departure, but beware as one or more random players among the Crew are Impostors bent on killing everyone!\n\nOriginally created as a party game, we recommend playing with friends at a LAN party or online using voice chat. Enjoy cross-platform play between Android, iOS, PC, and console.\n\n Win by completing tasks to prepare the ship or ejecting all Impostors.",
+   "ageRating": null,
+   "appId": 945360,
+   "developer": "Innersloth",
+   "features": [
+    "Online multiplayer",
+    "Co-op",
+    "Cross-platform multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:48:36Z",
+   "genres": [
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "Portuguese - Brazil",
+    "Spanish - Latin America",
+    "Spanish - Spain",
+    "Korean",
+    "Russian",
+    "French",
+    "Italian",
+    "German",
+    "Dutch",
+    "Japanese",
+    "Portuguese - Portugal",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": 85,
+   "name": "Among Us",
+   "publisher": "Innersloth",
+   "releaseDate": "2018-11-16",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945360/ss_b7374128e5b786a302a716bca038d604b00ffe46.1920x1080.jpg?t=1792187809",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945360/ss_719484b5e0314cc2ae43793786448e032056a31d.1920x1080.jpg?t=1792187809",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945360/ss_ffd9c8926cbd7fce3ca5e5efb4399c47bb196bc8.1920x1080.jpg?t=1792187809",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945360/ss_1fbd9dc9fd6a2710d233a088ef426a6d78fcf884.1920x1080.jpg?t=1792187809",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945360/ss_9d11502fa973580a82b532b25f1901b8425c28f9.1920x1080.jpg?t=1792187809",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945360/ss_17be75e178e3520c986504504ada8535de19cc0d.1920x1080.jpg?t=1792187809",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945360/ss_a1872c1c594ad4e5885d248516919d85243d9c1f.1920x1080.jpg?t=1792187809",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945360/ss_7ccc894b8f95091f608fa012450549091cce2423.1920x1080.jpg?t=1792187809"
+   ]
   },
   "amplitude": {
    "fetchedAt": "2026-10-22T17:14:03Z",
@@ -1761,6 +2373,10 @@
   },
   "angry birds movie 2 vr under pressure": {
    "fetchedAt": "2026-10-28T22:37:36Z",
+   "miss": true
+  },
+  "angry birds star wars": {
+   "fetchedAt": "2026-10-30T05:48:39Z",
    "miss": true
   },
   "angry birds vr isle of pigs": {
@@ -2039,6 +2655,50 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1172470/f880e64654baad384f3afb9e4b0004e411770241/ss_f880e64654baad384f3afb9e4b0004e411770241.1920x1080.jpg?t=1790164440"
    ]
   },
+  "apsulov end of gods": {
+   "about": "The humans delved far beneath the earth to find the mercy of the gods. What they found was never meant to reach the surface. Not on Midgard, nor any of the nine realms of Yggdrasil. Now their discovery wreaks havoc on their world, exploiting their technology, and leaving all in misery and decay. Through all their conquests and revelations they never stopped to consider that some things are buried for a reason.",
+   "ageRating": null,
+   "appId": 960980,
+   "developer": "Angry Demon Studio",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:48:44Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Polish",
+    "Russian",
+    "French",
+    "Simplified Chinese",
+    "Turkish",
+    "Portuguese - Brazil",
+    "Swedish",
+    "Korean"
+   ],
+   "metacritic": null,
+   "name": "Apsulov: End of Gods",
+   "publisher": "Angry Demon Studio",
+   "releaseDate": "2019-08-08",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960980/ss_1dc3584a853c8cae3d19f30d54f1c9f9b421e071.1920x1080.jpg?t=1669708142",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960980/ss_061c2138bc47600996951fa668cc8fab2a845a85.1920x1080.jpg?t=1669708142",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960980/ss_9f9ba172e310e394bef08f15473a1aa63d8849ad.1920x1080.jpg?t=1669708142",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960980/ss_a8d965f7f368725633a4a5125cf78183f4c41877.1920x1080.jpg?t=1669708142",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960980/ss_9bb6967ae75bbd5cacd06f7b4963354920606195.1920x1080.jpg?t=1669708142",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960980/ss_db2aafd19946aaf2b60179af5c8206968fd7d1ee.1920x1080.jpg?t=1669708142",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960980/ss_797d5e628bfff4d0161d3f3f548b089fb356cc3b.1920x1080.jpg?t=1669708142",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/960980/ss_3db40fab2e73edff4a1dd913312c6f17f6ee9dad.1920x1080.jpg?t=1669708142"
+   ]
+  },
   "aqua moto racing utopia": {
    "about": "Aqua Moto Racing Utopia is a challenging watercraft racing game which combines extreme speed, stunts and state-of-the art water simulation into a modern action filled gaming experience.\n\nFeaturing an extensive career mode with three single player championship campaigns, 4 player split screen racing and also an 8 player Online racing mode, Aqua Moto Racing Utopia offers action fueled fun. Add to that 4 creative party modes for that perfect gaming party.",
    "ageRating": null,
@@ -2081,6 +2741,53 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/468100/ss_33784a34c0e4204faf77a0175a1be667ca26ee1c.1920x1080.jpg?t=1761935699",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/468100/ss_420fbe45affce8ef29f59b6636f97db7354bcd9e.1920x1080.jpg?t=1761935699",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/468100/ss_4cb308e2b92ab5e0412c37986027a5be9556bcec.1920x1080.jpg?t=1761935699"
+   ]
+  },
+  "aragami 2": {
+   "about": "You are one of the last elite warriors of your kin, the Aragami. Victims of a supernatural affliction which corrodes the body and devours the mind, the Aragami control Shadow Essence - a mystical power which grants the ability to control the shadows. With this power the Aragami carry out their tasks and quests - assignments made all along the valley to ensure the subsistence of the village and to free the Aragami enslaved by the invader armies.",
+   "ageRating": null,
+   "appId": 1158370,
+   "developer": "Lince Works",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Cross-platform multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:48:49Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Spanish - Spain",
+    "French",
+    "German",
+    "Korean",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Turkish",
+    "Japanese",
+    "Basque",
+    "Catalan"
+   ],
+   "metacritic": null,
+   "name": "Aragami 2",
+   "publisher": "Lince Works",
+   "releaseDate": "2021-09-17",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1158370/ss_078b3bcf1b1d14856938f4d3183ba3f7f92c5ea8.1920x1080.jpg?t=1776370347",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1158370/ss_a5165648cddc5855fede97fc61a41e29b0d5a7ad.1920x1080.jpg?t=1776370347",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1158370/ss_792828d036958dfce1ef9b15a3ecde0eba1d4e58.1920x1080.jpg?t=1776370347",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1158370/ss_b1e1ee6b6d51a35ac0770b834037ff75e65c04c6.1920x1080.jpg?t=1776370347",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1158370/ss_2d0ec5edf588adaa66c9a51a4433166df7bf7157.1920x1080.jpg?t=1776370347",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1158370/ss_98719dac0204af105248cfb4089b7f2ccc4cff08.1920x1080.jpg?t=1776370347",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1158370/ss_289d14877b49236e0f5d10737d3a6869bd0153fe.1920x1080.jpg?t=1776370347",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1158370/ss_b06b3a216d11f2c0c825aa931bb1ac8f51b48851.1920x1080.jpg?t=1776370347"
    ]
   },
   "arcade game zone": {
@@ -19160,6 +19867,45 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/990080/ss_94058497bf0f8fabdde17ee8d59bece609a60663.1920x1080.jpg?t=1790708992",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/990080/ss_8e08976236d29b1897769257ac3c64e9264792a5.1920x1080.jpg?t=1790708992",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/990080/ss_d4930d675af053dc1e61a876a34fc003e85e261f.1920x1080.jpg?t=1790708992"
+   ]
+  },
+  "hole new world": {
+   "about": "The city is being invaded by monsters from the Upside Down World! You, the Potion Master, must defeat evil all alone, with no tutorials or \"Easy Mode\" to assist you. You'll have to rely on the help of Fäy, your companion fairy, and your potions!\n\nJump and shoot like they did in the good ol' arcade days. Fight enemies in your world and in the Upside Down World! Defeat gigantic bosses and acquire their powers!\n\nYou already know how to play!",
+   "ageRating": null,
+   "appId": 434160,
+   "developer": "MadGearGames",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:47:09Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Polish",
+    "Russian",
+    "Spanish - Latin America"
+   ],
+   "metacritic": null,
+   "name": "A Hole New World",
+   "publisher": "MadGearGames",
+   "releaseDate": "2017-05-19",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/434160/ss_37c61f0f6e68225a85acb791fc59149872738f47.1920x1080.jpg?t=1572368441",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/434160/ss_8ed5e07a58e762f80eb3432ef7e461cfd8c53b7c.1920x1080.jpg?t=1572368441",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/434160/ss_c40b833b6f561e9b1d6f4e0bdb16c9327c9dac24.1920x1080.jpg?t=1572368441",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/434160/ss_29f79021a57d4926372a528b20f9fb457f6b8210.1920x1080.jpg?t=1572368441",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/434160/ss_9fb7c264b643b16c0df5e957c04ef920f0a3e0b9.1920x1080.jpg?t=1572368441",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/434160/ss_7eb96dd54eff3e9f9775dad2966990fe2753acbf.1920x1080.jpg?t=1572368441",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/434160/ss_4093086a29d399ce6b75293775ece9499920f17a.1920x1080.jpg?t=1572368441",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/434160/ss_5a3906d8a0af7c1c0a245e4e58f8275a169235c3.1920x1080.jpg?t=1572368441"
    ]
   },
   "holiday eye spy": {
@@ -46266,6 +47012,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3375780/0b0c14124beade271d8ecf516b4492ee839830c5/ss_0b0c14124beade271d8ecf516b4492ee839830c5.1920x1080.jpg?t=1791225209"
    ]
   },
+  "train": {
+   "fetchedAt": "2026-10-30T05:47:16Z",
+   "miss": true
+  },
   "train life a railway simulator": {
    "about": "For the first time in a railway simulator, you are the driver and the company manager!TAKE THE CONTROLS OF YOUR TRAIN AND TRAVEL EUROPE\n\nDrive your passengers or goods across 10 countries and explore the countryside, towns, forests and mountains of Europe from your cab.",
    "ageRating": null,
@@ -51199,6 +51949,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2512040/ss_72d537bfa4d521adae493ff8503c4b2c85dadf5e.1920x1080.jpg?t=1733308259"
    ]
   },
+  "year of springs": {
+   "about": "Three women, three stories, three springs.\n\nExperience the stories of Haru, Erika, and Manami in A YEAR OF SPRINGS, a visual novel trilogy about a trio of friends navigating their feelings of love, connection, and just wanting to belong.FEATURES\n\nThree visual novels with multiple endings\n\nAn all-new epilogue exclusive to the trilogy collection\n\nSoft and cute art with a relaxing original soundtrack\n\nMusic player, CG gallery, and other extras\n\nIn one night, hot springs, visit the hot springs with…",
+   "ageRating": null,
+   "appId": 1688580,
+   "developer": "npckc",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T05:47:14Z",
+   "genres": [
+    "Simulation",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "Japanese",
+    "Korean",
+    "French",
+    "Spanish - Spain",
+    "Portuguese - Brazil",
+    "Simplified Chinese",
+    "Thai"
+   ],
+   "metacritic": null,
+   "name": "A YEAR OF SPRINGS",
+   "publisher": "npckc",
+   "releaseDate": "2021-09-28",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1688580/ss_4600733bea811b5ec14c26a7405d7386c7233d0c.1920x1080.jpg?t=1784010480",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1688580/ss_de9c4cfddeeb27e2045ead67e7c1d95a303441e2.1920x1080.jpg?t=1784010480",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1688580/ss_aac6110f5edc95607eee95b2e6b4ef95792ac40b.1920x1080.jpg?t=1784010480",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1688580/ss_7dbd00b75539616a16509d7fed95ef4556974ad9.1920x1080.jpg?t=1784010480",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1688580/ss_2fc189234e676b85d07d018d80a5dda8b4fd65fe.1920x1080.jpg?t=1784010480",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1688580/ss_d50b8e48af13cf98ceb5f49678f5de38111c7af9.1920x1080.jpg?t=1784010480"
+   ]
+  },
   "yokus island express": {
    "about": "Yoku has arrived on Mokumana and he’s ready for the easy life, soaking up the sun and delivering parcels on a tropical paradise!\n\nHowever, an ancient Island deity is trapped in a restless sleep - and it’s all down to Yoku to traverse the island using a unique blend of pinball mechanics, platforming and open world exploration, in an amazing adventure to help those in need!\n\nFlip and bump our pint-sized protagonist around the stunning hand-painted island on your quest to rebuild the post-office,…",
    "ageRating": null,
@@ -51823,6 +52611,6 @@
    "miss": true
   }
  },
- "updatedAt": "2026-10-30T00:02:08Z",
+ "updatedAt": "2026-10-30T05:48:49Z",
  "version": 1
 }
