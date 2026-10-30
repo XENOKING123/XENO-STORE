@@ -2790,9 +2790,52 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1158370/ss_b06b3a216d11f2c0c825aa931bb1ac8f51b48851.1920x1080.jpg?t=1776370347"
    ]
   },
+  "arcade archives aqua jet": {
+   "fetchedAt": "2026-10-30T12:54:23Z",
+   "miss": true
+  },
+  "arcade archives ridge racer": {
+   "fetchedAt": "2026-10-30T12:54:26Z",
+   "miss": true
+  },
+  "arcade archives vs battle city": {
+   "fetchedAt": "2026-10-30T12:54:28Z",
+   "miss": true
+  },
   "arcade game zone": {
    "fetchedAt": "2026-10-24T22:34:04Z",
    "miss": true
+  },
+  "arcade spirits": {
+   "about": "Arcade Spirits, a romantic visual novel, follows an alternate timeline set in the year 20XX where the 1983 video game crash never occurred. After a turbulent work history, you are granted employment at the Funplex, a popular arcade, home to a host of unique personalities and customers. Where will this new-found employment take you? Who will you meet along the way? Will you find the romance you're seeking?",
+   "ageRating": null,
+   "appId": 910630,
+   "developer": "Fiction Factory Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:54:33Z",
+   "genres": [
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": 78,
+   "name": "Arcade Spirits",
+   "publisher": "PQube",
+   "releaseDate": "2019-02-12",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/910630/ss_ffc7ce1bcbbab6ae05fc7dc90ea807d4a5e8b8fd.1920x1080.jpg?t=1792062379",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/910630/ss_ac1f636dcb88c217a9bfb2e0cbc2440fa67597bf.1920x1080.jpg?t=1792062379",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/910630/ss_f27549971d32a0c5374a14de37b7e93955f3153d.1920x1080.jpg?t=1792062379",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/910630/ss_555adfe7846342c4b1aad1a37e9a9e22a4100521.1920x1080.jpg?t=1792062379",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/910630/ss_23f656c525697f01f3cd22462ec75f0b0cb1fd59.1920x1080.jpg?t=1792062379",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/910630/ss_e92d465a0380b022b841a0faea2473979a343b1a.1920x1080.jpg?t=1792062379",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/910630/ss_21eb31026386c9cc1727c323e13cbcc584415c6f.1920x1080.jpg?t=1792062379",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/910630/ss_2e3035bc5cc35496c854dea08016f5af58182e02.1920x1080.jpg?t=1792062379"
+   ]
   },
   "arcade spirits the new challengers": {
    "about": "In the distant future year 20XX, an alternate timeline where arcades never went away... you're an aspiring gamer searching for esports glory on the Fist of Discomfort 2 Pro Tour. Seeking a partner to play with, you join a team of players who hang out at Good Clean Fun, a combination pizzeria / laundromat / arcade. It's up to you to rally the team, learning more about who they are and how best to support their dreams along the way.",
@@ -2875,6 +2918,50 @@
    "fetchedAt": "2026-10-24T18:52:16Z",
    "miss": true
   },
+  "arcrunner": {
+   "about": "Engage in a thrilling, Cyberpunk-styled roguelite shooter as you venture through a futuristic space station to reset an evil AI gone rogue. Clash in gun fights with swarms of deadly sentient robotic enemies, programmed with one objective - your annihilation. Select a character that aligns with your unique combat style and utilise cutting-edge augmentations after every successfully completed level to power up.",
+   "ageRating": null,
+   "appId": 1575830,
+   "developer": "Trickjump Games Ltd",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:54:21Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": 75,
+   "name": "ArcRunner",
+   "publisher": "PQube",
+   "releaseDate": "2023-04-27",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1575830/ss_eee595b4684651dd6a34dc2302a6e40ead3b18af.1920x1080.jpg?t=1792077864",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1575830/ss_3e8db232c25e066cbab5d68edd561e9423aa33f8.1920x1080.jpg?t=1792077864",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1575830/ss_ab9c0f59f1c3717c64f8823ab23a2e81fc5aeb43.1920x1080.jpg?t=1792077864",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1575830/ss_f14d9c920401cac93787b235d41fd1b59b3e3a5e.1920x1080.jpg?t=1792077864",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1575830/ss_744ebc915668f5f73306df8e6e42cd478725e73f.1920x1080.jpg?t=1792077864",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1575830/ss_90ceb2e37c073fee4a67450f3e4b308c0701199d.1920x1080.jpg?t=1792077864",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1575830/ss_22c7bfd5f50c10516a7df8a36550c2428a5aa2c1.1920x1080.jpg?t=1792077864",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1575830/ss_49e41a28b443ff9c018ab16be9cf5bb1157b6157.1920x1080.jpg?t=1792077864"
+   ]
+  },
   "argonauts agency 1 golden fleece": {
    "fetchedAt": "2026-10-26T20:02:02Z",
    "miss": true
@@ -2898,6 +2985,41 @@
   "argonauts agency 6 missing daughter": {
    "fetchedAt": "2026-10-26T20:02:15Z",
    "miss": true
+  },
+  "ariana and the elder codex": {
+   "about": "About Ariana and the Elder Codex\n\nThe Librarian Ariana's mission is to repair the Seven Hero Codices, which have been altered. Due to the terrible damages, magic has vanished from the world.\n\nBy utilizing special Librarian magic that allows her to enter Codices, Ariana seeks to mend the books to bring back magic.",
+   "ageRating": null,
+   "appId": 3986690,
+   "developer": "Idea Factory, Compile Heart",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:54:38Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "Japanese",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Ariana and the Elder Codex",
+   "publisher": "Idea Factory International, Inc.",
+   "releaseDate": "2026-04-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3986690/862422c6bcdb945e630acfa81c35be1220f50b47/ss_862422c6bcdb945e630acfa81c35be1220f50b47.1920x1080.jpg?t=1777669787",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3986690/cbdc3bf966350b336538c96ec0400bdf99c0b420/ss_cbdc3bf966350b336538c96ec0400bdf99c0b420.1920x1080.jpg?t=1777669787",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3986690/e30ba502dffd7b793f17f1f3777e482ee202f229/ss_e30ba502dffd7b793f17f1f3777e482ee202f229.1920x1080.jpg?t=1777669787",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3986690/e565904c5306279b4a43657d9069671a7c3e92b3/ss_e565904c5306279b4a43657d9069671a7c3e92b3.1920x1080.jpg?t=1777669787",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3986690/ac51d67f269ca0503ea4598613d56b45fd44011e/ss_ac51d67f269ca0503ea4598613d56b45fd44011e.1920x1080.jpg?t=1777669787",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3986690/26872e8a511afa4fb0a67411a45083c841403b52/ss_26872e8a511afa4fb0a67411a45083c841403b52.1920x1080.jpg?t=1777669787",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3986690/63f2a07364881d9f9e5b0086ad35fbb02159c07c/ss_63f2a07364881d9f9e5b0086ad35fbb02159c07c.1920x1080.jpg?t=1777669787",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3986690/794281b4c651ee4341c3a76af42762a7c565d32b/ss_794281b4c651ee4341c3a76af42762a7c565d32b.1920x1080.jpg?t=1777669787"
+   ]
   },
   "ark survival ascended": {
    "about": "Respawn into a new dinosaur survival experience beyond your wildest dreams… as ARK is reimagined from the ground-up into the next-generation of videogame technology with Unreal Engine 5! You awake on a mysterious island, your senses overwhelmed by the blinding sunlight and brilliant colors bouncing off every surface around you, the azure waters of a verdant Island lapping at your bare feet.",
@@ -3053,6 +3175,14 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1717270/ss_8f111e340ae45f2d8224e2b2f99166d7175163a3.1920x1080.jpg?t=1727356241",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1717270/ss_bb3b1642512cd005ea498d23af533247aac73c1f.1920x1080.jpg?t=1727356241"
    ]
+  },
+  "armagallant decks of destiny": {
+   "fetchedAt": "2026-10-30T12:54:41Z",
+   "miss": true
+  },
+  "armored core": {
+   "fetchedAt": "2026-10-30T12:54:44Z",
+   "miss": true
   },
   "armored core vi fires of rubicon": {
    "about": "Combining FromSoftware’s longstanding expertise in mech games with their signature action gameplay, ARMORED CORE VI FIRES OF RUBICON brings a brand-new action experience to the series.\n\nDynamic, Omni-directional Battles\nPlayers will pilot their mech in fast-paced, omni-directional battles, taking advantage of massive stages and their mech’s mobility on land and in the air to ensure victory.",
@@ -3324,6 +3454,41 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/406110/ss_4df3d803d805409c8a1d37b8ec6d4603516c9e22.1920x1080.jpg?t=1726532446",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/406110/ss_3626035bb766bda30141f9694d12c40fac3f38d9.1920x1080.jpg?t=1726532446",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/406110/ss_10df6846f21e4c4543a846e25ce9d3c665bf4641.1920x1080.jpg?t=1726532446"
+   ]
+  },
+  "ashes cricket": {
+   "about": "OUR GREATEST TEST\n\r\n\n\r\nAshes Cricket is the officially licensed video game of cricket’s greatest rivalry. Bringing all the fast paced action, big hits and skill that you see in the greatest cricket competition on earth, in both a more realistic and authentic way than ever before, you’ll be able to bathe your team in glory in the men’s and women’s 2017/2018 Ashes tours.",
+   "ageRating": null,
+   "appId": 649640,
+   "developer": "Big Ant Studios",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:54:48Z",
+   "genres": [
+    "Sports",
+    "Indie"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Ashes Cricket",
+   "publisher": "Big Ant Studios",
+   "releaseDate": "2017-12-15",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/649640/ss_be1830ab222f4de382d0ece95997160e9f8224ca.1920x1080.jpg?t=1667362920",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/649640/ss_89e546931138fbbf459267e8892a3f3d6ade4eda.1920x1080.jpg?t=1667362920",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/649640/ss_e6c2b088a9de46157fbb822fb0b5e6c1594aa606.1920x1080.jpg?t=1667362920",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/649640/ss_672a4d06c69452607b7f73fee0c68f160c49293f.1920x1080.jpg?t=1667362920",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/649640/ss_4634318223645fccfc758f93751c98f7c528feb6.1920x1080.jpg?t=1667362920",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/649640/ss_56df570cbc5a195b1c4ba777eac64cfff9e6f7fd.1920x1080.jpg?t=1667362920",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/649640/ss_06ae37a41f5cba0a994887f33a02eed06f637ca8.1920x1080.jpg?t=1667362920",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/649640/ss_e8125ba4a3f9ef28f719e43a1c4b2f6707734414.1920x1080.jpg?t=1667362920"
    ]
   },
   "assassins creed black flag resynced": {
@@ -3643,6 +3808,42 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2208920/ss_83a5e49815eed62911f27240390c6735b898c13e.1920x1080.jpg?t=1786637382"
    ]
   },
+  "assault on metaltron": {
+   "about": "Metaltron - an energy-rich metallic planet has been invaded by combined forces of humans and orc hordes. Elder Golem chose you to defend Metaltron!\n\nFirst action tower defense game where you power up your towers however you like. Play as Metaltron's Defender Golem and build towers to defend your planet from the invasion. Game offers 40 levels of campaign that can be played solo or in coop and first ever Skirmish mode in tower defense games.",
+   "ageRating": null,
+   "appId": 967940,
+   "developer": "Blue Sunset Games, Storm Trident S.A.",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:54:53Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Strategy",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Assault On Metaltron",
+   "publisher": "Forever Entertainment S. A.",
+   "releaseDate": "2019-06-13",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/967940/ss_3687e08fa6c4e47870e2a1ac484479f82982046d.1920x1080.jpg?t=1587655707",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/967940/ss_e2c05b587a7fa076c19298352916bdb1f7e2c7b6.1920x1080.jpg?t=1587655707",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/967940/ss_72bead956762f17688f5f037c34d5ce4102435a5.1920x1080.jpg?t=1587655707",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/967940/ss_846ddbb36a7eb47831357b8f1f37227efe571f5e.1920x1080.jpg?t=1587655707",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/967940/ss_c0dc6ecb399bd32690d2d6aaa9429702c6c8ffd5.1920x1080.jpg?t=1587655707",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/967940/ss_10149b5ea1ae14054da503746bcc7599d2f829f7.1920x1080.jpg?t=1587655707"
+   ]
+  },
   "assetto corsa": {
    "about": "NEXT GENERATION RACING SIMULATOR\nAssetto Corsa features an advanced DirectX 11 graphics engine that recreates an immersive environment, dynamic lighthing and realistic materials and surfaces. The advanced physics engine is being designed to provide a very realistic driving experience, including features and aspects of real cars, never seen on any other racing simulator such as tyre flat spots, heat cycles including graining and blistering, very advanced aerodynamic simulation with active…",
    "ageRating": null,
@@ -3774,6 +3975,51 @@
   "asterix and obelix babylon mission": {
    "fetchedAt": "2026-10-26T04:48:35Z",
    "miss": true
+  },
+  "asterix and obelix heroes": {
+   "about": "The year is 50 BC. Gaul is entirely occupied by the Romans. Well, not entirely... One small village of indomitable Gauls still holds out against the invaders.USE YOUR CARDS INSTEAD OF YOUR FISTS\n\nIn this game, designed to delight both fans of deck building and of the Asterix series, you can build a deck of 30 cards from the 150 available in the game.",
+   "ageRating": null,
+   "appId": 2374090,
+   "developer": "Gamexcite",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:54:58Z",
+   "genres": [
+    "Adventure",
+    "Strategy"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Dutch",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Turkish"
+   ],
+   "metacritic": null,
+   "name": "Asterix & Obelix: Heroes",
+   "publisher": "Nacon",
+   "releaseDate": "2023-10-05",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374090/ss_c6d289f9d95c2a86140d8d06ebbaed9dfb793a35.1920x1080.jpg?t=1764149582",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374090/ss_d64cfaae858d0b702e86a1e29d62860e21eaa3fc.1920x1080.jpg?t=1764149582",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374090/ss_a121deaf4fc8359fe60197571d27488335cf939e.1920x1080.jpg?t=1764149582",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374090/ss_3658f8df8f71e4a4fcafab2bc658c048f9fb32f5.1920x1080.jpg?t=1764149582",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374090/ss_deb40e2458face788f811df4e7e8d3d639d70fd8.1920x1080.jpg?t=1764149582",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374090/ss_4227ab9ad02ba0aaef837d6cbf2e1cb7d368453c.1920x1080.jpg?t=1764149582",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374090/ss_2a353f1da78374e9d76ed8decd4d46f31daf7da2.1920x1080.jpg?t=1764149582",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2374090/ss_208f1c810a8958c67e5a2c5a0204c59e5ec54b8e.1920x1080.jpg?t=1764149582"
+   ]
   },
   "asterix and obelix slap them all": {
    "about": "The year is 50 B.C. Gaul is entirely occupied by the Romans. Well, not entirely... \nOne small village of indomitable Gauls still holds out against the invaders.\n\nEverything is falling apart! Our two heroes will travel all around the world to fight the Roman Empire in a 2D horizontal scrolling Beat Them Up game, completely hand-drawn and made in the purest tradition of the genre.\n\nEnemies and wild boars will have to be cautious!",
@@ -4110,6 +4356,37 @@
    "fetchedAt": "2026-10-26T23:56:25Z",
    "miss": true
   },
+  "atelier firis the alchemist and the mysterious journey dx": {
+   "about": "The Mysterious series combines heart-warming everyday elements with extraordinary experiences in a world full of wonders.\n\r\nThe 2nd instalment, \"Atelier Firis\", is back in DX form!\n\r\n\n\r\n＜What makes it DX＞\n\r\n- Four new vehicles/exploration tools to increase efficiency & speed!\n\r\n- A quest to defeat 7 new monsters and fight a powered-up version of Palmyra!\n\r\n- 'Fast Forward' feature for fast-paced battles!\n\r\n- Lots of previously released DLC!\n\r\n- Photo mode to enjoy capturing beautiful…",
+   "ageRating": null,
+   "appId": 1502980,
+   "developer": "KOEI TECMO GAMES CO., LTD.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:55:03Z",
+   "genres": [
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Atelier Firis: The Alchemist and the Mysterious Journey DX",
+   "publisher": "KOEI TECMO GAMES CO., LTD.",
+   "releaseDate": "2021-04-21",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502980/ss_8481ae92b353b2a2b1b7b2a185051223ff44716b.1920x1080.jpg?t=1792392930",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502980/ss_597cb38fb4db764e50ecf627494014b68f5262f2.1920x1080.jpg?t=1792392930",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502980/ss_10d9f94367cc27a0bf9a25a2f5f23cf162ebabb0.1920x1080.jpg?t=1792392930",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502980/ss_d977373672e9ecf112d510dd9646e3ed79532483.1920x1080.jpg?t=1792392930",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502980/ss_d4f17697d7d8e5fac51e2fa7e9651d8078ac2ce7.1920x1080.jpg?t=1792392930"
+   ]
+  },
   "atelier firis the alchemist of the mysterious journey": {
    "fetchedAt": "2026-10-24T22:34:11Z",
    "miss": true
@@ -4175,6 +4452,37 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/756590/ss_12c098ebe87e1414859cfaf5bc8d66c6cc694085.1920x1080.jpg?t=1726130463"
    ]
   },
+  "atelier lydie and suelle the alchemists and the mysterious paintings dx": {
+   "about": "The Mysterious series combines heart-warming everyday elements with extraordinary experiences in a world full of wonders.\nThe 3rd instalment, \"Atelier Lydie & Suelle\", is back in DX form!\n\n＜What makes it DX!＞\n- A new painting based on the world of “Nelke & the Legendary Alchemists: Ateliers of the New World”, featuring new story episodes and a new boss enemy!\n- New “Nelke’s world” painting fragments scattered around various painting worlds.",
+   "ageRating": null,
+   "appId": 1502990,
+   "developer": "KOEI TECMO GAMES CO., LTD.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:55:08Z",
+   "genres": [
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Atelier Lydie & Suelle: The Alchemists and the Mysterious Paintings DX",
+   "publisher": "KOEI TECMO GAMES CO., LTD.",
+   "releaseDate": "2021-04-21",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502990/ss_60e44edf47f7d160167a274ddfd79011e6a8fcd9.1920x1080.jpg?t=1792392855",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502990/ss_03e5f9879a1f438230bbac899337b5710dd93283.1920x1080.jpg?t=1792392855",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502990/ss_781925154524c724243efe26455fefa8c1a87b11.1920x1080.jpg?t=1792392855",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502990/ss_1c3141cfaa2dc2d669f2038bb64e05a6159eeb57.1920x1080.jpg?t=1792392855",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502990/ss_ebfb888877041173bbe36c76e9b95009f7b4abca.1920x1080.jpg?t=1792392855"
+   ]
+  },
   "atelier marie remake the alchemist of salburg": {
    "about": "At the Royal Academy of Magic (the Academy for short), Marie is failing in her attempts to study alchemy. One day, she is given an atelier by her professor as part of a special graduation exam. In order to graduate, Marie must complete an item that will impress her professor.\n\nBut first, Marie must strive to improve her alchemy skills, collect ingredients, and earn money to hire adventurers and buy recipes and utensils...",
    "ageRating": null,
@@ -4209,6 +4517,37 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2138090/ss_8ef0ca2bfcdd99c65fd4f765e404f71cf0c1a279.1920x1080.jpg?t=1781066115",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2138090/ss_81878b918cf5674a4b6a6d93516b97111a1e3e01.1920x1080.jpg?t=1781066115",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2138090/ss_fff49bed36ff80698f667e97cb10047c182e035c.1920x1080.jpg?t=1781066115"
+   ]
+  },
+  "atelier sophie the alchemist of the mysterious book dx": {
+   "about": "The Mysterious series combines heart-warming everyday elements with extraordinary experiences in a world full of wonders.\n\r\nThe 1st instalment, \"Atelier Sophie\", is back in DX form!\n\r\n\n\r\n＜What makes it DX＞\n\r\n- New episodes of Sophie's growth and a new costume that will help her follow in her grandmother's steps!\n\r\n- Three new cauldrons to assist in your adventures!\n\r\n- Sprinting option to make getting around a lot easier!\n\r\n- 'Fast Forward' feature for fast-paced battles!\n\r\n- Lots of previously…",
+   "ageRating": null,
+   "appId": 1502970,
+   "developer": "KOEI TECMO GAMES CO., LTD.",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:55:13Z",
+   "genres": [
+    "RPG"
+   ],
+   "languages": [
+    "English",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Atelier Sophie: The Alchemist of the Mysterious Book DX",
+   "publisher": "KOEI TECMO GAMES CO., LTD.",
+   "releaseDate": "2021-04-21",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502970/ss_b589227b0f4c8de95b97ad88551a2f7bff1309c1.1920x1080.jpg?t=1792393051",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502970/ss_76e008304bad5811bed5b6789d0f17d5d9423a7d.1920x1080.jpg?t=1792393051",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502970/ss_cd93f2dd6be98639069902e3aab3e9d83134ce91.1920x1080.jpg?t=1792393051",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502970/ss_75c9a0942e78f5260e6e438b1ff2483600ab412e.1920x1080.jpg?t=1792393051",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1502970/ss_a37424b584af36d8495bf69a4fbe46615a655340.1920x1080.jpg?t=1792393051"
    ]
   },
   "atlas fallen": {
@@ -4302,6 +4641,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/668580/ss_0e4b3349f2124cdba1df885ac3cdabfba87b22fb.1920x1080.jpg?t=1786632138",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/668580/ss_5b70e08d5afa8f3df574852f77fa2347eefd2a57.1920x1080.jpg?t=1786632138"
    ]
+  },
+  "attack on titan": {
+   "fetchedAt": "2026-10-30T12:55:16Z",
+   "miss": true
   },
   "atv drift and tricks": {
    "about": "Drift, Tricks & Fun!\n\nTired of 2-wheeled vehicles? ATV Drift & Tricks is the ATV game for you! A quads-only racing game, with 3 reasons to have fun: \n\nPlayable solo or in multiplayer with 8 wild game modes: \nLeague, Time Trial, Quick Race, Hot Lap, King of the Road, Golden Helmet, Last One Standing and Hunter. Do a series of races on your own or split screen with friends in game modes with extraordinary challenges. Want more?",
@@ -4544,6 +4887,14 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1592320/ss_9328910e44d412342e73f278cf42fdafc7488214.1920x1080.jpg?t=1678835442"
    ]
   },
+  "azure striker gunvolt striker pack": {
+   "fetchedAt": "2026-10-30T12:55:18Z",
+   "miss": true
+  },
+  "baboon": {
+   "fetchedAt": "2026-10-30T12:55:36Z",
+   "miss": true
+  },
   "back 4 blood": {
    "fetchedAt": "2026-10-21T23:22:04Z",
    "miss": true
@@ -4585,6 +4936,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/308040/ss_95e28d58c73d0e0c0c75f1f378df66bd48bf75bf.1920x1080.jpg?t=1782146763",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/308040/ss_b1ac8ececd37135a5d97cce5dab1d40f66e80928.1920x1080.jpg?t=1782146763",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/308040/ss_9bc07d83bff7fb7b19d03867c360d86c5e0a1fde.1920x1080.jpg?t=1782146763"
+   ]
+  },
+  "baja edge of control hd": {
+   "about": "Baja: Edge of Control HD is the carefully remastered version of the original off-road racer from 2008 for Xbox 360 and PlayStation 3. This truly unique game contains more than 1,000 miles of the toughest terrain Mother Nature has to offer, including the steepest mountains, thickest mud and deepest canyons known to man.\n\nOnly the HD version features much crisper and more detailed visuals running at super smooth framerates in up to 4K screen resolution.",
+   "ageRating": null,
+   "appId": 623090,
+   "developer": "2XL Games, Blitworks",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:55:23Z",
+   "genres": [
+    "Racing",
+    "Sports"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain"
+   ],
+   "metacritic": null,
+   "name": "BAJA: Edge of Control HD",
+   "publisher": "THQ Nordic",
+   "releaseDate": "2017-09-14",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/623090/ss_fa7160c72ebd8dd9526907e4db06f337adc9b470.1920x1080.jpg?t=1727857574",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/623090/ss_a40415fd03f5a4433862079d737fd02b4402ec9f.1920x1080.jpg?t=1727857574",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/623090/ss_976544d9b7b090ea23aa41eb410900900f53c145.1920x1080.jpg?t=1727857574",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/623090/ss_58939970b6bb4a6e2b917f5b5688222b6dbe0e88.1920x1080.jpg?t=1727857574",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/623090/ss_ee6986f5ce96f8599bd61c2ba8155a68363c42aa.1920x1080.jpg?t=1727857574",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/623090/ss_e21424cbdf4d6ff162524e7ae330603f9d7a6f51.1920x1080.jpg?t=1727857574",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/623090/ss_fc88160f8df542be4a96877c831a41ac8bac1906.1920x1080.jpg?t=1727857574",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/623090/ss_bd5bd8f861202edf1de949efa5e5ea46f170e300.1920x1080.jpg?t=1727857574"
    ]
   },
   "balan wonderworld": {
@@ -4902,9 +5291,127 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2786660/81ad57f73d037b9a53d1cb4286c52676e134ca92/ss_81ad57f73d037b9a53d1cb4286c52676e134ca92.1920x1080.jpg?t=1760973143"
    ]
   },
+  "barbie project friendship": {
+   "about": "Play as Barbie and Barbie as you work together with friends and family to complete challenges and quests to help the community. \n\nGet ready for the ultimate Barbie™ gaming adventure as Barbie and Barbie work together to save a beloved Malibu landmark, the Malibu Waves Community Center! The once thriving destination is nearly abandoned and on the verge of being closed. It’s time to band together to restore the beloved community center to its former glory.",
+   "ageRating": null,
+   "appId": 2478330,
+   "developer": "Xaloc Studios, Casual Brothers Ltd.",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:55:41Z",
+   "genres": [
+    "Adventure",
+    "Simulation",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Arabic",
+    "Danish",
+    "Dutch",
+    "Finnish",
+    "Norwegian",
+    "Polish",
+    "Portuguese - Brazil",
+    "Spanish - Latin America",
+    "Swedish",
+    "Traditional Chinese",
+    "Japanese"
+   ],
+   "metacritic": null,
+   "name": "Barbie Project Friendship™",
+   "publisher": "Outright Games Ltd.",
+   "releaseDate": "2024-10-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2478330/ss_d38bb331c265f28c92e7204ad5271748c7f9f651.1920x1080.jpg?t=1760086028",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2478330/ss_3f016df117c6ec8150011685abbb996d8131f89a.1920x1080.jpg?t=1760086028",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2478330/ss_51c3c96ab2e89c06c36b87c738fa3afee18bb066.1920x1080.jpg?t=1760086028",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2478330/ss_adc05ef7bd8d72d669a4b477e4a9e41dc16913d7.1920x1080.jpg?t=1760086028",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2478330/ss_7b2e5ab60f6699e07bd08dc2861a8be9b86ff9b2.1920x1080.jpg?t=1760086028",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2478330/ss_b390bd01574c6466822398d9e193070e4f270a3d.1920x1080.jpg?t=1760086028",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2478330/ss_c8adc43690d3a1adf4461584e18487f88c739a31.1920x1080.jpg?t=1760086028",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2478330/ss_268907ff893f99de6091463e6c364e157eea5734.1920x1080.jpg?t=1760086028"
+   ]
+  },
+  "bards gold": {
+   "about": "Bard's Gold is a challenging platformer that let's you explore eerie worlds in a quest for a Goblin that stole your gold. Help the Bard to overcome the dungeon’s many dangerous perils and use your new-found treasures to improve your character and to buy new weapons and gear!\n\nThis game takes inspiration from early 90's platforming classics such as Rainbow Island, Rick Dangerous, Alex Kidd and Erik, which at the time were popular on the Amiga and consoles.",
+   "ageRating": null,
+   "appId": 381900,
+   "developer": "Pixel Lantern",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:55:46Z",
+   "genres": [
+    "Action",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "German",
+    "Turkish"
+   ],
+   "metacritic": 58,
+   "name": "Bard's Gold",
+   "publisher": "Pixel Lantern",
+   "releaseDate": "2015-08-14",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/381900/ss_a978282322ae471cd0055e3df92514ed6da53db8.1920x1080.jpg?t=1745869837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/381900/ss_ed3c00736bf898286afb0245708046134650eb2e.1920x1080.jpg?t=1745869837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/381900/ss_418fb6977f66b7721f3e9a8fa39c762a2a85b6a7.1920x1080.jpg?t=1745869837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/381900/ss_b2ee12ac73e6844ded87a10c1fb45b71bd931663.1920x1080.jpg?t=1745869837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/381900/ss_55cd7bcd7c9de9c19934775a45fdba9fc14b33fb.1920x1080.jpg?t=1745869837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/381900/ss_7155948beb821e611b43e63e0d04a9c67688f966.1920x1080.jpg?t=1745869837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/381900/ss_2133e9854169e3ec03e88c21672eafb188027c1b.1920x1080.jpg?t=1745869837",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/381900/ss_128e93532c4858fd64df7f4e885bc8ec559bc500.1920x1080.jpg?t=1745869837"
+   ]
+  },
   "bards tale 4 directors cut": {
    "fetchedAt": "2026-10-23T13:28:23Z",
    "miss": true
+  },
+  "baseball riot": {
+   "about": "Baseball Riot is a fun physics based puzzle game packed with slapstick comedy and mayhem!\n\nTake control of retired star batter Gabe Carpaccio as he goes on a crusade to free his former team from the grasp of Explodz Inc.\n\nSmash baseballs at various Explodz fueled goons such as obnoxious fans, biased umpires, leery catchers and more. Bounce the ball of walls and platforms to knock out many targets with one hit.\n\nDetonate Explodz crates to launch the baddies sky high!",
+   "ageRating": null,
+   "appId": 567660,
+   "developer": "10tons Ltd",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:55:51Z",
+   "genres": [
+    "Sports",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Baseball Riot",
+   "publisher": "10tons Ltd",
+   "releaseDate": "2017-01-17",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/567660/ss_7a563d4f80354c1ab3a1c18bc97e19d77a15f02e.1920x1080.jpg?t=1521465657",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/567660/ss_5f9aa3f5210b0c2cdd2ad6bea2458c5b7f95b77f.1920x1080.jpg?t=1521465657",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/567660/ss_77a5e2f3489135877a653e2dcc7ad5bcc619aad9.1920x1080.jpg?t=1521465657",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/567660/ss_b59404fe267bc9f7ec000ab09311d996833cb472.1920x1080.jpg?t=1521465657",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/567660/ss_afdda381aec6400e85509a36df02261d973d5631.1920x1080.jpg?t=1521465657",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/567660/ss_f9864db1cca1408fb4e0a404da67de8842614b32.1920x1080.jpg?t=1521465657",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/567660/ss_eea5f58a4002fa77c03de531f07aa8cb10dc8216.1920x1080.jpg?t=1521465657",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/567660/ss_8af388600484de481dda6a49f8985fe43fadf432.1920x1080.jpg?t=1521465657"
+   ]
   },
   "bassmaster fishing 2022": {
    "fetchedAt": "2026-10-21T23:22:12Z",
@@ -4949,6 +5456,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/208650/ss_0093e9b8191093a1c97187079adb3d93a8ba6cf9.1920x1080.jpg?t=1745534372",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/208650/ss_9ccb4ec0388cd868c0f49580f98da94e8bd0e213.1920x1080.jpg?t=1745534372",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/208650/ss_8dd2a78400463d6924b9dc8ce1e734420414af3d.1920x1080.jpg?t=1745534372"
+   ]
+  },
+  "batman arkham vr": {
+   "about": "Batman™: Arkham VR immerses you in the Dark Knight's Universe and redefines what it means to be the Batman.\n\r\n\n\r\nExperience Gotham City through the eyes of the World's Greatest Detective in an all new Arkham mystery.\n\r\n\n\r\nThink like Batman. Utilize his legendary gadgets in Virtual Reality to unravel a plot that threatens the lives of Batman's closest allies.",
+   "ageRating": 17,
+   "appId": 502820,
+   "developer": "Rocksteady Studios",
+   "features": [
+    "Single-player",
+    "Controller support",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-30T12:55:56Z",
+   "genres": [
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "Batman™: Arkham VR",
+   "publisher": "Warner Bros. Interactive Entertainment",
+   "releaseDate": "2017-04-25",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/502820/ss_bfb0ab888210c6e9c946371ff860fbe098138334.1920x1080.jpg?t=1773778770",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/502820/ss_41cb1e2beff3c71b54fc632a2a18e2f9621c29cc.1920x1080.jpg?t=1773778770",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/502820/ss_d0e93ca434fc24841543b5030100be8d43bd9d39.1920x1080.jpg?t=1773778770",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/502820/ss_9e9add450d9e159e89ced0267b9b74b92b490399.1920x1080.jpg?t=1773778770",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/502820/ss_9e4e31da7eaadfe260f5bd355cb590680e3f16ac.1920x1080.jpg?t=1773778770",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/502820/ss_3be5bc8c0c49dbf60eef80a550880427a4a13171.1920x1080.jpg?t=1773778770"
    ]
   },
   "batman the enemy within the telltale series": {
@@ -5020,6 +5565,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2282740/ss_6d04e500260e50a965ca4d5f85a6f0a89fb965d5.1920x1080.jpg?t=1788974279",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2282740/ss_0ecfe46fcaef598b6374a1ff063fab3d21778222.1920x1080.jpg?t=1788974279",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2282740/ss_7c0898ca170ee1dbc1cb56f2180f68c9bf4e69e2.1920x1080.jpg?t=1788974279"
+   ]
+  },
+  "battle chef brigade deluxe": {
+   "about": "Welcome to Victusia, where the members of the elite Battle Chef Brigade are revered for their ability to skillfully take down monsters and transform their kills into delicious cuisine! But getting in isn't easy; chefs from across Victusia must vie for their spot in a high stakes competition. Follow two contestants, Mina and Thrash, as their journeys through the tournament unfold.",
+   "ageRating": null,
+   "appId": 452570,
+   "developer": "Trinket Studios",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:56:01Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": 80,
+   "name": "Battle Chef Brigade Deluxe",
+   "publisher": "Trinket Studios",
+   "releaseDate": "2017-11-20",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/452570/ss_c7de4fb6c763dcc137029c8238221245f2828bbf.1920x1080.jpg?t=1763397067",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/452570/ss_612f282b85faf6d92bcfbe242d6ed91aeab58dcb.1920x1080.jpg?t=1763397067",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/452570/ss_3ca66263530a1c8b1d661fa7d7a19b108ed76c43.1920x1080.jpg?t=1763397067",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/452570/ss_34f2f5cf833652e6bae98677f3732613795af06d.1920x1080.jpg?t=1763397067",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/452570/ss_4fee8d7f1a40de777f25be7cb1e1daae8778c527.1920x1080.jpg?t=1763397067",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/452570/ss_e4738c437380fb878f46271bc0b05c9555ebce80.1920x1080.jpg?t=1763397067",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/452570/ss_3f988beafbdd8d2a0392e338a458fab24251caab.1920x1080.jpg?t=1763397067",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/452570/ss_94e9602f1a054c4e5093fb43d48bba9042a20a94.1920x1080.jpg?t=1763397067"
    ]
   },
   "battlefield 1": {
@@ -5241,9 +5829,90 @@
    "fetchedAt": "2026-10-24T22:34:14Z",
    "miss": true
   },
+  "battlewake": {
+   "about": "BATTLE TO SAVE THE PIRATE'S LIFE\n\nAvast, matey! Rough seas await in Battlewake, a fantasy naval combat game built for VR from the creators of Raw Data and CREED: Rise to Glory. Play as 4 mythical pirate lords, captain massive battle-ready warships, and summon ancient powers as you set sail on a larger-than-life nautical war for the ages.",
+   "ageRating": null,
+   "appId": 814400,
+   "developer": "Survios",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Co-op",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-30T12:56:06Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Strategy",
+    "Simulation",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": 70,
+   "name": "Battlewake",
+   "publisher": "Survios",
+   "releaseDate": "2019-09-10",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/814400/ss_b11c3a3fbcd7a7561a06dc264b28a60315523c15.1920x1080.jpg?t=1588116629",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/814400/ss_385f081081977d6fdd5657ab011d6bf2ad402f02.1920x1080.jpg?t=1588116629",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/814400/ss_1d6d506c1c3baed377e27870d814e2b8d64d4db9.1920x1080.jpg?t=1588116629",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/814400/ss_df51bfd27dbf32eaaef2a072c5a5cf8100fba7ee.1920x1080.jpg?t=1588116629",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/814400/ss_1efeb508e74405e4662bef96198d70424b598e65.1920x1080.jpg?t=1588116629",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/814400/ss_7108557bf0bfc4a7e02ee0a241c9a0a2761d71b9.1920x1080.jpg?t=1588116629"
+   ]
+  },
   "beach buggy racing": {
    "fetchedAt": "2026-10-25T04:41:36Z",
    "miss": true
+  },
+  "beach buggy racing 2 island adventure": {
+   "about": "Match your kart racing skills against a rag-tag crew of rivals as you explore a mysterious island packed with ancient temples, dragon-infested castles, and post apocalyptic ice cream stands. Unlock and upgrade moon buggies, monster trucks and more. Collect and master over forty unique powerups in an epic race for the ultimate trophy.\n\nBeach Buggy Racing 2: Island Adventure is an action-packed, mayhem-filled kart racer with split screen competition and game rule customization.",
+   "ageRating": null,
+   "appId": 1230800,
+   "developer": "Vector Unit",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-30T12:56:11Z",
+   "genres": [
+    "Racing"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Spanish - Latin America",
+    "Dutch",
+    "Indonesian",
+    "Japanese",
+    "Korean",
+    "Portuguese - Portugal",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "Beach Buggy Racing 2: Island Adventure",
+   "publisher": "Vector Unit",
+   "releaseDate": "2021-03-10",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1230800/ss_6a7fb4f64415019c5bb7d4d7921295e7b8a5728f.1920x1080.jpg?t=1736983832",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1230800/ss_0e73c262a5241fb49df8039746564256cd8e9f99.1920x1080.jpg?t=1736983832",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1230800/ss_3de8f6de849435dc3d34d6e7b5e844364b352f2b.1920x1080.jpg?t=1736983832",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1230800/ss_9362f12d610e3f2d9242c087f5cb66285bd9f7c8.1920x1080.jpg?t=1736983832",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1230800/ss_a35203aa361d5abe61db40f8005c26785bdebb0f.1920x1080.jpg?t=1736983832",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1230800/ss_8c52137f91a8dbdd070f163a1a92420f3cafd9c0.1920x1080.jpg?t=1736983832"
+   ]
   },
   "bear with me the complete collection": {
    "fetchedAt": "2026-10-27T05:04:46Z",
@@ -5404,6 +6073,44 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/461950/ss_c0857a491fc75b0f6be96898ec73fe95e3a66ae6.1920x1080.jpg?t=1701878616",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/461950/ss_723747b95e778651483c74670c9612745e4b5f8a.1920x1080.jpg?t=1701878616",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/461950/ss_d1ccfe023c5b6eabd71571b889ef81c6b50ef82c.1920x1080.jpg?t=1701878616"
+   ]
+  },
+  "beat saber": {
+   "about": "Huge update coming Spring 2027\n\nSLASH THE BEATS \n\nStep in and get moving! Slash, duck, and dodge your way through every beat. Match the color and direction of incoming notes to master the music and keep your body in the flow.\n\nBUILT FOR THE BEAT\n\nEvery level is handcrafted to perfectly match the music. Experience stunning visual effects and haptic feedback that put you inside the track.\n\nAN UNBEATABLE MUSIC LIBRARY\n\nBeat Saber features a massive library of 300+ songs.",
+   "ageRating": null,
+   "appId": 620980,
+   "developer": "Beat Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-30T12:56:16Z",
+   "genres": [
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Spanish - Latin America"
+   ],
+   "metacritic": 93,
+   "name": "Beat Saber",
+   "publisher": "Beat Games",
+   "releaseDate": "2019-05-21",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620980/cad0da5aa0de0e7a8a25ce1cbd0e40e472794b2a/ss_cad0da5aa0de0e7a8a25ce1cbd0e40e472794b2a.1920x1080.jpg?t=1793008842",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620980/6204b8e313db035cbcaf30ad02ed8ee7cbdcfb18/ss_6204b8e313db035cbcaf30ad02ed8ee7cbdcfb18.1920x1080.jpg?t=1793008842",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620980/ss_7df971fd7781d69dc455b15a400a6973ed7d3f36.1920x1080.jpg?t=1793008842",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620980/ss_e1b161014deff483fa6bd8147a102b83b053e201.1920x1080.jpg?t=1793008842",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620980/ss_b39d40cd4c53c9fd737ffde535cfdffc17662862.1920x1080.jpg?t=1793008842",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620980/ss_1881ae4f153faf0d1ccecca60fbdac5b43ad57eb.1920x1080.jpg?t=1793008842",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620980/ss_114dc9a9f27666b2d56801ba49a1db8fa202b6ee.1920x1080.jpg?t=1793008842",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620980/ss_b65444cc4513f34bd41fa6b0fe96cf11d94fea8d.1920x1080.jpg?t=1793008842"
    ]
   },
   "bendy and the dark revival": {
@@ -5748,6 +6455,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2397250/ss_0e64d023c6aaa4ccf7662aed413ba036933b766a.1920x1080.jpg?t=1744895598",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2397250/ss_f9783ad3518e9f6f3cedea2cbc9d3c88de63f1fe.1920x1080.jpg?t=1744895598"
    ]
+  },
+  "biohazard re 4": {
+   "fetchedAt": "2026-10-30T12:55:26Z",
+   "miss": true
   },
   "biolab wars": {
    "about": "An alien lab experimenting on Earth? It's time to call the mercenary team on duty to sweep the invaders by firing, beating and bombing.\nInspired by the 8-bit games and by the movies from the 80's, your goal is to blow things up, defeat aliens and fight bizarre bosses in this platformer 2D with classic mechanics.",
@@ -7057,6 +7768,14 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/738520/ss_683b836e322e9c86d20d4d64b1161987dd93b722.1920x1080.jpg?t=1788188445"
    ]
   },
+  "brok natal tale a new christmas special": {
+   "fetchedAt": "2026-10-30T12:55:28Z",
+   "miss": true
+  },
+  "brok the brawl bar": {
+   "fetchedAt": "2026-10-30T12:55:31Z",
+   "miss": true
+  },
   "broken sword 5 the serpents curse": {
    "about": "Paris in the spring. Shots ring out from a gallery…\n\nA robbery… a murder… and the beginning of another epic, original Broken Sword adventure.\n\nFrom multi-award winning Revolution Software comes the latest explosive episode in this classic series. Playing as intrepid American George Stobbart and sassy French journalist Nico Collard, you find yourself on the trail of a stolen painting – and a murderous conspiracy. A conspiracy whose roots lie in mysteries older than the written word...",
    "ageRating": null,
@@ -7180,6 +7899,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2153350/ss_aae6cc4e6b48931916a18a9272a6c3e23020cf76.1920x1080.jpg?t=1727773982",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2153350/ss_e0a1eb49ff8bedc6a4a0771afc60e6b1a7eda74c.1920x1080.jpg?t=1727773982"
    ]
+  },
+  "bsd flushyourmeds lzma": {
+   "fetchedAt": "2026-10-30T12:55:33Z",
+   "miss": true
   },
   "bubble bobble sugar dungeons": {
    "fetchedAt": "2026-10-29T13:02:24Z",
@@ -52611,6 +53334,6 @@
    "miss": true
   }
  },
- "updatedAt": "2026-10-30T05:48:49Z",
+ "updatedAt": "2026-10-30T12:56:16Z",
  "version": 1
 }

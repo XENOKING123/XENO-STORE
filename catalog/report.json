@@ -1,8 +1,10 @@
 {
   "audit": {
-    "auditedAt": "2026-10-30T00:02:14Z",
-    "droppedDead": 11443,
+    "auditedAt": "2026-10-30T05:48:55Z",
+    "droppedDead": 12145,
     "droppedLinks": [
+      "lapy20011-homebrew https://pkg-zone.com/download/ps4/LAPY20011/latest",
+      "lapy20012-homebrew https://pkg-zone.com/download/ps4/LAPY20012/latest",
       "lapy20016-homebrew https://pkg-zone.com/download/ps4/LAPY20016/latest",
       "ppsa01615-homebrew https://pkg-zone.com/download/ps4/PPSA01615/latest",
       "p-t-ps4 https://filekeeper.net/kc5dqc49ulga/[SuperPSX]-Ancestors.The.Humankind.Odyssey-CUSA13248-EUR-Game-PS4.pkg",
@@ -100,27 +102,27 @@
       "p-t-ps4 https://filecrypt.cc/Container/4310BAFCC7.html",
       "p-t-ps4 https://filecrypt.cc/Container/AFDC01E6ED.html",
       "p-t-ps4 https://filecrypt.cc/Container/B5CA83292C.html",
-      "p-t-ps4 https://filecrypt.cc/Container/73F7AF83C6.html",
-      "p-t-ps4 https://filecrypt.cc/Container/DCAF278C5A.html",
-      "p-t-ps4 https://downloadgameps3.net/archives/23034"
+      "p-t-ps4 https://filecrypt.cc/Container/73F7AF83C6.html"
     ],
-    "flaky": 4344,
-    "ok": 10916,
+    "flaky": 3146,
+    "ok": 11411,
     "page": 0,
-    "results": 28336,
-    "unaudited": 3
+    "results": 28339,
+    "unaudited": 1
   },
   "backports": 38,
-  "bytes": 12160536,
+  "bytes": 11684110,
   "changed": true,
   "droppedGames": {
-    "audit_dead": 1462
+    "audit_dead": 1702
   },
   "droppedReleases": {
-    "audit_dead": 11443,
+    "audit_dead": 12145,
     "duplicate_url": 2873
   },
   "droppedSamples": [
+    "pkgzone: audit_dead: lapy20011-homebrew https://pkg-zone.com/download/ps4/LAPY20011/latest",
+    "pkgzone: audit_dead: lapy20012-homebrew https://pkg-zone.com/download/ps4/LAPY20012/latest",
     "pkgzone: audit_dead: lapy20016-homebrew https://pkg-zone.com/download/ps4/LAPY20016/latest",
     "pkgzone: audit_dead: ppsa01615-homebrew https://pkg-zone.com/download/ps4/PPSA01615/latest",
     "dlpsgame: audit_dead: p-t-ps4 https://filekeeper.net/kc5dqc49ulga/[SuperPSX]-Ancestors.The.Humankind.Odyssey-CUSA13248-EUR-Game-PS4.pkg",
@@ -218,11 +220,9 @@
     "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/4310BAFCC7.html",
     "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/AFDC01E6ED.html",
     "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/B5CA83292C.html",
-    "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/73F7AF83C6.html",
-    "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/DCAF278C5A.html",
-    "dlpsgame: audit_dead: p-t-ps4 https://downloadgameps3.net/archives/23034"
+    "dlpsgame: audit_dead: p-t-ps4 https://filecrypt.cc/Container/73F7AF83C6.html"
   ],
-  "elapsed": 392.5,
+  "elapsed": 401.4,
   "enrichment": {
     "psStoreCache": 3597,
     "psstore": {
@@ -233,77 +233,77 @@
       "skipped": 3581
     },
     "seeds": {
-      "cheats": 1083,
-      "conceptIds": 6974,
-      "covers": 435,
-      "games": 16662,
+      "cheats": 1070,
+      "conceptIds": 6836,
+      "covers": 420,
+      "games": 16422,
       "namesResolved": 0,
-      "regions": 2702,
-      "titleIdsFilled": 1908
+      "regions": 2699,
+      "titleIdsFilled": 1907
     },
     "steam": {
       "errors": 0,
-      "hits": 19,
-      "looked": 29,
-      "misses": 10,
-      "skipped": 1743,
+      "hits": 18,
+      "looked": 30,
+      "misses": 12,
+      "skipped": 1772,
       "stoppedBy": 0
     },
-    "steamCache": 1776
+    "steamCache": 1806
   },
   "formats": {
     "7z": 92,
-    "FFPFSC": 227,
+    "FFPFSC": 198,
     "FFPKG": 1,
-    "PAGE": 9625,
-    "PKG": 3812,
-    "RAR": 324,
+    "PAGE": 8956,
+    "PKG": 3808,
+    "RAR": 325,
     "ZIP": 483,
-    "exFAT": 699
+    "exFAT": 695
   },
-  "games": 7774,
-  "generatedAt": "2026-10-30T05:46:44Z",
+  "games": 7534,
+  "generatedAt": "2026-10-30T12:54:08Z",
   "genres": {
-    "Action": 733,
-    "Adventure": 504,
-    "Family": 125,
+    "Action": 719,
+    "Adventure": 497,
+    "Family": 119,
     "Fighting": 26,
     "Horror": 52,
-    "Indie": 254,
+    "Indie": 241,
     "Music": 2,
     "Puzzle": 18,
-    "RPG": 222,
-    "Racing": 80,
+    "RPG": 217,
+    "Racing": 77,
     "Shooter": 40,
-    "Simulation": 120,
-    "Sports": 60,
-    "Strategy": 68
+    "Simulation": 118,
+    "Sports": 58,
+    "Strategy": 69
   },
   "httpFailures": 4,
-  "httpRequests": 1405,
+  "httpRequests": 1400,
   "kinds": {
-    "app": 179,
+    "app": 177,
     "backport": 32,
-    "dlc": 709,
-    "game": 12043,
-    "update": 2300
+    "dlc": 636,
+    "game": 11649,
+    "update": 2064
   },
   "mergedGroups": 1451,
   "mode": "online",
-  "nodes": 387352,
+  "nodes": 371296,
   "platforms": {
     "HOMEBREW": 174,
-    "PS4": 6327,
-    "PS5": 1273
+    "PS4": 6092,
+    "PS5": 1268
   },
-  "releases": 15263,
-  "revision": 68,
+  "releases": 14558,
+  "revision": 69,
   "sources": [
     {
       "draftGames": 1611,
       "draftReleases": 2264,
       "dropped": 2,
-      "elapsed": 1.4,
+      "elapsed": 1.1,
       "error": "",
       "games": 1608,
       "id": "feed-verified",
@@ -314,44 +314,44 @@
     {
       "draftGames": 7781,
       "draftReleases": 19839,
-      "dropped": 11297,
-      "elapsed": 233.8,
+      "dropped": 11861,
+      "elapsed": 218.9,
       "error": "",
-      "games": 6932,
+      "games": 6791,
       "id": "dlpsgame",
       "name": "DLPSGAME",
-      "releases": 17268,
+      "releases": 16983,
       "status": "live"
     },
     {
-      "draftGames": 3121,
-      "draftReleases": 3237,
+      "draftGames": 3122,
+      "draftReleases": 3238,
       "dropped": 56,
-      "elapsed": 262.5,
+      "elapsed": 264.5,
       "error": "",
-      "games": 3121,
+      "games": 3122,
       "id": "archive_org",
       "name": "Archive.org",
-      "releases": 3181,
+      "releases": 3182,
       "status": "live"
     },
     {
       "draftGames": 2517,
       "draftReleases": 2517,
-      "dropped": 2163,
-      "elapsed": 76.3,
+      "dropped": 2167,
+      "elapsed": 77.7,
       "error": "",
-      "games": 2479,
+      "games": 2475,
       "id": "superpsx",
       "name": "SuperPSX",
-      "releases": 361,
+      "releases": 357,
       "status": "live"
     },
     {
       "draftGames": 4,
       "draftReleases": 4,
       "dropped": 0,
-      "elapsed": 3.2,
+      "elapsed": 3.1,
       "error": "",
       "games": 4,
       "id": "romsfun",
@@ -374,8 +374,8 @@
     {
       "draftGames": 174,
       "draftReleases": 181,
-      "dropped": 2,
-      "elapsed": 189.5,
+      "dropped": 4,
+      "elapsed": 191.2,
       "error": "",
       "games": 174,
       "id": "pkgzone",
@@ -386,20 +386,20 @@
     {
       "draftGames": 1127,
       "draftReleases": 1130,
-      "dropped": 587,
-      "elapsed": 123.6,
+      "dropped": 684,
+      "elapsed": 149.9,
       "error": "",
-      "games": 544,
+      "games": 446,
       "id": "espacypkg",
       "name": "Espacypkg",
-      "releases": 543,
+      "releases": 446,
       "status": "live"
     },
     {
       "draftGames": 100,
       "draftReleases": 123,
       "dropped": 9,
-      "elapsed": 3.9,
+      "elapsed": 4.3,
       "error": "",
       "games": 100,
       "id": "pkggames",
@@ -408,22 +408,22 @@
       "status": "live"
     },
     {
-      "draftGames": 176,
-      "draftReleases": 176,
+      "draftGames": 172,
+      "draftReleases": 172,
       "dropped": 7,
-      "elapsed": 179.1,
+      "elapsed": 179.2,
       "error": "",
-      "games": 172,
+      "games": 167,
       "id": "pspkg",
       "name": "pspkg.com",
-      "releases": 172,
+      "releases": 167,
       "status": "live"
     },
     {
       "draftGames": 95,
       "draftReleases": 95,
       "dropped": 2,
-      "elapsed": 2.3,
+      "elapsed": 2.4,
       "error": "",
       "games": 94,
       "id": "arabicps4",
@@ -432,10 +432,10 @@
       "status": "live"
     }
   ],
-  "verifiedReleases": 4844,
-  "withCheats": 498,
-  "withMetacritic": 405,
-  "withPsStoreUrl": 3071,
-  "withScreenshots": 1393,
-  "withTitleIds": 3088
+  "verifiedReleases": 4861,
+  "withCheats": 485,
+  "withMetacritic": 401,
+  "withPsStoreUrl": 2933,
+  "withScreenshots": 1376,
+  "withTitleIds": 2950
 }
