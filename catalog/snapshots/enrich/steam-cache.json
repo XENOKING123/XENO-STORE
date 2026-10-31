@@ -15273,6 +15273,40 @@
    "fetchedAt": "2026-10-27T18:03:30Z",
    "miss": true
   },
+  "dont touch this button": {
+   "about": "You don’t know where you are or how you got here... This place looks extremely strange, and the string of rooms ahead of you is fraught with deadly dangers... But I'm sure you will be able to overcome all obstacles on your way and get to the exit... The main thing is to remember the rule - never trust me!\n\nDon't Touch this Button! is a minimalistic puzzle game with a first-person point of view.",
+   "ageRating": null,
+   "appId": 1593950,
+   "developer": "9 Eyes Game Studio",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-31T12:27:13Z",
+   "genres": [
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "Russian",
+    "French",
+    "German",
+    "Spanish - Spain"
+   ],
+   "metacritic": null,
+   "name": "Don't Touch this Button!",
+   "publisher": "9 Eyes Game Studio, Stately Snail",
+   "releaseDate": "2021-08-31",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1593950/ss_21cb1f0928e5d59c1de4e945d72cd4eb7f5fadfc.1920x1080.jpg?t=1630423308",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1593950/ss_bfced2a62020996394c58575c5bbe1d9381547a1.1920x1080.jpg?t=1630423308",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1593950/ss_2f656cf4ee925ee3095f7872945a592b5db10dc8.1920x1080.jpg?t=1630423308",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1593950/ss_981384436381076c38c07037fd541bdf7e86c018.1920x1080.jpg?t=1630423308",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1593950/ss_34b56cf252f9fa92d70e55210d3eea24b6cca03f.1920x1080.jpg?t=1630423308",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1593950/ss_eee3a6fc7c8e9ebdbc8410fc7588dff5f65785a6.1920x1080.jpg?t=1630423308"
+   ]
+  },
   "donut county": {
    "about": "Donut County is a story-based physics puzzle game where you play as an ever-growing hole in the ground. Meet cute characters, steal their trash, and throw them in a hole.\n\nWhere Trash is Treasure\nRaccoons have taken over Donut County with remote-controlled trash-stealing holes. You play as BK, a hole-driving raccoon who swallows up his friends and their homes to earn idiotic prizes.",
    "ageRating": null,
@@ -15920,6 +15954,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/851850/ss_f35cedc28ae53c2cbafeb03177e3a4d416a00868.1920x1080.jpg?t=1769139697"
    ]
   },
+  "dragon fantasy the black tome of ice": {
+   "fetchedAt": "2026-10-31T12:27:16Z",
+   "miss": true
+  },
   "dragon quest heroes 2": {
    "about": "DRAGON QUEST HEROES II is a hack-and-slash, field-roaming Action RPG that sends players on a new adventure to restore order to a once peaceful world filled with hordes of monsters and battles of epic proportions. Up to 4 players can band together in cooperative multiplayer to conquer swarms of enemies and defeat challenging boss monsters.",
    "ageRating": 13,
@@ -16039,6 +16077,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2499860/f3b44f04d8210b7c1cbdd172f53f8c191f5cb0a4/ss_f3b44f04d8210b7c1cbdd172f53f8c191f5cb0a4.1920x1080.jpg?t=1785474787"
    ]
   },
+  "dragon quest x offline": {
+   "fetchedAt": "2026-10-31T12:27:18Z",
+   "miss": true
+  },
   "dragon quest xi echoes of an elusive age": {
    "fetchedAt": "2026-10-24T04:37:06Z",
    "miss": true
@@ -16086,6 +16128,48 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2054970/ss_a2878bf879ea6c36cc2c5a554007a5116e8ede14.1920x1080.jpg?t=1791504871",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2054970/ss_06cdf45af9fa89bc9a6e9d46f830fe0e9d84f1e3.1920x1080.jpg?t=1791504871",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2054970/ss_7818dbd3504400f13f5924adc9d81999b791e87b.1920x1080.jpg?t=1791504871"
+   ]
+  },
+  "drawfighters": {
+   "fetchedAt": "2026-10-31T12:27:21Z",
+   "miss": true
+  },
+  "dreadout 2": {
+   "about": "DreadOut 2 is a third-person horror adventure that draws inspiration from Indonesian folklore and urban legend. Play as Linda Meillinda, a high school student with supernatural power – the ability to sense and see ghosts. \n\nWith the aid of her trusty smartphone, Linda must hunt the nightmarish spirits and dark forces that threaten not only her hometown but all of mankind.",
+   "ageRating": null,
+   "appId": 945710,
+   "developer": "Digital Happiness",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-31T12:27:26Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Spain",
+    "Hungarian",
+    "Indonesian"
+   ],
+   "metacritic": null,
+   "name": "DreadOut 2",
+   "publisher": "Digital Happiness",
+   "releaseDate": "2020-02-21",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945710/ss_cabb5eddab5e43cbe0f2cd3ea00e958b3da2b25f.1920x1080.jpg?t=1791981357",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945710/ss_d53b0d2bffafe22f9b41d60c21d659795fc8ab85.1920x1080.jpg?t=1791981357",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945710/ss_bccd9149af49422a0894247cdbb31078247b00cf.1920x1080.jpg?t=1791981357",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945710/ss_3183a4891c2b621e41598721c691634271055a58.1920x1080.jpg?t=1791981357",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945710/ss_b7365866d0b63076263f9b5c165137d27f0c8b11.1920x1080.jpg?t=1791981357",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945710/ss_e2854f46beaf67882c48ea71f86e3bcfe9a014c0.1920x1080.jpg?t=1791981357",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945710/ss_41141bfb39ba3c9c5e494c8d86b5e358ed2c2838.1920x1080.jpg?t=1791981357",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945710/ss_7bcb612435146ee1e82c02066ddaf71eceed4a66.1920x1080.jpg?t=1791981357"
    ]
   },
   "dreamcore": {
@@ -16174,6 +16258,48 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/237850/ss_d83b1e30d0074fa83525a0bf41cd371b4f58886d.1920x1080.jpg?t=1783003404",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/237850/ss_dddefa4aab903c5b88ac496fc00563cbb4e4c0c6.1920x1080.jpg?t=1783003404"
    ]
+  },
+  "dreaming sarah": {
+   "about": "Inspired by the horror game Yume Nikki, Dreaming Sarah is a surreal adventure platformer game with puzzle elements, an engaging environment, an incredibly diverse cast of characters, and of course, a young girl named Sarah.\n\nSarah has been on an accident and is in a coma.",
+   "ageRating": null,
+   "appId": 296870,
+   "developer": "Asteristic Game Studio, Anthony Septim",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-31T12:27:31Z",
+   "genres": [
+    "Adventure",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "Portuguese - Brazil",
+    "Italian",
+    "Simplified Chinese",
+    "German",
+    "Spanish - Spain",
+    "French"
+   ],
+   "metacritic": null,
+   "name": "Dreaming Sarah",
+   "publisher": "Asteristic Game Studio",
+   "releaseDate": "2015-03-12",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/296870/ss_c7721e370e7d9b114e2beb56c076cf1c8c6d17c2.1920x1080.jpg?t=1759236577",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/296870/ss_ab17b8db216af0ffa2414bc2581af2db9192efde.1920x1080.jpg?t=1759236577",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/296870/ss_40287ee4de69bdc626e44005d6468bb2e036fd2e.1920x1080.jpg?t=1759236577",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/296870/ss_8392289c85ede5740e5072e10bfb234ae4307b03.1920x1080.jpg?t=1759236577",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/296870/ss_818c2eaf8eac114c03febb4df22ff8f5a1f6a3b9.1920x1080.jpg?t=1759236577",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/296870/ss_4b47f94318c39eb529da38a3f5378fff58626607.1920x1080.jpg?t=1759236577",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/296870/ss_57b1c6615eeee21d5b49ca351e5b91d8072dff63.1920x1080.jpg?t=1759236577"
+   ]
+  },
+  "dreamweb": {
+   "fetchedAt": "2026-10-31T12:27:33Z",
+   "miss": true
   },
   "dreamworks gabbys dollhouse ready to party": {
    "about": "Inspired by DreamWorks Animation’s Gabby’s Dollhouse, fans can now throw the greatest party ever with Gabby and Pandy Paws! Hop into the catavator and see the colorful world come to life. \n\nFirst stop, Crafting World with Mama and Baby Box. Get creative with items you find around the house. Then see what awaits you in the Fairy Tail Garden with Kitty Fairy. Does floating through space sound like a groovy plan? DJ Catnip thinks so. Boogie down to the music room and blast off to planet Caturn.",
@@ -16275,8 +16401,16 @@
    "fetchedAt": "2026-10-31T05:41:31Z",
    "miss": true
   },
+  "drunken fist": {
+   "fetchedAt": "2026-10-31T12:27:36Z",
+   "miss": true
+  },
   "ducati 90th anniversary the official videogame": {
    "fetchedAt": "2026-10-25T04:43:14Z",
+   "miss": true
+  },
+  "duck dynasty": {
+   "fetchedAt": "2026-10-31T12:27:38Z",
    "miss": true
   },
   "dungeon and gravestone": {
@@ -16491,6 +16625,10 @@
    "fetchedAt": "2026-10-31T05:41:34Z",
    "miss": true
   },
+  "dynamite fishing world games": {
+   "fetchedAt": "2026-10-31T12:27:41Z",
+   "miss": true
+  },
   "dynasty warriors godseekers": {
    "fetchedAt": "2026-10-31T05:41:36Z",
    "miss": true
@@ -16541,6 +16679,61 @@
   "ea sports college football 26": {
    "fetchedAt": "2026-10-17T12:17:07Z",
    "miss": true
+  },
+  "ea sports fc 25": {
+   "about": "Introducing Club Membership – the next phase of loyalty in EA SPORTS FC™ 25. Available to fans that have played EA SPORTS FC™ 24 before 27 September 2024 and play EA SPORTS FC™ 25 before November 1st, 2024*.\n\nFC 25 Club Members will receive a host of exclusive benefits across the year, including a badge and kit to represent their status and rewards across all your favourite game modes.\n\nOnce again, all Founders will be able to unlock their Founders exclusive cosmetic items.",
+   "ageRating": null,
+   "appId": 2669320,
+   "developer": "EA Canada, EA Romania",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Cross-platform multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-31T12:27:46Z",
+   "genres": [
+    "Sports",
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Arabic",
+    "Czech",
+    "Danish",
+    "Dutch",
+    "Japanese",
+    "Korean",
+    "Norwegian",
+    "Polish",
+    "Portuguese - Brazil",
+    "Portuguese - Portugal",
+    "Russian",
+    "Simplified Chinese",
+    "Spanish - Latin America",
+    "Swedish",
+    "Traditional Chinese"
+   ],
+   "metacritic": null,
+   "name": "EA SPORTS FC™ 25",
+   "publisher": "Electronic Arts",
+   "releaseDate": "2024-09-26",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2669320/ss_857b4aaf3c10b2a886d60f029f32b2f86d968311.1920x1080.jpg?t=1788548615",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2669320/ss_aeeea35bf96fad387b97befd9a5c4b9d8ee2ac1a.1920x1080.jpg?t=1788548615",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2669320/ss_c8460408705b54e37228cc320a2da1c19e4dc12f.1920x1080.jpg?t=1788548615",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2669320/ss_ee0be94a0a8e1325050481bcf351d736e6d2982d.1920x1080.jpg?t=1788548615",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2669320/ss_ded26e23554cb4d0612b8f531304f8f486eafcf4.1920x1080.jpg?t=1788548615",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2669320/ss_709f8a775654b083b7faf991522f657dda2a14a9.1920x1080.jpg?t=1788548615",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2669320/ss_009991924bc40dd9d9793bbef7b5783470e3030d.1920x1080.jpg?t=1788548615",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2669320/ss_bab390c4ca80ca91d5984440cec2eea12b4848ba.1920x1080.jpg?t=1788548615"
+   ]
   },
   "ea sports fc 26": {
    "about": "This game includes optional in-game purchases of virtual currency that can be used to acquire virtual in-game items, including a random selection of virtual in-game items.",
@@ -16845,6 +17038,37 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3597580/4034ff2de9554e71a29ba026dc859b428ef575cb/ss_4034ff2de9554e71a29ba026dc859b428ef575cb.1920x1080.jpg?t=1756932966"
    ]
   },
+  "earthworm jim 2": {
+   "about": "From Evil the Cat’s ’Circus of the Scars’ to the planet of Meat, join Jim on a madcap chase across the galaxy. Saving cows, thwarting lawyers and outsmarting Psy-Crow are all in a day’s work for Jim. Are you up to the challenge? Can you handle the awesome new weapons? Excellent! Then stop reading this. Try it now! Trust no one, play it yourself.. or EAT DIRT! \n\n \n\nOver 5 new weapons to choose from!",
+   "ageRating": null,
+   "appId": 38490,
+   "developer": "Shiny Entertainment",
+   "features": [
+    "Single-player"
+   ],
+   "fetchedAt": "2026-10-31T12:27:53Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": null,
+   "name": "Earthworm Jim 2",
+   "publisher": "Interplay Inc.",
+   "releaseDate": "2009-11-04",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/38490/ss_19857e77dee73a93a5a5428a6a3b9db8292335bd.1920x1080.jpg?t=1762282852",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/38490/ss_fc8589d6ff1cfaa94e29a428a03485045664bc97.1920x1080.jpg?t=1762282852",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/38490/ss_f2e73142229a043d39240e0d9a18cf24ef686717.1920x1080.jpg?t=1762282852",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/38490/ss_595fde8d24e98ca36a400276308607819b81cf56.1920x1080.jpg?t=1762282852",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/38490/ss_208b31e1b2b4884365272750c91b29daa81fa855.1920x1080.jpg?t=1762282852",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/38490/ss_1dc52c65670889939fb9050751c9cd240da2d55a.1920x1080.jpg?t=1762282852",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/38490/ss_8b5b04bd82bef3ea791958ac52fa99eeb82c2474.1920x1080.jpg?t=1762282852",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/38490/ss_edb49b9facb35e1650effdc54f321b252b9360c1.1920x1080.jpg?t=1762282852"
+   ]
+  },
   "easy red 2": {
    "about": "We hit the beach in 30 seconds. Stay alert. Stay alive.\n\nEasy Red II is a tactical, realistic, historically authentic World War II shooter focused on large-scale, immersive battles that put you right on the front lines of the chaos.\n\nCommand your squad, coordinate combined-arms assaults, and fight across sprawling battlefields modeled after real historical locations of war. Playable completely solo against AI, or take the fight to other players.\n\nA Global War\n\nFight all across the globe.",
    "ageRating": null,
@@ -16896,6 +17120,51 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1324780/a943b72058c75c784791dc9e150f39a93354e1af/ss_a943b72058c75c784791dc9e150f39a93354e1af.1920x1080.jpg?t=1785026019"
    ]
   },
+  "echoes of the end": {
+   "about": "Embark on the Journey of a Lifetime\n\nIn Echoes of the End, you play as Ryn, a powerful vestige born with an affinity for what remains of an ancient magic. When her brother is captured and war threatens to engulf her homeland, Ryn must rise to defend it before it’s consumed by conflict.",
+   "ageRating": null,
+   "appId": 2821610,
+   "developer": "Myrkur Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-31T12:27:58Z",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Russian",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Turkish",
+    "Icelandic"
+   ],
+   "metacritic": null,
+   "name": "Echoes of the End: Enhanced Edition",
+   "publisher": "Deep Silver",
+   "releaseDate": "2025-08-12",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2821610/3b18fb3060e2b309241d6ce76fb5dd7f3594a436/ss_3b18fb3060e2b309241d6ce76fb5dd7f3594a436.1920x1080.jpg?t=1789052838",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2821610/6046716d062b0d85d3c8bcb4bafac2df83548ec3/ss_6046716d062b0d85d3c8bcb4bafac2df83548ec3.1920x1080.jpg?t=1789052838",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2821610/55d173b363da830e1dc07be85f3a4cad12227a92/ss_55d173b363da830e1dc07be85f3a4cad12227a92.1920x1080.jpg?t=1789052838",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2821610/6fcb009c2c3a89685069bafb0b0f64f730800b8e/ss_6fcb009c2c3a89685069bafb0b0f64f730800b8e.1920x1080.jpg?t=1789052838",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2821610/0433b2a2ae679e3dadb7a69b9dd8604db280d7ee/ss_0433b2a2ae679e3dadb7a69b9dd8604db280d7ee.1920x1080.jpg?t=1789052838",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2821610/a92d2a7d2cd68318a698362ee5d53be8eff80c95/ss_a92d2a7d2cd68318a698362ee5d53be8eff80c95.1920x1080.jpg?t=1789052838",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2821610/558b74669d112188727623b00fabb4b5c880ec36/ss_558b74669d112188727623b00fabb4b5c880ec36.1920x1080.jpg?t=1789052838",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2821610/a096c0a9f078d29b1acfad8f6ac1efbfdecab97a/ss_a096c0a9f078d29b1acfad8f6ac1efbfdecab97a.1920x1080.jpg?t=1789052838"
+   ]
+  },
   "edens zero": {
    "about": "A new game adaptation of Hiro Mashima's fantasy opus!\n\nTake off to the stars, and adventure!\n\nHiro Mashima's space fantasy manga and anime EDENS ZERO is becoming an Action RPG!\n\nStep into the shoes of Shiki and co. and play through the original story, expanded with tons of game-exclusive content and quests, and all set within a vast open world!\n\nTake on awesome action-packed battles!\n\nOverpower enemies with combos and Finishing Attacks!\n\nPerform Special Skills!\n\nBuilding up the gauge and then…",
    "ageRating": null,
@@ -16944,6 +17213,10 @@
   },
   "efootball pes 2021 season update": {
    "fetchedAt": "2026-10-23T18:24:09Z",
+   "miss": true
+  },
+  "eiyuu densetsu sen no kiseki 4 the end of saga": {
+   "fetchedAt": "2026-10-31T12:28:01Z",
    "miss": true
   },
   "elden ring": {
@@ -17329,8 +17602,61 @@
    "fetchedAt": "2026-10-21T00:42:21Z",
    "miss": true
   },
+  "end space": {
+   "about": "Take command of the most advanced starfighter the United Trade Consortium has ever developed in stunning virtual reality as you battle for the Tartarus sector. Protect the UTC’s secret jump-drive technology from the Tartarus Liberation Front insurgents as you fight to maintain the corporation’s dominance and earn yourself fame and fortune in the process. \n\r\n\n\r\nTrack targets with your gaze and blast them with your Pulse Lasers or lock on and pound them into space dust with your Meteor Missiles.",
+   "ageRating": null,
+   "appId": 753900,
+   "developer": "Orange Bridge Studios",
+   "features": [
+    "Single-player",
+    "Controller support",
+    "VR"
+   ],
+   "fetchedAt": "2026-10-31T12:28:06Z",
+   "genres": [
+    "Action",
+    "Simulation",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Japanese",
+    "Korean",
+    "Russian",
+    "Simplified Chinese"
+   ],
+   "metacritic": null,
+   "name": "End Space",
+   "publisher": "Orange Bridge Studios",
+   "releaseDate": "2018-03-29",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/753900/ss_07df0784719d6a230a61165592e581303e2d53fc.1920x1080.jpg?t=1652460734",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/753900/ss_86737bffc350d5789535a7a393f96fcd7a4d9f23.1920x1080.jpg?t=1652460734",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/753900/ss_d0d29a096d29872de9de30cbf7dbbe3f56980f78.1920x1080.jpg?t=1652460734",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/753900/ss_e0b417baec24d1803f3f6ecf6219a16388838c75.1920x1080.jpg?t=1652460734",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/753900/ss_eaf685d7347a1740debde2e8a02f9981e5cdc349.1920x1080.jpg?t=1652460734",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/753900/ss_69430aa4320c8b47219a49aab1496029659c4ae5.1920x1080.jpg?t=1652460734",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/753900/ss_739103e0e1c4ae9343f7d9fef46aa630b5fb4c0d.1920x1080.jpg?t=1652460734"
+   ]
+  },
   "endless dungeon": {
    "fetchedAt": "2026-10-25T04:43:19Z",
+   "miss": true
+  },
+  "enotria the last song": {
+   "fetchedAt": "2026-10-31T12:28:08Z",
+   "miss": true
+  },
+  "entwined": {
+   "fetchedAt": "2026-10-31T12:28:11Z",
+   "miss": true
+  },
+  "ep 0006 00 fifafootball 2014 a 0100 v 0103": {
+   "fetchedAt": "2026-10-31T12:27:48Z",
    "miss": true
   },
   "ep0177 00 divaft39future00 a0000 v0100": {
@@ -17454,6 +17780,39 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1303140/ss_b4461dc246c3ff9925ae59e66d7c12e70d1e03e8.1920x1080.jpg?t=1624885543",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1303140/ss_1ddb0925c43867976361004fa0c2f3328a2f168f.1920x1080.jpg?t=1624885543",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1303140/ss_29cc436913714ed4cdcf983e71fae64850e55325.1920x1080.jpg?t=1624885543"
+   ]
+  },
+  "escape goat 2": {
+   "about": "\"The game’s flow from challenge to discovery is a masterwork for the genre ...\" - Ars Technica\n\nEscape Goat 2 is a puzzle platformer game where you use machinery, the environment, and a friendly mouse to progress through a dungeon.\n\nOverview: None have overcome the Stronghold of Toragos... will you be the first goat to do so?",
+   "ageRating": null,
+   "appId": 255340,
+   "developer": "MagicalTimeBean",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-31T12:28:16Z",
+   "genres": [
+    "Action",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English"
+   ],
+   "metacritic": 76,
+   "name": "Escape Goat 2",
+   "publisher": "Double Fine Presents",
+   "releaseDate": "2014-03-24",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255340/ss_679367f7150783c0b0afa0e357f5551b0a838e37.1920x1080.jpg?t=1667944341",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255340/ss_cf46ace248d2913a08cd75b2327f2f911e1c7b5b.1920x1080.jpg?t=1667944341",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255340/ss_aea57545fa89e31da11a94d8e712e5074350d1b0.1920x1080.jpg?t=1667944341",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255340/ss_0034b476132a2c57f2f28bf10de00a7e34e8c0fe.1920x1080.jpg?t=1667944341",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255340/ss_c3567441caa79d24cc5e82ecc4e63b8f9a9d940d.1920x1080.jpg?t=1667944341",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255340/ss_ad870f1053ecb4d5b1d8ba98788bfdd30ce7dddb.1920x1080.jpg?t=1667944341",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255340/ss_2751d866861824f10413d399982489468a7d37e6.1920x1080.jpg?t=1667944341",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/255340/ss_1c8d7e9305fa2bde5dbf492f698af055474abdd1.1920x1080.jpg?t=1667944341"
    ]
   },
   "escape plan": {
@@ -17611,6 +17970,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/865680/ss_28da76623c4ae0bc104ad916abcec6ab290216f4.1920x1080.jpg?t=1728690515"
    ]
   },
+  "eternights": {
+   "about": "Eternights is a unique blend of dating and action where players can explore a post-apocalyptic world filled with danger, love, and adventure.\n \nSave the world, and find love along the way.Face the infected\n\nOne day, something, or someone, has turned humans into dangerous monsters. All that interests them now is violence and power. They are what stand between you, a cure, and the world you want. Most importantly?",
+   "ageRating": null,
+   "appId": 1402110,
+   "developer": "Studio Sai",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-31T12:28:21Z",
+   "genres": [
+    "Action",
+    "RPG",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Japanese",
+    "Korean",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Portuguese - Brazil",
+    "Spanish - Latin America"
+   ],
+   "metacritic": null,
+   "name": "Eternights",
+   "publisher": "Studio Sai, Kepler Ghost",
+   "releaseDate": "2023-09-11",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1402110/ss_9d0883ea260ad6bcbc83da96c6c5daecfcd20873.1920x1080.jpg?t=1759232313",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1402110/ss_b11fa6d7034eecbe9c0b6cb1504aaa3a48fa767e.1920x1080.jpg?t=1759232313",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1402110/ss_439363515555f9d44c6de3fece144b4cc21a006b.1920x1080.jpg?t=1759232313",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1402110/ss_bc3c15f5b9412d0715aa74d48032c23a48712810.1920x1080.jpg?t=1759232313",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1402110/ss_effcb75e45cc69304b4c187a5496aedb6d677c9f.1920x1080.jpg?t=1759232313",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1402110/ss_8c0c864b0344701d085d08b221f56ed3c4021eb1.1920x1080.jpg?t=1759232313",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1402110/ss_5261816ccb691ae3f852fdc832a0da7963d08cc2.1920x1080.jpg?t=1759232313",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1402110/ss_9b2f90a6d89a11226db6f7dd387f559266c2ced1.1920x1080.jpg?t=1759232313"
+   ]
+  },
   "ever forward": {
    "about": "Ever Forward is an adventure puzzle game — it is the story of Maya. Maya is lost in a strange world somewhere between reality and imagination. She is alone to confront her despair on her journey of discovery, where she must unlock her memories and confront her fears to unravel the secrets of the world. Players will need to use their observational skills and intelligence to solve multiple puzzles to piece together the mystery of Maya's past and what dark secrets she has buried.",
    "ageRating": null,
@@ -17694,6 +18096,52 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/845030/ss_7049c3174ba92d2599418510ba745ea81f690da1.1920x1080.jpg?t=1792069140",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/845030/ss_929947528a8fa9b62ee1e36d3c23b65b4bb76eb3.1920x1080.jpg?t=1792069140",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/845030/ss_31ed8859a8d72d1f74c8479e542ca45217f099c7.1920x1080.jpg?t=1792069140"
+   ]
+  },
+  "everspace 2": {
+   "about": "EVERSPACE 2 puts you in the pilot seat in this fast-paced single-player space shooter, where vicious encounters and brutal challenges stand between you and that next epic loot drop. Explore the war-torn star systems of the Demilitarized Zone of Cluster 34—each massive handcrafted area is packed with secrets, puzzles, and perils to encounter. \n\nExperience a thrilling sci-fi story following Adam, a clone pilot seeking his place in the universe.",
+   "ageRating": null,
+   "appId": 1128920,
+   "developer": "ROCKFISH Games",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-31T12:28:26Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Czech",
+    "Japanese",
+    "Korean",
+    "Polish",
+    "Portuguese - Brazil",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Russian"
+   ],
+   "metacritic": 81,
+   "name": "EVERSPACE™ 2",
+   "publisher": "ROCKFISH Games",
+   "releaseDate": "2023-04-06",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1128920/ss_d6ef1b997aceb9ffdda887e7308b5e09fb3b8585.1920x1080.jpg?t=1783351221",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1128920/ss_6b64317cc8adfd5c183b7a4a1be5f354dfb9cb20.1920x1080.jpg?t=1783351221",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1128920/ss_497fd3e4575bf0a37c5054da2530ded9f31c1eec.1920x1080.jpg?t=1783351221",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1128920/ss_b1471452fc2c3eb75cc7b4b51fe8b63f769c2bfa.1920x1080.jpg?t=1783351221",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1128920/ss_c14ebc5a9f78f5610d48f7a0f95c8641fa8797b3.1920x1080.jpg?t=1783351221",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1128920/ss_03a10f8e6ecbe7430e1c48f9bfa95aed8e1a615d.1920x1080.jpg?t=1783351221",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1128920/ss_ad1a144d310cee27de377184462301176d0fb333.1920x1080.jpg?t=1783351221",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1128920/ss_8b18bc1a384cf360ded1b092c664fb6859b19f8f.1920x1080.jpg?t=1783351221"
    ]
   },
   "evil genius 2 world domination": {
@@ -17826,6 +18274,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1065310/ss_5909a0ffbd8def5a1fe28fafb3272e6dd814c1bd.1920x1080.jpg?t=1761845937"
    ]
   },
+  "exit 9 metro": {
+   "fetchedAt": "2026-10-31T12:28:28Z",
+   "miss": true
+  },
   "exodemon": {
    "about": "Exodemon is a fast paced first person shooter inspired by the 90s FPS golden age. You must make your way through maze-like levels, destroying hordes of enemies with your monstrous abilities. Combining the destructive power of your symbiotic claws with a fast, sharp and fluid movement, you’ll become an indestructible alien killing machine. \n \nIn Exodemon you play as a scientist in the edge of the universe who was infected by an alien entity.",
    "ageRating": null,
@@ -17857,6 +18309,49 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/516820/ss_1b0b89b4232083be69f13046da6ed1b30a2a3c3f.1920x1080.jpg?t=1572015050"
    ]
   },
+  "extreme exorcism": {
+   "about": "Extreme Exorcism is a paranormal platformer where every move you make comes back to haunt you.\n\nTake on the role of Mae Barrons; an Extreme Exorcist with extreme measures. Her supernatural skills are called upon when everything and everyone else has failed to rid a haunted house of its ghostly presence.\n\nConventional methods won’t cut it with these ghosts. Instead, Mae comes armed with a deadly arsenal of ghost-busting weapons, from rocket launchers to razor sharp boomerangs.",
+   "ageRating": null,
+   "appId": 334100,
+   "developer": "Golden Ruby Games",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-31T12:28:33Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "Indie",
+    "Family"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Dutch",
+    "Portuguese - Portugal",
+    "Portuguese - Brazil"
+   ],
+   "metacritic": 75,
+   "name": "Extreme Exorcism",
+   "publisher": "Ripstone",
+   "releaseDate": "2015-09-23",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/334100/ss_6f4fa2e7c1ea3c532cf15654cac52625defd28c5.1920x1080.jpg?t=1667318474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/334100/ss_14a7f3206f14a4c8ed721fbd511a9eb4406eb0fb.1920x1080.jpg?t=1667318474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/334100/ss_ee008de5e5b2e214b30a267f1d1c4f715630e0a1.1920x1080.jpg?t=1667318474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/334100/ss_c26b582281af649323ca0ae67fee390c1c9014c3.1920x1080.jpg?t=1667318474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/334100/ss_3a834b60f9503f2088be3a67a9e57683389f94dc.1920x1080.jpg?t=1667318474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/334100/ss_1430219d3e6fa3991f4184fa5718d89bf7fabd97.1920x1080.jpg?t=1667318474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/334100/ss_c001825ee6ed3bf37a6f5101aafb9dde911a354c.1920x1080.jpg?t=1667318474",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/334100/ss_df948317f3dab01ff6ac8ee1dfcb233adae894fd.1920x1080.jpg?t=1667318474"
+   ]
+  },
   "f1 2019": {
    "fetchedAt": "2026-10-27T18:04:00Z",
    "miss": true
@@ -17871,6 +18366,10 @@
   },
   "f1 22": {
    "fetchedAt": "2026-10-22T17:15:08Z",
+   "miss": true
+  },
+  "f1 22 championship edition": {
+   "fetchedAt": "2026-10-31T12:28:36Z",
    "miss": true
   },
   "f1 24": {
@@ -17966,6 +18465,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3059520/cea541e72ef58d3a81ab872e6f9f743028ee5b55/ss_cea541e72ef58d3a81ab872e6f9f743028ee5b55.1920x1080.jpg?t=1786646076"
    ]
   },
+  "fahrenheit": {
+   "fetchedAt": "2026-10-31T12:28:51Z",
+   "miss": true
+  },
   "fall of light darkest edition": {
    "about": "\"In the beginning, there was only an excruciating, screaming void, wherein twisted souls writhed about, imprisoned in nothingness. Then the darkness was pierced by Luce, and with her came warmth and order. The time of men had begun, and would last many eras.",
    "ageRating": null,
@@ -18049,6 +18552,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1378370/ss_3bacb19d39018fca211144980a585626753bd4e2.1920x1080.jpg?t=1792071862",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1378370/ss_ea4dd24e8661f3d4a0de811b4238888046cd000a.1920x1080.jpg?t=1792071862"
    ]
+  },
+  "fallen legion flames of rebellion": {
+   "fetchedAt": "2026-10-31T12:28:53Z",
+   "miss": true
   },
   "fallen legion rise to glory": {
    "about": "Will you restore glory to your homeland or overthrow the monarchy and claim the throne in your name? Fallen Legion+ doubles the intensity on Steam with Fallen Legion: Sins of an Empire and Fallen Legion: Flames of Rebellion bundled together!\n\nEmbark on a personal journey with Princess Cecille and an enigmatic talking grimoire to restore glory to your crumbling home in Sins of an Empire.",
@@ -18190,6 +18697,45 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2844850/ss_405f056ab685d6ad63b1f6362f04672485bb9cd8.1920x1080.jpg?t=1751340059"
    ]
   },
+  "fantasy friends": {
+   "about": "Fantasy Friends takes place in a gorgeous fantasy forest where anything is possible! With the help of Aurea, the magic fairy, you will care for 12 adorable new pet friends! Take care of them and make sure you give them all the love they need. If you do, your pets will grow up and play with you!\nThe more you care for them, keeping them happy and healthy, the more mana you will earn.",
+   "ageRating": null,
+   "appId": 1376950,
+   "developer": "Xaloc Studios",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-31T12:29:01Z",
+   "genres": [
+    "Simulation"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Simplified Chinese",
+    "Traditional Chinese",
+    "Korean",
+    "Japanese",
+    "Dutch",
+    "Portuguese - Brazil",
+    "Russian"
+   ],
+   "metacritic": null,
+   "name": "Fantasy Friends",
+   "publisher": "Maximum Entertainment",
+   "releaseDate": "2020-11-06",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1376950/ss_4af28575ac148c9f9df4562c14f43b00121ac5e9.1920x1080.jpg?t=1707744609",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1376950/ss_e19f87788b13377d8c504f7029c3292f6ab1a79d.1920x1080.jpg?t=1707744609",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1376950/ss_a84ad1a8030a54ddac1f11d7a23a913148f7a34c.1920x1080.jpg?t=1707744609",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1376950/ss_678676814497c2e1705e5ccdc182fe263739100d.1920x1080.jpg?t=1707744609",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1376950/ss_535d2baa5a969801fea139164083acff2e5d6d61.1920x1080.jpg?t=1707744609"
+   ]
+  },
   "fantasy life i the girl who steals time": {
    "about": "Step into this Slow-Life RPG where you can freely switch between 14 unique jobs, so called \"Lives,\" and enjoy a carefree life in a fantasy world.\n\nFish, cook, shape the island to your liking, or team up with friends to battle monsters across the vast world.It's up to you to choose what kind of Life you'll live!\n\n■A Dragon Guides You to a Mysterious Island\n\nYou are an adventurer who sets sail with the archaeologist Edward and his team.",
    "ageRating": null,
@@ -18229,6 +18775,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2993780/ss_5584897bbdd441886ba7eb94981ae9669c1f222c.1920x1080.jpg?t=1749900924",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2993780/ss_091d0e4e26efc16d2bd296b0535b7c706256aee3.1920x1080.jpg?t=1749900924"
    ]
+  },
+  "fantavision": {
+   "fetchedAt": "2026-10-31T12:28:56Z",
+   "miss": true
   },
   "far cry 3 blood dragon classic edition": {
    "fetchedAt": "2026-10-26T04:48:25Z",
@@ -18639,6 +19189,10 @@
    "fetchedAt": "2026-10-26T04:47:47Z",
    "miss": true
   },
+  "fat city": {
+   "fetchedAt": "2026-10-31T12:29:03Z",
+   "miss": true
+  },
   "fatal frame ii crimson butterfly remake": {
    "about": "About FATAL FRAME II: Crimson Butterfly REMAKE\n\nThe full remake of the second installment in the FATAL FRAME (PROJECT ZERO) series titled FATAL FRAME / PROJECT ZERO II: Crimson Butterfly. This Japanese-style horror adventure game follows twin sisters who become lost in an abandoned village haunted by vengeful spirits. Using the Camera Obscura—a device that can capture and seal away the impossible—they fight ghosts as the story unfolds.",
    "ageRating": 17,
@@ -18676,6 +19230,14 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3920610/0fbab0308fee682020063a5a88453d585a1ab57e/ss_0fbab0308fee682020063a5a88453d585a1ab57e.1920x1080.jpg?t=1782174544",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3920610/11fb543d7f62fb1bbfdbe1ce2e238f5ad1e22568/ss_11fb543d7f62fb1bbfdbe1ce2e238f5ad1e22568.1920x1080.jpg?t=1782174544"
    ]
+  },
+  "fatal frame project zero maiden of black water": {
+   "fetchedAt": "2026-10-31T12:28:38Z",
+   "miss": true
+  },
+  "fatal frame project zero mask of the lunar eclipse": {
+   "fetchedAt": "2026-10-31T12:28:41Z",
+   "miss": true
   },
   "fatal fury battle archives volume 2": {
    "fetchedAt": "2026-10-27T18:04:18Z",
@@ -18940,6 +19502,10 @@
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/940580/ss_038f46cc9cf026b29d2e9f73e8650b55f2356903.1920x1080.jpg?t=1725351040",
     "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/940580/ss_4f2a5f1a171d6f2b7446aff9702b8a27dd539fa1.1920x1080.jpg?t=1725351040"
    ]
+  },
+  "fifa 15": {
+   "fetchedAt": "2026-10-31T12:28:43Z",
+   "miss": true
   },
   "fifa 16": {
    "fetchedAt": "2026-10-25T04:43:31Z",
@@ -19801,6 +20367,53 @@
   "football manager 26 console": {
    "fetchedAt": "2026-10-17T18:32:55Z",
    "miss": true
+  },
+  "forced slightly better edition": {
+   "about": "Forced is a challenging one- to four-player co-op arcade action RPG with puzzle and tactical elements. You are cast as slaves in the toughest fantasy gladiator school of them all, condemned to fight to the death, all the while attempting to win your freedom.",
+   "ageRating": null,
+   "appId": 249990,
+   "developer": "BetaDwarf",
+   "features": [
+    "Single-player",
+    "Online multiplayer",
+    "Local multiplayer",
+    "Co-op",
+    "Cross-platform multiplayer",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-31T12:28:48Z",
+   "genres": [
+    "Action",
+    "Adventure",
+    "RPG",
+    "Indie"
+   ],
+   "languages": [
+    "English",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Portugal",
+    "Russian",
+    "Swedish",
+    "Italian",
+    "Danish",
+    "French",
+    "Polish"
+   ],
+   "metacritic": null,
+   "name": "FORCED: Slightly Better Edition",
+   "publisher": "BetaDwarf",
+   "releaseDate": "2013-10-24",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/249990/ss_08fc19a2f88a3a8b64dd4da527ee739a3dfe50ed.1920x1080.jpg?t=1667808676",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/249990/ss_c3ef68fedbc9353118a556825117a4f3ef13b59c.1920x1080.jpg?t=1667808676",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/249990/ss_9620da7887487b4c3b4a335870a49f50f7e4e423.1920x1080.jpg?t=1667808676",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/249990/ss_8efaf42ca0503bc2fef8fc034b61eb90540b0f05.1920x1080.jpg?t=1667808676",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/249990/ss_ce152533fed1eda802ede6b3f49e82d9dda62518.1920x1080.jpg?t=1667808676",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/249990/ss_820a5e804c2326ed975cda64d78b2bd5f0a35863.1920x1080.jpg?t=1667808676",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/249990/ss_c716dad73979d22416e013eb978439005a6f42fc.1920x1080.jpg?t=1667808676",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/249990/ss_acaa705a82b93e5e07ecdb58cad9c4f51b0570ad.1920x1080.jpg?t=1667808676"
+   ]
   },
   "foreclosed": {
    "about": "FORECLOSED is a narrative-driven action-adventure set in a Cyberpunk world filled with action, suspense, and experimental augmentations. Follow the story of Evan Kapnos, his identity recently Foreclosed, stripped of his job, his brain implants and his access to the city Block-chain, he must now escape before his identity and implants are auctioned off.",
@@ -22557,6 +23170,41 @@
   "hitman blood money hd": {
    "fetchedAt": "2026-10-21T13:51:50Z",
    "miss": true
+  },
+  "hitman go definitive edition": {
+   "about": "Hitman GO is a simple to play, but difficult to master turn-based strategy game set in a stunning interpretation of the Hitman universe. You will strategically navigate fixed spaces on a grid to avoid enemies and take out your target or infiltrate well-guarded locations.",
+   "ageRating": 10,
+   "appId": 427820,
+   "developer": "Square Enix Montréal",
+   "features": [
+    "Single-player",
+    "Controller support"
+   ],
+   "fetchedAt": "2026-10-31T12:27:08Z",
+   "genres": [
+    "Strategy"
+   ],
+   "languages": [
+    "English",
+    "French",
+    "Italian",
+    "German",
+    "Spanish - Spain",
+    "Portuguese - Brazil"
+   ],
+   "metacritic": 72,
+   "name": "Hitman GO: Definitive Edition",
+   "publisher": "Crystal Dynamics",
+   "releaseDate": "2016-02-23",
+   "screenshots": [
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/427820/ss_4a27e52bee4422a5539c63083aa256ef72f82e58.1920x1080.jpg?t=1699905509",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/427820/ss_c84986c3e95df594c269d72ad65df63b7d200b48.1920x1080.jpg?t=1699905509",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/427820/ss_9755637c9d4357ca4eabe481378965d5823dfb55.1920x1080.jpg?t=1699905509",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/427820/ss_530bbf9efd3a60ccbd84145cf90805b7c2ff9695.1920x1080.jpg?t=1699905509",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/427820/ss_36625e16b14f8db02d7c8cf6e2fa2fe2bd4a9313.1920x1080.jpg?t=1699905509",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/427820/ss_cad3a055d5c682a970dfdf59696d1a98a97c60cd.1920x1080.jpg?t=1699905509",
+    "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/427820/ss_0fb231b771b67a5d9009c5c499f937da666f4569.1920x1080.jpg?t=1699905509"
+   ]
   },
   "hoa": {
    "about": "Hoa is a beautiful puzzle-platforming game that features breathtaking hand-painted art, lovely music, and a peaceful, relaxing atmosphere. Experience the magic of nature and imagination as you play the main character, Hoa, on her journey through breathtaking environments back to where it all began.",
@@ -55387,6 +56035,6 @@
    "miss": true
   }
  },
- "updatedAt": "2026-10-31T05:42:59Z",
+ "updatedAt": "2026-10-31T12:29:03Z",
  "version": 1
 }
